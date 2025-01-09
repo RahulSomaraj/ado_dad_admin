@@ -27,7 +27,7 @@ jobs:
             export PATH="$PATH:/usr/local/flutter/bin"  # Add Flutter to PATH
             cd /var/www/html/ado_dad_admin || exit
             git reset --hard  # Reset any local changes
-            git pull origin main
+            git pull origin master
             flutter clean  # Clean old builds
             flutter build web --release  # Build Flutter web release
             sudo systemctl reload nginx  # Reload Nginx to apply changes
