@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/features/users/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/core/bloc/users/user_bloc.dart';
@@ -17,6 +18,7 @@ class _UserListViewState extends State<UserListView> {
   int _currentPage = 1;
   int _lastPage = 1;
   int _rowsPerPage = 10;
+  String? _searchQuery;
   bool _isPaginationLoading = false; // Flag for pagination-specific loading
 
   void _fetchUsers(int page, int rowsPerPage) {
@@ -33,6 +35,22 @@ class _UserListViewState extends State<UserListView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 50),
+          SearchBarController(
+            onSearch: (query) {
+              setState(() {
+                _searchQuery = query;
+                _currentPage = 1; // Reset to first page
+              });
+              _fetchUsers(_currentPage, _rowsPerPage);
+            },
+            onCreate: () {
+              setState(() {
+                _currentPage = 1; // Reset to first page
+              });
+              _fetchUsers(_currentPage, _rowsPerPage);
+            },
+          ),
+          const SizedBox(height: 10),
           BlocListener<UserBloc, UserState>(
             listener: (context, state) {
               if (state is UserLoaded) {

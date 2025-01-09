@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/features/users/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:ado_dad_admin/dashboard/user/user_detailed.dart';
 import 'package:ado_dad_admin/dashboard/user/user_edit.dart';
@@ -12,18 +13,54 @@ class UserDataTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(30),
-      width: double.infinity,
-      child: Card(
-        child: DataTable(
-          columns: const [
-            DataColumn(label: Text('ID')),
-            DataColumn(label: Text('NAME')),
-            DataColumn(label: Text('PHONE')),
-            DataColumn(label: Text('EMAIL')),
-            DataColumn(label: Text('ACTIONS')),
-          ],
-          rows: users.map((user) => _buildUserRow(context, user)).toList(),
-        ),
+      width: double.infinity, // Ensure container takes full width
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Card(
+            child: SizedBox(
+              width: double.infinity, // Make the table stretch full width
+              child: DataTable(
+                columnSpacing: 40.0, // Adjust column spacing
+                horizontalMargin: 10.0, // Adjust margin for better spacing
+                columns: const [
+                  DataColumn(
+                    label: Text(
+                      'ID',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'NAME',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'PHONE',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'EMAIL',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  DataColumn(
+                    label: Text(
+                      'ACTIONS',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+                rows:
+                    users.map((user) => _buildUserRow(context, user)).toList(),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -36,6 +73,7 @@ class UserDataTable extends StatelessWidget {
       DataCell(Text(user.email)),
       DataCell(
         Row(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             IconButton(
               icon: const Icon(Icons.visibility),

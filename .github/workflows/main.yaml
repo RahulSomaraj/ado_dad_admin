@@ -8,25 +8,26 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      # Step 2: SSH and Deploy
       - name: SSH and Deploy
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_ADO_DAD_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_ADO_DAD_SSH_KEY }}
+          port: 22
           script: |
-            echo "${{ secrets.EC2_ADO_DAD_SSH_KEY }}" > /tmp/key.pem
-            chmod 400 /tmp/key.pem
-            ssh -o StrictHostKeyChecking=no -i /tmp/key.pem ubuntu@${{ secrets.EC2_ADO_DAD_HOST }} << 'EOF'
-              source ~/.bashrc  # Force load .bashrc
-              export PATH="$PATH:/usr/local/flutter/bin"
-              cd /var/www/html/ado_dad_admin
-              git pull origin main
-              flutter build web
-              sudo systemctl reload nginx
-            EOF
-            rm -f /tmp/key.pem
+            set -e  # Stop the script on errors
+            export PATH="$PATH:/usr/local/flutter/bin"  # Add Flutter to PATH
+            cd /var/www/html/ado_dad_admin || exit
+            git reset --hard  # Reset any local changes
+            git pull origin main
+            flutter clean  # Clean old builds
+            flutter build web --release  # Build Flutter web release
+            sudo systemctl reload nginx  # Reload Nginx to apply changes

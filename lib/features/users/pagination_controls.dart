@@ -47,7 +47,7 @@ class PaginationControls extends StatelessWidget {
               ),
               DropdownButton<int>(
                 value: rowsPerPage,
-                items: [5, 10, 20]
+                items: [5, 10]
                     .map((value) => DropdownMenuItem<int>(
                           value: value,
                           child: Text('Rows: $value'),
