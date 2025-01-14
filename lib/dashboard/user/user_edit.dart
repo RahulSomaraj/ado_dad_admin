@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:ado_dad_admin/core/model/user_model.dart';
 
-class UserEditPage extends StatefulWidget {
+class UserEditPageDetail extends StatefulWidget {
   final UserModel? user;
+  final void Function(int previousPageIndex) onGoBack;
+  final void Function(int editPageIndex, String userId) onEditPage;
 
-  const UserEditPage({super.key, this.user});
+  const UserEditPageDetail(
+      {super.key, this.user, required this.onGoBack, required this.onEditPage});
 
   @override
-  State<UserEditPage> createState() => _UserEditPageState();
+  State<UserEditPageDetail> createState() => _UserEditPageDetailState();
 }
 
-class _UserEditPageState extends State<UserEditPage> {
+class _UserEditPageDetailState extends State<UserEditPageDetail> {
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
 
@@ -26,9 +29,6 @@ class _UserEditPageState extends State<UserEditPage> {
   Widget build(BuildContext context) {
     bool isNew = widget.user == null;
     return Scaffold(
-      appBar: AppBar(
-        title: Text(isNew ? 'Create user' : 'Edit user'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

@@ -6,8 +6,15 @@ import 'package:ado_dad_admin/core/model/user_model.dart';
 
 class UserDataTable extends StatelessWidget {
   final List<UserModel> users;
+  final void Function(int detailPageIndex, String selectedId) onDetailedPage;
+  final void Function(int detailPageIndex, String selectedId) onEditPage;
 
-  const UserDataTable({super.key, required this.users});
+  const UserDataTable({
+    super.key,
+    required this.users,
+    required this.onDetailedPage,
+    required this.onEditPage,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,23 +85,15 @@ class UserDataTable extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.visibility),
               onPressed: () {
-                // Navigator.push( ///change here
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => UserDetailPage(userId: '',),
-                //   ),
-                // );
+                print(user.id);
+                onDetailedPage(5, user.id);
               },
             ),
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserEditPage(user: user),
-                  ),
-                );
+                print(user.id);
+                onEditPage(4, user.id);
               },
             ),
           ],

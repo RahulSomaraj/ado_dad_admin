@@ -4,8 +4,13 @@ import 'package:ado_dad_admin/dashboard/user/user_edit.dart';
 
 class UserDetails extends StatefulWidget {
   final UserModel user;
+  final void Function(int editPageIndex, String userId) onEditPage;
 
-  const UserDetails({super.key, required this.user});
+  const UserDetails({
+    super.key,
+    required this.user,
+    required this.onEditPage,
+  });
 
   @override
   State<UserDetails> createState() => _UserDetailsState();
@@ -27,17 +32,17 @@ class _UserDetailsState extends State<UserDetails> {
     });
   }
 
-  void _navigateLeft() {
-    setState(() {
-      currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
-    });
-  }
+  // void _navigateLeft() {
+  //   setState(() {
+  //     currentIndex = (currentIndex > 0) ? currentIndex - 1 : images.length - 1;
+  //   });
+  // }
 
-  void _navigateRight() {
-    setState(() {
-      currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
-    });
-  }
+  // void _navigateRight() {
+  //   setState(() {
+  //     currentIndex = (currentIndex < images.length - 1) ? currentIndex + 1 : 0;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -54,35 +59,13 @@ class _UserDetailsState extends State<UserDetails> {
               return SizedBox(
                 width: imageSize,
                 height: imageSize,
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Image.network(
-                        images[currentIndex],
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                      ),
-                    ),
-                    Positioned(
-                      left: 5,
-                      top: 0,
-                      bottom: 0,
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_left, size: 30),
-                        onPressed: _navigateLeft,
-                      ),
-                    ),
-                    Positioned(
-                      right: 5,
-                      top: 0,
-                      bottom: 0,
-                      child: IconButton(
-                        icon: const Icon(Icons.arrow_right, size: 30),
-                        onPressed: _navigateRight,
-                      ),
-                    ),
-                  ],
+                child: Center(
+                  child: Image.network(
+                    images[currentIndex],
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
                 ),
               );
             },
@@ -106,12 +89,8 @@ class _UserDetailsState extends State<UserDetails> {
                 const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserEditPage(user: widget.user),
-                      ),
-                    );
+                    widget.onEditPage(
+                        4, widget.user.id); // Navigate to the edit page
                   },
                   child: const Text('Edit'),
                 ),

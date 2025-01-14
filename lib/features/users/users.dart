@@ -9,16 +9,24 @@ import 'user_list_view.dart';
 class UserListPage extends StatelessWidget {
   final DioClient dioClient = DioClient();
   final UserRepository userRepository;
+  final void Function(int detailPageIndex, String selectedId) onDetailedPage;
+  final void Function(int detailPageIndex, String selectedId) onEditPage;
 
-  UserListPage({super.key})
-      : userRepository = UserRepository(dioClient: DioClient());
+  UserListPage({
+    super.key,
+    required this.onDetailedPage,
+    required this.onEditPage,
+  }) : userRepository = UserRepository(dioClient: DioClient());
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => UserBloc(userRepository: userRepository)
         ..add(FetchUsers(page: 1, limit: 10)),
-      child: const UserListView(),
+      child: UserListView(
+        onDetailedPage: onDetailedPage,
+        onEditPage: onEditPage,
+      ),
     );
   }
 }

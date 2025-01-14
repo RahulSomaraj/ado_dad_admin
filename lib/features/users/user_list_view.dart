@@ -8,7 +8,13 @@ import 'pagination_controls.dart';
 import 'user_data_table.dart';
 
 class UserListView extends StatefulWidget {
-  const UserListView({super.key});
+  final void Function(int detailPageIndex, String selectedId) onDetailedPage;
+  final void Function(int detailPageIndex, String selectedId) onEditPage;
+  const UserListView({
+    super.key,
+    required this.onDetailedPage,
+    required this.onEditPage,
+  });
 
   @override
   State<UserListView> createState() => _UserListViewState();
@@ -70,7 +76,11 @@ class _UserListViewState extends State<UserListView> {
                 if (state is UserLoading && !_isPaginationLoading) {
                   return const Center(child: CircularProgressIndicator());
                 } else if (state is UserLoaded) {
-                  return UserDataTable(users: state.users.users);
+                  return UserDataTable(
+                    users: state.users.users,
+                    onDetailedPage: widget.onDetailedPage,
+                    onEditPage: widget.onEditPage,
+                  );
                 } else if (state is UserError) {
                   return Center(child: Text(state.message));
                 } else {
