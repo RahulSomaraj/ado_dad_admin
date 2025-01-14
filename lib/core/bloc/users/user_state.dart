@@ -20,6 +20,15 @@ class UserLoaded extends UserState {
   List<Object?> get props => [users];
 }
 
+class UserFetched extends UserState {
+  final UserModel user;
+
+  UserFetched({required this.user});
+
+  @override
+  List<Object?> get props => [user];
+}
+
 class UserCreated extends UserState {
   final UserModel user;
 

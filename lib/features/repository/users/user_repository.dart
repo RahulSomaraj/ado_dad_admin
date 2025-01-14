@@ -18,10 +18,6 @@ class UserRepository {
         'limit': limit,
       });
 
-      // print(response.data is String
-      //     ? jsonDecode(response.data) // Decode if it's a string
-      //     : response.data);
-
       // Deserialize response into UserListPagination
       return UserListPagination.fromJson(response.data);
     } catch (e) {
@@ -34,6 +30,24 @@ class UserRepository {
       }
 
       throw Exception('Failed to load users');
+    }
+  }
+
+  // Fetch User by ID
+  Future<UserModel> fetchUserById(String userId) async {
+    try {
+      final response = await dioClient.get('/users/$userId'); // GET /users/{id}
+      return UserModel.fromJson(response.data);
+    } catch (e) {
+      if (e is DioException) {
+        print('DioException: ${e.response?.statusCode}');
+        print('DioException Data: ${e.response?.data}');
+      } else {
+        print(e);
+        print('Unknown Exception: $e');
+      }
+
+      throw Exception('Failed to fetch user by ID');
     }
   }
 

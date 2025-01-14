@@ -18,6 +18,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       }
     });
 
+    on<FetchUserById>((event, emit) async {
+      emit(UserLoading());
+      try {
+        final user = await userRepository.fetchUserById(event.userId);
+        emit(UserFetched(user: user));
+      } catch (e) {
+        emit(UserError(message: e.toString()));
+      }
+    });
+
     on<CreateUser>((event, emit) async {
       emit(UserLoading());
       try {

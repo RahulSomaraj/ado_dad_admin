@@ -1,6 +1,6 @@
 import 'package:ado_dad_admin/features/users/search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:ado_dad_admin/dashboard/user/user_detailed.dart';
+import 'package:ado_dad_admin/dashboard/user/user_detailed_main.dart';
 import 'package:ado_dad_admin/dashboard/user/user_edit.dart';
 import 'package:ado_dad_admin/core/model/user_model.dart';
 
@@ -78,12 +78,12 @@ class UserDataTable extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.visibility),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserDetailPage(user: user),
-                  ),
-                );
+                // Navigator.push( ///change here
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) => UserDetailPage(userId: '',),
+                //   ),
+                // );
               },
             ),
             IconButton(

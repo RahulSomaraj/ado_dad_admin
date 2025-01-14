@@ -16,6 +16,16 @@ class FetchUsers extends UserEvent {
   List<Object?> get props => [page, limit];
 }
 
+// Fetch user by Id
+class FetchUserById extends UserEvent {
+  final String userId;
+
+  FetchUserById({required this.userId});
+
+  @override
+  List<Object?> get props => [userId];
+}
+
 // Create a new user
 class CreateUser extends UserEvent {
   final Map<String, dynamic> userData;

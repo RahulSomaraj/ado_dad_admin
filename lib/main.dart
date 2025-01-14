@@ -13,21 +13,24 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'core/router.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
+// import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
+
   setUrlStrategy(PathUrlStrategy());
   final dioClient = DioClient();
   final authService = AuthService();
 
   // Check if the user is authenticated before app startup
-  final bool isAuthenticated = await authService.isAuthenticated();
+  // final bool isAuthenticated = await authService.isAuthenticated();
 
   runApp(
     MyApp(
       dioClient: dioClient,
       authService: authService,
-      isAuthenticated: isAuthenticated,
+      // isAuthenticated: isAuthenticated,
     ),
   );
 }
@@ -35,13 +38,13 @@ void main() async {
 class MyApp extends StatelessWidget {
   final DioClient dioClient;
   final AuthService authService;
-  final bool isAuthenticated;
+  // final bool isAuthenticated;
 
   const MyApp({
     super.key,
     required this.dioClient,
     required this.authService,
-    required this.isAuthenticated,
+    // required this.isAuthenticated,
   });
 
   @override

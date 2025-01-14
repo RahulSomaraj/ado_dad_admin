@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ado_dad_admin/core/widgets/left_bar.dart';
 import 'package:ado_dad_admin/features/home/homescreen.dart';
 import 'package:ado_dad_admin/features/users/users.dart';
+import 'package:ado_dad_admin/dashboard/user/user_detailed_main.dart';
 
 class HomeDashBoard extends StatefulWidget {
   final int initialIndex;
@@ -17,7 +18,7 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
   // Pages corresponding to sidebar selections
   final List<Widget> _pages = [
     const HomePage(),
-    UserListPage(),
+    UserDetailPage(userId: '677fd507508e1efec1072ba7'),
     const HomePage(),
     UserListPage(),
     const HomePage(),
@@ -32,6 +33,18 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
   void _onItemSelected(int index) {
     setState(() {
       _selectedIndex = index;
+    });
+  }
+
+  void _onDetailedPage(int detailPageIndex) {
+    setState(() {
+      _selectedIndex = detailPageIndex;
+    });
+  }
+
+  void _onGoBack(int previousPageIndex) {
+    setState(() {
+      _selectedIndex = previousPageIndex;
     });
   }
 

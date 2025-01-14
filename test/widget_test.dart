@@ -18,7 +18,7 @@ void main() {
     await tester.pumpWidget(MyApp(
       dioClient: DioClient(),
       authService: AuthService(),
-      isAuthenticated: false,
+      // isAuthenticated: false,
     ));
 
     // Verify that our counter starts at 0.
