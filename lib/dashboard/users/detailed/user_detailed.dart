@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ado_dad_admin/core/model/user_model.dart';
-import 'package:ado_dad_admin/dashboard/user/user_edit.dart';
+import 'package:ado_dad_admin/core/model/users/user_model.dart';
+import 'package:ado_dad_admin/dashboard/users/detailed/user_edit.dart';
 
 class UserDetails extends StatefulWidget {
   final UserModel user;

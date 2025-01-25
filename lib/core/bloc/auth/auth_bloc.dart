@@ -1,7 +1,7 @@
 // Bloc
 import 'package:ado_dad_admin/core/bloc/auth/auth_event.dart';
 import 'package:ado_dad_admin/core/bloc/auth/auth_state.dart';
-import 'package:ado_dad_admin/features/repository/auth_service.dart';
+import 'package:ado_dad_admin/core/repository/auth_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {

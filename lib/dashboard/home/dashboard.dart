@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:ado_dad_admin/core/widgets/left_bar.dart';
-import 'package:ado_dad_admin/features/home/homescreen.dart';
-import 'package:ado_dad_admin/features/users/users.dart';
-import 'package:ado_dad_admin/dashboard/user/user_edit_main.dart';
-import 'package:ado_dad_admin/dashboard/user/user_detailed_main.dart';
+import 'package:ado_dad_admin/dashboard/home/homescreen.dart';
+import 'package:ado_dad_admin/dashboard/users/users.dart';
+import 'package:ado_dad_admin/dashboard/users/detailed/user_edit_main.dart';
+import 'package:ado_dad_admin/dashboard/users/detailed/user_detailed_main.dart';
 
 class HomeDashBoard extends StatefulWidget {
   final int initialIndex;

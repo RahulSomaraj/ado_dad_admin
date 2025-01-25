@@ -1,10 +1,10 @@
 import 'package:ado_dad_admin/core/bloc/users/user_event.dart';
 import 'package:ado_dad_admin/core/bloc/users/user_state.dart';
-import 'package:ado_dad_admin/dashboard/user/user_detailed.dart';
+import 'package:ado_dad_admin/dashboard/users/detailed/user_detailed.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/core/bloc/users/user_bloc.dart';
-import 'package:ado_dad_admin/features/repository/users/user_repository.dart';
+import 'package:ado_dad_admin/core/repository/users/user_repository.dart';
 
 class UserDetailPage extends StatelessWidget {
   final String userId;

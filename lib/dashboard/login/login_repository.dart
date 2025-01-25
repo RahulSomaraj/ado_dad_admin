@@ -1,6 +1,6 @@
-import 'package:ado_dad_admin/core/model/login_model.dart';
+import 'package:ado_dad_admin/core/model/auth/login_model.dart';
 import 'package:ado_dad_admin/core/network/user_dio_client.dart';
-import 'package:ado_dad_admin/core/model/login_success_model.dart';
+import 'package:ado_dad_admin/core/model/auth/login_success_model.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,7 +1,7 @@
 import 'package:ado_dad_admin/core/bloc/users/user_bloc.dart';
 import 'package:ado_dad_admin/core/bloc/users/user_event.dart';
 import 'package:ado_dad_admin/core/network/user_dio_client.dart';
-import 'package:ado_dad_admin/features/repository/users/user_repository.dart';
+import 'package:ado_dad_admin/core/repository/users/user_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'user_list_view.dart';

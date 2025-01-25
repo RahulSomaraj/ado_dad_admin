@@ -1,9 +1,9 @@
 import 'package:ado_dad_admin/core/bloc/auth/auth_bloc.dart';
-import 'package:ado_dad_admin/features/login/left_section.dart';
-import 'package:ado_dad_admin/features/login/right_section.dart';
+import 'package:ado_dad_admin/dashboard/login/left_section.dart';
+import 'package:ado_dad_admin/dashboard/login/right_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ado_dad_admin/features/repository/login/login_repository.dart';
+import 'package:ado_dad_admin/dashboard/login/login_repository.dart';
 import 'package:ado_dad_admin/core/bloc/login/login_bloc.dart';
 
 class AdminPage extends StatefulWidget {

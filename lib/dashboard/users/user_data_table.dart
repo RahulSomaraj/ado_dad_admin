@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ado_dad_admin/core/model/user_model.dart';
+import 'package:ado_dad_admin/core/model/users/user_model.dart';
 
 class UserDataTable extends StatelessWidget {
   final List<UserModel> users;

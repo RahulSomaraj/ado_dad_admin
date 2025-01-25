@@ -1,4 +1,4 @@
-import 'package:ado_dad_admin/features/users/search_bar.dart';
+import 'package:ado_dad_admin/dashboard/users/search_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/core/bloc/users/user_bloc.dart';

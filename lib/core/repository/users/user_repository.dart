@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:ado_dad_admin/core/model/user_model.dart';
-import 'package:ado_dad_admin/core/model/user_model_pagination.dart';
+import 'package:ado_dad_admin/core/model/users/user_model.dart';
+import 'package:ado_dad_admin/core/model/users/user_model_pagination.dart';
 import 'package:ado_dad_admin/core/network/user_dio_client.dart';
 import 'package:dio/dio.dart';
 

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ado_dad_admin/features/login/password_section.dart';
+import 'package:ado_dad_admin/dashboard/login/password_section.dart';
 
 class EmailSection extends StatefulWidget {
   final FocusNode? focusNode;

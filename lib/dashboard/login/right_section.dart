@@ -1,7 +1,7 @@
-import 'package:ado_dad_admin/core/model/login_model.dart';
+import 'package:ado_dad_admin/core/model/auth/login_model.dart';
 import 'package:ado_dad_admin/core/bloc/login/login_bloc.dart';
-import 'package:ado_dad_admin/features/login/email_section.dart';
-import 'package:ado_dad_admin/features/login/otp_section.dart';
+import 'package:ado_dad_admin/dashboard/login/email_section.dart';
+import 'package:ado_dad_admin/dashboard/login/otp_section.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/core/bloc/login/login_event.dart';

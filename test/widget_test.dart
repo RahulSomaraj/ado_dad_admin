@@ -8,7 +8,7 @@
 import 'package:ado_dad_admin/core/network/user_dio_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:ado_dad_admin/features/repository/auth_service.dart';
+import 'package:ado_dad_admin/core/repository/auth_service.dart';
 
 import 'package:ado_dad_admin/main.dart';
 

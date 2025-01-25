@@ -1,4 +1,4 @@
-import 'package:ado_dad_admin/core/model/login_success_model.dart';
+import 'package:ado_dad_admin/core/model/auth/login_success_model.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class LoginState extends Equatable {

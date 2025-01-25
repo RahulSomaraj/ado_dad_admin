@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:ado_dad_admin/features/home/custom_chart.dart';
-import 'package:ado_dad_admin/features/home/stat_cards.dart';
+import 'package:ado_dad_admin/dashboard/home/custom_chart.dart';
+import 'package:ado_dad_admin/dashboard/home/stat_cards.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatelessWidget {
