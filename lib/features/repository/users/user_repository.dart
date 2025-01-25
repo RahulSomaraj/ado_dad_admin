@@ -11,11 +11,15 @@ class UserRepository {
   UserRepository({required this.dioClient});
 
   // Fetch Users with optional pagination
-  Future<UserListPagination> fetchUsers({int page = 1, int limit = 10}) async {
+  Future<UserListPagination> fetchUsers({int page = 1, int limit = 10,
+    Map<String, dynamic>? additionalParams, // Optional query parameters
+  }) async {
     try {
       final response = await dioClient.get('/users', queryParameters: {
         'page': page,
         'limit': limit,
+        if (additionalParams != null)
+          ...additionalParams, // Add optional params
       });
 
       // Deserialize response into UserListPagination
@@ -62,12 +66,20 @@ class UserRepository {
   }
 
   // Update User
-  Future<UserModel> updateUser(int userId, Map<String, dynamic> data) async {
+  Future<UserModel> updateUser(String userId, Map<String, dynamic> data) async {
     try {
       final response =
           await dioClient.put('/users/$userId', data); // PUT /users/{id}
+      print(response);
       return UserModel.fromJson(response.data);
     } catch (e) {
+      if (e is DioException) {
+        print('DioException: ${e.response?.statusCode}');
+        print('DioException Data: ${e.response?.data}');
+      } else {
+        print(e);
+        print('Unknown Exception: $e');
+      }
       throw Exception('Failed to update user');
     }
   }

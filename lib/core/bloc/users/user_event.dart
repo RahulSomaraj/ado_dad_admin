@@ -9,11 +9,16 @@ abstract class UserEvent extends Equatable {
 class FetchUsers extends UserEvent {
   final int page;
   final int limit;
+  final Map<String, dynamic>? queryParams; // Optional query parameters
 
-  FetchUsers({this.page = 0, this.limit = 10});
+  FetchUsers({
+    this.page = 0,
+    this.limit = 10,
+    this.queryParams,
+  });
 
   @override
-  List<Object?> get props => [page, limit];
+  List<Object?> get props => [page, limit, queryParams];
 }
 
 // Fetch user by Id
@@ -38,7 +43,7 @@ class CreateUser extends UserEvent {
 
 // Update an existing user
 class UpdateUser extends UserEvent {
-  final int userId;
+  final String userId;
   final Map<String, dynamic> updatedData;
 
   UpdateUser({required this.userId, required this.updatedData});

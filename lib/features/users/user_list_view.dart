@@ -25,13 +25,29 @@ class _UserListViewState extends State<UserListView> {
   int _lastPage = 1;
   int _rowsPerPage = 10;
   String? _searchQuery;
-  bool _isPaginationLoading = false; // Flag for pagination-specific loading
+  String? _type;
+  bool _isPaginationLoading = false;
 
-  void _fetchUsers(int page, int rowsPerPage) {
+  @override
+  void initState() {
+    super.initState();
+    _fetchUsers(_currentPage, _rowsPerPage);
+  }
+
+  void _fetchUsers(
+    int page,
+    int rowsPerPage,
+  ) {
     setState(() {
       _isPaginationLoading = true;
     });
-    context.read<UserBloc>().add(FetchUsers(page: page, limit: rowsPerPage));
+    context.read<UserBloc>().add(
+          FetchUsers(page: page, limit: rowsPerPage, queryParams: {
+            if (_searchQuery != null && _searchQuery!.isNotEmpty)
+              'search': _searchQuery,
+            if (_type != null) 'type': _type,
+          }),
+        );
   }
 
   @override
@@ -45,57 +61,60 @@ class _UserListViewState extends State<UserListView> {
             onSearch: (query) {
               setState(() {
                 _searchQuery = query;
-                _currentPage = 1; // Reset to first page
+                _currentPage = 1; // Reset to the first page for new search
               });
               _fetchUsers(_currentPage, _rowsPerPage);
             },
             onCreate: () {
               setState(() {
-                _currentPage = 1; // Reset to first page
+                _searchQuery = null; // Clear search query
+                _currentPage = 1; // Reset to the first page
               });
               _fetchUsers(_currentPage, _rowsPerPage);
             },
           ),
           const SizedBox(height: 10),
-          BlocListener<UserBloc, UserState>(
+          BlocConsumer<UserBloc, UserState>(
             listener: (context, state) {
               if (state is UserLoaded) {
-                // Update _lastPage and stop pagination loading when new data is loaded
                 setState(() {
                   _lastPage = state.users.totalPages;
                   _isPaginationLoading = false;
                 });
               } else if (state is UserError) {
                 setState(() {
-                  _isPaginationLoading = false; // Stop loading on error
+                  _isPaginationLoading = false;
                 });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
               }
             },
-            child: BlocBuilder<UserBloc, UserState>(
-              builder: (BuildContext context, UserState state) {
-                if (state is UserLoading && !_isPaginationLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (state is UserLoaded) {
-                  return UserDataTable(
+            builder: (context, state) {
+              if (state is UserLoading && !_isPaginationLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is UserLoaded) {
+                return Expanded(
+                  child: UserDataTable(
                     users: state.users.users,
                     onDetailedPage: widget.onDetailedPage,
                     onEditPage: widget.onEditPage,
-                  );
-                } else if (state is UserError) {
-                  return Center(child: Text(state.message));
-                } else {
-                  return const Center(child: Text('No data available.'));
-                }
-              },
-            ),
+                  ),
+                );
+              } else if (state is UserError) {
+                return Center(child: Text(state.message));
+              } else {
+                return const Center(child: Text('No data available.'));
+              }
+            },
           ),
           PaginationControls(
             currentPage: _currentPage,
             lastPage: _lastPage,
             rowsPerPage: _rowsPerPage,
-            isLoading: _isPaginationLoading, // Pass loading state to controls
+            isLoading: _isPaginationLoading,
             onPageChange: (page) {
-              if (page <= _lastPage && page > 0 && !_isPaginationLoading) {
+              if (page > 0 && page <= _lastPage && !_isPaginationLoading) {
                 setState(() {
                   _currentPage = page;
                 });
@@ -106,7 +125,7 @@ class _UserListViewState extends State<UserListView> {
               if (!_isPaginationLoading) {
                 setState(() {
                   _rowsPerPage = rows;
-                  _currentPage = 1;
+                  _currentPage = 1; // Reset to the first page
                 });
                 _fetchUsers(1, rows);
               }

@@ -1,7 +1,4 @@
-import 'package:ado_dad_admin/features/users/search_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:ado_dad_admin/dashboard/user/user_detailed_main.dart';
-import 'package:ado_dad_admin/dashboard/user/user_edit.dart';
 import 'package:ado_dad_admin/core/model/user_model.dart';
 
 class UserDataTable extends StatelessWidget {
@@ -73,6 +70,8 @@ class UserDataTable extends StatelessWidget {
   }
 
   DataRow _buildUserRow(BuildContext context, UserModel user) {
+    print("user");
+    print(user);
     return DataRow(cells: [
       DataCell(Text(user.id.toString())),
       DataCell(Text(user.name)),

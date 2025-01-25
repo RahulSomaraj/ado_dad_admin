@@ -11,7 +11,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       emit(UserLoading());
       try {
         final users = await userRepository.fetchUsers(
-            page: event.page, limit: event.limit);
+          page: event.page, limit: event.limit,
+          additionalParams: event.queryParams, // Pass optional query parameters
+        );
         emit(UserLoaded(users: users));
       } catch (e) {
         emit(UserError(message: e.toString()));
@@ -41,10 +43,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<UpdateUser>((event, emit) async {
       emit(UserLoading());
       try {
+        if (event.updatedData.isEmpty) {
+          throw Exception('Updated data cannot be empty.');
+        }
+
         final user =
             await userRepository.updateUser(event.userId, event.updatedData);
+
         emit(UserUpdated(user: user));
       } catch (e) {
+        print('Update Error: $e');
         emit(UserError(message: e.toString()));
       }
     });

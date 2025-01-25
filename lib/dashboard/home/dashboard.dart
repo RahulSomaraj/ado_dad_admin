@@ -1,8 +1,8 @@
-import 'package:ado_dad_admin/dashboard/user/user_edit_main.dart';
 import 'package:flutter/material.dart';
 import 'package:ado_dad_admin/core/widgets/left_bar.dart';
 import 'package:ado_dad_admin/features/home/homescreen.dart';
 import 'package:ado_dad_admin/features/users/users.dart';
+import 'package:ado_dad_admin/dashboard/user/user_edit_main.dart';
 import 'package:ado_dad_admin/dashboard/user/user_detailed_main.dart';
 
 class HomeDashBoard extends StatefulWidget {
@@ -20,12 +20,10 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex = widget.initialIndex; // Initialize _selectedIndex properly
+    _selectedIndex = widget.initialIndex;
     _selectedId = '';
-    // Pages corresponding to sidebar selections
   }
 
-  // Method to dynamically rebuild _pages
   List<Widget> get _pages {
     return [
       const HomePage(),
@@ -56,8 +54,6 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
 
   void _onDetailedPage(int detailPageIndex, String selectedId) {
     setState(() {
-      print("selectedId");
-      print(selectedId);
       _selectedIndex = detailPageIndex;
       _selectedId = selectedId;
     });
@@ -78,18 +74,43 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
+      appBar: screenWidth <= 768
+          ? AppBar(
+              backgroundColor: const Color(0xFF1E1E1E),
+              title: const Text("Dashboard"),
+              leading: Builder(
+                builder: (context) {
+                  return IconButton(
+                    icon: const Icon(Icons.menu, color: Colors.white),
+                    onPressed: () => Scaffold.of(context).openDrawer(),
+                  );
+                },
+              ),
+            )
+          : null,
+      drawer: screenWidth <= 768
+          ? Drawer(
+              child: AppSidebar(
+                selectedIndex: _selectedIndex,
+                onItemSelected: (index) {
+                  _onItemSelected(index);
+                  Navigator.of(context).pop();
+                },
+              ),
+            )
+          : null,
       body: Row(
         children: [
-          // Sidebar (left navigation)
-          AppSidebar(
-            selectedIndex: _selectedIndex,
-            onItemSelected: _onItemSelected,
-          ),
-
-          // Main content that changes based on selected index
+          if (screenWidth > 768)
+            AppSidebar(
+              selectedIndex: _selectedIndex,
+              onItemSelected: _onItemSelected,
+            ),
           Expanded(
-            child: _pages[_selectedIndex], // Dynamically switch page
+            child: _pages[_selectedIndex],
           ),
         ],
       ),

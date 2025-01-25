@@ -126,6 +126,8 @@ class DioClient {
     try {
       return await dio.put(endpoint, data: data);
     } catch (e) {
+      print("e");
+      print(e);
       rethrow;
     }
   }
