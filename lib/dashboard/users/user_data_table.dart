@@ -29,38 +29,51 @@ class UserDataTable extends StatelessWidget {
                 horizontalMargin: 10.0, // Adjust margin for better spacing
                 columns: const [
                   DataColumn(
-                    label: Text(
-                      'ID',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    label: Center(
+                      child: Text(
+                        '#',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   DataColumn(
-                    label: Text(
-                      'NAME',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    label: Center(
+                      child: Text(
+                        'Name',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   DataColumn(
-                    label: Text(
-                      'PHONE',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    label: Center(
+                      child: Text(
+                        'E-mail / Phone',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   DataColumn(
-                    label: Text(
-                      'EMAIL',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    label: Center(
+                      child: Text(
+                        'Joined On',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                   DataColumn(
-                    label: Text(
-                      'ACTIONS',
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                    label: Center(
+                      child: Text(
+                        ' ',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
                     ),
                   ),
                 ],
-                rows:
-                    users.map((user) => _buildUserRow(context, user)).toList(),
+                rows: users.asMap().entries.map((entry) {
+                  int index = entry.key; // The index of the current element
+                  var user = entry.value; // The user object
+                  return _buildUserRow(context, user, index);
+                }).toList(),
               ),
             ),
           ),
@@ -69,31 +82,28 @@ class UserDataTable extends StatelessWidget {
     );
   }
 
-  DataRow _buildUserRow(BuildContext context, UserModel user) {
-    print("user");
-    print(user);
+  DataRow _buildUserRow(BuildContext context, UserModel user, int index) {
     return DataRow(cells: [
-      DataCell(Text(user.id.toString())),
+      DataCell(Text((index + 1).toString())),
       DataCell(Text(user.name)),
-      DataCell(Text(user.phoneNumber)),
+      DataCell(Text('${user.phoneNumber} / ${user.email}')),
       DataCell(Text(user.email)),
       DataCell(
         Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            IconButton(
-              icon: const Icon(Icons.visibility),
+            TextButton(
               onPressed: () {
-                print(user.id);
                 onDetailedPage(5, user.id);
               },
-            ),
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                print(user.id);
-                onEditPage(4, user.id);
-              },
+              style: TextButton.styleFrom(
+                side: BorderSide(
+                    color: const Color.fromARGB(172, 20, 20, 20), width: 2), // Border color and width
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10), // Rounded corners
+                ),
+              ),
+              child: Text("View"),
             ),
           ],
         ),

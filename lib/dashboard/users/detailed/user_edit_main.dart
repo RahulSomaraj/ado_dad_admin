@@ -30,7 +30,7 @@ class UserEditPage extends StatelessWidget {
           title: const Text('User Edit'),
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => onGoBack(2), // Navigate back to UserListPage
+            onPressed: () => onGoBack(1), // Navigate back to UserListPage
           ),
         ),
         body: BlocConsumer<UserBloc, UserState>(

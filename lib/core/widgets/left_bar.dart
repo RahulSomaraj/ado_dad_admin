@@ -15,7 +15,7 @@ class AppSidebar extends StatelessWidget {
     return Container(
       width: 100, // Set fixed width for consistent layout
       decoration: const BoxDecoration(
-        color: Color(0xFF1E1E1E),
+        color: Color.fromARGB(255, 255, 255, 255),
       ),
       child: Column(
         children: [
@@ -40,12 +40,12 @@ class AppSidebar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 24.0),
         decoration: BoxDecoration(
           color: selectedIndex == index
-              ? Colors.blueAccent.withOpacity(0.2)
+              ?  const Color.fromARGB(255, 255, 215, 36) 
               : Colors.transparent,
           border: Border(
             left: BorderSide(
               color: selectedIndex == index
-                  ? Colors.blueAccent
+                  ?  const Color.fromARGB(255, 252, 255, 68) 
                   : Colors.transparent,
               width: 4, // Highlight on the left
             ),
@@ -57,7 +57,7 @@ class AppSidebar extends StatelessWidget {
             Icon(
               icon,
               size: 35, // Large uniform icon
-              color: selectedIndex == index ? Colors.blueAccent : Colors.white,
+              color: selectedIndex == index ? const Color.fromARGB(255, 255, 255, 255) : const Color.fromARGB(255, 36, 28, 28),
             ),
             const SizedBox(height: 10),
             Text(
@@ -65,7 +65,7 @@ class AppSidebar extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 color:
-                    selectedIndex == index ? Colors.blueAccent : Colors.white,
+                    selectedIndex == index ?  const Color.fromARGB(255, 255, 255, 255)  : const Color.fromARGB(255, 36, 28, 28),
               ),
             ),
           ],

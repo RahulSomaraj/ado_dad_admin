@@ -83,7 +83,7 @@ class MyApp extends StatelessWidget {
                 primarySwatch: Colors.blue,
                 fontFamily: GoogleFonts.inter().fontFamily,
                 scaffoldBackgroundColor:
-                    const Color.fromARGB(141, 255, 255, 255),
+                    const Color.fromARGB(101, 247, 242, 184),
                 textTheme: TextTheme(
                   bodyLarge: GoogleFonts.inter(
                     fontSize: 18.0,

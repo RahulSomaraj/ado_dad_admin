@@ -15,12 +15,14 @@ class HomeDashBoard extends StatefulWidget {
 
 class _HomeDashBoardState extends State<HomeDashBoard> {
   late int _selectedIndex;
+  late int _activeIndex;
   late String _selectedId;
 
   @override
   void initState() {
     super.initState();
     _selectedIndex = widget.initialIndex;
+    _activeIndex = widget.initialIndex;
     _selectedId = '';
   }
 
@@ -48,6 +50,7 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
 
   void _onItemSelected(int index) {
     setState(() {
+      _activeIndex = index;
       _selectedIndex = index;
     });
   }
@@ -69,6 +72,7 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
   void _onGoBack(int previousPageIndex) {
     setState(() {
       _selectedIndex = previousPageIndex;
+      _activeIndex = previousPageIndex;
     });
   }
 
@@ -94,7 +98,7 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
       drawer: screenWidth <= 768
           ? Drawer(
               child: AppSidebar(
-                selectedIndex: _selectedIndex,
+                selectedIndex: _activeIndex,
                 onItemSelected: (index) {
                   _onItemSelected(index);
                   Navigator.of(context).pop();
@@ -106,7 +110,7 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
         children: [
           if (screenWidth > 768)
             AppSidebar(
-              selectedIndex: _selectedIndex,
+              selectedIndex: _activeIndex,
               onItemSelected: _onItemSelected,
             ),
           Expanded(
