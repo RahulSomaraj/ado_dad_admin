@@ -10,12 +10,14 @@ class UserListPage extends StatelessWidget {
   final DioClient dioClient = DioClient();
   final UserRepository userRepository;
   final void Function(int detailPageIndex, String selectedId) onDetailedPage;
-  final void Function(int detailPageIndex, String selectedId) onEditPage;
+  final void Function(int editPageIndex, String selectedId) onEditPage;
+  final void Function(int createPageIndex) onCreatePage;
 
   UserListPage({
     super.key,
     required this.onDetailedPage,
     required this.onEditPage,
+    required this.onCreatePage,
   }) : userRepository = UserRepository(dioClient: DioClient());
 
   @override
@@ -26,6 +28,7 @@ class UserListPage extends StatelessWidget {
       child: UserListView(
         onDetailedPage: onDetailedPage,
         onEditPage: onEditPage,
+        onCreatePage: onCreatePage,
       ),
     );
   }

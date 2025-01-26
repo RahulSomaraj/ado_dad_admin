@@ -9,12 +9,14 @@ import 'user_data_table.dart';
 
 class UserListView extends StatefulWidget {
   final void Function(int detailPageIndex, String selectedId) onDetailedPage;
-  final void Function(int detailPageIndex, String selectedId) onEditPage;
+  final void Function(int editPageIndex, String selectedId) onEditPage;
+  final void Function(int createPageIndex) onCreatePage;
 
   const UserListView({
     Key? key,
     required this.onDetailedPage,
     required this.onEditPage,
+    required this.onCreatePage,
   }) : super(key: key);
 
   @override
@@ -116,7 +118,7 @@ class _UserListViewState extends State<UserListView> {
           const SizedBox(height: 20),
           SearchBarController(
             onSearch: _onSearch,
-            onCreate: _onCreate,
+            onCreate: widget.onCreatePage,
           ),
           const SizedBox(height: 10),
           Expanded(

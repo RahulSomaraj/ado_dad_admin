@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/dashboard/users/create/user_create.dart';
 import 'package:flutter/material.dart';
 import 'package:ado_dad_admin/core/widgets/left_bar.dart';
 import 'package:ado_dad_admin/dashboard/home/homescreen.dart';
@@ -32,6 +33,7 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
       UserListPage(
         onDetailedPage: _onDetailedPage,
         onEditPage: _onEditPage,
+        onCreatePage: _onCreatePage,
       ),
       const HomePage(),
       const HomePage(),
@@ -43,6 +45,10 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
       UserDetailPage(
         userId: _selectedId,
         onEditPage: _onEditPage,
+        onGoBack: _onGoBack,
+      ),
+      UserCreatePage(
+        onCreate: _onCreatePage,
         onGoBack: _onGoBack,
       ),
     ];
@@ -66,6 +72,12 @@ class _HomeDashBoardState extends State<HomeDashBoard> {
     setState(() {
       _selectedIndex = editPageIndex;
       _selectedId = selectedId;
+    });
+  }
+
+  void _onCreatePage(int createPageIndex) {
+    setState(() {
+      _selectedIndex = createPageIndex;
     });
   }
 

@@ -1,13 +1,23 @@
+import 'package:ado_dad_admin/core/model/users/user_model.dart';
 import 'package:flutter/material.dart';
 
-class CreateUser extends StatefulWidget {
-  const CreateUser({super.key});
+class UserCreatePage extends StatefulWidget {
+  final UserModel? user;
+  final void Function(int previousPageIndex) onGoBack;
+  final void Function(int createPageIndex) onCreate;
+
+  const UserCreatePage({
+    super.key,
+    this.user,
+    required this.onGoBack,
+    required this.onCreate,
+  });
 
   @override
-  State<CreateUser> createState() => _CreateUserState();
+  State<UserCreatePage> createState() => _UserCreatePageState();
 }
 
-class _CreateUserState extends State<CreateUser> {
+class _UserCreatePageState extends State<UserCreatePage> {
   @override
   Widget build(BuildContext context) {
     return const Text("Create User");

@@ -4,7 +4,7 @@ import 'search_bar_isolate.dart';
 
 class SearchBarController extends StatefulWidget {
   final void Function(String query) onSearch;
-  final void Function() onCreate;
+  final void Function(int pageIndex) onCreate;
 
   const SearchBarController({
     super.key,
@@ -32,14 +32,17 @@ class _SearchBarControllerState extends State<SearchBarController> {
       setState(() => _isProcessing = true);
 
       try {
-        widget.onCreate(); // Trigger the create callback
+        widget.onCreate(6); // Trigger the create callback
       } catch (e, stackTrace) {
         debugPrint('Error during onCreate callback: $e');
         debugPrint(stackTrace.toString());
       }
 
       Future.delayed(const Duration(milliseconds: 500), () {
-        setState(() => _isProcessing = false);
+        if (mounted) {
+          // Check if the widget is still mounted before calling setState
+          setState(() => _isProcessing = false);
+        }
       });
     }
   }
