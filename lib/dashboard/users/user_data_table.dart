@@ -16,12 +16,17 @@ class UserDataTable extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(30),
+      padding: const EdgeInsets.all(20),
       width: double.infinity, // Ensure container takes full width
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Card(
+          Container(
+            padding: const EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 255, 255, 255),
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
             child: SizedBox(
               width: double.infinity, // Make the table stretch full width
               child: DataTable(
@@ -84,28 +89,44 @@ class UserDataTable extends StatelessWidget {
 
   DataRow _buildUserRow(BuildContext context, UserModel user, int index) {
     return DataRow(cells: [
-      DataCell(Text((index + 1).toString())),
-      DataCell(Text(user.name)),
-      DataCell(Text('${user.phoneNumber} / ${user.email}')),
-      DataCell(Text(user.email)),
       DataCell(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            TextButton(
-              onPressed: () {
-                onDetailedPage(5, user.id);
-              },
-              style: TextButton.styleFrom(
-                side: BorderSide(
-                    color: const Color.fromARGB(172, 20, 20, 20), width: 2), // Border color and width
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                ),
+        Padding(
+          padding:
+              const EdgeInsets.symmetric(vertical: 10.0), // Vertical padding
+          child: Text((index + 1).toString()),
+        ),
+      ),
+      DataCell(
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0), // Vertical padding
+          child: Text(user.name),
+        ),
+      ),
+      DataCell(Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0), // Vertical padding
+        child: Text('${user.phoneNumber} / ${user.email}'),
+      )),
+      DataCell(Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.0), // Vertical padding
+        child: Text(user.email),
+      )),
+      DataCell(
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 10.0), // Vertical padding
+          child: TextButton(
+            onPressed: () {
+              onDetailedPage(5, user.id);
+            },
+            style: TextButton.styleFrom(
+              side: BorderSide(
+                  color: const Color.fromARGB(172, 20, 20, 20),
+                  width: 2), // Border color and width
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10), // Rounded corners
               ),
-              child: Text("View"),
             ),
-          ],
+            child: Text("View"),
+          ),
         ),
       ),
     ]);

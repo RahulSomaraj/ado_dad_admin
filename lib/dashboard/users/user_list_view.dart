@@ -10,11 +10,12 @@ import 'user_data_table.dart';
 class UserListView extends StatefulWidget {
   final void Function(int detailPageIndex, String selectedId) onDetailedPage;
   final void Function(int detailPageIndex, String selectedId) onEditPage;
+
   const UserListView({
-    super.key,
+    Key? key,
     required this.onDetailedPage,
     required this.onEditPage,
-  });
+  }) : super(key: key);
 
   @override
   State<UserListView> createState() => _UserListViewState();
@@ -22,11 +23,10 @@ class UserListView extends StatefulWidget {
 
 class _UserListViewState extends State<UserListView> {
   int _currentPage = 1;
-  int _lastPage = 1;
   int _rowsPerPage = 10;
   String? _searchQuery;
-  String? _type;
-  bool _isPaginationLoading = false;
+  bool _isLoading = false;
+  int _lastPage = 1;
 
   @override
   void initState() {
@@ -34,20 +34,77 @@ class _UserListViewState extends State<UserListView> {
     _fetchUsers(_currentPage, _rowsPerPage);
   }
 
-  void _fetchUsers(
-    int page,
-    int rowsPerPage,
-  ) {
-    setState(() {
-      _isPaginationLoading = true;
-    });
+  void _fetchUsers(int page, int rowsPerPage) {
+    setState(() => _isLoading = true);
     context.read<UserBloc>().add(
           FetchUsers(page: page, limit: rowsPerPage, queryParams: {
-            if (_searchQuery != null && _searchQuery!.isNotEmpty)
-              'search': _searchQuery,
-            if (_type != null) 'type': _type,
+            if (_searchQuery?.isNotEmpty ?? false) 'search': _searchQuery!,
           }),
         );
+  }
+
+  void _onSearch(String query) {
+    setState(() {
+      _searchQuery = query;
+      _currentPage = 1; // Reset to the first page for new search
+    });
+    _fetchUsers(_currentPage, _rowsPerPage);
+  }
+
+  void _onCreate() {
+    setState(() {
+      _searchQuery = null; // Clear search query
+      _currentPage = 1; // Reset to the first page
+    });
+    _fetchUsers(_currentPage, _rowsPerPage);
+  }
+
+  void _onPageChange(int page) {
+    if (page > 0 && !_isLoading) {
+      setState(() => _currentPage = page);
+      _fetchUsers(page, _rowsPerPage);
+    }
+  }
+
+  void _onRowsPerPageChange(int rows) {
+    setState(() {
+      _rowsPerPage = rows;
+      _currentPage = 1; // Reset to the first page
+    });
+    _fetchUsers(1, rows);
+  }
+
+  Widget _buildContent(UserState state) {
+    if (state is UserLoading) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (state is UserLoaded) {
+      // Update _lastPage dynamically
+      _lastPage = state.users.totalPages;
+
+      if (state.users.users.isEmpty) {
+        return Center(
+          child: Text(
+            _searchQuery?.isNotEmpty ?? false
+                ? 'No results found for your search.'
+                : 'No data available.',
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        );
+      }
+      return UserDataTable(
+        users: state.users.users,
+        onDetailedPage: widget.onDetailedPage,
+        onEditPage: widget.onEditPage,
+      );
+    } else if (state is UserError) {
+      return Center(
+        child: Text(
+          state.message,
+          style: TextStyle(color: Colors.red),
+        ),
+      );
+    }
+    return const Center(child: Text('No data available.'));
   }
 
   @override
@@ -56,80 +113,34 @@ class _UserListViewState extends State<UserListView> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 50),
+          const SizedBox(height: 20),
           SearchBarController(
-            onSearch: (query) {
-              setState(() {
-                _searchQuery = query;
-                _currentPage = 1; // Reset to the first page for new search
-              });
-              _fetchUsers(_currentPage, _rowsPerPage);
-            },
-            onCreate: () {
-              setState(() {
-                _searchQuery = null; // Clear search query
-                _currentPage = 1; // Reset to the first page
-              });
-              _fetchUsers(_currentPage, _rowsPerPage);
-            },
+            onSearch: _onSearch,
+            onCreate: _onCreate,
           ),
           const SizedBox(height: 10),
-          BlocConsumer<UserBloc, UserState>(
-            listener: (context, state) {
-              if (state is UserLoaded) {
-                setState(() {
-                  _lastPage = state.users.totalPages;
-                  _isPaginationLoading = false;
-                });
-              } else if (state is UserError) {
-                setState(() {
-                  _isPaginationLoading = false;
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(state.message)),
-                );
-              }
-            },
-            builder: (context, state) {
-              if (state is UserLoading && !_isPaginationLoading) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is UserLoaded) {
-                return Expanded(
-                  child: UserDataTable(
-                    users: state.users.users,
-                    onDetailedPage: widget.onDetailedPage,
-                    onEditPage: widget.onEditPage,
-                  ),
-                );
-              } else if (state is UserError) {
-                return Center(child: Text(state.message));
-              } else {
-                return const Center(child: Text('No data available.'));
-              }
-            },
+          Expanded(
+            child: BlocConsumer<UserBloc, UserState>(
+              listener: (context, state) {
+                if (state is UserLoaded || state is UserError) {
+                  setState(() => _isLoading = false);
+                }
+                if (state is UserError) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(state.message)),
+                  );
+                }
+              },
+              builder: (context, state) => _buildContent(state),
+            ),
           ),
           PaginationControls(
             currentPage: _currentPage,
-            lastPage: _lastPage,
+            lastPage: _lastPage, // Use the _lastPage from the local state
             rowsPerPage: _rowsPerPage,
-            isLoading: _isPaginationLoading,
-            onPageChange: (page) {
-              if (page > 0 && page <= _lastPage && !_isPaginationLoading) {
-                setState(() {
-                  _currentPage = page;
-                });
-                _fetchUsers(page, _rowsPerPage);
-              }
-            },
-            onRowsPerPageChange: (rows) {
-              if (!_isPaginationLoading) {
-                setState(() {
-                  _rowsPerPage = rows;
-                  _currentPage = 1; // Reset to the first page
-                });
-                _fetchUsers(1, rows);
-              }
-            },
+            isLoading: _isLoading,
+            onPageChange: _onPageChange,
+            onRowsPerPageChange: _onRowsPerPageChange,
           ),
         ],
       ),

@@ -9,7 +9,7 @@ class DioClient {
   DioClient()
       : dio = Dio(
           BaseOptions(
-            baseUrl: 'https://uat.ado-dad.com/',
+            baseUrl: 'http://192.168.29.211:5000/',
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 15),
             contentType: 'application/json',

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'create_buton.dart';
+import 'search_bar_isolate.dart';
 
 class SearchBarController extends StatefulWidget {
   final void Function(String query) onSearch;
@@ -16,66 +18,73 @@ class SearchBarController extends StatefulWidget {
 
 class _SearchBarControllerState extends State<SearchBarController> {
   final TextEditingController _searchController = TextEditingController();
+  bool _isProcessing = false;
 
-  void _performSearch() {
-    widget.onSearch(_searchController.text);
+  void _performCreate() {
+    if (!_isProcessing) {
+      try {
+        FocusScope.of(context).unfocus(); // Unfocus any active element
+      } catch (e, stackTrace) {
+        debugPrint('Error while unfocusing: $e');
+        debugPrint(stackTrace.toString());
+      }
+
+      setState(() => _isProcessing = true);
+
+      try {
+        widget.onCreate(); // Trigger the create callback
+      } catch (e, stackTrace) {
+        debugPrint('Error during onCreate callback: $e');
+        debugPrint(stackTrace.toString());
+      }
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        setState(() => _isProcessing = false);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    try {
+      _searchController.dispose(); // Dispose the controller safely
+    } catch (e, stackTrace) {
+      debugPrint('Error during TextEditingController dispose: $e');
+      debugPrint(stackTrace.toString());
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding:
-          const EdgeInsets.all(30), // Match padding with PaginationControls
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+    return GestureDetector(
+      onTap: () {
+        try {
+          FocusScope.of(context).unfocus(); // Unfocus any active input element
+        } catch (e, stackTrace) {
+          debugPrint('Error during unfocus in GestureDetector: $e');
+          debugPrint(stackTrace.toString());
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: const Color.fromARGB(255, 255, 255, 255),
+            borderRadius: const BorderRadius.all(Radius.circular(20)),
+          ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Search Field
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    hintText: 'Search...',
-                    border: InputBorder.none, // No border for consistency
-                    prefixIcon: Icon(Icons.search),
-                  ),
-                  onSubmitted: (_) => _performSearch(),
-                  style: const TextStyle(fontSize: 16), // Adjusted font size
-                ),
+              SearchBarIso(
+                controller: _searchController,
+                onSearch: widget.onSearch,
               ),
               const SizedBox(width: 10),
-              // Create Button
-              GestureDetector(
-                onTap: widget.onCreate,
-                child: Container(
-                  height: 50,
-                  width: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(25),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade300,
-                        blurRadius: 6,
-                        offset: const Offset(4, 4),
-                      ),
-                      BoxShadow(
-                        color: Colors.white,
-                        blurRadius: 6,
-                        offset: const Offset(-4, -4),
-                      ),
-                    ],
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.blue,
-                      size: 28,
-                    ),
-                  ),
-                ),
+              CreateButton(
+                isProcessing: _isProcessing,
+                onCreate: _performCreate,
               ),
             ],
           ),
