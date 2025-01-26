@@ -43,6 +43,8 @@ dependencies:
   json_annotation: ^4.9.0
   flutter_secure_storage: ^9.2.3
   shared_preferences: ^2.3.5
+  image_picker: ^0.8.7+3
+  file_picker: ^5.3.3
 
 dev_dependencies:
   flutter_test:

@@ -13,11 +13,11 @@ class UserListView extends StatefulWidget {
   final void Function(int createPageIndex) onCreatePage;
 
   const UserListView({
-    Key? key,
+    super.key,
     required this.onDetailedPage,
     required this.onEditPage,
     required this.onCreatePage,
-  }) : super(key: key);
+  });
 
   @override
   State<UserListView> createState() => _UserListViewState();
