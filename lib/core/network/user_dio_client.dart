@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class DioClient {
   final Dio dio;
@@ -9,7 +8,7 @@ class DioClient {
   DioClient()
       : dio = Dio(
           BaseOptions(
-            baseUrl: 'https://uat.ado-dad.com',
+            baseUrl: 'http://localhost:5000/',
             connectTimeout: const Duration(seconds: 10),
             receiveTimeout: const Duration(seconds: 15),
             contentType: 'application/json',
