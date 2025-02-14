@@ -4,22 +4,20 @@ part 'login_success_model.g.dart';
 
 @JsonSerializable()
 class LoginSuccessModel {
-  String message;
-  String token;
-  String refreshToken;
-  String name;
-  String phoneNumber;
-  String email;
-  String profilePicture;
+  final String id;
+  final String token;
+  final String refreshToken;
+  final String userName;
+  final String email;
+  final String userType;
 
   LoginSuccessModel({
-    required this.name,
-    required this.phoneNumber,
-    required this.email,
-    required this.profilePicture,
+    required this.id,
+    required this.token,
     required this.refreshToken,
-    required this.message,
-    required this.token
+    required this.userName,
+    required this.email,
+    required this.userType,
   });
 
   factory LoginSuccessModel.fromJson(Map<String, dynamic> json) =>

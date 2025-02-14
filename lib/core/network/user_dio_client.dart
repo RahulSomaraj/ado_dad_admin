@@ -33,18 +33,27 @@ class DioClient {
         onError: (DioException e, handler) async {
           print('DioException: ${e.response?.statusCode}');
 
-          // Handle token expiration (401)
+          // Check if the error is 401 (Unauthorized)
           if (e.response?.statusCode == 401) {
             print('Token expired - refreshing token...');
 
-            final refreshed = await _refreshToken();
+            print(e.requestOptions.path);
+
+            if (e.requestOptions.path == 'auth/login') {
+              print('401 error on /auth/login - Exiting without retry');
+              return handler.next(e);
+            }
+
+            // Prevent multiple refresh attempts
+            bool refreshed = await _refreshToken();
             if (refreshed) {
               final options = e.requestOptions;
 
-              // Uncomment this section if token refresh logic is implemented
+              // Set the new token (Uncomment if using token storage)
               // String? newToken = await _storage.read(key: 'accessToken');
               // options.headers['Authorization'] = 'Bearer $newToken';
 
+              print("Retrying request with new token...");
               return handler.resolve(await dio.request(
                 options.path,
                 options: Options(
@@ -54,9 +63,14 @@ class DioClient {
                 data: options.data,
                 queryParameters: options.queryParameters,
               ));
+            } else {
+              // If token refresh fails, logout user to prevent infinite loop
+              print("Token refresh failed. Logging out user...");
+              await _logout();
+              return handler.reject(e);
             }
           }
-          return handler.next(e); // Continue with the error if refresh fails
+          return handler.next(e); // Continue with the error if it's not 401
         },
       ),
     );

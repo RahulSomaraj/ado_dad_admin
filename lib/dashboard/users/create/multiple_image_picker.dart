@@ -12,7 +12,7 @@ class MultipleImagePicker extends StatefulWidget {
 }
 
 class _MultipleImagePickerState extends State<MultipleImagePicker> {
-  final List<Uint8List?> _images = List.generate(10, (index) => null);
+  List<Uint8List?> _images = List.generate(10, (index) => null);
   final int _maxFileCount = 10; // Maximum number of images
   final int _maxFileSize = 5 * 1024 * 1024; // 5 MB per image
 
@@ -232,9 +232,14 @@ class _MultipleImagePickerState extends State<MultipleImagePicker> {
                           child: ElevatedButton(
                             onPressed: () {
                               // Add form submission logic
+                              _images = _images
+                                  .where((image) => image != null)
+                                  .toList(); // Remove nulls
+                              print(_images);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(181, 250, 242, 125), // White background
+                              backgroundColor: const Color.fromARGB(
+                                  181, 250, 242, 125), // White background
                               foregroundColor: Colors.black, // Black text
                             ),
                             child: Text(

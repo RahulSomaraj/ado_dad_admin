@@ -127,8 +127,8 @@ class _RightSectionState extends State<RightSection> {
       listener: (context, state) {
         print('BLoC State: $state');
         if (state is LoginLoaded) {
-          showTopRightDialog(context, state.user.message,
-              const Color.fromARGB(255, 149, 248, 129));
+          showTopRightDialog(
+              context, state.user.id, const Color.fromARGB(255, 149, 248, 129));
           Navigator.pushReplacementNamed(context, '/home');
         } else if (state is LoginError) {
           showTopRightDialog(

@@ -64,5 +64,3 @@ class ImageTile extends StatelessWidget {
     );
   }
 }
-
-

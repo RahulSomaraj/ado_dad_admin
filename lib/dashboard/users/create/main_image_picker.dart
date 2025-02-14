@@ -6,10 +6,10 @@ class MainImagePicker extends StatelessWidget {
   final VoidCallback onPick;
 
   const MainImagePicker({
-    super.key,
+    Key? key,
     required this.images,
     required this.onPick,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

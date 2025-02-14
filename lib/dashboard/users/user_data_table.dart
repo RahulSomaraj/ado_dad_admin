@@ -107,7 +107,7 @@ class UserDataTable extends StatelessWidget {
       )),
       DataCell(Padding(
         padding: EdgeInsets.symmetric(vertical: 10.0), // Vertical padding
-        child: Text(user.email),
+        child: Text(user.createdAt.toString()),
       )),
       DataCell(
         Padding(
