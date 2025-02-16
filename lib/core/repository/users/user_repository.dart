@@ -1,3 +1,4 @@
+// ignore: unused_import
 import 'dart:convert';
 
 import 'package:ado_dad_admin/core/model/users/user_model.dart';
@@ -11,7 +12,9 @@ class UserRepository {
   UserRepository({required this.dioClient});
 
   // Fetch Users with optional pagination
-  Future<UserListPagination> fetchUsers({int page = 1, int limit = 10,
+  Future<UserListPagination> fetchUsers({
+    int page = 1,
+    int limit = 10,
     Map<String, dynamic>? additionalParams, // Optional query parameters
   }) async {
     try {

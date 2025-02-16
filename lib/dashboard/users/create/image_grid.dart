@@ -4,26 +4,26 @@ import 'image_tile.dart';
 
 class ImageGrid extends StatelessWidget {
   final List<Uint8List?> images;
-  final void Function() onPickImageForIndex;
+  final VoidCallback onPickImageForIndex;
   final void Function(int index) onRemoveImage;
 
   const ImageGrid({
-    super.key,
+    Key? key,
     required this.images,
     required this.onPickImageForIndex,
     required this.onRemoveImage,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // Adjust gridDelegate values as needed.
     return SizedBox(
-      width: double.infinity, // Constrain the width to match its parent
+      width: double.infinity,
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: MediaQuery.sizeOf(context).width ~/
-              150, // Display 5 containers per row
+          crossAxisCount: MediaQuery.sizeOf(context).width ~/ 150,
           crossAxisSpacing: 10,
           mainAxisSpacing: 10,
         ),
@@ -31,7 +31,7 @@ class ImageGrid extends StatelessWidget {
         itemBuilder: (context, index) {
           return ImageTile(
             image: images[index],
-            onPick: () => onPickImageForIndex(),
+            onPick: onPickImageForIndex,
             onRemove: () => onRemoveImage(index),
           );
         },

@@ -1,260 +1,147 @@
-import 'dart:html' as html;
 import 'dart:typed_data';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'image_grid.dart';
-import 'main_image_picker.dart';
+import 'image_picker_section.dart';
+import 'user_form_section.dart';
 
 class MultipleImagePicker extends StatefulWidget {
-  const MultipleImagePicker({super.key});
+  const MultipleImagePicker({Key? key}) : super(key: key);
 
   @override
-  State<MultipleImagePicker> createState() => _MultipleImagePickerState();
+  _MultipleImagePickerState createState() => _MultipleImagePickerState();
 }
 
 class _MultipleImagePickerState extends State<MultipleImagePicker> {
+  // The parent holds the list of images.
   List<Uint8List?> _images = List.generate(10, (index) => null);
-  final int _maxFileCount = 10; // Maximum number of images
-  final int _maxFileSize = 5 * 1024 * 1024; // 5 MB per image
 
-  /// Pick multiple images and fill available slots.
-  Future<void> _pickMultipleImages() async {
-    try {
-      final uploadInput = html.FileUploadInputElement()
-        ..multiple = true
-        ..accept = 'image/*';
-      uploadInput.click();
-
-      uploadInput.onChange.listen((event) async {
-        final files = uploadInput.files;
-        if (files != null) {
-          for (var file in files) {
-            if (file.size > _maxFileSize) {
-              _showSnackBar('File "${file.name}" exceeds 5 MB.');
-              continue;
-            }
-
-            final emptyIndex = _images.indexOf(null);
-            if (emptyIndex == -1) {
-              _showSnackBar('Maximum 10 images can be uploaded.');
-              break;
-            }
-
-            final reader = html.FileReader();
-            reader.readAsArrayBuffer(file);
-            await reader.onLoadEnd.first;
-
-            reader.onError.listen((event) {
-              debugPrint('Error reading file: ${file.name}');
-              _showSnackBar('Error reading file "${file.name}".');
-            });
-
-            setState(() {
-              _images[emptyIndex] = reader.result as Uint8List;
-            });
-          }
-        }
-      });
-    } catch (e) {
-      debugPrint('Error picking multiple images: $e');
-    }
-  }
-
-  /// Pick an image for a specific index.
-  Future<void> _pickImageForIndex(int index) async {
-    try {
-      final uploadInput = html.FileUploadInputElement()..accept = 'image/*';
-      uploadInput.click();
-
-      uploadInput.onChange.listen((event) async {
-        final files = uploadInput.files;
-        if (files != null && files.isNotEmpty) {
-          final file = files.first;
-
-          if (file.size > _maxFileSize) {
-            _showSnackBar('File "${file.name}" exceeds 5 MB.');
-            return;
-          }
-
-          final reader = html.FileReader();
-          reader.readAsArrayBuffer(file);
-          await reader.onLoadEnd.first;
-
-          setState(() {
-            _images[index] = reader.result as Uint8List;
-          });
-        }
-      });
-    } catch (e) {
-      debugPrint('Error picking image for index $index: $e');
-    }
-  }
-
-  /// Remove an image and maintain the list length.
-  void _removeImage(int index) {
+  // Update callback to be passed down to children.
+  void _updateImages(List<Uint8List?> newImages) {
     setState(() {
-      _images.removeAt(index);
-      _images.add(null);
+      _images = newImages;
     });
   }
 
-  /// Display a snackbar with a custom message.
-  void _showSnackBar(String message) {
+  // Upload each non-null image to S3 using a pre-signed URL.
+  Future<void> _uploadFilesToS3() async {
+    final dio = Dio();
+    // Filter out null images.
+    final validImages = _images.where((img) => img != null).toList();
+
+    if (validImages.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No images to upload.")),
+      );
+      return;
+    }
+
+    for (int i = 0; i < validImages.length; i++) {
+      final imageData = validImages[i]!;
+      // Create a filename (you can modify this to use a UUID or timestamp)
+      final fileName = "image_$i.jpg";
+      // Define the MIME type.
+      const String fileType = "image/jpeg";
+
+      try {
+        // Step 1: Request a pre-signed URL from your backend.
+        // Replace 'http://your-backend-url/s3/presigned-url' with your actual endpoint.
+        final presignedResponse = await dio.get(
+          'http://your-backend-url/s3/presigned-url',
+          queryParameters: {
+            'fileName': fileName,
+            'fileType': fileType,
+          },
+        );
+
+        if (presignedResponse.statusCode == 200) {
+          final presignedUrl = presignedResponse.data['url'];
+          debugPrint("Pre-signed URL for image $i: $presignedUrl");
+
+          // Step 2: Upload the image to S3.
+          await dio.put(
+            presignedUrl,
+            data: imageData,
+            options: Options(
+              headers: {
+                'Content-Type': fileType,
+              },
+            ),
+            onSendProgress: (int sent, int total) {
+              final progress = (sent / total) * 100;
+              debugPrint("Uploading image $i: ${progress.toStringAsFixed(0)}%");
+            },
+          );
+          debugPrint("Uploaded image $i successfully.");
+        } else {
+          debugPrint("Failed to get pre-signed URL for image $i.");
+        }
+      } catch (e) {
+        debugPrint("Error uploading image $i: $e");
+      }
+    }
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
+      const SnackBar(content: Text("All images uploaded successfully.")),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    // Responsive text scaling
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double pixelRatio = MediaQuery.of(context).devicePixelRatio;
 
-    String? selectedUserType; // Variable to store the selected user type
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "Add Images (${_images.where((image) => image != null).length}/10, Max Size: 5 MB)",
-          style: TextStyle(
-            fontSize:
-                18 * pixelRatio, // Scale font size based on device pixel ratio
-            fontWeight: FontWeight.bold,
+        // Header for the image picker section.
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            "Add Images (${_images.where((img) => img != null).length}/10, Max Size: 5 MB)",
+            style: TextStyle(
+              fontSize: 18 * pixelRatio,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
-        SizedBox(height: screenHeight * 0.02), // 2% of screen height
         Expanded(
-          child: ListView(
+          child: Row(
             children: [
-              // First Row
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left Section: Image Selector and Tiles
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        MainImagePicker(
-                          images: _images,
-                          onPick: _pickMultipleImages,
-                        ),
-                        SizedBox(
-                            height: screenHeight * 0.02), // 2% of screen height
-                        ImageGrid(
-                          images: _images,
-                          onPickImageForIndex: _pickMultipleImages,
-                          onRemoveImage: _removeImage,
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(width: screenWidth * 0.05), // 5% of screen width
-                  // Right Section: Form
-                  Expanded(
-                    flex: 1,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "User",
-                          style: TextStyle(
-                            fontSize: 16 * pixelRatio,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        SizedBox(
-                            height: screenHeight * 0.02), // 2% of screen height
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: "Name",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: "E-mail",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(
-                                  12.0), // 12.0 is the radius
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        TextFormField(
-                          decoration: InputDecoration(
-                            labelText: "PhoneNumber",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        DropdownButtonFormField<String>(
-                          decoration: InputDecoration(
-                            labelText: "User Type",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12.0),
-                            ),
-                          ),
-                          value: selectedUserType, // Default value
-                          items: const [
-                            DropdownMenuItem(
-                              value: "admin",
-                              child: Text("Admin"),
-                            ),
-                            DropdownMenuItem(
-                              value: "user",
-                              child: Text("User"),
-                            ),
-                            DropdownMenuItem(
-                              value: "showroom",
-                              child: Text("Showroom"),
-                            ),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              selectedUserType = value; // Update selected type
-                            });
-                          },
-                        ),
-                        SizedBox(height: screenHeight * 0.02),
-                        SizedBox(
-                          width: double.infinity,
-                          height: screenHeight *
-                              0.06, // Match the height of the TextFormField
-                          child: ElevatedButton(
-                            onPressed: () {
-                              // Add form submission logic
-                              _images = _images
-                                  .where((image) => image != null)
-                                  .toList(); // Remove nulls
-                              print(_images);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                  181, 250, 242, 125), // White background
-                              foregroundColor: Colors.black, // Black text
-                            ),
-                            child: Text(
-                              "Save User",
-                              style: TextStyle(color: Colors.black),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              // Left: Image picker section.
+              Expanded(
+                flex: 1,
+                child: ImagePickerSection(
+                  images: _images,
+                  onImagesChanged: _updateImages,
+                ),
               ),
-              SizedBox(height: screenHeight * 0.02),
+              SizedBox(width: screenWidth * 0.05),
+              // Right: User form section.
+              Expanded(
+                flex: 1,
+                child: const UserFormSection(),
+              ),
             ],
+          ),
+        ),
+        // Save Button: triggers S3 upload.
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SizedBox(
+            width: double.infinity,
+            height: screenHeight * 0.06,
+            child: ElevatedButton(
+              onPressed: _uploadFilesToS3,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(181, 250, 242, 125),
+                foregroundColor: Colors.black,
+              ),
+              child: const Text(
+                "Save",
+                style: TextStyle(color: Colors.black),
+              ),
+            ),
           ),
         ),
       ],

@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'dart:typed_data';
 
-/// Individual image tile widget.
 class ImageTile extends StatelessWidget {
   final Uint8List? image;
   final VoidCallback onPick;
   final VoidCallback onRemove;
 
   const ImageTile({
-    super.key,
+    Key? key,
     required this.image,
     required this.onPick,
     required this.onRemove,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -1,5 +1,4 @@
 import 'package:ado_dad_admin/core/bloc/users/user_bloc.dart';
-import 'package:ado_dad_admin/core/bloc/users/user_event.dart';
 import 'package:ado_dad_admin/core/bloc/users/user_state.dart';
 import 'package:ado_dad_admin/core/model/users/user_model.dart';
 import 'package:ado_dad_admin/dashboard/users/create/multiple_image_picker.dart';
@@ -23,10 +22,6 @@ class UserCreatePage extends StatefulWidget {
 }
 
 class _UserCreatePageState extends State<UserCreatePage> {
-  final _formKey = GlobalKey<FormState>();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
   List<Map<String, dynamic>> images = [];
 
   @override

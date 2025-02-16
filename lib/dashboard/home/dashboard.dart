@@ -2,7 +2,7 @@ import 'package:ado_dad_admin/dashboard/users/create/user_create.dart';
 import 'package:flutter/material.dart';
 import 'package:ado_dad_admin/core/widgets/left_bar.dart';
 import 'package:ado_dad_admin/dashboard/home/homescreen.dart';
-import 'package:ado_dad_admin/dashboard/users/users.dart';
+import 'package:ado_dad_admin/dashboard/users/list/users.dart';
 import 'package:ado_dad_admin/dashboard/users/detailed/user_edit_main.dart';
 import 'package:ado_dad_admin/dashboard/users/detailed/user_detailed_main.dart';
 
