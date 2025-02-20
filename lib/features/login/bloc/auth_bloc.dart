@@ -18,12 +18,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthState.loading());
 
     try {
-      final response =
-          await authService.login(event.username, event.password);
+      final response = await authService.login(event.username, event.password);
 
       if (response.token != null && response.refreshToken != null) {
         await saveLoginResponse(response);
-        emit(AuthState.authenticated(response));
+        emit(AuthState.authenticated());
       } else {
         throw Exception("Invalid login response");
       }

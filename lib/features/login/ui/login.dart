@@ -82,9 +82,8 @@ class _LoginPageState extends State<LoginPage> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         state.maybeWhen(
-          authenticated: () {
-
-            context.go('/');
+          success: () {
+            // context.go('/');
             Navigator.pushReplacementNamed(context, "/home");
           },
           failure: (message) {

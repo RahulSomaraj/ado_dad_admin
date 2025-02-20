@@ -14,5 +14,15 @@ class LoginResponse {
     required this.email,
     required this.userType,
   });
+
+  factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    return LoginResponse(
+      id: json['id'],
+      token: json['token'],
+      refreshToken: json['refreshToken'],
+      userName: json['userName'],
+      email: json['email'],
+      userType: json['userType'],
+    );
+  }
 }
- 

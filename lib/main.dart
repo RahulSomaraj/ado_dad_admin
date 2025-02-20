@@ -1,6 +1,7 @@
 import 'package:ado_dad_admin/common/app_routes.dart';
 import 'package:ado_dad_admin/common/app_theme.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
+import 'package:ado_dad_admin/repositories/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => AuthBloc(),
+          create: (context) => AuthBloc(authService: AuthApiService()),
         ),
       ],
       child: BlocListener<AuthBloc, AuthState>(

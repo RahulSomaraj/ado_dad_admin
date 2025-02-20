@@ -29,9 +29,7 @@ Future<void> saveLoginResponse(LoginResponse loginResponse) async {
   final prefs = await SharedPreferences.getInstance();
   await prefs.setString('token', loginResponse.token);
   await prefs.setString('refreshToken', loginResponse.refreshToken);
-  await prefs.setString('name', loginResponse.name);
   await prefs.setString('email', loginResponse.email);
-  await prefs.setString('profilePicture', loginResponse.profilePicture);
 }
 
 Future<String?> getToken() async {
