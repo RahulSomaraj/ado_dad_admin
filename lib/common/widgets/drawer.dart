@@ -6,12 +6,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AdminDrawer extends StatefulWidget {
-  final int selectedIndex;
   final String? userType;
 
   const AdminDrawer({
     super.key,
-    required this.selectedIndex,
     required this.userType,
   });
 
@@ -20,6 +18,8 @@ class AdminDrawer extends StatefulWidget {
 }
 
 class _AdminDrawerState extends State<AdminDrawer> {
+  int selectedIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -41,7 +41,6 @@ class _AdminDrawerState extends State<AdminDrawer> {
     );
   }
 
-  /// Builds the logout button with state listening
   Widget _buildLogoutButton(BuildContext context) {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
@@ -64,23 +63,23 @@ class _AdminDrawerState extends State<AdminDrawer> {
     );
   }
 
-  /// Builds drawer menu items based on userType
   Widget _buildDrawerMenu() {
-    if (widget.userType == 'admin') {
+    if (widget.userType == "AD" || widget.userType == "SA") {
       return Column(
         children: [
           _buildDrawerItem(
-              0, '/home', 'assets/images/dashboard-icon.png', "Dashboard"),
-          _buildDrawerItem(1, '/users', 'assets/images/users.png', "Users"),
-          _buildDrawerItem(2, '/listing-management',
+              0, '/dashboard', 'assets/images/dashboard-icon.png', "Dashboard"),
+          _buildDrawerItem(1, '/profile', 'assets/images/users.png', "Profile"),
+          _buildDrawerItem(2, '/users', 'assets/images/users.png', "Users"),
+          _buildDrawerItem(3, '/listing-management',
               'assets/images/listing-icon.png', "Listing Management"),
-          _buildDrawerItem(3, '/promotion', 'assets/images/promotion-icon.png',
+          _buildDrawerItem(4, '/promotion', 'assets/images/promotion-icon.png',
               "Ad and Promotion"),
           _buildDrawerItem(
-              4, '/showrooms', 'assets/images/showroom-icon.png', "Showrooms"),
-          _buildDrawerItem(5, '/reports', 'assets/images/report-icon.png',
+              5, '/showrooms', 'assets/images/showroom-icon.png', "Showrooms"),
+          _buildDrawerItem(6, '/reports', 'assets/images/report-icon.png',
               "Reports Management"),
-          _buildDrawerItem(6, '/notifications',
+          _buildDrawerItem(7, '/notifications',
               'assets/images/notification-icon.png', "Notifications"),
         ],
       );
@@ -88,30 +87,33 @@ class _AdminDrawerState extends State<AdminDrawer> {
       return Column(
         children: [
           _buildDrawerItem(
-              0, '/home', 'assets/images/dashboard-icon.png', "Dashboard"),
+              0, '/dashboard', 'assets/images/dashboard-icon.png', "Dashboard"),
           _buildDrawerItem(1, '/profile', 'assets/images/users.png', "Profile"),
-          _buildDrawerItem(2, '/listing-management',
-              'assets/images/listing-icon.png', "Add Advertisement"),
+          _buildDrawerItem(2, '/create-ad', 'assets/images/listing-icon.png',
+              "Add Advertisement"),
         ],
       );
     }
   }
 
-  /// Helper method to create a drawer item
   Widget _buildDrawerItem(int index, String route, String image, String title) {
     return ListTile(
       leading: Image.asset(image),
       title: Text(
         title,
         style: AppTextStyle.drawerTextstyle.copyWith(
-          color: widget.selectedIndex == index
+          color: selectedIndex == index
               ? AppColors.primaryColor
               : AppColors.blackColor,
+          fontWeight:
+              selectedIndex == index ? FontWeight.bold : FontWeight.normal,
         ),
       ),
-      tileColor:
-          widget.selectedIndex == index ? Colors.black26 : Colors.transparent,
+      tileColor: selectedIndex == index ? Colors.black26 : Colors.transparent,
       onTap: () {
+        setState(() {
+          selectedIndex = index;
+        });
         context.go(route);
       },
     );

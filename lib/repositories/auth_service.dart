@@ -10,7 +10,7 @@ class AuthApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await getToken(); // Retrieve stored access token
+          final token = await getToken();
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
@@ -22,7 +22,6 @@ class AuthApiService {
 
             final newToken = await _refreshToken();
             if (newToken != null) {
-              // Retry the failed request with the new token
               e.requestOptions.headers['Authorization'] = 'Bearer $newToken';
               final retryResponse = await _dio.fetch(e.requestOptions);
               return handler.resolve(retryResponse);
@@ -47,7 +46,6 @@ class AuthApiService {
       if (response.statusCode == 201) {
         final loginResponse = LoginResponse.fromJson(response.data);
 
-        // Save tokens securely
         await saveLoginResponse(loginResponse);
 
         return loginResponse;
@@ -89,8 +87,6 @@ class AuthApiService {
   }
 
   Future<void> logout() async {
-    print("xxxxxxxxxxxxxx...");
-
-    await clearUserData(); // Clear stored login data
+    await clearUserData();
   }
 }

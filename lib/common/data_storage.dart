@@ -63,7 +63,7 @@ Future<String?> getUserEmail() async {
 }
 
 /// Retrieve stored user type
-Future<String?> getUserUserType() async {
+Future<String?> getUserType() async {
   return SharedPrefs().getString('userType');
 }
 

@@ -99,7 +99,7 @@ class _LoginPageState extends State<LoginPage> {
         state.maybeWhen(
           success: (username, userType) {
             if (context.mounted) {
-              context.go('/home');
+              context.go('/dashboard');
             }
           },
           failure: (message) {

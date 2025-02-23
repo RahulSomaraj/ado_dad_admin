@@ -26,3 +26,18 @@ class LoginResponse {
     );
   }
 }
+
+String getFullUserType(String shortCode) {
+  switch (shortCode) {
+    case 'SA':
+      return "Super Admin";
+    case 'AD':
+      return "Admin";
+    case 'NU':
+      return "Normal User";
+    case 'SR':
+      return "Showroom";
+    default:
+      return "Unknown";
+  }
+}

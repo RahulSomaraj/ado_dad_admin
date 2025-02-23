@@ -34,12 +34,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onLogout(Logout event, Emitter<AuthState> emit) async {
-    print("hiiiiiiii");
     await clearUserData();
-
-    final tokenamen = await getUserName();
-
-    print(tokenamen);
 
     emit(const AuthState.initial());
   }
@@ -47,7 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   Future<void> _onCheckLoginStatus(
       CheckLoginStatus event, Emitter<AuthState> emit) async {
     final String? username = await getUserName();
-    final String? userType = await getUserUserType();
+    final String? userType = await getUserType();
 
     if (username != null && userType != null) {
       emit(AuthState.success(username: username, userType: userType));

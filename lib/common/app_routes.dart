@@ -1,53 +1,67 @@
-import 'package:ado_dad_admin/showroom/features/home/home.dart';
-import 'package:ado_dad_admin/showroom/features/login/ui/login.dart';
-import 'package:ado_dad_admin/showroom/features/user_profile.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
+import 'package:ado_dad_admin/showroom/features/admin_layout/admin_layout.dart';
+import 'package:ado_dad_admin/showroom/features/login/ui/login.dart';
+import 'package:ado_dad_admin/showroom/features/profile/user_profile.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRoutes {
   static final GoRouter router = GoRouter(
-    debugLogDiagnostics: true,
     initialLocation: '/',
     routes: [
       GoRoute(
         path: '/',
         builder: (context, state) => const LoginPage(),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const Home(selectedPage: 0),
-      ),
-      GoRoute(
-        path: "/profile",
-        builder: (context, state) => const ProfilePage(),
-      ),
-      GoRoute(
-        path: '/users',
-        builder: (context, state) => const Home(selectedPage: 1),
-      ),
-      GoRoute(
-        path: '/add-user',
-        builder: (context, state) => const Home(selectedPage: 8),
-      ),
-      GoRoute(
-        path: '/listing-management',
-        builder: (context, state) => const Home(selectedPage: 2),
-      ),
-      GoRoute(
-        path: '/promotion',
-        builder: (context, state) => const Home(selectedPage: 3),
-      ),
-      GoRoute(
-        path: '/showrooms',
-        builder: (context, state) => const Home(selectedPage: 4),
-      ),
-      GoRoute(
-        path: '/reports',
-        builder: (context, state) => const Home(selectedPage: 5),
-      ),
-      GoRoute(
-        path: '/notifications',
-        builder: (context, state) => const Home(selectedPage: 6),
+      ShellRoute(
+        builder: (context, state, child) {
+          return AdminLayout(child: child);
+        },
+        routes: [
+          GoRoute(
+            path: '/dashboard',
+            builder: (context, state) =>
+                const Center(child: Text("Dashboard Content")),
+          ),
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const MyProfile(),
+          ),
+          GoRoute(
+            path: '/users',
+            builder: (context, state) => const Center(child: Text("Users")),
+          ),
+          GoRoute(
+            path: '/create-ad',
+            builder: (context, state) =>
+                const Center(child: Text("Listing Management")),
+          ),
+          GoRoute(
+            path: '/listing-management',
+            builder: (context, state) =>
+                const Center(child: Text(" Management")),
+          ),
+          GoRoute(
+            path: '/promotion',
+            builder: (context, state) =>
+                const Center(child: Text("promotion Management")),
+          ),
+          GoRoute(
+            path: '/showrooms',
+            builder: (context, state) =>
+                const Center(child: Text("showrooms Management")),
+          ),
+          GoRoute(
+            path: '/reports',
+            builder: (context, state) =>
+                const Center(child: Text("reports Management")),
+          ),
+          GoRoute(
+            path: '/notifications',
+            builder: (context, state) =>
+                const Center(child: Text("Noti Management")),
+          ),
+        ],
       ),
     ],
     redirect: (context, state) async {
@@ -58,17 +72,18 @@ class AppRoutes {
           return '/';
         }
       } else {
-        if (state.uri.toString() == '/' || state.uri.toString() == '/login') {
-          return '/home';
+        if (state.uri.toString() == '/' ||
+            state.uri.toString() == '/dashboard') {
+          return '/dashboard';
         }
       }
 
       return null;
     },
   );
+}
 
-  static Future<bool> _isLoggedIn() async {
-    final token = await getToken();
-    return token != null;
-  }
+Future<bool> _isLoggedIn() async {
+  final token = await getToken();
+  return token != null;
 }
