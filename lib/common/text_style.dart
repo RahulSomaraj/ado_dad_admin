@@ -13,15 +13,20 @@ class AppTextStyle {
     fontSize: 12,
     color: AppColors.redColor,
   );
-  static final TextStyle texttstyle = GoogleFonts.inter(
+  static final TextStyle texttstyle = GoogleFonts.outfit(
     fontSize: 16,
     fontWeight: FontWeight.w500,
     color: AppColors.blackColor,
   );
 
-    static final TextStyle buttonTextstyle = GoogleFonts.inter(
+  static final TextStyle buttonTextstyle = GoogleFonts.outfit(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: AppColors.primaryColor,
+  );
+
+  static TextStyle drawerTextstyle = GoogleFonts.outfit(
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
   );
 }

@@ -5,6 +5,9 @@ class AuthEvent with _$AuthEvent {
   const factory AuthEvent.login({
     required String username,
     required String password,
-  }) = _Login;
-  const factory AuthEvent.logout() = _Logout;
+  }) = Login;
+
+  const factory AuthEvent.checkLoginStatus() = CheckLoginStatus;
+
+  const factory AuthEvent.logout() = Logout;
 }

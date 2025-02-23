@@ -1,8 +1,9 @@
 import 'package:ado_dad_admin/common/text_style.dart';
-import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
-import 'package:ado_dad_admin/features/widgets/input_decoration.dart';
+import 'package:ado_dad_admin/showroom/features/login/bloc/auth_bloc.dart';
+import 'package:ado_dad_admin/showroom/features/widgets/input_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -15,6 +16,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  bool _obscureText = true;
 
   @override
   Widget build(BuildContext context) {
@@ -71,8 +74,20 @@ class _LoginPageState extends State<LoginPage> {
   TextFormField _buildPassword() {
     return TextFormField(
       controller: _passwordController,
-      obscureText: true,
-      decoration: textFieldDecoration('Password'),
+      obscureText: _obscureText,
+      decoration: textFieldDecoration('Password').copyWith(
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+            color: Colors.grey,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+      ),
       style: AppTextStyle.texttstyle,
       validator: (value) => value!.isEmpty ? "Enter Password" : null,
     );
@@ -82,14 +97,30 @@ class _LoginPageState extends State<LoginPage> {
     return BlocConsumer<AuthBloc, AuthState>(
       listener: (context, state) {
         state.maybeWhen(
-          success: () {
-            // context.go('/');
-            Navigator.pushReplacementNamed(context, "/home");
+          success: (username, userType) {
+            if (context.mounted) {
+              context.go('/home');
+            }
           },
           failure: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message)),
-            );
+            if (context.mounted) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Center(child: const Text("Login Failed")),
+                  content: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Text(message),
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text("OK"),
+                    ),
+                  ],
+                ),
+              );
+            }
           },
           orElse: () {},
         );

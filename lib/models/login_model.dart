@@ -1,5 +1,5 @@
 class LoginResponse {
-  final int id;
+  final String id;
   final String token;
   final String refreshToken;
   final String userName;
