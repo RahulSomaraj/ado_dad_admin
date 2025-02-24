@@ -1,6 +1,6 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/text_style.dart';
-import 'package:ado_dad_admin/showroom/features/login/bloc/auth_bloc.dart';
+import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -109,7 +109,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
               selectedIndex == index ? FontWeight.bold : FontWeight.normal,
         ),
       ),
-      tileColor: selectedIndex == index ? Colors.black26 : Colors.transparent,
+      tileColor:
+          selectedIndex == index ? AppColors.greyColor2 : Colors.transparent,
       onTap: () {
         setState(() {
           selectedIndex = index;

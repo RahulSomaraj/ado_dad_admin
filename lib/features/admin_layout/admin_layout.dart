@@ -4,7 +4,7 @@ import 'package:ado_dad_admin/common/widgets/drawer.dart';
 import 'package:flutter/material.dart';
 
 class AdminLayout extends StatefulWidget {
-  final Widget child; // Receives the dynamically changing content
+  final Widget child;
 
   const AdminLayout({super.key, required this.child});
 
@@ -52,17 +52,26 @@ class _AdminLayoutState extends State<AdminLayout> {
         children: [
           SizedBox(
             width: 250,
-            child: AdminDrawer(
-              // selectedIndex: 0,
-              userType: userType,
-            ),
+            child: AdminDrawer(userType: userType),
           ),
           Expanded(
-            child: Column(
-              children: [
-                _buildProfileBar(),
-                widget.child,
-              ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints:
+                        BoxConstraints(minHeight: constraints.maxHeight),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        _buildProfileBar(),
+                        widget.child,
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],

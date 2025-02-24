@@ -37,7 +37,7 @@ class AppTextStyle {
   );
 
   static final TextStyle title2Textstyle = GoogleFonts.roboto(
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: FontWeight.w500,
     color: const Color.fromARGB(255, 79, 78, 78),
   );

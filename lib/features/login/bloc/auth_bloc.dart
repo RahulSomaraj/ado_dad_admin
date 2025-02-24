@@ -1,5 +1,5 @@
 import 'package:ado_dad_admin/common/data_storage.dart';
-import 'package:ado_dad_admin/repositories/auth_service.dart';
+import 'package:ado_dad_admin/repositories/auth_rep.dart';
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -8,9 +8,9 @@ part 'auth_state.dart';
 part 'auth_bloc.freezed.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final AuthApiService authService;
+  final AuthRepository authRepository;
 
-  AuthBloc({required this.authService}) : super(const AuthState.initial()) {
+  AuthBloc({required this.authRepository}) : super(const AuthState.initial()) {
     on<Login>(_onLogin);
     on<Logout>(_onLogout);
     on<CheckLoginStatus>(_onCheckLoginStatus);
@@ -20,14 +20,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthState.loading());
 
     try {
-      final response = await authService.login(event.username, event.password);
+      final response =
+          await authRepository.login(event.username, event.password);
 
-      if (response.token != null && response.refreshToken != null) {
-        emit(AuthState.success(
-            username: response.userName, userType: response.userType));
-      } else {
-        emit(const AuthState.failure("Invalid Username or Password"));
-      }
+      emit(AuthState.success(
+          username: response.userName, userType: response.userType));
     } catch (e) {
       emit(AuthState.failure('Invalid Username or Password'));
     }

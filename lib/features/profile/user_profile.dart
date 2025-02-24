@@ -101,7 +101,7 @@ class _MyProfileState extends State<MyProfile> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(title, style: AppTextStyle.title2Textstyle),
+        Text(title, style: AppTextStyle.valueTextstyle),
         Text(value ?? "Loading...", style: AppTextStyle.valueTextstyle),
       ],
     );

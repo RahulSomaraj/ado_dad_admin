@@ -1,7 +1,8 @@
 import 'package:ado_dad_admin/common/data_storage.dart';
-import 'package:ado_dad_admin/showroom/features/admin_layout/admin_layout.dart';
-import 'package:ado_dad_admin/showroom/features/login/ui/login.dart';
-import 'package:ado_dad_admin/showroom/features/profile/user_profile.dart';
+import 'package:ado_dad_admin/features/admin_layout/admin_layout.dart';
+import 'package:ado_dad_admin/features/login/ui/login.dart';
+import 'package:ado_dad_admin/features/profile/user_profile.dart';
+import 'package:ado_dad_admin/features/users/ui/user_list.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -29,7 +30,7 @@ class AppRoutes {
           ),
           GoRoute(
             path: '/users',
-            builder: (context, state) => const Center(child: Text("Users")),
+            builder: (context, state) => Users(),
           ),
           GoRoute(
             path: '/create-ad',
