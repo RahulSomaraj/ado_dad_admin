@@ -23,6 +23,7 @@ mixin _$UserEvent {
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -32,6 +33,7 @@ mixin _$UserEvent {
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -40,6 +42,7 @@ mixin _$UserEvent {
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -49,6 +52,7 @@ mixin _$UserEvent {
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -57,6 +61,7 @@ mixin _$UserEvent {
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -65,6 +70,7 @@ mixin _$UserEvent {
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -136,6 +142,7 @@ class _$StartedImpl implements _Started {
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
   }) {
     return started();
   }
@@ -148,6 +155,7 @@ class _$StartedImpl implements _Started {
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
   }) {
     return started?.call();
   }
@@ -159,6 +167,7 @@ class _$StartedImpl implements _Started {
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -174,6 +183,7 @@ class _$StartedImpl implements _Started {
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
   }) {
     return started(this);
   }
@@ -185,6 +195,7 @@ class _$StartedImpl implements _Started {
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
   }) {
     return started?.call(this);
   }
@@ -196,6 +207,7 @@ class _$StartedImpl implements _Started {
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -303,6 +315,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
   }) {
     return fetchAllUsers(page, limit, searchQuery);
   }
@@ -315,6 +328,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
   }) {
     return fetchAllUsers?.call(page, limit, searchQuery);
   }
@@ -326,6 +340,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
     required TResult orElse(),
   }) {
     if (fetchAllUsers != null) {
@@ -341,6 +356,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
   }) {
     return fetchAllUsers(this);
   }
@@ -352,6 +368,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
   }) {
     return fetchAllUsers?.call(this);
   }
@@ -363,6 +380,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
     required TResult orElse(),
   }) {
     if (fetchAllUsers != null) {
@@ -463,6 +481,7 @@ class _$AddUserImpl implements AddUser {
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
   }) {
     return addUser(userData);
   }
@@ -475,6 +494,7 @@ class _$AddUserImpl implements AddUser {
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
   }) {
     return addUser?.call(userData);
   }
@@ -486,6 +506,7 @@ class _$AddUserImpl implements AddUser {
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
     required TResult orElse(),
   }) {
     if (addUser != null) {
@@ -501,6 +522,7 @@ class _$AddUserImpl implements AddUser {
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
   }) {
     return addUser(this);
   }
@@ -512,6 +534,7 @@ class _$AddUserImpl implements AddUser {
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
   }) {
     return addUser?.call(this);
   }
@@ -523,6 +546,7 @@ class _$AddUserImpl implements AddUser {
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
     required TResult orElse(),
   }) {
     if (addUser != null) {
@@ -617,6 +641,7 @@ class _$DeleteUserImpl implements DeleteUser {
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
   }) {
     return deleteUser(userId);
   }
@@ -629,6 +654,7 @@ class _$DeleteUserImpl implements DeleteUser {
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
   }) {
     return deleteUser?.call(userId);
   }
@@ -640,6 +666,7 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
     required TResult orElse(),
   }) {
     if (deleteUser != null) {
@@ -655,6 +682,7 @@ class _$DeleteUserImpl implements DeleteUser {
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
   }) {
     return deleteUser(this);
   }
@@ -666,6 +694,7 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
   }) {
     return deleteUser?.call(this);
   }
@@ -677,6 +706,7 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
     required TResult orElse(),
   }) {
     if (deleteUser != null) {
@@ -699,6 +729,168 @@ abstract class DeleteUser implements UserEvent {
 }
 
 /// @nodoc
+abstract class _$$UpdateUserImplCopyWith<$Res> {
+  factory _$$UpdateUserImplCopyWith(
+          _$UpdateUserImpl value, $Res Function(_$UpdateUserImpl) then) =
+      __$$UpdateUserImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel updatedUser});
+}
+
+/// @nodoc
+class __$$UpdateUserImplCopyWithImpl<$Res>
+    extends _$UserEventCopyWithImpl<$Res, _$UpdateUserImpl>
+    implements _$$UpdateUserImplCopyWith<$Res> {
+  __$$UpdateUserImplCopyWithImpl(
+      _$UpdateUserImpl _value, $Res Function(_$UpdateUserImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? updatedUser = null,
+  }) {
+    return _then(_$UpdateUserImpl(
+      updatedUser: null == updatedUser
+          ? _value.updatedUser
+          : updatedUser // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UpdateUserImpl implements UpdateUser {
+  const _$UpdateUserImpl({required this.updatedUser});
+
+  @override
+  final UserModel updatedUser;
+
+  @override
+  String toString() {
+    return 'UserEvent.updateUser(updatedUser: $updatedUser)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateUserImpl &&
+            (identical(other.updatedUser, updatedUser) ||
+                other.updatedUser == updatedUser));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, updatedUser);
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateUserImplCopyWith<_$UpdateUserImpl> get copyWith =>
+      __$$UpdateUserImplCopyWithImpl<_$UpdateUserImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int? page, int? limit, String? searchQuery)
+        fetchAllUsers,
+    required TResult Function(UserModel userData) addUser,
+    required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
+  }) {
+    return updateUser(updatedUser);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int? page, int? limit, String? searchQuery)?
+        fetchAllUsers,
+    TResult? Function(UserModel userData)? addUser,
+    TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
+  }) {
+    return updateUser?.call(updatedUser);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
+    TResult Function(UserModel userData)? addUser,
+    TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
+    required TResult orElse(),
+  }) {
+    if (updateUser != null) {
+      return updateUser(updatedUser);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllUsers value) fetchAllUsers,
+    required TResult Function(AddUser value) addUser,
+    required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
+  }) {
+    return updateUser(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllUsers value)? fetchAllUsers,
+    TResult? Function(AddUser value)? addUser,
+    TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
+  }) {
+    return updateUser?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllUsers value)? fetchAllUsers,
+    TResult Function(AddUser value)? addUser,
+    TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
+    required TResult orElse(),
+  }) {
+    if (updateUser != null) {
+      return updateUser(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateUser implements UserEvent {
+  const factory UpdateUser({required final UserModel updatedUser}) =
+      _$UpdateUserImpl;
+
+  UserModel get updatedUser;
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateUserImplCopyWith<_$UpdateUserImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$UserState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
@@ -707,6 +899,7 @@ mixin _$UserState {
     required TResult Function(
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
+    required TResult Function() updated,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -716,6 +909,7 @@ mixin _$UserState {
     TResult? Function()? loading,
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult? Function()? updated,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -725,6 +919,7 @@ mixin _$UserState {
     TResult Function()? loading,
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult Function()? updated,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -734,6 +929,7 @@ mixin _$UserState {
     required TResult Function(UserInitial value) initial,
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -742,6 +938,7 @@ mixin _$UserState {
     TResult? Function(UserInitial value)? initial,
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -750,6 +947,7 @@ mixin _$UserState {
     TResult Function(UserInitial value)? initial,
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
     required TResult orElse(),
   }) =>
@@ -822,6 +1020,7 @@ class _$UserInitialImpl implements UserInitial {
     required TResult Function(
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
+    required TResult Function() updated,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -834,6 +1033,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult? Function()? loading,
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult? Function()? updated,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -846,6 +1046,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult Function()? loading,
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult Function()? updated,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -861,6 +1062,7 @@ class _$UserInitialImpl implements UserInitial {
     required TResult Function(UserInitial value) initial,
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
   }) {
     return initial(this);
@@ -872,6 +1074,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult? Function(UserInitial value)? initial,
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
   }) {
     return initial?.call(this);
@@ -883,6 +1086,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult Function(UserInitial value)? initial,
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
     required TResult orElse(),
   }) {
@@ -943,6 +1147,7 @@ class _$UserLoadingImpl implements UserLoading {
     required TResult Function(
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
+    required TResult Function() updated,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -955,6 +1160,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult? Function()? loading,
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult? Function()? updated,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -967,6 +1173,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult Function()? loading,
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult Function()? updated,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -982,6 +1189,7 @@ class _$UserLoadingImpl implements UserLoading {
     required TResult Function(UserInitial value) initial,
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
   }) {
     return loading(this);
@@ -993,6 +1201,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult? Function(UserInitial value)? initial,
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
   }) {
     return loading?.call(this);
@@ -1004,6 +1213,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult Function(UserInitial value)? initial,
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
     required TResult orElse(),
   }) {
@@ -1120,6 +1330,7 @@ class _$UserLoadedImpl implements UserLoaded {
     required TResult Function(
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
+    required TResult Function() updated,
     required TResult Function(String message) error,
   }) {
     return loaded(users, totalPages, currentPage);
@@ -1132,6 +1343,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult? Function()? loading,
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult? Function()? updated,
     TResult? Function(String message)? error,
   }) {
     return loaded?.call(users, totalPages, currentPage);
@@ -1144,6 +1356,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult Function()? loading,
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult Function()? updated,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -1159,6 +1372,7 @@ class _$UserLoadedImpl implements UserLoaded {
     required TResult Function(UserInitial value) initial,
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
   }) {
     return loaded(this);
@@ -1170,6 +1384,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult? Function(UserInitial value)? initial,
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
   }) {
     return loaded?.call(this);
@@ -1181,6 +1396,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult Function(UserInitial value)? initial,
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
     required TResult orElse(),
   }) {
@@ -1206,6 +1422,133 @@ abstract class UserLoaded implements UserState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UserLoadedImplCopyWith<_$UserLoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UserUpdatedImplCopyWith<$Res> {
+  factory _$$UserUpdatedImplCopyWith(
+          _$UserUpdatedImpl value, $Res Function(_$UserUpdatedImpl) then) =
+      __$$UserUpdatedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$UserUpdatedImplCopyWithImpl<$Res>
+    extends _$UserStateCopyWithImpl<$Res, _$UserUpdatedImpl>
+    implements _$$UserUpdatedImplCopyWith<$Res> {
+  __$$UserUpdatedImplCopyWithImpl(
+      _$UserUpdatedImpl _value, $Res Function(_$UserUpdatedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$UserUpdatedImpl implements UserUpdated {
+  const _$UserUpdatedImpl();
+
+  @override
+  String toString() {
+    return 'UserState.updated()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$UserUpdatedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            List<UserModel> users, int totalPages, int currentPage)
+        loaded,
+    required TResult Function() updated,
+    required TResult Function(String message) error,
+  }) {
+    return updated();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult? Function()? updated,
+    TResult? Function(String message)? error,
+  }) {
+    return updated?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult Function()? updated,
+    TResult Function(String message)? error,
+    required TResult orElse(),
+  }) {
+    if (updated != null) {
+      return updated();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(UserInitial value) initial,
+    required TResult Function(UserLoading value) loading,
+    required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserError value) error,
+  }) {
+    return updated(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(UserInitial value)? initial,
+    TResult? Function(UserLoading value)? loading,
+    TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserError value)? error,
+  }) {
+    return updated?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(UserInitial value)? initial,
+    TResult Function(UserLoading value)? loading,
+    TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
+    TResult Function(UserError value)? error,
+    required TResult orElse(),
+  }) {
+    if (updated != null) {
+      return updated(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UserUpdated implements UserState {
+  const factory UserUpdated() = _$UserUpdatedImpl;
 }
 
 /// @nodoc
@@ -1281,6 +1624,7 @@ class _$UserErrorImpl implements UserError {
     required TResult Function(
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
+    required TResult Function() updated,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -1293,6 +1637,7 @@ class _$UserErrorImpl implements UserError {
     TResult? Function()? loading,
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult? Function()? updated,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -1305,6 +1650,7 @@ class _$UserErrorImpl implements UserError {
     TResult Function()? loading,
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
+    TResult Function()? updated,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -1320,6 +1666,7 @@ class _$UserErrorImpl implements UserError {
     required TResult Function(UserInitial value) initial,
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
   }) {
     return error(this);
@@ -1331,6 +1678,7 @@ class _$UserErrorImpl implements UserError {
     TResult? Function(UserInitial value)? initial,
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
   }) {
     return error?.call(this);
@@ -1342,6 +1690,7 @@ class _$UserErrorImpl implements UserError {
     TResult Function(UserInitial value)? initial,
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
     required TResult orElse(),
   }) {

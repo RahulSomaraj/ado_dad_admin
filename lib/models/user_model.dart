@@ -1,74 +1,108 @@
 class UserModel {
   final String id;
   final String? profilePic;
-  final String type;
-  final String name;
-  final String phoneNumber;
-  final String email;
-  final String password;
-  final String username;
-  final bool isDeleted;
-  final String otp;
-  final DateTime otpExpires;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final String? type;
+  final String name; // ✅ Ensure `name` is always non-null
+  final String phoneNumber; // ✅ Ensure `phoneNumber` is always non-null
+  final String email; // ✅ Ensure `email` is always non-null
+  final String? password;
+  final String? username;
+  final bool? isDeleted;
+  final String? otp;
+  final DateTime? otpExpires;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   UserModel({
     required this.id,
     this.profilePic,
-    required this.type,
+    this.type,
     required this.name,
     required this.phoneNumber,
     required this.email,
-    required this.password,
-    required this.username,
-    required this.isDeleted,
-    required this.otp,
-    required this.otpExpires,
-    required this.createdAt,
-    required this.updatedAt,
+    this.password,
+    this.username,
+    this.isDeleted,
+    this.otp,
+    this.otpExpires,
+    this.createdAt,
+    this.updatedAt,
   });
 
+  /// ✅ Fix: Handle `null` values properly
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['_id'] ?? '',
-      profilePic: json['profilePic'] ?? '',
-      type: json['type'] ?? '',
-      name: json['name'] ?? '',
+      profilePic: json['profilePic'],
+      type: json['type'],
+      name: json['name'] ?? '', // ✅ Use `?? ''` to avoid null assignment errors
       phoneNumber: json['phoneNumber'] ?? '',
       email: json['email'] ?? '',
-      password: json['password'] ?? '',
-      username: json['username'] ?? '',
-      isDeleted: json['isDeleted'] ?? false,
-      otp: json['otp'] ?? '',
+      password: json['password'],
+      username: json['username'],
+      isDeleted: json['isDeleted'],
+      otp: json['otp'],
       otpExpires: json['otpExpires'] != null
-          ? DateTime.parse(json['otpExpires'])
-          : DateTime.now(),
+          ? DateTime.tryParse(json['otpExpires'])
+          : null,
       createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+          ? DateTime.tryParse(json['createdAt'])
+          : null,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'])
-          : DateTime.now(),
+          ? DateTime.tryParse(json['updatedAt'])
+          : null,
     );
   }
 
+  /// ✅ Fix: `toJson()` only includes non-null values
   Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'profilePic': profilePic,
-      'type': type,
-      'name': name,
-      'phoneNumber': phoneNumber,
-      'email': email,
-      'password': password,
-      'username': username,
-      'isDeleted': isDeleted,
-      'otp': otp,
-      'otpExpires': otpExpires.toIso8601String(),
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-    };
+    final Map<String, dynamic> data = {};
+    if (id.isNotEmpty) data['_id'] = id;
+    if (profilePic != null) data['profilePic'] = profilePic;
+    if (type != null) data['type'] = type;
+    data['name'] = name; // ✅ Always send `name` (non-null)
+    data['phoneNumber'] = phoneNumber;
+    data['email'] = email;
+    if (password != null) data['password'] = password;
+    if (username != null) data['username'] = username;
+    if (isDeleted != null) data['isDeleted'] = isDeleted;
+    if (otp != null) data['otp'] = otp;
+    if (otpExpires != null) data['otpExpires'] = otpExpires!.toIso8601String();
+    if (createdAt != null) data['createdAt'] = createdAt!.toIso8601String();
+    if (updatedAt != null) data['updatedAt'] = updatedAt!.toIso8601String();
+    return data;
+  }
+
+  /// ✅ Copy method to update only changed fields
+  UserModel copyWith({
+    String? profilePic,
+    String? type,
+    String? name,
+    String? phoneNumber,
+    String? email,
+    String? password,
+    String? username,
+    bool? isDeleted,
+    String? otp,
+    DateTime? otpExpires,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return UserModel(
+      id: id,
+      profilePic: profilePic ?? this.profilePic,
+      type: type ?? this.type,
+      name: name ?? this.name, // ✅ Ensure `name` is non-null
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      username: username ?? this.username,
+      isDeleted: isDeleted ?? this.isDeleted,
+      otp: otp ?? this.otp,
+      otpExpires: otpExpires ?? this.otpExpires,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
   }
 }
 

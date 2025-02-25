@@ -11,4 +11,6 @@ class UserEvent with _$UserEvent {
 
   const factory UserEvent.addUser(UserModel userData) = AddUser;
   const factory UserEvent.deleteUser({required String userId}) = DeleteUser;
+  const factory UserEvent.updateUser({required UserModel updatedUser}) =
+      UpdateUser;
 }

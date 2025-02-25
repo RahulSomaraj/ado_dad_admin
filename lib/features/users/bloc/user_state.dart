@@ -10,5 +10,6 @@ class UserState with _$UserState {
     required int totalPages,
     required int currentPage,
   }) = UserLoaded;
+  const factory UserState.updated() = UserUpdated;
   const factory UserState.error(String message) = UserError;
 }

@@ -22,12 +22,12 @@ class UserRepository {
       if (response.statusCode == 200) {
         return UserResponse.fromJson(response.data);
       } else {
-        throw Exception("Failed to load users: ${response.statusMessage}");
+        throw Exception("Failed to load users");
       }
     } on DioException catch (e) {
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      throw Exception("Unexpected error: ${e.toString()}");
+      throw Exception("Unexpected error");
     }
   }
 
@@ -37,12 +37,29 @@ class UserRepository {
 
       if (response.statusCode == 200) {
       } else {
-        throw Exception("❌ Failed to delete user: ${response.statusMessage}");
+        throw Exception("Failed to delete user");
       }
     } on DioException catch (e) {
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      throw Exception("❌ Unexpected error: ${e.toString()}");
+      throw Exception("Unexpected error");
+    }
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    try {
+      final response = await _dio.put('/users/${user.id}', data: {
+        'name': user.name,
+        'email': user.email,
+        'phoneNumber': user.phoneNumber,
+      });
+
+      if (response.statusCode == 200) {
+      } else {
+        throw Exception("Failed to update user");
+      }
+    } on DioException catch (e) {
+      throw Exception(DioErrorHandler.handleError(e));
     }
   }
 }

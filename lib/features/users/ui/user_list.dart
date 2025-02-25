@@ -48,7 +48,6 @@ class _UsersState extends State<Users> {
                 ),
               ),
               onPressed: () {
-                // context.read<UserBloc>().add(DeleteUser(userId: userId));
                 _deleteUser(userId);
                 Navigator.pop(context);
               },
@@ -374,7 +373,9 @@ class _UsersState extends State<Users> {
             IconButton(
               icon: const Icon(Icons.edit,
                   color: Color.fromARGB(255, 59, 59, 59)),
-              onPressed: () {},
+              onPressed: () {
+                context.push('/edit-user', extra: user);
+              },
             ),
             IconButton(
               icon: const Icon(Icons.delete,
