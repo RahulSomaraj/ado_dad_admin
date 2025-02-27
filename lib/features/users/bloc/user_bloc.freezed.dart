@@ -24,6 +24,7 @@ mixin _$UserEvent {
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function() userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -34,6 +35,7 @@ mixin _$UserEvent {
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function()? userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -43,6 +45,7 @@ mixin _$UserEvent {
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function()? userListNavigation,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -53,6 +56,7 @@ mixin _$UserEvent {
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UserListNavigation value) userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -62,6 +66,7 @@ mixin _$UserEvent {
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UserListNavigation value)? userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -71,6 +76,7 @@ mixin _$UserEvent {
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -143,6 +149,7 @@ class _$StartedImpl implements _Started {
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function() userListNavigation,
   }) {
     return started();
   }
@@ -156,6 +163,7 @@ class _$StartedImpl implements _Started {
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function()? userListNavigation,
   }) {
     return started?.call();
   }
@@ -168,6 +176,7 @@ class _$StartedImpl implements _Started {
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -184,6 +193,7 @@ class _$StartedImpl implements _Started {
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return started(this);
   }
@@ -196,6 +206,7 @@ class _$StartedImpl implements _Started {
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return started?.call(this);
   }
@@ -208,6 +219,7 @@ class _$StartedImpl implements _Started {
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -316,6 +328,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function() userListNavigation,
   }) {
     return fetchAllUsers(page, limit, searchQuery);
   }
@@ -329,6 +342,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function()? userListNavigation,
   }) {
     return fetchAllUsers?.call(page, limit, searchQuery);
   }
@@ -341,6 +355,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
     if (fetchAllUsers != null) {
@@ -357,6 +372,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return fetchAllUsers(this);
   }
@@ -369,6 +385,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return fetchAllUsers?.call(this);
   }
@@ -381,6 +398,7 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
     if (fetchAllUsers != null) {
@@ -482,6 +500,7 @@ class _$AddUserImpl implements AddUser {
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function() userListNavigation,
   }) {
     return addUser(userData);
   }
@@ -495,6 +514,7 @@ class _$AddUserImpl implements AddUser {
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function()? userListNavigation,
   }) {
     return addUser?.call(userData);
   }
@@ -507,6 +527,7 @@ class _$AddUserImpl implements AddUser {
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
     if (addUser != null) {
@@ -523,6 +544,7 @@ class _$AddUserImpl implements AddUser {
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return addUser(this);
   }
@@ -535,6 +557,7 @@ class _$AddUserImpl implements AddUser {
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return addUser?.call(this);
   }
@@ -547,6 +570,7 @@ class _$AddUserImpl implements AddUser {
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
     if (addUser != null) {
@@ -642,6 +666,7 @@ class _$DeleteUserImpl implements DeleteUser {
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function() userListNavigation,
   }) {
     return deleteUser(userId);
   }
@@ -655,6 +680,7 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function()? userListNavigation,
   }) {
     return deleteUser?.call(userId);
   }
@@ -667,6 +693,7 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
     if (deleteUser != null) {
@@ -683,6 +710,7 @@ class _$DeleteUserImpl implements DeleteUser {
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return deleteUser(this);
   }
@@ -695,6 +723,7 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return deleteUser?.call(this);
   }
@@ -707,6 +736,7 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
     if (deleteUser != null) {
@@ -803,6 +833,7 @@ class _$UpdateUserImpl implements UpdateUser {
     required TResult Function(UserModel userData) addUser,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function() userListNavigation,
   }) {
     return updateUser(updatedUser);
   }
@@ -816,6 +847,7 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult? Function(UserModel userData)? addUser,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function()? userListNavigation,
   }) {
     return updateUser?.call(updatedUser);
   }
@@ -828,6 +860,7 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult Function(UserModel userData)? addUser,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
     if (updateUser != null) {
@@ -844,6 +877,7 @@ class _$UpdateUserImpl implements UpdateUser {
     required TResult Function(AddUser value) addUser,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return updateUser(this);
   }
@@ -856,6 +890,7 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult? Function(AddUser value)? addUser,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return updateUser?.call(this);
   }
@@ -868,6 +903,7 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult Function(AddUser value)? addUser,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
     if (updateUser != null) {
@@ -891,6 +927,137 @@ abstract class UpdateUser implements UserEvent {
 }
 
 /// @nodoc
+abstract class _$$UserListNavigationImplCopyWith<$Res> {
+  factory _$$UserListNavigationImplCopyWith(_$UserListNavigationImpl value,
+          $Res Function(_$UserListNavigationImpl) then) =
+      __$$UserListNavigationImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$UserListNavigationImplCopyWithImpl<$Res>
+    extends _$UserEventCopyWithImpl<$Res, _$UserListNavigationImpl>
+    implements _$$UserListNavigationImplCopyWith<$Res> {
+  __$$UserListNavigationImplCopyWithImpl(_$UserListNavigationImpl _value,
+      $Res Function(_$UserListNavigationImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$UserListNavigationImpl implements UserListNavigation {
+  const _$UserListNavigationImpl();
+
+  @override
+  String toString() {
+    return 'UserEvent.userListNavigation()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$UserListNavigationImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int? page, int? limit, String? searchQuery)
+        fetchAllUsers,
+    required TResult Function(UserModel userData) addUser,
+    required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function() userListNavigation,
+  }) {
+    return userListNavigation();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int? page, int? limit, String? searchQuery)?
+        fetchAllUsers,
+    TResult? Function(UserModel userData)? addUser,
+    TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function()? userListNavigation,
+  }) {
+    return userListNavigation?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
+    TResult Function(UserModel userData)? addUser,
+    TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function()? userListNavigation,
+    required TResult orElse(),
+  }) {
+    if (userListNavigation != null) {
+      return userListNavigation();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllUsers value) fetchAllUsers,
+    required TResult Function(AddUser value) addUser,
+    required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UserListNavigation value) userListNavigation,
+  }) {
+    return userListNavigation(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllUsers value)? fetchAllUsers,
+    TResult? Function(AddUser value)? addUser,
+    TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UserListNavigation value)? userListNavigation,
+  }) {
+    return userListNavigation?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllUsers value)? fetchAllUsers,
+    TResult Function(AddUser value)? addUser,
+    TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UserListNavigation value)? userListNavigation,
+    required TResult orElse(),
+  }) {
+    if (userListNavigation != null) {
+      return userListNavigation(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UserListNavigation implements UserEvent {
+  const factory UserListNavigation() = _$UserListNavigationImpl;
+}
+
+/// @nodoc
 mixin _$UserState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
@@ -901,6 +1068,7 @@ mixin _$UserState {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -911,6 +1079,7 @@ mixin _$UserState {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -921,6 +1090,7 @@ mixin _$UserState {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -931,6 +1101,7 @@ mixin _$UserState {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -940,6 +1111,7 @@ mixin _$UserState {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -949,6 +1121,7 @@ mixin _$UserState {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1022,6 +1195,7 @@ class _$UserInitialImpl implements UserInitial {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
   }) {
     return initial();
   }
@@ -1035,6 +1209,7 @@ class _$UserInitialImpl implements UserInitial {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
   }) {
     return initial?.call();
   }
@@ -1048,6 +1223,7 @@ class _$UserInitialImpl implements UserInitial {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1064,6 +1240,7 @@ class _$UserInitialImpl implements UserInitial {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
   }) {
     return initial(this);
   }
@@ -1076,6 +1253,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
     return initial?.call(this);
   }
@@ -1088,6 +1266,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1149,6 +1328,7 @@ class _$UserLoadingImpl implements UserLoading {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
   }) {
     return loading();
   }
@@ -1162,6 +1342,7 @@ class _$UserLoadingImpl implements UserLoading {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
   }) {
     return loading?.call();
   }
@@ -1175,6 +1356,7 @@ class _$UserLoadingImpl implements UserLoading {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1191,6 +1373,7 @@ class _$UserLoadingImpl implements UserLoading {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
   }) {
     return loading(this);
   }
@@ -1203,6 +1386,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
     return loading?.call(this);
   }
@@ -1215,6 +1399,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1332,6 +1517,7 @@ class _$UserLoadedImpl implements UserLoaded {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
   }) {
     return loaded(users, totalPages, currentPage);
   }
@@ -1345,6 +1531,7 @@ class _$UserLoadedImpl implements UserLoaded {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
   }) {
     return loaded?.call(users, totalPages, currentPage);
   }
@@ -1358,6 +1545,7 @@ class _$UserLoadedImpl implements UserLoaded {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1374,6 +1562,7 @@ class _$UserLoadedImpl implements UserLoaded {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
   }) {
     return loaded(this);
   }
@@ -1386,6 +1575,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
     return loaded?.call(this);
   }
@@ -1398,6 +1588,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1472,6 +1663,7 @@ class _$UserUpdatedImpl implements UserUpdated {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
   }) {
     return updated();
   }
@@ -1485,6 +1677,7 @@ class _$UserUpdatedImpl implements UserUpdated {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
   }) {
     return updated?.call();
   }
@@ -1498,6 +1691,7 @@ class _$UserUpdatedImpl implements UserUpdated {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
     required TResult orElse(),
   }) {
     if (updated != null) {
@@ -1514,6 +1708,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
   }) {
     return updated(this);
   }
@@ -1526,6 +1721,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
     return updated?.call(this);
   }
@@ -1538,6 +1734,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
   }) {
     if (updated != null) {
@@ -1626,6 +1823,7 @@ class _$UserErrorImpl implements UserError {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
   }) {
     return error(message);
   }
@@ -1639,6 +1837,7 @@ class _$UserErrorImpl implements UserError {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
   }) {
     return error?.call(message);
   }
@@ -1652,6 +1851,7 @@ class _$UserErrorImpl implements UserError {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1668,6 +1868,7 @@ class _$UserErrorImpl implements UserError {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
   }) {
     return error(this);
   }
@@ -1680,6 +1881,7 @@ class _$UserErrorImpl implements UserError {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
     return error?.call(this);
   }
@@ -1692,6 +1894,7 @@ class _$UserErrorImpl implements UserError {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1711,4 +1914,137 @@ abstract class UserError implements UserState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UserErrorImplCopyWith<_$UserErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UserListNavigatedImplCopyWith<$Res> {
+  factory _$$UserListNavigatedImplCopyWith(_$UserListNavigatedImpl value,
+          $Res Function(_$UserListNavigatedImpl) then) =
+      __$$UserListNavigatedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$UserListNavigatedImplCopyWithImpl<$Res>
+    extends _$UserStateCopyWithImpl<$Res, _$UserListNavigatedImpl>
+    implements _$$UserListNavigatedImplCopyWith<$Res> {
+  __$$UserListNavigatedImplCopyWithImpl(_$UserListNavigatedImpl _value,
+      $Res Function(_$UserListNavigatedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$UserListNavigatedImpl implements UserListNavigated {
+  const _$UserListNavigatedImpl();
+
+  @override
+  String toString() {
+    return 'UserState.userListNavigated()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$UserListNavigatedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            List<UserModel> users, int totalPages, int currentPage)
+        loaded,
+    required TResult Function() updated,
+    required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
+  }) {
+    return userListNavigated();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult? Function()? updated,
+    TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
+  }) {
+    return userListNavigated?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult Function()? updated,
+    TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
+    required TResult orElse(),
+  }) {
+    if (userListNavigated != null) {
+      return userListNavigated();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(UserInitial value) initial,
+    required TResult Function(UserLoading value) loading,
+    required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
+  }) {
+    return userListNavigated(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(UserInitial value)? initial,
+    TResult? Function(UserLoading value)? loading,
+    TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
+  }) {
+    return userListNavigated?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(UserInitial value)? initial,
+    TResult Function(UserLoading value)? loading,
+    TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
+    TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
+    required TResult orElse(),
+  }) {
+    if (userListNavigated != null) {
+      return userListNavigated(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UserListNavigated implements UserState {
+  const factory UserListNavigated() = _$UserListNavigatedImpl;
 }

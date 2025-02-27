@@ -14,14 +14,14 @@ class EditUser extends StatefulWidget {
 }
 
 class _EditUserState extends State<EditUser> {
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _userEditFormKey = GlobalKey<FormState>();
 
   late String _name;
   late String _email;
   late String _phone;
-  late String _userType; // Full form for UI dropdown
+  late String _userType;
 
-  /// ✅ Short form to Full form mapping
+  /// Short form to full form mapping
   final Map<String, String> _userTypeMap = {
     'SA': "Super Admin",
     'AD': "Admin",
@@ -35,102 +35,124 @@ class _EditUserState extends State<EditUser> {
     _name = widget.user.name;
     _email = widget.user.email;
     _phone = widget.user.phoneNumber;
-    _userType = _userTypeMap[widget.user.type] ??
-        "Unknown"; // Convert short form to full form
+    _userType = _userTypeMap[widget.user.type] ?? "Normal User";
   }
 
-  /// ✅ Convert Full Form to Short Form before sending API request
+  /// Convert full form to short code for API request
   String _getShortForm(String fullType) {
     return _userTypeMap.entries
-        .firstWhere((entry) => entry.value == fullType,
-            orElse: () => const MapEntry('Unknown', 'Unknown'))
+        .firstWhere(
+          (entry) => entry.value == fullType,
+          orElse: () => const MapEntry('NU', "Normal User"),
+        )
         .key;
   }
 
   void _updateUser() {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // ✅ Save values
+    if (_userEditFormKey.currentState!.validate()) {
+      _userEditFormKey.currentState!.save();
 
       final updatedUser = UserModel(
         id: widget.user.id,
         name: _name,
         email: _email,
         phoneNumber: _phone,
-        type: _getShortForm(_userType), // Convert full form back to short form
+        type: _getShortForm(_userType),
       );
 
       context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        _showSuccessPopup(
+            context, "User details have been updated successfully.");
+      });
     }
+  }
+
+  void _showSuccessPopup(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Success"),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<UserBloc, UserState>(
-      listener: (context, state) {
-        if (state is UserUpdated) {
-          _showSuccessDialog(context);
-        } else if (state is UserError) {
-          _showErrorDialog(context, state.message);
-        }
+    return BlocBuilder<UserBloc, UserState>(
+      // listener: (context, state) {
+      //   if (state is UserUpdated) {
+      //     _showDialog(context, "Success",
+      //         "User details have been updated successfully.");
+      //   } else if (state is UserError) {
+      //     _showDialog(context, "Error", state.message, isError: true);
+      //   } else if (state is UserListNavigated) {
+      //     context.pop();
+      //     context.read<UserBloc>().add(FetchAllUsers());
+      //   }
+      // },
+      builder: (context, state) {
+        return Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              _buildHeaderSection(),
+              const SizedBox(height: 30),
+              _buildUpdateForm(state),
+            ],
+          ),
+        );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(0),
-        child: Column(
+    );
+  }
+
+  /// ✅ Header Section with Back Button
+  Widget _buildHeaderSection() {
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        child: Row(
           children: [
-            _buildHeaderSection(),
-            SizedBox(height: 30),
-            _buildUpdateForm(),
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              onPressed: () {
+                context.pop();
+                context.read<UserBloc>().add(FetchAllUsers());
+                // context.read<UserBloc>().add(UserListNavigation());
+              },
+            ),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "Edit User",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  /// ✅ Success Dialog
-  void _showSuccessDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Success",
-              style: TextStyle(fontWeight: FontWeight.bold)),
-          content: const Text("User details have been updated successfully."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                context.pop();
-              },
-              child: const Text("OK", style: TextStyle(color: Colors.black)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// ✅ Error Dialog
-  void _showErrorDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Error",
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: const Text("OK", style: TextStyle(color: Colors.black)),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  /// ✅ UI for the Update Form
-  Center _buildUpdateForm() {
+  Center _buildUpdateForm(UserState state) {
     return Center(
       child: SizedBox(
         width: 500,
@@ -141,12 +163,10 @@ class _EditUserState extends State<EditUser> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Form(
-              key: _formKey,
+              key: _userEditFormKey,
               child: Column(
-                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 20),
                   _buildFormField("Name", _name, (value) => _name = value!),
                   const SizedBox(height: 15),
                   _buildFormField("Email", _email, (value) => _email = value!,
@@ -167,10 +187,17 @@ class _EditUserState extends State<EditUser> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: _updateUser,
-                      child: const Text("Update",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      onPressed: state is UserLoading ? null : _updateUser,
+                      child: state is UserLoading
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white),
+                            )
+                          : const Text("Update",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ],
@@ -182,41 +209,6 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  /// ✅ Header Section
-  Widget _buildHeaderSection() {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Edit User",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// ✅ Text Field Builder with Validation
   Widget _buildFormField(
       String label, String initialValue, Function(String?) onSaved,
       {bool isEmail = false}) {
@@ -224,50 +216,27 @@ class _EditUserState extends State<EditUser> {
       initialValue: initialValue,
       decoration: InputDecoration(
         labelText: label,
-        filled: true,
-        fillColor: Colors.grey[200],
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.black, width: 1.5)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
-      validator: (value) {
-        if (value == null || value.isEmpty) return "$label is required";
-        return null;
-      },
+      validator: (value) =>
+          (value == null || value.isEmpty) ? "$label is required" : null,
       onSaved: onSaved,
     );
   }
 
-  /// ✅ Dropdown Field for User Type
   Widget _buildDropdownField(String label, String selectedValue) {
     return DropdownButtonFormField<String>(
       value: selectedValue,
       decoration: InputDecoration(
         labelText: label,
-        filled: true,
-        fillColor: Colors.grey[200],
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none),
-        focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.black, width: 1.5)),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      items: _userTypeMap.values.map((String type) {
-        return DropdownMenuItem<String>(
-          value: type,
-          child: Text(type),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-          _userType = value!;
-        });
-      },
+      items: _userTypeMap.values
+          .map(
+              (String type) => DropdownMenuItem(value: type, child: Text(type)))
+          .toList(),
+      onChanged: (value) => setState(() => _userType = value!),
       validator: (value) => value == null ? "Please select a user type" : null,
     );
   }

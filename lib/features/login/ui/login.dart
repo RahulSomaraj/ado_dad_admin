@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   actions: [
                     TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () => context.pop(),
                       child: const Text("OK"),
                     ),
                   ],

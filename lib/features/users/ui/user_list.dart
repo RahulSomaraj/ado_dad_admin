@@ -34,7 +34,7 @@ class _UsersState extends State<Users> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               child: const Text(
                 "Cancel",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -49,7 +49,7 @@ class _UsersState extends State<Users> {
               ),
               onPressed: () {
                 _deleteUser(userId);
-                Navigator.pop(context);
+                context.pop();
               },
               child: const Text(
                 "Delete",
@@ -71,7 +71,7 @@ class _UsersState extends State<Users> {
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               child: const Text("OK"),
             ),
           ],
