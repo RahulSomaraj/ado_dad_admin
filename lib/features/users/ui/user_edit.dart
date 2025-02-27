@@ -90,17 +90,6 @@ class _EditUserState extends State<EditUser> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UserBloc, UserState>(
-      // listener: (context, state) {
-      //   if (state is UserUpdated) {
-      //     _showDialog(context, "Success",
-      //         "User details have been updated successfully.");
-      //   } else if (state is UserError) {
-      //     _showDialog(context, "Error", state.message, isError: true);
-      //   } else if (state is UserListNavigated) {
-      //     context.pop();
-      //     context.read<UserBloc>().add(FetchAllUsers());
-      //   }
-      // },
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
@@ -133,7 +122,6 @@ class _EditUserState extends State<EditUser> {
               onPressed: () {
                 context.pop();
                 context.read<UserBloc>().add(FetchAllUsers());
-                // context.read<UserBloc>().add(UserListNavigation());
               },
             ),
             const Padding(
@@ -173,7 +161,8 @@ class _EditUserState extends State<EditUser> {
                       isEmail: true),
                   const SizedBox(height: 15),
                   _buildFormField(
-                      "Phone Number", _phone, (value) => _phone = value!),
+                      "Phone Number", _phone, (value) => _phone = value!,
+                      isPhone: true),
                   const SizedBox(height: 15),
                   _buildDropdownField("User Type", _userType),
                   const SizedBox(height: 20),
@@ -211,16 +200,30 @@ class _EditUserState extends State<EditUser> {
 
   Widget _buildFormField(
       String label, String initialValue, Function(String?) onSaved,
-      {bool isEmail = false}) {
+      {bool isEmail = false, bool isPhone = false}) {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      keyboardType: isEmail ? TextInputType.emailAddress : TextInputType.text,
-      validator: (value) =>
-          (value == null || value.isEmpty) ? "$label is required" : null,
+      keyboardType: isEmail
+          ? TextInputType.emailAddress
+          : (isPhone ? TextInputType.phone : TextInputType.text),
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "$label is required";
+        }
+        if (isEmail &&
+            !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+                .hasMatch(value)) {
+          return "Enter a valid email address";
+        }
+        if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value)) {
+          return "Enter a valid phone number (10+ digits)";
+        }
+        return null;
+      },
       onSaved: onSaved,
     );
   }
