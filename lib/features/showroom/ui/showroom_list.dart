@@ -1,92 +1,19 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
-import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
+import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class Users extends StatefulWidget {
-  const Users({super.key});
+class Showroom extends StatefulWidget {
+  const Showroom({super.key});
 
   @override
-  State<Users> createState() => _UsersState();
+  State<Showroom> createState() => _ShowroomState();
 }
 
-class _UsersState extends State<Users> {
+class _ShowroomState extends State<Showroom> {
   final TextEditingController _searchController = TextEditingController();
-
-  void _showDeleteDialog(BuildContext context, String userId) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          title: Center(
-            child: const Text(
-              "Confirm Delete",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          content: const Text(
-            "Are you sure you want to delete this user?",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              onPressed: () {
-                _deleteUser(userId);
-                context.pop();
-              },
-              child: const Text(
-                "Delete",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showSuccessPopup(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Success"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _deleteUser(String userId) {
-    context.read<UserBloc>().add(DeleteUser(userId: userId));
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _showSuccessPopup(context, "User deleted successfully!");
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +22,7 @@ class _UsersState extends State<Users> {
         const SizedBox(height: 20),
         _buildHeaderSection(),
         const SizedBox(height: 20),
-        _buildUserList(),
+        _buildShowroomList(),
       ],
     );
   }
@@ -114,7 +41,7 @@ class _UsersState extends State<Users> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              "Users Management",
+              "Showroom Management",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -159,12 +86,11 @@ class _UsersState extends State<Users> {
               style: const TextStyle(fontSize: 14),
               onChanged: (query) {
                 if (query.isNotEmpty) {
-                  context.read<UserBloc>().add(
-                      FetchAllUsers(page: 1, limit: 10, searchQuery: query));
+                  context.read<ShowroomBloc>().add(FetchAllShowrooms(
+                      page: 1, limit: 10, searchQuery: query));
                 } else {
-                  context
-                      .read<UserBloc>()
-                      .add(FetchAllUsers(page: 1, limit: 10, searchQuery: ''));
+                  context.read<ShowroomBloc>().add(
+                      FetchAllShowrooms(page: 1, limit: 10, searchQuery: ''));
                 }
               },
             ),
@@ -176,12 +102,12 @@ class _UsersState extends State<Users> {
 
   Widget _buildAddButton() {
     return SizedBox(
-      width: 150,
+      width: 210,
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: AppColors.primaryColor,
+          foregroundColor: AppColors.blackColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -189,7 +115,7 @@ class _UsersState extends State<Users> {
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
-          context.push('/add-user');
+          context.push('/add-showroom');
         },
         child: Row(
           children: [
@@ -199,87 +125,82 @@ class _UsersState extends State<Users> {
               size: 20,
             ),
             SizedBox(width: 8),
-            const Text('Add User'),
+            const Text('Add New Showroom'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildUserList() {
-    return BlocBuilder<UserBloc, UserState>(
+  Widget _buildShowroomList() {
+    return BlocBuilder<ShowroomBloc, ShowroomState>(
       builder: (context, state) {
-        if (state is UserLoading) {
+        if (state is ShowroomLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is UserLoaded) {
+        } else if (state is ShowroomLoaded) {
           return Column(
             children: [
-              _buildUserTable(state.users, state.currentPage),
+              _buildUserTable(state.showroomusers),
               const SizedBox(height: 30),
               _buildPaginationBar(state.currentPage, state.totalPages),
             ],
           );
-        } else if (state is UserError) {
+        } else if (state is ShowroomError) {
           return Center(
               child: Text(state.message,
                   style: const TextStyle(color: Colors.red)));
         }
-        return const Center(child: Text("No Users Found"));
+        return const Center(child: Text("No Showroom Users Found"));
       },
     );
   }
 
-  Widget _buildUserTable(List<UserModel> users, int currentPage) {
+  Widget _buildUserTable(List<UserModel> users) {
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: IntrinsicWidth(
-              child: Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: DataTable(
-                    columnSpacing: 260,
-                    headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => AppColors.greyColor2),
-                    dataRowMinHeight: 55,
-                    dataRowMaxHeight: 55,
-                    columns: const [
-                      DataColumn(
-                        label: Padding(
-                          padding: EdgeInsets.only(left: 30),
-                          child: Text('ID',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                      DataColumn(
-                          label: Text('Name',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Email',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Phone Number',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Actions',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                    rows: users.asMap().entries.map((entry) {
-                      return _buildUserRow(entry.key, entry.value, currentPage);
-                    }).toList(),
-                  ),
-                ),
+      child: SizedBox(
+        width: double.infinity,
+        child: Card(
+          elevation: 3,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: SingleChildScrollView(
+              child: DataTable(
+                columnSpacing: 100,
+                headingRowColor: WidgetStateColor.resolveWith(
+                    (states) => AppColors.greyColor2),
+                dataRowMinHeight: 40,
+                dataRowMaxHeight: 40,
+                columns: const [
+                  DataColumn(
+                      label: Padding(
+                    padding: EdgeInsets.only(left: 30),
+                    child: Text('ID',
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                  )),
+                  DataColumn(
+                      label: Text('Name',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Email',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Phone Number',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(
+                      label: Text('Actions',
+                          style: TextStyle(fontWeight: FontWeight.bold))),
+                ],
+                rows: users.asMap().entries.map((entry) {
+                  return _buildUserRow(entry.key, entry.value);
+                }).toList(),
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -311,8 +232,8 @@ class _UsersState extends State<Users> {
                     rowsPerPage = value;
                   });
                   context
-                      .read<UserBloc>()
-                      .add(FetchAllUsers(page: 1, limit: rowsPerPage));
+                      .read<ShowroomBloc>()
+                      .add(FetchAllShowrooms(page: 1, limit: rowsPerPage));
                 }
               },
             ),
@@ -320,7 +241,7 @@ class _UsersState extends State<Users> {
             GestureDetector(
               onTap: currentPage > 1
                   ? () {
-                      context.read<UserBloc>().add(FetchAllUsers(
+                      context.read<ShowroomBloc>().add(FetchAllShowrooms(
                           page: currentPage - 1, limit: rowsPerPage));
                     }
                   : null,
@@ -339,7 +260,7 @@ class _UsersState extends State<Users> {
             GestureDetector(
               onTap: currentPage < totalPages
                   ? () {
-                      context.read<UserBloc>().add(FetchAllUsers(
+                      context.read<ShowroomBloc>().add(FetchAllShowrooms(
                           page: currentPage + 1, limit: rowsPerPage));
                     }
                   : null,
@@ -356,12 +277,76 @@ class _UsersState extends State<Users> {
     );
   }
 
-  DataRow _buildUserRow(int index, UserModel user, int currentPage) {
-    int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+  // Widget _buildPaginationBar(int currentPage, int totalPages) {
+  //   return Align(
+  //     alignment: Alignment.centerRight,
+  //     child: Padding(
+  //       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.end,
+  //         children: [
+  //           // Previous Button
+  //           ElevatedButton(
+  //             onPressed: currentPage > 1
+  //                 ? () {
+  //                     context.read<ShowroomBloc>().add(FetchAllShowrooms(
+  //                           page: currentPage - 1,
+  //                           limit: 10,
+  //                         ));
+  //                   }
+  //                 : null,
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.white,
+  //               foregroundColor: Colors.black,
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               padding:
+  //                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //             ),
+  //             child: const Text("Previous"),
+  //           ),
+  //           const SizedBox(width: 15),
+
+  //           // Page Indicator
+  //           Text(
+  //             "Page $currentPage of $totalPages",
+  //             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+  //           ),
+  //           const SizedBox(width: 15),
+
+  //           // Next Button
+  //           ElevatedButton(
+  //             onPressed: currentPage < totalPages
+  //                 ? () {
+  //                     context.read<ShowroomBloc>().add(FetchAllShowrooms(
+  //                           page: currentPage + 1,
+  //                           limit: 10,
+  //                         ));
+  //                   }
+  //                 : null,
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.white,
+  //               foregroundColor: Colors.black,
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(8),
+  //               ),
+  //               padding:
+  //                   const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  //             ),
+  //             child: const Text("Next"),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  DataRow _buildUserRow(int index, UserModel user) {
     return DataRow(cells: [
       DataCell(Padding(
         padding: const EdgeInsets.only(left: 30),
-        child: Text('$rowNumber'),
+        child: Text('${index + 1}'),
       )),
       DataCell(Text(user.name)),
       DataCell(Text(user.email)),
@@ -374,14 +359,15 @@ class _UsersState extends State<Users> {
               icon: const Icon(Icons.edit,
                   color: Color.fromARGB(255, 59, 59, 59)),
               onPressed: () {
-                context.push('/edit-user', extra: user);
+                context.push('/edit-showroom', extra: user);
+                // print("Edit Showroom: ${user.name}");
               },
             ),
             IconButton(
-              icon: const Icon(Icons.delete,
+              icon: const Icon(Icons.remove_red_eye_outlined,
                   color: Color.fromARGB(255, 20, 20, 20)),
               onPressed: () {
-                _showDeleteDialog(context, user.id);
+                context.push('/view-showroom', extra: user);
               },
             ),
           ],

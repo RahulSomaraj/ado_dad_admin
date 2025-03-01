@@ -1,70 +1,51 @@
+import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 
-class EditUser extends StatefulWidget {
-  final UserModel user;
+class EditShowroom extends StatefulWidget {
+  final UserModel showroomuser;
 
-  const EditUser({super.key, required this.user});
+  const EditShowroom({super.key, required this.showroomuser});
 
   @override
-  State<EditUser> createState() => _EditUserState();
+  State<EditShowroom> createState() => _EditShowroomState();
 }
 
-class _EditUserState extends State<EditUser> {
-  final GlobalKey<FormState> _userEditFormKey = GlobalKey<FormState>();
+class _EditShowroomState extends State<EditShowroom> {
+  // final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _showroomEditFormKey = GlobalKey<FormState>();
 
   late String _name;
   late String _email;
   late String _phone;
-  late String _userType;
-
-  /// Short form to full form mapping
-  final Map<String, String> _userTypeMap = {
-    'SA': "Super Admin",
-    'AD': "Admin",
-    'NU': "Normal User",
-    'SR': "Showroom",
-  };
 
   @override
   void initState() {
     super.initState();
-    _name = widget.user.name;
-    _email = widget.user.email;
-    _phone = widget.user.phoneNumber;
-    _userType = _userTypeMap[widget.user.type] ?? "Normal User";
+    _name = widget.showroomuser.name;
+    _email = widget.showroomuser.email;
+    _phone = widget.showroomuser.phoneNumber;
   }
 
-  /// Convert full form to short code for API request
-  String _getShortForm(String fullType) {
-    return _userTypeMap.entries
-        .firstWhere(
-          (entry) => entry.value == fullType,
-          orElse: () => const MapEntry('NU', "Normal User"),
-        )
-        .key;
-  }
+  void _updateShowroom() {
+    if (_showroomEditFormKey.currentState!.validate()) {
+      _showroomEditFormKey.currentState!.save();
 
-  void _updateUser() {
-    if (_userEditFormKey.currentState!.validate()) {
-      _userEditFormKey.currentState!.save();
-
-      final updatedUser = UserModel(
-        id: widget.user.id,
+      final updatedShowroom = UserModel(
+        id: widget.showroomuser.id,
         name: _name,
         email: _email,
         phoneNumber: _phone,
-        type: _getShortForm(_userType),
+        type: 'SR',
       );
-
-      context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
-
+      context
+          .read<ShowroomBloc>()
+          .add(UpdateShowroom(updatedShowroom: updatedShowroom));
       Future.delayed(const Duration(milliseconds: 500), () {
         _showSuccessPopup(
-            context, "User details have been updated successfully.");
+            context, "Showroom details have been updated successfully.");
       });
     }
   }
@@ -80,7 +61,8 @@ class _EditUserState extends State<EditUser> {
             TextButton(
               onPressed: () {
                 context.pop();
-                context.go('/users');
+                context.go('/showrooms');
+                context.read<ShowroomBloc>().add(FetchAllShowrooms());
               },
               child: const Text("OK"),
             ),
@@ -92,7 +74,7 @@ class _EditUserState extends State<EditUser> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocBuilder<ShowroomBloc, ShowroomState>(
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
@@ -108,7 +90,6 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  /// ✅ Header Section with Back Button
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -124,13 +105,13 @@ class _EditUserState extends State<EditUser> {
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
               onPressed: () {
                 context.pop();
-                context.read<UserBloc>().add(FetchAllUsers());
+                context.read<ShowroomBloc>().add(FetchAllShowrooms());
               },
             ),
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "Edit User",
+                "Edit Showroom",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -143,7 +124,7 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  Center _buildUpdateForm(UserState state) {
+  Center _buildUpdateForm(ShowroomState state) {
     return Center(
       child: SizedBox(
         width: 500,
@@ -154,11 +135,12 @@ class _EditUserState extends State<EditUser> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Form(
-              key: _userEditFormKey,
+              key: _showroomEditFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildFormField("Name", _name, (value) => _name = value!),
+                  _buildFormField(
+                      "Showroom Name", _name, (value) => _name = value!),
                   const SizedBox(height: 15),
                   _buildFormField("Email", _email, (value) => _email = value!,
                       isEmail: true),
@@ -166,8 +148,6 @@ class _EditUserState extends State<EditUser> {
                   _buildFormField(
                       "Phone Number", _phone, (value) => _phone = value!,
                       isPhone: true),
-                  const SizedBox(height: 15),
-                  _buildDropdownField("User Type", _userType),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -179,8 +159,9 @@ class _EditUserState extends State<EditUser> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: state is UserLoading ? null : _updateUser,
-                      child: state is UserLoading
+                      onPressed:
+                          state is ShowroomLoading ? null : _updateShowroom,
+                      child: state is ShowroomLoading
                           ? const SizedBox(
                               height: 20,
                               width: 20,
@@ -228,22 +209,6 @@ class _EditUserState extends State<EditUser> {
         return null;
       },
       onSaved: onSaved,
-    );
-  }
-
-  Widget _buildDropdownField(String label, String selectedValue) {
-    return DropdownButtonFormField<String>(
-      value: selectedValue,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-      items: _userTypeMap.values
-          .map(
-              (String type) => DropdownMenuItem(value: type, child: Text(type)))
-          .toList(),
-      onChanged: (value) => setState(() => _userType = value!),
-      validator: (value) => value == null ? "Please select a user type" : null,
     );
   }
 }

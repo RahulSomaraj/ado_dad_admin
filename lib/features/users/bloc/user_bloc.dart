@@ -14,6 +14,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<FetchAllUsers>(_onFetchAllUsers);
     on<DeleteUser>(_onDeleteUser);
     on<UpdateUser>(_onUpdateUser);
+    on<AddUser>(_onAddUser);
+
     on<UserListNavigation>(_onUserListNavigation);
   }
 
@@ -55,6 +57,17 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       add(FetchAllUsers(page: 1, limit: 10));
     } catch (e) {
       emit(UserState.error("Failed to update user"));
+    }
+  }
+
+  Future<void> _onAddUser(AddUser event, Emitter<UserState> emit) async {
+    emit(const UserState.loading());
+    try {
+      final responseMessage = await userRepository.createUser(event.userData);
+      emit(UserState.userAddedSuccess(responseMessage));
+      add(const FetchAllUsers());
+    } catch (e) {
+      emit(UserError(e.toString()));
     }
   }
 

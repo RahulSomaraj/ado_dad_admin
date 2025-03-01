@@ -11,6 +11,8 @@ class UserState with _$UserState {
     required int currentPage,
   }) = UserLoaded;
   const factory UserState.updated() = UserUpdated;
+  const factory UserState.userAddedSuccess(String message) = UserAddedSuccess;
+
   const factory UserState.error(String message) = UserError;
   const factory UserState.userListNavigated() = UserListNavigated;
 }

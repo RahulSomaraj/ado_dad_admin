@@ -9,9 +9,10 @@ class UserEvent with _$UserEvent {
     @Default('') String? searchQuery,
   }) = FetchAllUsers;
 
-  const factory UserEvent.addUser(UserModel userData) = AddUser;
+  const factory UserEvent.addUser({required UserModel userData}) = AddUser;
   const factory UserEvent.deleteUser({required String userId}) = DeleteUser;
   const factory UserEvent.updateUser({required UserModel updatedUser}) =
       UpdateUser;
+
   const factory UserEvent.userListNavigation() = UserListNavigation;
 }
