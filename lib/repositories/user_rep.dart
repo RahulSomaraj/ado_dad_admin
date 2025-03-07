@@ -62,4 +62,26 @@ class UserRepository {
       throw Exception(DioErrorHandler.handleError(e));
     }
   }
+
+  Future<String> createUser(UserModel userData) async {
+    try {
+      final response = await _dio.post(
+        "/users",
+        data: userData.toJson(),
+      );
+      if (response.statusCode == 201) {
+        return response.data['message'] ?? "User added successfully";
+      } else {
+        throw Exception("Failed to add user: ${response.statusMessage}");
+      }
+    } on DioException catch (e) {
+      if (e.response != null) {
+        throw Exception(e.response!.data['message'] ?? "API error occurred");
+      } else {
+        throw Exception("Network error: ${e.message}");
+      }
+    } catch (e) {
+      throw Exception("Unexpected error: $e");
+    }
+  }
 }

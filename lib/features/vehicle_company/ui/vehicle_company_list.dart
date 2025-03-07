@@ -1,92 +1,19 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
-import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
-import 'package:ado_dad_admin/models/user_model.dart';
+import 'package:ado_dad_admin/features/vehicle_company/bloc/vehicle_company_bloc.dart';
+import 'package:ado_dad_admin/models/vehicle_company_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class Users extends StatefulWidget {
-  const Users({super.key});
+class VehicleCompanyList extends StatefulWidget {
+  const VehicleCompanyList({super.key});
 
   @override
-  State<Users> createState() => _UsersState();
+  State<VehicleCompanyList> createState() => _VehicleCompanyListState();
 }
 
-class _UsersState extends State<Users> {
+class _VehicleCompanyListState extends State<VehicleCompanyList> {
   final TextEditingController _searchController = TextEditingController();
-
-  void _showDeleteDialog(BuildContext context, String userId) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.0),
-          ),
-          title: Center(
-            child: const Text(
-              "Confirm Delete",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          content: const Text(
-            "Are you sure you want to delete this user?",
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: const Text(
-                "Cancel",
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
-              onPressed: () {
-                _deleteUser(userId);
-                context.pop();
-              },
-              child: const Text(
-                "Delete",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showSuccessPopup(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Success"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () => context.pop(),
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _deleteUser(String userId) {
-    context.read<UserBloc>().add(DeleteUser(userId: userId));
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _showSuccessPopup(context, "User deleted successfully!");
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +22,7 @@ class _UsersState extends State<Users> {
         const SizedBox(height: 20),
         _buildHeaderSection(),
         const SizedBox(height: 20),
-        _buildUserList(),
+        _buildCompanyList(),
       ],
     );
   }
@@ -114,7 +41,7 @@ class _UsersState extends State<Users> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Text(
-              "Users Management",
+              "Vehicle Company Management",
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -159,12 +86,11 @@ class _UsersState extends State<Users> {
               style: const TextStyle(fontSize: 14),
               onChanged: (query) {
                 if (query.isNotEmpty) {
-                  context.read<UserBloc>().add(
-                      FetchAllUsers(page: 1, limit: 10, searchQuery: query));
+                  context.read<VehicleCompanyBloc>().add(FetchAllVehicleCompany(
+                      page: 1, limit: 10, searchQuery: query));
                 } else {
-                  context
-                      .read<UserBloc>()
-                      .add(FetchAllUsers(page: 1, limit: 10, searchQuery: ''));
+                  context.read<VehicleCompanyBloc>().add(FetchAllVehicleCompany(
+                      page: 1, limit: 10, searchQuery: ''));
                 }
               },
             ),
@@ -176,7 +102,7 @@ class _UsersState extends State<Users> {
 
   Widget _buildAddButton() {
     return SizedBox(
-      width: 150,
+      width: 250,
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -189,7 +115,7 @@ class _UsersState extends State<Users> {
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
         onPressed: () {
-          context.push('/add-user');
+          context.push('/add-vehiclecompany');
         },
         child: Row(
           children: [
@@ -199,37 +125,38 @@ class _UsersState extends State<Users> {
               size: 20,
             ),
             SizedBox(width: 8),
-            const Text('Add User'),
+            const Text('Add Vehicle Companies'),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildUserList() {
-    return BlocBuilder<UserBloc, UserState>(
+  Widget _buildCompanyList() {
+    return BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
       builder: (context, state) {
-        if (state is UserLoading) {
+        if (state is VehicleCompanyLoading) {
           return const Center(child: CircularProgressIndicator());
-        } else if (state is UserLoaded) {
+        } else if (state is VehicleCompanyLoaded) {
           return Column(
             children: [
-              _buildUserTable(state.users, state.currentPage),
+              _buildCompanyTable(state.companies, state.currentPage),
               const SizedBox(height: 30),
               _buildPaginationBar(state.currentPage, state.totalPages),
             ],
           );
-        } else if (state is UserError) {
+        } else if (state is VehicleCompanyError) {
           return Center(
               child: Text(state.message,
                   style: const TextStyle(color: Colors.red)));
         }
-        return const Center(child: Text("No Users Found"));
+        return const Center(child: Text("No Vehicle Companies Found"));
       },
     );
   }
 
-  Widget _buildUserTable(List<UserModel> users, int currentPage) {
+  Widget _buildCompanyTable(
+      List<VehicleCompanyModel> companies, int currentPage) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: LayoutBuilder(
@@ -245,7 +172,7 @@ class _UsersState extends State<Users> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: DataTable(
-                    columnSpacing: 150,
+                    columnSpacing: 120,
                     headingRowColor: WidgetStateColor.resolveWith(
                         (states) => AppColors.greyColor2),
                     dataRowMinHeight: 55,
@@ -259,20 +186,21 @@ class _UsersState extends State<Users> {
                         ),
                       ),
                       DataColumn(
-                          label: Text('Name',
+                          label: Text('Vehicle Company Name',
                               style: TextStyle(fontWeight: FontWeight.bold))),
                       DataColumn(
-                          label: Text('Email',
+                          label: Text('Origin Country of Vehicle Company',
                               style: TextStyle(fontWeight: FontWeight.bold))),
                       DataColumn(
-                          label: Text('Phone Number',
+                          label: Text('Vehicle Type',
                               style: TextStyle(fontWeight: FontWeight.bold))),
                       DataColumn(
                           label: Text('Actions',
                               style: TextStyle(fontWeight: FontWeight.bold))),
                     ],
-                    rows: users.asMap().entries.map((entry) {
-                      return _buildUserRow(entry.key, entry.value, currentPage);
+                    rows: companies.asMap().entries.map((entry) {
+                      return _buildCompanyRow(
+                          entry.key, entry.value, currentPage);
                     }).toList(),
                   ),
                 ),
@@ -311,8 +239,8 @@ class _UsersState extends State<Users> {
                     rowsPerPage = value;
                   });
                   context
-                      .read<UserBloc>()
-                      .add(FetchAllUsers(page: 1, limit: rowsPerPage));
+                      .read<VehicleCompanyBloc>()
+                      .add(FetchAllVehicleCompany(page: 1, limit: rowsPerPage));
                 }
               },
             ),
@@ -320,8 +248,9 @@ class _UsersState extends State<Users> {
             GestureDetector(
               onTap: currentPage > 1
                   ? () {
-                      context.read<UserBloc>().add(FetchAllUsers(
-                          page: currentPage - 1, limit: rowsPerPage));
+                      context.read<VehicleCompanyBloc>().add(
+                          FetchAllVehicleCompany(
+                              page: currentPage - 1, limit: rowsPerPage));
                     }
                   : null,
               child: Icon(
@@ -339,8 +268,9 @@ class _UsersState extends State<Users> {
             GestureDetector(
               onTap: currentPage < totalPages
                   ? () {
-                      context.read<UserBloc>().add(FetchAllUsers(
-                          page: currentPage + 1, limit: rowsPerPage));
+                      context.read<VehicleCompanyBloc>().add(
+                          FetchAllVehicleCompany(
+                              page: currentPage + 1, limit: rowsPerPage));
                     }
                   : null,
               child: Icon(
@@ -356,16 +286,17 @@ class _UsersState extends State<Users> {
     );
   }
 
-  DataRow _buildUserRow(int index, UserModel user, int currentPage) {
+  DataRow _buildCompanyRow(
+      int index, VehicleCompanyModel company, int currentPage) {
     int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
     return DataRow(cells: [
       DataCell(Padding(
         padding: const EdgeInsets.only(left: 30),
         child: Text('$rowNumber'),
       )),
-      DataCell(Text(user.name)),
-      DataCell(Text(user.email)),
-      DataCell(Text(user.phoneNumber)),
+      DataCell(Text(company.name)),
+      DataCell(Text(company.originCountry)),
+      DataCell(Text(company.vehicleType)),
       DataCell(
         Row(
           mainAxisSize: MainAxisSize.min,
@@ -374,14 +305,14 @@ class _UsersState extends State<Users> {
               icon: const Icon(Icons.edit,
                   color: Color.fromARGB(255, 59, 59, 59)),
               onPressed: () {
-                context.push('/edit-user', extra: user);
+                context.push('/edit-vehicle_company', extra: company);
               },
             ),
             IconButton(
-              icon: const Icon(Icons.delete,
+              icon: const Icon(Icons.remove_red_eye_outlined,
                   color: Color.fromARGB(255, 20, 20, 20)),
               onPressed: () {
-                _showDeleteDialog(context, user.id);
+                context.push('/view-vehicle_company', extra: company);
               },
             ),
           ],

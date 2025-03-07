@@ -1,70 +1,67 @@
+import 'package:ado_dad_admin/features/vehicle_company/bloc/vehicle_company_bloc.dart';
+import 'package:ado_dad_admin/models/vehicle_company_model.dart';
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
-import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 
-class EditUser extends StatefulWidget {
-  final UserModel user;
-
-  const EditUser({super.key, required this.user});
+class EditVehicleCompany extends StatefulWidget {
+  final VehicleCompanyModel vehiclecompany;
+  const EditVehicleCompany({super.key, required this.vehiclecompany});
 
   @override
-  State<EditUser> createState() => _EditUserState();
+  State<EditVehicleCompany> createState() => _EditVehicleCompanyState();
 }
 
-class _EditUserState extends State<EditUser> {
-  final GlobalKey<FormState> _userEditFormKey = GlobalKey<FormState>();
+class _EditVehicleCompanyState extends State<EditVehicleCompany> {
+  final GlobalKey<FormState> _vehiclecompanyEditFormKey =
+      GlobalKey<FormState>();
 
-  late String _name;
-  late String _email;
-  late String _phone;
-  late String _userType;
+  late String _companyName;
+  late String _originContry;
+  late String _vehicleType;
+  late String _logo;
 
-  /// Short form to full form mapping
-  final Map<String, String> _userTypeMap = {
-    'SA': "Super Admin",
-    'AD': "Admin",
-    'NU': "Normal User",
-    'SR': "Showroom",
-  };
+  List<String> _countryList = [];
+  final List<String> _vehicleTypes = ["TWO_WHEELER", "FOUR_WHEELER"];
 
   @override
   void initState() {
     super.initState();
-    _name = widget.user.name;
-    _email = widget.user.email;
-    _phone = widget.user.phoneNumber;
-    _userType = _userTypeMap[widget.user.type] ?? "Normal User";
+    _companyName = widget.vehiclecompany.name;
+    _originContry = widget.vehiclecompany.originCountry;
+    _vehicleType = widget.vehiclecompany.vehicleType;
+    _logo = widget.vehiclecompany.logo ?? '';
+    _loadCountries();
   }
 
-  /// Convert full form to short code for API request
-  String _getShortForm(String fullType) {
-    return _userTypeMap.entries
-        .firstWhere(
-          (entry) => entry.value == fullType,
-          orElse: () => const MapEntry('NU', "Normal User"),
-        )
-        .key;
+  Future<void> _loadCountries() async {
+    List<String> countries =
+        CountryService().getAll().map((country) => country.name).toList();
+
+    setState(() {
+      _countryList = countries;
+    });
   }
 
-  void _updateUser() {
-    if (_userEditFormKey.currentState!.validate()) {
-      _userEditFormKey.currentState!.save();
+  void _updateVehicleCompany() {
+    if (_vehiclecompanyEditFormKey.currentState!.validate()) {
+      _vehiclecompanyEditFormKey.currentState!.save();
 
-      final updatedUser = UserModel(
-        id: widget.user.id,
-        name: _name,
-        email: _email,
-        phoneNumber: _phone,
-        type: _getShortForm(_userType),
+      final updatedVehicleCompany = VehicleCompanyModel(
+        id: widget.vehiclecompany.id,
+        name: _companyName,
+        originCountry: _originContry,
+        vehicleType: _vehicleType,
+        logo: _logo,
       );
 
-      context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
+      context.read<VehicleCompanyBloc>().add(
+          UpdateVehicleCompany(updatedVehicleCompany: updatedVehicleCompany));
 
       Future.delayed(const Duration(milliseconds: 500), () {
         _showSuccessPopup(
-            context, "User details have been updated successfully.");
+            context, "Vehicle Company details have been updated successfully.");
       });
     }
   }
@@ -80,7 +77,7 @@ class _EditUserState extends State<EditUser> {
             TextButton(
               onPressed: () {
                 context.pop();
-                context.go('/users');
+                context.go('/vehicle-companies');
               },
               child: const Text("OK"),
             ),
@@ -92,7 +89,7 @@ class _EditUserState extends State<EditUser> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
+    return BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
       builder: (context, state) {
         return Padding(
           padding: const EdgeInsets.all(16.0),
@@ -108,7 +105,6 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  /// ✅ Header Section with Back Button
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -124,13 +120,15 @@ class _EditUserState extends State<EditUser> {
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
               onPressed: () {
                 context.pop();
-                context.read<UserBloc>().add(FetchAllUsers());
+                context
+                    .read<VehicleCompanyBloc>()
+                    .add(FetchAllVehicleCompany());
               },
             ),
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "Edit User",
+                "Edit Vehicle Company",
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -143,7 +141,7 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  Center _buildUpdateForm(UserState state) {
+  Center _buildUpdateForm(VehicleCompanyState state) {
     return Center(
       child: SizedBox(
         width: 500,
@@ -154,20 +152,29 @@ class _EditUserState extends State<EditUser> {
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Form(
-              key: _userEditFormKey,
+              key: _vehiclecompanyEditFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildFormField("Name", _name, (value) => _name = value!),
-                  const SizedBox(height: 15),
-                  _buildFormField("Email", _email, (value) => _email = value!,
-                      isEmail: true),
+                  _buildFormField("Vehicle Company Name", _companyName,
+                      (value) => _companyName = value!),
                   const SizedBox(height: 15),
                   _buildFormField(
-                      "Phone Number", _phone, (value) => _phone = value!,
-                      isPhone: true),
+                      "Company Logo", _logo, (value) => _logo = value!),
                   const SizedBox(height: 15),
-                  _buildDropdownField("User Type", _userType),
+                  _buildDropdownField(
+                    "Origin Country of Vehicle Company",
+                    _originContry,
+                    _countryList,
+                    (value) => _originContry = value,
+                  ),
+                  const SizedBox(height: 15),
+                  _buildDropdownField(
+                    "Vehicle Type",
+                    _vehicleType,
+                    _vehicleTypes,
+                    (value) => _vehicleType = value,
+                  ),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -179,8 +186,10 @@ class _EditUserState extends State<EditUser> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: state is UserLoading ? null : _updateUser,
-                      child: state is UserLoading
+                      onPressed: state is VehicleCompanyLoading
+                          ? null
+                          : _updateVehicleCompany,
+                      child: state is VehicleCompanyLoading
                           ? const SizedBox(
                               height: 20,
                               width: 20,
@@ -202,28 +211,19 @@ class _EditUserState extends State<EditUser> {
   }
 
   Widget _buildFormField(
-      String label, String initialValue, Function(String?) onSaved,
-      {bool isEmail = false, bool isPhone = false}) {
+    String label,
+    String initialValue,
+    Function(String?) onSaved,
+  ) {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      keyboardType: isEmail
-          ? TextInputType.emailAddress
-          : (isPhone ? TextInputType.phone : TextInputType.text),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return "$label is required";
-        }
-        if (isEmail &&
-            !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                .hasMatch(value)) {
-          return "Enter a valid email address";
-        }
-        if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value)) {
-          return "Enter a valid phone number (10+ digits)";
         }
         return null;
       },
@@ -231,19 +231,20 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  Widget _buildDropdownField(String label, String selectedValue) {
+  Widget _buildDropdownField(String label, String? selectedValue,
+      List<String> options, Function(String) onChanged) {
     return DropdownButtonFormField<String>(
-      value: selectedValue,
+      value: selectedValue, // Ensure this is valid or set to null
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
-      items: _userTypeMap.values
-          .map(
-              (String type) => DropdownMenuItem(value: type, child: Text(type)))
-          .toList(),
-      onChanged: (value) => setState(() => _userType = value!),
-      validator: (value) => value == null ? "Please select a user type" : null,
+      items: options.map((String value) {
+        return DropdownMenuItem(value: value, child: Text(value));
+      }).toList(),
+      onChanged: (value) => setState(() => onChanged(value!)),
+      validator: (value) =>
+          value == null || value.isEmpty ? "Please select $label" : null,
     );
   }
 }

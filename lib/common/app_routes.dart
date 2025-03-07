@@ -2,9 +2,21 @@ import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/admin_layout/admin_layout.dart';
 import 'package:ado_dad_admin/features/login/ui/login.dart';
 import 'package:ado_dad_admin/features/profile/user_profile.dart';
+import 'package:ado_dad_admin/features/showroom/ui/showroom_add.dart';
+import 'package:ado_dad_admin/features/showroom/ui/showroom_detail_view.dart';
+import 'package:ado_dad_admin/features/showroom/ui/showroom_edit.dart';
+import 'package:ado_dad_admin/features/showroom/ui/showroom_list.dart';
+import 'package:ado_dad_admin/features/users/ui/add_user.dart';
 import 'package:ado_dad_admin/features/users/ui/user_edit.dart';
 import 'package:ado_dad_admin/features/users/ui/user_list.dart';
+import 'package:ado_dad_admin/features/vehicle/ui/vehicle_add.dart';
+import 'package:ado_dad_admin/features/vehicle/ui/vehicle_list.dart';
+import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_add.dart';
+import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_edit.dart';
+import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_list.dart';
+import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_view.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
+import 'package:ado_dad_admin/models/vehicle_company_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -25,14 +37,15 @@ class AppRoutes {
               '/dashboard', const Center(child: Text("Dashboard Content"))),
           _noTransitionRoute('/profile', const MyProfile()),
           _noTransitionRoute('/users', Users()),
+          _noTransitionRoute('/add-user', AddUser()),
           _noTransitionRoute(
               '/create-ad', const Center(child: Text("Listing Management"))),
-          _noTransitionRoute(
-              '/listing-management', const Center(child: Text("Management"))),
-          _noTransitionRoute(
-              '/promotion', const Center(child: Text("Promotion Management"))),
-          _noTransitionRoute(
-              '/showrooms', const Center(child: Text("Showrooms Management"))),
+          _noTransitionRoute('/vehicles', VehicleList()),
+          _noTransitionRoute('/add-vehicle', AddVehicle()),
+          _noTransitionRoute('/vehicle-companies', VehicleCompanyList()),
+          _noTransitionRoute('/add-vehiclecompany', VehicleCompanyAdd()),
+          _noTransitionRoute('/showrooms', Showroom()),
+          _noTransitionRoute('/add-showroom', ShowroomAdd()),
           _noTransitionRoute(
               '/reports', const Center(child: Text("Reports Management"))),
           _noTransitionRoute(
@@ -42,6 +55,39 @@ class AppRoutes {
             pageBuilder: (context, state) {
               final user = state.extra as UserModel;
               return NoTransitionPage(child: EditUser(user: user));
+            },
+          ),
+          GoRoute(
+            path: '/edit-showroom',
+            pageBuilder: (context, state) {
+              final showroomuser = state.extra as UserModel;
+              return NoTransitionPage(
+                  child: EditShowroom(showroomuser: showroomuser));
+            },
+          ),
+          GoRoute(
+            path: '/view-showroom',
+            pageBuilder: (context, state) {
+              final showroomuser = state.extra as UserModel;
+              return NoTransitionPage(
+                  child: ShowroomDetailView(showroomuser: showroomuser));
+            },
+          ),
+          GoRoute(
+            path: '/edit-vehicle_company',
+            pageBuilder: (context, state) {
+              final vehiclecompany = state.extra as VehicleCompanyModel;
+              return NoTransitionPage(
+                  child: EditVehicleCompany(vehiclecompany: vehiclecompany));
+            },
+          ),
+          GoRoute(
+            path: '/view-vehicle_company',
+            pageBuilder: (context, state) {
+              final vehiclecompany = state.extra as VehicleCompanyModel;
+              return NoTransitionPage(
+                  child:
+                      VehicleCompanyDetailView(vehiclecompany: vehiclecompany));
             },
           ),
         ],

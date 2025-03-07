@@ -450,7 +450,7 @@ class __$$AddUserImplCopyWithImpl<$Res>
     Object? userData = null,
   }) {
     return _then(_$AddUserImpl(
-      null == userData
+      userData: null == userData
           ? _value.userData
           : userData // ignore: cast_nullable_to_non_nullable
               as UserModel,
@@ -461,7 +461,7 @@ class __$$AddUserImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$AddUserImpl implements AddUser {
-  const _$AddUserImpl(this.userData);
+  const _$AddUserImpl({required this.userData});
 
   @override
   final UserModel userData;
@@ -581,7 +581,7 @@ class _$AddUserImpl implements AddUser {
 }
 
 abstract class AddUser implements UserEvent {
-  const factory AddUser(final UserModel userData) = _$AddUserImpl;
+  const factory AddUser({required final UserModel userData}) = _$AddUserImpl;
 
   UserModel get userData;
 
@@ -1067,6 +1067,7 @@ mixin _$UserState {
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) =>
@@ -1078,6 +1079,7 @@ mixin _$UserState {
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) =>
@@ -1089,6 +1091,7 @@ mixin _$UserState {
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1100,6 +1103,7 @@ mixin _$UserState {
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) =>
@@ -1110,6 +1114,7 @@ mixin _$UserState {
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) =>
@@ -1120,6 +1125,7 @@ mixin _$UserState {
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1194,6 +1200,7 @@ class _$UserInitialImpl implements UserInitial {
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1208,6 +1215,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1222,6 +1230,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1239,6 +1248,7 @@ class _$UserInitialImpl implements UserInitial {
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1252,6 +1262,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1265,6 +1276,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1327,6 +1339,7 @@ class _$UserLoadingImpl implements UserLoading {
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1341,6 +1354,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1355,6 +1369,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1372,6 +1387,7 @@ class _$UserLoadingImpl implements UserLoading {
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1385,6 +1401,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1398,6 +1415,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1516,6 +1534,7 @@ class _$UserLoadedImpl implements UserLoaded {
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1530,6 +1549,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1544,6 +1564,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1561,6 +1582,7 @@ class _$UserLoadedImpl implements UserLoaded {
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1574,6 +1596,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1587,6 +1610,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1662,6 +1686,7 @@ class _$UserUpdatedImpl implements UserUpdated {
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1676,6 +1701,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1690,6 +1716,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1707,6 +1734,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1720,6 +1748,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1733,6 +1762,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1746,6 +1776,181 @@ class _$UserUpdatedImpl implements UserUpdated {
 
 abstract class UserUpdated implements UserState {
   const factory UserUpdated() = _$UserUpdatedImpl;
+}
+
+/// @nodoc
+abstract class _$$UserAddedSuccessImplCopyWith<$Res> {
+  factory _$$UserAddedSuccessImplCopyWith(_$UserAddedSuccessImpl value,
+          $Res Function(_$UserAddedSuccessImpl) then) =
+      __$$UserAddedSuccessImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$UserAddedSuccessImplCopyWithImpl<$Res>
+    extends _$UserStateCopyWithImpl<$Res, _$UserAddedSuccessImpl>
+    implements _$$UserAddedSuccessImplCopyWith<$Res> {
+  __$$UserAddedSuccessImplCopyWithImpl(_$UserAddedSuccessImpl _value,
+      $Res Function(_$UserAddedSuccessImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_$UserAddedSuccessImpl(
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UserAddedSuccessImpl implements UserAddedSuccess {
+  const _$UserAddedSuccessImpl(this.message);
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'UserState.userAddedSuccess(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserAddedSuccessImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserAddedSuccessImplCopyWith<_$UserAddedSuccessImpl> get copyWith =>
+      __$$UserAddedSuccessImplCopyWithImpl<_$UserAddedSuccessImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            List<UserModel> users, int totalPages, int currentPage)
+        loaded,
+    required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
+  }) {
+    return userAddedSuccess(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
+  }) {
+    return userAddedSuccess?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
+    required TResult orElse(),
+  }) {
+    if (userAddedSuccess != null) {
+      return userAddedSuccess(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(UserInitial value) initial,
+    required TResult Function(UserLoading value) loading,
+    required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
+  }) {
+    return userAddedSuccess(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(UserInitial value)? initial,
+    TResult? Function(UserLoading value)? loading,
+    TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
+  }) {
+    return userAddedSuccess?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(UserInitial value)? initial,
+    TResult Function(UserLoading value)? loading,
+    TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
+    required TResult orElse(),
+  }) {
+    if (userAddedSuccess != null) {
+      return userAddedSuccess(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UserAddedSuccess implements UserState {
+  const factory UserAddedSuccess(final String message) = _$UserAddedSuccessImpl;
+
+  String get message;
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UserAddedSuccessImplCopyWith<_$UserAddedSuccessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1822,6 +2027,7 @@ class _$UserErrorImpl implements UserError {
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1836,6 +2042,7 @@ class _$UserErrorImpl implements UserError {
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1850,6 +2057,7 @@ class _$UserErrorImpl implements UserError {
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1867,6 +2075,7 @@ class _$UserErrorImpl implements UserError {
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1880,6 +2089,7 @@ class _$UserErrorImpl implements UserError {
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1893,6 +2103,7 @@ class _$UserErrorImpl implements UserError {
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1963,6 +2174,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
             List<UserModel> users, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1977,6 +2189,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1991,6 +2204,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     TResult Function(List<UserModel> users, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -2008,6 +2222,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     required TResult Function(UserLoading value) loading,
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -2021,6 +2236,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     TResult? Function(UserLoading value)? loading,
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -2034,6 +2250,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     TResult Function(UserLoading value)? loading,
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
