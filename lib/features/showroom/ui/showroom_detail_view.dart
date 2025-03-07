@@ -3,7 +3,10 @@ import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+<<<<<<< HEAD
 import 'package:go_router/go_router.dart';
+=======
+>>>>>>> 0d9a3bad18b84ded2402b747d050c0bf976e256b
 
 class ShowroomDetailView extends StatefulWidget {
   final UserModel showroomuser;
@@ -28,6 +31,37 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
     );
   }
 
+<<<<<<< HEAD
+=======
+  // Widget _buildShowroomDetailSection(UserModel user) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(15),
+  //     child: Container(
+  //       height: 100,
+  //       decoration: BoxDecoration(
+  //         color: Colors.grey,
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //         children: [
+  //           Column(
+  //             children: [Text('Showroom Name'), Text('Sample')],
+  //           ),
+  //           Column(
+  //             children: [Text('Email'), Text('Sample Email')],
+  //           ),
+  //           Column(
+  //             children: [Text('Phone Number'), Text('Sample Phone')],
+  //           )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+>>>>>>> 0d9a3bad18b84ded2402b747d050c0bf976e256b
   Widget _buildShowroomDetailSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
