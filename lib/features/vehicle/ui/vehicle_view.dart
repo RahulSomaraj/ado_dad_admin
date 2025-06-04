@@ -1,21 +1,20 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
-import 'package:ado_dad_admin/features/vehicle_company/bloc/vehicle_company_bloc.dart';
-import 'package:ado_dad_admin/models/vehicle_company_model.dart';
+import 'package:ado_dad_admin/features/vehicle/bloc/vehicle_bloc.dart';
+import 'package:ado_dad_admin/models/vehicle_post_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class VehicleCompanyDetailView extends StatefulWidget {
-  final VehicleCompanyModel vehiclecompany;
-  const VehicleCompanyDetailView({super.key, required this.vehiclecompany});
+class VehicleDetailView extends StatefulWidget {
+  final VehicleRequest vehicle;
+  const VehicleDetailView({super.key, required this.vehicle});
 
   @override
-  State<VehicleCompanyDetailView> createState() =>
-      _VehicleCompanyDetailViewState();
+  State<VehicleDetailView> createState() => _VehicleDetailViewState();
 }
 
-class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
-  void _showDeleteDialog(BuildContext context, String companyId) {
+class _VehicleDetailViewState extends State<VehicleDetailView> {
+  void _showDeleteDialog(BuildContext context, String vehicleId) {
     showDialog(
       context: context,
       builder: (context) {
@@ -30,7 +29,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
             ),
           ),
           content: const Text(
-            "Are you sure you want to delete this vehicle company?",
+            "Are you sure you want to delete this vehicle?",
           ),
           actions: [
             TextButton(
@@ -48,7 +47,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
                 ),
               ),
               onPressed: () {
-                _deleteVehicleCompany(companyId);
+                _deleteVehicle(vehicleId);
                 // page pop list
                 context.pop();
               },
@@ -63,18 +62,17 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
     );
   }
 
-  void _deleteVehicleCompany(String companyId) {
+  void _deleteVehicle(String vehicleId) {
+    print('Deleting vehicle with ID: $vehicleId');
     Navigator.of(context).pop();
-    context
-        .read<VehicleCompanyBloc>()
-        .add(DeleteVehicleCompany(companyId: companyId));
+    context.read<VehicleBloc>().add(DeleteVehicle(vehicleId: vehicleId));
 
     context
-        .read<VehicleCompanyBloc>()
+        .read<VehicleBloc>()
         .stream
-        .firstWhere((state) => state is VehicleCompanyDeleted)
+        .firstWhere((state) => state is VehicleDeleted)
         .then((_) {
-      print("✅ Vehicle Company Deleted Successfully!");
+      print("✅ Vehicle Deleted Successfully!");
 
       // Delay popup to prevent UI conflict
       // Future.delayed(const Duration(milliseconds: 300), () {
@@ -83,101 +81,22 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
     });
   }
 
-  void _showSuccessPopup(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Success"),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                // context.pop();
-                // Navigation handled in BlocListener
-                // Navigator.of(context).pop();
-                // context.go('/vehicle-companies');
-              },
-              child: const Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    return BlocListener<VehicleCompanyBloc, VehicleCompanyState>(
-      listenWhen: (previous, current) => current is VehicleCompanyDeleted,
-      listener: (context, state) {
-        if (state is VehicleCompanyDeleted) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                title: const Text("Success"),
-                content: const Text("Vehicle Company deleted successfully!"),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      // Navigator.of(context).pop(); // close dialog
-                      context.pop();
-                      context.go('/vehicle-companies'); // then navigate
-                    },
-                    child: const Text("OK"),
-                  ),
-                ],
-              );
-            },
-          );
-        }
-      },
-      child: Padding(
-        padding: const EdgeInsets.all(0),
-        child: Column(
-          children: [
-            _buildShowroomDetailSection(),
-            SizedBox(height: 30),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: 40.0,
-                  border: TableBorder.all(
-                    color: Colors.black, // Border color for rows
-                    width: 1.0,
-                  ),
-                  headingRowColor: MaterialStateColor.resolveWith(
-                      (states) => Colors.black12),
-                  columns: const [
-                    DataColumn(
-                        label: Text('ID',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Vehicle Company Name',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Origin Country',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Vehicle Type',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                  ],
-                  rows: const [], // No data rows
-                ),
-              ),
-            ),
-          ],
-        ),
+    print(widget.vehicle.id);
+    return Padding(
+      padding: EdgeInsets.all(0),
+      child: Column(
+        children: [
+          buildVehicleDetailSection(),
+        ],
       ),
     );
   }
 
-  Widget _buildShowroomDetailSection() {
+  Widget buildVehicleDetailSection() {
     return Padding(
-      padding: const EdgeInsets.all(15),
+      padding: EdgeInsets.all(15),
       child: Container(
         height: 100,
         decoration: BoxDecoration(
@@ -195,9 +114,6 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
                       color: AppColors.blackColor),
                   onPressed: () {
                     context.pop();
-                    context
-                        .read<VehicleCompanyBloc>()
-                        .add(FetchAllVehicleCompany());
                   },
                 ),
               ],
@@ -206,40 +122,52 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
               children: [
                 Column(
                   children: [
-                    const Text('Vehicle Company Name',
+                    const Text('Vehicle Name/Model Name',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.blackColor)),
+                    // Text('Vehicle ID: ${widget.vehicle.id}'),
                     Text(
-                      widget.vehiclecompany.name!,
+                      '${widget.vehicle.vehicleModels.first.name}/${widget.vehicle.vehicleModels.first.modelName}',
                       style: TextStyle(color: AppColors.blackColor),
                     ),
                   ],
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 20),
                 Column(
                   children: [
-                    const Text('Country of Origin',
+                    const Text('Model Type',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.blackColor)),
                     Text(
-                      widget.vehiclecompany.originCountry!,
+                      widget.vehicle.modelType,
                       style: TextStyle(color: AppColors.blackColor),
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 50,
-                ),
+                SizedBox(width: 20),
                 Column(
                   children: [
-                    const Text('Vehicle Type',
+                    const Text('Company Name',
                         style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.blackColor)),
                     Text(
-                      widget.vehiclecompany.vehicleType!,
+                      widget.vehicle.vendor,
+                      style: TextStyle(color: AppColors.blackColor),
+                    ),
+                  ],
+                ),
+                SizedBox(width: 20),
+                Column(
+                  children: [
+                    const Text('Transmission/Fuel Type',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.blackColor)),
+                    Text(
+                      '${widget.vehicle.vehicleModels.first.transmissionType}/${widget.vehicle.vehicleModels.first.fuelType}',
                       style: TextStyle(color: AppColors.blackColor),
                     ),
                   ],
@@ -264,7 +192,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
                           fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                     onPressed: () {
-                      _showDeleteDialog(context, widget.vehiclecompany.id);
+                      _showDeleteDialog(context, widget.vehicle.id);
                     },
                     child: Row(
                       children: [
@@ -274,7 +202,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
                           size: 20,
                         ),
                         SizedBox(width: 8),
-                        const Text('Delete Vehicle Company'),
+                        const Text('Delete Vehicle'),
                       ],
                     ),
                   ),

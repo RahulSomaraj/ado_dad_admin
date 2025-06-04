@@ -32,7 +32,7 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -43,7 +43,7 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
             const Text(
               "Vehicle Company Management",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.blackColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -63,9 +63,9 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
       width: 200,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.blackColor)),
       child: Row(
         children: [
           const SizedBox(width: 8),
@@ -106,8 +106,8 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: AppColors.blackColor,
+          foregroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -121,7 +121,7 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
           children: [
             Icon(
               Icons.add,
-              color: Colors.black,
+              color: AppColors.primaryColor,
               size: 20,
             ),
             SizedBox(width: 8),
@@ -174,7 +174,9 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
                   child: DataTable(
                     columnSpacing: 120,
                     headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => AppColors.greyColor2),
+                        (states) => Color.fromARGB(66, 144, 140, 140)),
+                    dataRowColor:
+                        WidgetStatePropertyAll(AppColors.primaryColor),
                     dataRowMinHeight: 55,
                     dataRowMaxHeight: 55,
                     columns: const [
@@ -294,9 +296,9 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
         padding: const EdgeInsets.only(left: 30),
         child: Text('$rowNumber'),
       )),
-      DataCell(Text(company.name)),
-      DataCell(Text(company.originCountry)),
-      DataCell(Text(company.vehicleType)),
+      DataCell(Text(company.name!)),
+      DataCell(Text(company.originCountry!)),
+      DataCell(Text(company.vehicleType!)),
       DataCell(
         Row(
           mainAxisSize: MainAxisSize.min,

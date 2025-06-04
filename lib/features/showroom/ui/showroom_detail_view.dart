@@ -3,10 +3,7 @@ import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-<<<<<<< HEAD
 import 'package:go_router/go_router.dart';
-=======
->>>>>>> 0d9a3bad18b84ded2402b747d050c0bf976e256b
 
 class ShowroomDetailView extends StatefulWidget {
   final UserModel showroomuser;
@@ -31,44 +28,13 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
     );
   }
 
-<<<<<<< HEAD
-=======
-  // Widget _buildShowroomDetailSection(UserModel user) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(15),
-  //     child: Container(
-  //       height: 100,
-  //       decoration: BoxDecoration(
-  //         color: Colors.grey,
-  //         borderRadius: BorderRadius.circular(12),
-  //       ),
-  //       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //         children: [
-  //           Column(
-  //             children: [Text('Showroom Name'), Text('Sample')],
-  //           ),
-  //           Column(
-  //             children: [Text('Email'), Text('Sample Email')],
-  //           ),
-  //           Column(
-  //             children: [Text('Phone Number'), Text('Sample Phone')],
-  //           )
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
->>>>>>> 0d9a3bad18b84ded2402b747d050c0bf976e256b
   Widget _buildShowroomDetailSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Container(
         height: 100,
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
@@ -78,8 +44,8 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
             Row(
               children: [
                 IconButton(
-                  icon:
-                      const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back_ios_new,
+                      color: AppColors.blackColor),
                   onPressed: () {
                     context.pop();
                     context.read<ShowroomBloc>().add(FetchAllShowrooms());
@@ -93,10 +59,11 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
                   children: [
                     const Text('Showroom Name',
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white)),
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.blackColor)),
                     Text(
                       widget.showroomuser.name,
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: AppColors.blackColor),
                     ),
                   ],
                 ),
@@ -106,10 +73,11 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
               children: [
                 const Text('Email',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white)),
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.blackColor)),
                 Text(
                   widget.showroomuser.email,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppColors.blackColor),
                 ),
               ],
             ),
@@ -117,10 +85,11 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
               children: [
                 const Text('Phone Number',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold, color: Colors.white)),
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.blackColor)),
                 Text(
                   widget.showroomuser.phoneNumber,
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: AppColors.blackColor),
                 ),
               ],
             ),
@@ -169,7 +138,8 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
               child: DataTable(
                 columnSpacing: 100,
                 headingRowColor: WidgetStateColor.resolveWith(
-                    (states) => AppColors.greyColor2),
+                    (states) => Color.fromARGB(66, 144, 140, 140)),
+                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
                 dataRowMinHeight: 40,
                 dataRowMaxHeight: 40,
                 columns: const [

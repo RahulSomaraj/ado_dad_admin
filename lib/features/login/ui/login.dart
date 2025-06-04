@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
 import 'package:ado_dad_admin/features/widgets/input_decoration.dart';
@@ -22,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldColor,
       body: Center(
         child: Card(
           elevation: 4,
@@ -39,8 +41,8 @@ class _LoginPageState extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    "assets/images/logo.png",
-                    height: 40,
+                    "assets/images/ado-dad-logo.png",
+                    height: 100,
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -139,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
+              backgroundColor: AppColors.logoColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

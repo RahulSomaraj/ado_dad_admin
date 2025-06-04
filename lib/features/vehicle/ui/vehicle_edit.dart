@@ -10,15 +10,16 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-class AddVehicle extends StatefulWidget {
-  const AddVehicle({super.key});
+class EditVehicle extends StatefulWidget {
+  final VehicleRequest vehicle;
+  const EditVehicle({super.key, required this.vehicle});
 
   @override
-  State<AddVehicle> createState() => _AddVehicleState();
+  State<EditVehicle> createState() => _EditVehicleState();
 }
 
-class _AddVehicleState extends State<AddVehicle> {
-  final GlobalKey<FormState> _vehicleFormKey = GlobalKey<FormState>();
+class _EditVehicleState extends State<EditVehicle> {
+  final GlobalKey<FormState> _vehicleEditFormKey = GlobalKey<FormState>();
 
   bool _isBasicInfoExpanded = true;
   bool _isVehicleModelExpanded = false;
@@ -56,56 +57,119 @@ class _AddVehicleState extends State<AddVehicle> {
     "Dual-Clutch"
   ];
 
+  late String? _name, _modelName, _wheelerType, _modelType;
+  late int? _modelYear;
+  late String? _month;
+  late VehicleCompanyModel? _selectedVendor;
+  late String? _vehicleName, _vehicleModelName;
+  late String? _fuelType, _transmissionType;
+  late int? _mileage, _engineCapacity, _fuelCapacity, _maxPower;
+  late List<String>? _selectedColors;
+  late bool _abs;
+  late bool _accidental;
+  late bool _adjustableExternalMirror;
+  late bool _adjustableSteering;
+  late bool _adjustableSeats;
+  late bool _airConditioning;
+  late bool _alloyWheels;
+  late bool _auxCompatibility;
+  late bool _bluetooth;
+  late bool _vehicleCertified;
+  late bool _cruiseControl;
+  late bool _lockSystem;
+  late bool _navigationSystem;
+  late bool _parkingSensors;
+  late bool _powerSteering;
+  late bool _powerWindows;
+  late bool _amFmRadio;
+  late bool _rearParkingCamera;
+  late bool _exchange;
+  late bool _finance;
+  late bool _serviceHistory;
+  late bool _sunroof;
+  late bool _usbCompatibility;
+  late bool _seatWarmer;
+  late int _numberOfAirbags;
+  late String? _batteryCondition,
+      _insuranceType,
+      _makeMonth,
+      _registrationPlace,
+      _tyreCondition;
+  late List<String>? _selectedAdditionalColors;
+
   @override
   void initState() {
     super.initState();
     context.read<VehicleCompanyBloc>().add(FetchAllVehicleCompany());
+
+    final vehicle = widget.vehicle;
+    _name = vehicle.name;
+    _modelName = vehicle.modelName;
+    _wheelerType = vehicle.wheelerType;
+    _modelType = vehicle.modelType;
+    _modelYear = vehicle.details.modelYear;
+    _month = vehicle.details.month;
+    _selectedVendor = VehicleCompanyModel(id: vehicle.vendor);
+    _vehicleName = vehicle.vehicleModels.first.name;
+    _vehicleModelName = vehicle.vehicleModels.first.modelName;
+    _fuelType = vehicle.vehicleModels.first.fuelType;
+    _transmissionType = vehicle.vehicleModels.first.transmissionType;
+    _mileage = vehicle.vehicleModels.first.mileage;
+    _engineCapacity = vehicle.vehicleModels.first.engineCapacity;
+    _fuelCapacity = vehicle.vehicleModels.first.fuelCapacity;
+    _maxPower = vehicle.vehicleModels.first.maxPower;
+    _selectedColors = vehicle.color;
+    _abs = vehicle.vehicleModels.first.additionalInfo!.abs;
+    _accidental = vehicle.vehicleModels.first.additionalInfo!.accidental;
+    _adjustableExternalMirror =
+        vehicle.vehicleModels.first.additionalInfo!.adjustableExternalMirror;
+    _adjustableSteering =
+        vehicle.vehicleModels.first.additionalInfo!.adjustableSteering;
+    _adjustableSeats =
+        vehicle.vehicleModels.first.additionalInfo!.adjustableSeats;
+    _airConditioning =
+        vehicle.vehicleModels.first.additionalInfo!.airConditioning;
+    _alloyWheels = vehicle.vehicleModels.first.additionalInfo!.alloyWheels;
+    _auxCompatibility =
+        vehicle.vehicleModels.first.additionalInfo!.auxCompatibility;
+    _bluetooth = vehicle.vehicleModels.first.additionalInfo!.bluetooth;
+    _vehicleCertified =
+        vehicle.vehicleModels.first.additionalInfo!.vehicleCertified;
+    _cruiseControl = vehicle.vehicleModels.first.additionalInfo!.cruiseControl;
+    _lockSystem = vehicle.vehicleModels.first.additionalInfo!.lockSystem;
+    _navigationSystem =
+        vehicle.vehicleModels.first.additionalInfo!.navigationSystem;
+    _parkingSensors =
+        vehicle.vehicleModels.first.additionalInfo!.parkingSensors;
+    _powerSteering = vehicle.vehicleModels.first.additionalInfo!.powerSteering;
+    _powerWindows = vehicle.vehicleModels.first.additionalInfo!.powerWindows;
+    _amFmRadio = vehicle.vehicleModels.first.additionalInfo!.amFmRadio;
+    _rearParkingCamera =
+        vehicle.vehicleModels.first.additionalInfo!.rearParkingCamera;
+    _exchange = vehicle.vehicleModels.first.additionalInfo!.exchange;
+    _finance = vehicle.vehicleModels.first.additionalInfo!.finance;
+    _serviceHistory =
+        vehicle.vehicleModels.first.additionalInfo!.serviceHistory;
+    _sunroof = vehicle.vehicleModels.first.additionalInfo!.sunroof;
+    _usbCompatibility =
+        vehicle.vehicleModels.first.additionalInfo!.usbCompatibility;
+    _seatWarmer = vehicle.vehicleModels.first.additionalInfo!.seatWarmer;
+    _numberOfAirbags =
+        vehicle.vehicleModels.first.additionalInfo!.numberOfAirbags;
+    _batteryCondition =
+        vehicle.vehicleModels.first.additionalInfo!.batteryCondition;
+    _insuranceType = vehicle.vehicleModels.first.additionalInfo!.insuranceType;
+    _makeMonth = vehicle.vehicleModels.first.additionalInfo!.makeMonth;
+    _registrationPlace =
+        vehicle.vehicleModels.first.additionalInfo!.registrationPlace;
+    _tyreCondition = vehicle.vehicleModels.first.additionalInfo!.tyreCondition;
+    _selectedAdditionalColors =
+        vehicle.vehicleModels.first.additionalInfo!.color;
   }
 
-  String _name = '', _modelName = '', _wheelerType = '', _modelType = '';
-  int? _modelYear;
-  String _month = '';
-  VehicleCompanyModel? _selectedVendor;
-  String _vehicleName = '', _vehicleModelName = '';
-  String _fuelType = '', _transmissionType = '';
-  int _mileage = 0, _engineCapacity = 0, _fuelCapacity = 0, _maxPower = 0;
-  List<String> _selectedColors = [];
-  bool _abs = false;
-  bool _accidental = false;
-  bool _adjustableExternalMirror = false;
-  bool _adjustableSteering = false;
-  bool _adjustableSeats = false;
-  bool _airConditioning = false;
-  bool _alloyWheels = false;
-  bool _auxCompatibility = false;
-  bool _bluetooth = false;
-  bool _vehicleCertified = false;
-  bool _cruiseControl = false;
-  bool _lockSystem = false;
-  bool _navigationSystem = false;
-  bool _parkingSensors = false;
-  bool _powerSteering = false;
-  bool _powerWindows = false;
-  bool _amFmRadio = false;
-  bool _rearParkingCamera = false;
-  bool _exchange = false;
-  bool _finance = false;
-  bool _serviceHistory = false;
-  bool _sunroof = false;
-  bool _usbCompatibility = false;
-  bool _seatWarmer = false;
-  int _numberOfAirbags = 0;
-  String _batteryCondition = '',
-      _insuranceType = '',
-      _makeMonth = '',
-      _registrationPlace = '',
-      _tyreCondition = '';
-  List<String> _selectedAdditionalColors = [];
-
-  void _addVehicle() {
-    if (_vehicleFormKey.currentState!.validate()) {
-      _vehicleFormKey.currentState!.save();
-      print('Wheeler Type:.... $_wheelerType');
+  void _updateVehicle() {
+    if (_vehicleEditFormKey.currentState!.validate()) {
+      _vehicleEditFormKey.currentState!.save();
 
       AdditionalInfo? additionalInfo;
       if (_wheelerType == "FOUR_WHEELER") {
@@ -119,60 +183,60 @@ class _AddVehicleState extends State<AddVehicle> {
           numberOfAirbags: _numberOfAirbags,
           alloyWheels: _alloyWheels,
           auxCompatibility: _auxCompatibility,
-          batteryCondition: _batteryCondition,
+          batteryCondition: _batteryCondition!,
           bluetooth: _bluetooth,
           vehicleCertified: _vehicleCertified,
-          color: _selectedAdditionalColors,
+          color: _selectedAdditionalColors!,
           cruiseControl: _cruiseControl,
-          insuranceType: _insuranceType,
+          insuranceType: _insuranceType!,
           lockSystem: _lockSystem,
-          makeMonth: _makeMonth,
+          makeMonth: _makeMonth!,
           navigationSystem: _navigationSystem,
           parkingSensors: _parkingSensors,
           powerSteering: _powerSteering,
           powerWindows: _powerWindows,
           amFmRadio: _amFmRadio,
           rearParkingCamera: _rearParkingCamera,
-          registrationPlace: _registrationPlace,
+          registrationPlace: _registrationPlace!,
           exchange: _exchange,
           finance: _finance,
           serviceHistory: _serviceHistory,
-          tyreCondition: _tyreCondition,
+          tyreCondition: _tyreCondition!,
           sunroof: _sunroof,
           usbCompatibility: _usbCompatibility,
           seatWarmer: _seatWarmer,
         );
       }
 
-      final newVehicle = VehicleRequest(
-        id: '',
-        name: _name,
-        modelName: _modelName,
-        modelType: _modelType,
-        wheelerType: _wheelerType,
-        details: Details(modelYear: _modelYear!, month: _month),
+      final updatedVehicle = VehicleRequest(
+        id: widget.vehicle.id,
+        name: _name!,
+        modelName: _modelName!,
+        modelType: _modelType!,
+        wheelerType: _wheelerType!,
+        details: Details(modelYear: _modelYear!, month: _month!),
         vendor: _selectedVendor!.id,
-        color: _selectedColors,
+        color: _selectedColors!,
         vehicleModels: [
           VehicleModel1(
-            name: _vehicleName,
-            modelName: _vehicleModelName,
-            fuelType: _fuelType,
-            transmissionType: _transmissionType,
-            mileage: _mileage,
-            engineCapacity: _engineCapacity,
-            fuelCapacity: _fuelCapacity,
-            maxPower: _maxPower,
-            additionalInfo: additionalInfo,
-          )
+              name: _vehicleName!,
+              modelName: _vehicleModelName!,
+              fuelType: _fuelType!,
+              transmissionType: _transmissionType!,
+              mileage: _mileage!,
+              engineCapacity: _engineCapacity!,
+              fuelCapacity: _fuelCapacity!,
+              maxPower: _maxPower!,
+              additionalInfo: additionalInfo)
         ],
       );
 
       context
           .read<VehicleBloc>()
-          .add(VehicleEvent.addVehicle(vehicleData: newVehicle));
+          .add(UpdateVehicle(updatedVehicle: updatedVehicle));
+
       Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(context, "Vehicle added successfully.");
+        _showSuccessPopup(context, "Vehicle updated successfully.");
       });
     }
   }
@@ -208,7 +272,7 @@ class _AddVehicleState extends State<AddVehicle> {
             children: [
               _buildHeaderSection(),
               const SizedBox(height: 30),
-              _buildVehicleForm(state),
+              _buildUpdateForm(state),
             ],
           ),
         );
@@ -238,7 +302,7 @@ class _AddVehicleState extends State<AddVehicle> {
             const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
-                "Add Vehicle",
+                "Edit Vehicle",
                 style: TextStyle(
                     color: AppColors.blackColor,
                     fontSize: 18,
@@ -251,7 +315,7 @@ class _AddVehicleState extends State<AddVehicle> {
     );
   }
 
-  Widget _buildVehicleForm(VehicleState state) {
+  Widget _buildUpdateForm(VehicleState state) {
     return Padding(
       padding: const EdgeInsets.all(15.0),
       child: SizedBox(
@@ -262,7 +326,7 @@ class _AddVehicleState extends State<AddVehicle> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Form(
-            key: _vehicleFormKey,
+            key: _vehicleEditFormKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -280,10 +344,10 @@ class _AddVehicleState extends State<AddVehicle> {
                           children: [
                             Expanded(
                                 child: _buildFormField(
-                                    "Name", "", (value) => _name = value!)),
+                                    "Name", _name!, (value) => _name = value!)),
                             const SizedBox(width: 15),
                             Expanded(
-                              child: _buildFormField("Model Name", "",
+                              child: _buildFormField("Model Name", _modelName!,
                                   (value) => _modelName = value!),
                             ),
                           ],
@@ -294,7 +358,7 @@ class _AddVehicleState extends State<AddVehicle> {
                             Expanded(
                               child: _buildDropdownField(
                                 "Wheeler Type",
-                                _wheelerType,
+                                _wheelerType!,
                                 wheelerType,
                                 (value) {
                                   setState(() {
@@ -311,7 +375,7 @@ class _AddVehicleState extends State<AddVehicle> {
                             Expanded(
                               child: _buildDropdownField(
                                   "Model Type",
-                                  _modelType,
+                                  _modelType!,
                                   _wheelerType == "TWO_WHEELER"
                                       ? ["two-wheeler"]
                                       : modelTypes
@@ -337,7 +401,7 @@ class _AddVehicleState extends State<AddVehicle> {
                             const SizedBox(width: 15),
                             Expanded(
                               child: _buildDropdownField(
-                                  'Month', _month, months, (value) {
+                                  'Month', _month!, months, (value) {
                                 setState(() => _month = value!);
                               }, false),
                             )
@@ -351,7 +415,7 @@ class _AddVehicleState extends State<AddVehicle> {
                             Expanded(
                               child: _buildMultiSelectColors(
                                 label: "Color",
-                                selectedColors: _selectedColors,
+                                selectedColors: _selectedColors!,
                                 onSelectionChanged: (newColors) {
                                   setState(() {
                                     _selectedColors = newColors;
@@ -379,11 +443,15 @@ class _AddVehicleState extends State<AddVehicle> {
                         Row(
                           children: [
                             Expanded(
-                                child: _buildFormField("Vehicle Name", "",
+                                child: _buildFormField(
+                                    "Vehicle Name",
+                                    _vehicleName!,
                                     (value) => _vehicleName = value!)),
                             const SizedBox(width: 15),
                             Expanded(
-                              child: _buildFormField("Vehicle Model Name", "",
+                              child: _buildFormField(
+                                  "Vehicle Model Name",
+                                  _vehicleModelName!,
                                   (value) => _vehicleModelName = value!),
                             ),
                           ],
@@ -394,7 +462,7 @@ class _AddVehicleState extends State<AddVehicle> {
                             Expanded(
                               child: _buildDropdownField(
                                   'Transmission Type',
-                                  _transmissionType,
+                                  _transmissionType!,
                                   transmissionTypes, (value) {
                                 setState(() => _transmissionType = value!);
                               }, false),
@@ -402,7 +470,7 @@ class _AddVehicleState extends State<AddVehicle> {
                             const SizedBox(width: 15),
                             Expanded(
                               child: _buildDropdownField(
-                                  'Fuel Type', _fuelType, fuelTypes, (value) {
+                                  'Fuel Type', _fuelType!, fuelTypes, (value) {
                                 setState(() => _fuelType = value!);
                               }, false),
                             )
@@ -412,13 +480,15 @@ class _AddVehicleState extends State<AddVehicle> {
                         Row(
                           children: [
                             Expanded(
-                                child: _buildFormField("Mileage", "",
+                                child: _buildFormField(
+                                    "Mileage",
+                                    _mileage.toString(),
                                     (value) => _mileage = int.parse(value!))),
                             const SizedBox(width: 15),
                             Expanded(
                               child: _buildFormField(
                                   "Engine Capacity",
-                                  "",
+                                  _engineCapacity.toString(),
                                   (value) =>
                                       _engineCapacity = int.parse(value!)),
                             ),
@@ -430,12 +500,14 @@ class _AddVehicleState extends State<AddVehicle> {
                             Expanded(
                                 child: _buildFormField(
                                     "Fuel Capacity",
-                                    "",
+                                    _fuelCapacity.toString(),
                                     (value) =>
                                         _fuelCapacity = int.parse(value!))),
                             const SizedBox(width: 15),
                             Expanded(
-                              child: _buildFormField("Maximum Power", "",
+                              child: _buildFormField(
+                                  "Maximum Power",
+                                  _maxPower.toString(),
                                   (value) => _maxPower = int.parse(value!)),
                             ),
                           ],
@@ -461,18 +533,20 @@ class _AddVehicleState extends State<AddVehicle> {
                               Expanded(
                                   child: _buildFormField(
                                       "Number of Airbags",
-                                      "",
+                                      _numberOfAirbags.toString(),
                                       (value) => _numberOfAirbags =
                                           int.parse(value!))),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildFormField(
                                       "Battery Condition",
-                                      "",
+                                      _batteryCondition!,
                                       (value) => _batteryCondition = value!)),
                               const SizedBox(width: 15),
                               Expanded(
-                                  child: _buildFormField("Insurance Type", "",
+                                  child: _buildFormField(
+                                      "Insurance Type",
+                                      _insuranceType!,
                                       (value) => _insuranceType = value!)),
                             ],
                           ),
@@ -481,7 +555,7 @@ class _AddVehicleState extends State<AddVehicle> {
                             children: [
                               Expanded(
                                 child: _buildDropdownField(
-                                    'Make Month', _makeMonth, months, (value) {
+                                    'Make Month', _makeMonth!, months, (value) {
                                   setState(() => _makeMonth = value!);
                                 }, false),
                               ),
@@ -489,11 +563,13 @@ class _AddVehicleState extends State<AddVehicle> {
                               Expanded(
                                   child: _buildFormField(
                                       "Registration Place",
-                                      "",
+                                      _registrationPlace!,
                                       (value) => _registrationPlace = value!)),
                               const SizedBox(width: 15),
                               Expanded(
-                                  child: _buildFormField("Tyre Condition", "",
+                                  child: _buildFormField(
+                                      "Tyre Condition",
+                                      _tyreCondition!,
                                       (value) => _tyreCondition = value!)),
                             ],
                           ),
@@ -503,7 +579,7 @@ class _AddVehicleState extends State<AddVehicle> {
                               Expanded(
                                 child: _buildMultiSelectColors(
                                   label: "Color",
-                                  selectedColors: _selectedAdditionalColors,
+                                  selectedColors: _selectedAdditionalColors!,
                                   onSelectionChanged: (newColors) {
                                     setState(() {
                                       _selectedAdditionalColors = newColors;
@@ -516,21 +592,29 @@ class _AddVehicleState extends State<AddVehicle> {
                           Row(
                             children: [
                               Expanded(
-                                  child: _buildCheckboxField(
-                                      "ABS", _abs, (value) => _abs = value!)),
+                                child: _buildCheckboxField(
+                                  label: "ABS",
+                                  value: _abs,
+                                  onChanged: (newValue) =>
+                                      setState(() => _abs = newValue),
+                                ),
+                              ),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                child: _buildCheckboxField(
+                                    label: "Accidental",
+                                    value: _accidental,
+                                    onChanged: (newValue) =>
+                                        setState(() => _accidental = newValue)),
+                              ),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Accidental",
-                                      _accidental,
-                                      (value) => _accidental = value!)),
-                              const SizedBox(width: 15),
-                              Expanded(
-                                  child: _buildCheckboxField(
-                                      "Adjustable External Mirror",
-                                      _adjustableExternalMirror,
-                                      (value) =>
-                                          _adjustableExternalMirror = value!)),
+                                label: "Adjustable External Mirror",
+                                value: _adjustableExternalMirror,
+                                onChanged: (newValue) => setState(
+                                    () => _adjustableExternalMirror = newValue),
+                              )),
                             ],
                           ),
                           const SizedBox(height: 15),
@@ -538,21 +622,27 @@ class _AddVehicleState extends State<AddVehicle> {
                             children: [
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Adjustable Steering",
-                                      _adjustableSteering,
-                                      (value) => _adjustableSteering = value!)),
+                                label: "Adjustable Steering",
+                                value: _adjustableSteering,
+                                onChanged: (newValue) => setState(
+                                    () => _adjustableSteering = newValue),
+                              )),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Adjustable Seats",
-                                      _adjustableSeats,
-                                      (value) => _adjustableSeats = value!)),
+                                label: "Adjustable Seats",
+                                value: _adjustableSeats,
+                                onChanged: (newValue) =>
+                                    setState(() => _adjustableSeats = newValue),
+                              )),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Air Conditioning",
-                                      _airConditioning,
-                                      (value) => _airConditioning = value!)),
+                                label: "Air Conditioning",
+                                value: _airConditioning,
+                                onChanged: (newValue) =>
+                                    setState(() => _airConditioning = newValue),
+                              )),
                             ],
                           ),
                           const SizedBox(height: 15),
@@ -560,21 +650,25 @@ class _AddVehicleState extends State<AddVehicle> {
                             children: [
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Alloy Wheels",
-                                      _alloyWheels,
-                                      (value) => _alloyWheels = value!)),
+                                label: "Alloy Wheels",
+                                value: _alloyWheels,
+                                onChanged: (newValue) =>
+                                    setState(() => _alloyWheels = newValue),
+                              )),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Aux Compatibility",
-                                      _auxCompatibility,
-                                      (value) => _auxCompatibility = value!)),
+                                      label: "Aux Compatibility",
+                                      value: _auxCompatibility,
+                                      onChanged: (newValue) => setState(
+                                          () => _auxCompatibility = newValue))),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Bluetooth",
-                                      _bluetooth,
-                                      (value) => _bluetooth = value!)),
+                                      label: "Bluetooth",
+                                      value: _bluetooth,
+                                      onChanged: (value) =>
+                                          _bluetooth = value)),
                             ],
                           ),
                           const SizedBox(height: 15),
@@ -582,21 +676,24 @@ class _AddVehicleState extends State<AddVehicle> {
                             children: [
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Vehicle Certified",
-                                      _vehicleCertified,
-                                      (value) => _vehicleCertified = value!)),
+                                      label: "Vehicle Certified",
+                                      value: _vehicleCertified,
+                                      onChanged: (value) =>
+                                          _vehicleCertified = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Cruise Control",
-                                      _cruiseControl,
-                                      (value) => _cruiseControl = value!)),
+                                      label: "Cruise Control",
+                                      value: _cruiseControl,
+                                      onChanged: (value) =>
+                                          _cruiseControl = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Lock System",
-                                      _lockSystem,
-                                      (value) => _lockSystem = value!)),
+                                      label: "Lock System",
+                                      value: _lockSystem,
+                                      onChanged: (value) =>
+                                          _lockSystem = value)),
                             ],
                           ),
                           const SizedBox(height: 15),
@@ -604,21 +701,24 @@ class _AddVehicleState extends State<AddVehicle> {
                             children: [
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Navigation System",
-                                      _navigationSystem,
-                                      (value) => _navigationSystem = value!)),
+                                      label: "Navigation System",
+                                      value: _navigationSystem,
+                                      onChanged: (value) =>
+                                          _navigationSystem = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Parking Sensors",
-                                      _parkingSensors,
-                                      (value) => _parkingSensors = value!)),
+                                      label: "Parking Sensors",
+                                      value: _parkingSensors,
+                                      onChanged: (value) =>
+                                          _parkingSensors = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Power Steering",
-                                      _powerSteering,
-                                      (value) => _powerSteering = value!)),
+                                      label: "Power Steering",
+                                      value: _powerSteering,
+                                      onChanged: (value) =>
+                                          _powerSteering = value)),
                             ],
                           ),
                           const SizedBox(height: 15),
@@ -626,21 +726,24 @@ class _AddVehicleState extends State<AddVehicle> {
                             children: [
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Power Windows",
-                                      _powerWindows,
-                                      (value) => _powerWindows = value!)),
+                                      label: "Power Windows",
+                                      value: _powerWindows,
+                                      onChanged: (value) =>
+                                          _powerWindows = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "AmFm Radio",
-                                      _amFmRadio,
-                                      (value) => _amFmRadio = value!)),
+                                      label: "AmFm Radio",
+                                      value: _amFmRadio,
+                                      onChanged: (value) =>
+                                          _amFmRadio = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Rear Parking Camera",
-                                      _rearParkingCamera,
-                                      (value) => _rearParkingCamera = value!)),
+                                      label: "Rear Parking Camera",
+                                      value: _rearParkingCamera,
+                                      onChanged: (value) =>
+                                          _rearParkingCamera = value)),
                             ],
                           ),
                           const SizedBox(height: 15),
@@ -648,39 +751,46 @@ class _AddVehicleState extends State<AddVehicle> {
                             children: [
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Exchange",
-                                      _exchange,
-                                      (value) => _exchange = value!)),
-                              const SizedBox(width: 15),
-                              Expanded(
-                                  child: _buildCheckboxField("Finance",
-                                      _finance, (value) => _finance = value!)),
+                                      label: "Exchange",
+                                      value: _exchange,
+                                      onChanged: (value) => _exchange = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Service History",
-                                      _serviceHistory,
-                                      (value) => _serviceHistory = value!)),
+                                      label: "Finance",
+                                      value: _finance,
+                                      onChanged: (value) => _finance = value)),
+                              const SizedBox(width: 15),
+                              Expanded(
+                                  child: _buildCheckboxField(
+                                      label: "Service History",
+                                      value: _serviceHistory,
+                                      onChanged: (value) =>
+                                          _serviceHistory = value)),
                             ],
                           ),
                           const SizedBox(height: 15),
                           Row(
                             children: [
                               Expanded(
-                                  child: _buildCheckboxField("Sunroof",
-                                      _sunroof, (value) => _sunroof = value!)),
+                                  child: _buildCheckboxField(
+                                      label: "Sunroof",
+                                      value: _sunroof,
+                                      onChanged: (value) => _sunroof = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "USB Compatibility",
-                                      _usbCompatibility,
-                                      (value) => _usbCompatibility = value!)),
+                                      label: "USB Compatibility",
+                                      value: _usbCompatibility,
+                                      onChanged: (value) =>
+                                          _usbCompatibility = value)),
                               const SizedBox(width: 15),
                               Expanded(
                                   child: _buildCheckboxField(
-                                      "Seat Warmer",
-                                      _seatWarmer,
-                                      (value) => _seatWarmer = value!)),
+                                      label: "Seat Warmer",
+                                      value: _seatWarmer,
+                                      onChanged: (value) =>
+                                          _seatWarmer = value)),
                             ],
                           )
                         ],
@@ -701,7 +811,8 @@ class _AddVehicleState extends State<AddVehicle> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: state is VehicleLoading ? null : _addVehicle,
+                      onPressed:
+                          state is VehicleLoading ? null : _updateVehicle,
                       child: state is VehicleLoading
                           ? const SizedBox(
                               height: 20,
@@ -709,7 +820,7 @@ class _AddVehicleState extends State<AddVehicle> {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
                             )
-                          : const Text("Add Vehicle",
+                          : const Text("Update Vehicle",
                               style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
@@ -725,10 +836,11 @@ class _AddVehicleState extends State<AddVehicle> {
 
   Widget _buildFormField(
     String label,
-    String initialValue,
+    String? initialValue,
     Function(String?) onSaved,
   ) {
     return TextFormField(
+      initialValue: initialValue ?? '',
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
@@ -768,7 +880,8 @@ class _AddVehicleState extends State<AddVehicle> {
           : items
               .map((type) => DropdownMenuItem(value: type, child: Text(type)))
               .toList(),
-      onChanged: isDisabled ? null : onChanged,
+      onChanged:
+          isDisabled ? null : (value) => setState(() => onChanged(value!)),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return "$label is required";
@@ -782,8 +895,16 @@ class _AddVehicleState extends State<AddVehicle> {
     return BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
       builder: (context, state) {
         if (state is VehicleCompanyLoaded) {
+          // Ensure selected vendor exists in the dropdown list
+          final existingVendor = state.companies.firstWhere(
+            (vendor) => vendor.id == _selectedVendor?.id,
+            orElse: () => state.companies.isNotEmpty
+                ? state.companies.first
+                : VehicleCompanyModel(id: "", name: "No Vendor"),
+          );
+
           return DropdownButtonFormField<VehicleCompanyModel>(
-            value: _selectedVendor,
+            value: existingVendor.id.isNotEmpty ? existingVendor : null,
             decoration: InputDecoration(
               labelText: "Vendor",
               border:
@@ -792,23 +913,25 @@ class _AddVehicleState extends State<AddVehicle> {
             items: state.companies.map((vendor) {
               return DropdownMenuItem(
                 value: vendor,
-                child: Text(vendor.name!), // ✅ Display Name
+                child: Text(vendor.name!), // ✅ Ensure name is valid
               );
             }).toList(),
             onChanged: (value) {
               setState(() {
-                _selectedVendor = value; // ✅ Store Vendor Object
+                _selectedVendor = value!; // ✅ Update selected vendor
               });
             },
             validator: (value) {
-              if (value == null) {
+              if (value == null || value.id.isEmpty) {
                 return "Please select a vendor";
               }
               return null;
             },
           );
+        } else if (state is VehicleCompanyLoading) {
+          return const Center(child: CircularProgressIndicator());
         } else {
-          return Text("No vendors available");
+          return const Text("No vendors available");
         }
       },
     );
@@ -822,7 +945,8 @@ class _AddVehicleState extends State<AddVehicle> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8.0,
           children: availableColors.map((color) {
@@ -830,12 +954,14 @@ class _AddVehicleState extends State<AddVehicle> {
               label: Text(color),
               selected: selectedColors.contains(color),
               onSelected: (selected) {
-                List<String> updatedColors = List.from(selectedColors);
-                selected
-                    ? updatedColors.add(color)
-                    : updatedColors.remove(color);
+                setState(() {
+                  List<String> updatedColors = List.from(selectedColors);
+                  selected
+                      ? updatedColors.add(color)
+                      : updatedColors.remove(color);
 
-                onSelectionChanged(updatedColors);
+                  onSelectionChanged(updatedColors);
+                });
               },
             );
           }).toList(),
@@ -844,16 +970,22 @@ class _AddVehicleState extends State<AddVehicle> {
     );
   }
 
-  Widget _buildCheckboxField(
-      String label, bool value, Function(bool?) onChanged) {
+  Widget _buildCheckboxField({
+    required String label,
+    required bool value,
+    required Function(bool) onChanged,
+  }) {
     return CheckboxListTile(
       title: Text(label),
       value: value,
       onChanged: (newValue) {
-        setState(() {
-          onChanged(newValue);
-        });
+        if (newValue != null) {
+          setState(() {
+            onChanged(newValue);
+          });
+        }
       },
+      controlAffinity: ListTileControlAffinity.leading,
     );
   }
 

@@ -10,13 +10,16 @@ import 'package:ado_dad_admin/features/users/ui/add_user.dart';
 import 'package:ado_dad_admin/features/users/ui/user_edit.dart';
 import 'package:ado_dad_admin/features/users/ui/user_list.dart';
 import 'package:ado_dad_admin/features/vehicle/ui/vehicle_add.dart';
+import 'package:ado_dad_admin/features/vehicle/ui/vehicle_edit.dart';
 import 'package:ado_dad_admin/features/vehicle/ui/vehicle_list.dart';
+import 'package:ado_dad_admin/features/vehicle/ui/vehicle_view.dart';
 import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_add.dart';
 import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_edit.dart';
 import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_list.dart';
 import 'package:ado_dad_admin/features/vehicle_company/ui/vehicle_company_view.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/models/vehicle_company_model.dart';
+import 'package:ado_dad_admin/models/vehicle_post_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -88,6 +91,21 @@ class AppRoutes {
               return NoTransitionPage(
                   child:
                       VehicleCompanyDetailView(vehiclecompany: vehiclecompany));
+            },
+          ),
+          GoRoute(
+            path: '/edit-vehicle',
+            pageBuilder: (context, state) {
+              final vehicle = state.extra as VehicleRequest;
+              return NoTransitionPage(child: EditVehicle(vehicle: vehicle));
+            },
+          ),
+          GoRoute(
+            path: '/view-vehicle',
+            pageBuilder: (context, state) {
+              final vehicle = state.extra as VehicleRequest;
+              return NoTransitionPage(
+                  child: VehicleDetailView(vehicle: vehicle));
             },
           ),
         ],

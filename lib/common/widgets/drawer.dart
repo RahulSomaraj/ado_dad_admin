@@ -43,13 +43,13 @@ class _AdminDrawerState extends State<AdminDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       width: 500,
-      backgroundColor: Colors.grey[300],
+      backgroundColor: AppColors.primaryColor,
       shape: const ContinuousRectangleBorder(),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Image.asset('assets/images/Ado-dad.png'),
+            child: Image.asset('assets/images/ado-dad-logo.png'),
           ),
           const Divider(),
           _buildDrawerMenu(),
@@ -117,7 +117,12 @@ class _AdminDrawerState extends State<AdminDrawer> {
 
   Widget _buildDrawerItem(int index, String route, String image, String title) {
     return ListTile(
-      leading: Image.asset(image),
+      leading: Image.asset(
+        image,
+        color: selectedIndex == index
+            ? AppColors.primaryColor
+            : AppColors.blackColor,
+      ),
       title: Text(
         title,
         style: AppTextStyle.drawerTextstyle.copyWith(
@@ -129,7 +134,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         ),
       ),
       tileColor:
-          selectedIndex == index ? AppColors.greyColor2 : Colors.transparent,
+          selectedIndex == index ? AppColors.logoColor : Colors.transparent,
       onTap: () {
         setState(() {
           selectedIndex = index;

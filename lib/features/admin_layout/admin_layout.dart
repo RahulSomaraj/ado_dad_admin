@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/common/widgets/drawer.dart';
@@ -48,6 +49,7 @@ class _AdminLayoutState extends State<AdminLayout> {
     }
 
     return Scaffold(
+      backgroundColor: AppColors.scaffoldColor,
       body: Row(
         children: [
           SizedBox(

@@ -32,7 +32,7 @@ class _ShowroomState extends State<Showroom> {
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -43,7 +43,7 @@ class _ShowroomState extends State<Showroom> {
             const Text(
               "Showroom Management",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.blackColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -63,9 +63,9 @@ class _ShowroomState extends State<Showroom> {
       width: 200,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.blackColor)),
       child: Row(
         children: [
           const SizedBox(width: 8),
@@ -106,8 +106,8 @@ class _ShowroomState extends State<Showroom> {
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryColor,
-          foregroundColor: AppColors.blackColor,
+          backgroundColor: AppColors.blackColor,
+          foregroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -121,7 +121,7 @@ class _ShowroomState extends State<Showroom> {
           children: [
             Icon(
               Icons.add,
-              color: Colors.black,
+              color: AppColors.primaryColor,
               size: 20,
             ),
             SizedBox(width: 8),
@@ -171,7 +171,8 @@ class _ShowroomState extends State<Showroom> {
               child: DataTable(
                 columnSpacing: 100,
                 headingRowColor: WidgetStateColor.resolveWith(
-                    (states) => AppColors.greyColor2),
+                    (states) => Color.fromARGB(66, 144, 140, 140)),
+                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
                 dataRowMinHeight: 40,
                 dataRowMaxHeight: 40,
                 columns: const [

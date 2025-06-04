@@ -1,7 +1,7 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle/bloc/vehicle_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_company/bloc/vehicle_company_bloc.dart';
-import 'package:ado_dad_admin/models/vehicle_model.dart';
+import 'package:ado_dad_admin/models/vehicle_post_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -36,13 +36,12 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
-  /// Builds the top header section
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -52,7 +51,7 @@ class _VehicleListState extends State<VehicleList> {
             const Text(
               "Vehicles Management",
               style: TextStyle(
-                color: Colors.white,
+                color: AppColors.blackColor,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -67,15 +66,14 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
-  /// Builds the search bar
   Widget _buildSearchBar() {
     return Container(
       width: 200,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.blackColor)),
       child: Row(
         children: [
           const SizedBox(width: 8),
@@ -106,15 +104,14 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
-  /// Builds the "Add Vehicle" button
   Widget _buildAddButton() {
     return SizedBox(
       width: 160,
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          backgroundColor: AppColors.blackColor,
+          foregroundColor: AppColors.primaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -124,7 +121,7 @@ class _VehicleListState extends State<VehicleList> {
         onPressed: () => context.push('/add-vehicle'),
         child: const Row(
           children: [
-            Icon(Icons.add, color: Colors.black, size: 20),
+            Icon(Icons.add, color: AppColors.primaryColor, size: 20),
             SizedBox(width: 8),
             Text('Add Vehicle'),
           ],
@@ -133,7 +130,6 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
-  /// Builds the list of vehicles using BlocBuilder
   Widget _buildVehicleList() {
     return BlocBuilder<VehicleBloc, VehicleState>(
       builder: (context, state) {
@@ -158,33 +154,37 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
-  /// Builds the vehicle table
-  Widget _buildVehicleTable(List<VehicleModel> vehicles, int currentPage) {
+  Widget _buildVehicleTable(List<VehicleRequest> vehicles, int currentPage) {
     return Padding(
-      padding: const EdgeInsets.all(20),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Card(
-          elevation: 3,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: DataTable(
-              columnSpacing: 80,
-              headingRowColor: WidgetStateColor.resolveWith(
-                  (states) => AppColors.greyColor2),
-              dataRowMinHeight: 55,
-              dataRowMaxHeight: 55,
-              columns: _buildTableColumns(),
-              rows: vehicles
-                  .asMap()
-                  .entries
-                  .map(
-                    (entry) =>
-                        _buildVehicleRow(entry.key, entry.value, currentPage),
-                  )
-                  .toList(),
+      padding: const EdgeInsets.all(15),
+      child: Container(
+        width: double.infinity,
+        // constraints: const BoxConstraints(maxWidth: 1200),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Card(
+            elevation: 3,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: DataTable(
+                columnSpacing: 105,
+                headingRowColor: WidgetStateColor.resolveWith(
+                    (states) => const Color.fromARGB(66, 144, 140, 140)),
+                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+                dataRowMinHeight: 55,
+                dataRowMaxHeight: 55,
+                columns: _buildTableColumns(),
+                rows: vehicles
+                    .asMap()
+                    .entries
+                    .map(
+                      (entry) =>
+                          _buildVehicleRow(entry.key, entry.value, currentPage),
+                    )
+                    .toList(),
+              ),
             ),
           ),
         ),
@@ -192,59 +192,51 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
-  /// Defines table column headers
   List<DataColumn> _buildTableColumns() {
     return const [
       DataColumn(
           label:
               Padding(padding: EdgeInsets.only(left: 30), child: Text('ID'))),
-      DataColumn(label: Text('Name')),
-      DataColumn(label: Text('Model Name')),
+      DataColumn(label: Text('Vehicle Name & Model')),
       DataColumn(label: Text('Model Type')),
-      DataColumn(label: Text('Wheeler Type')),
       DataColumn(label: Text('Company Name')),
-      DataColumn(label: Text('Fuel Type')),
-      DataColumn(label: Text('Transmission Type')),
-      DataColumn(label: Text('Model Year')),
-      DataColumn(label: Text('Month')),
-      DataColumn(label: Text('Mileage')),
-      DataColumn(label: Text('Engine Capacity')),
-      DataColumn(label: Text('Fuel Capacity')),
-      DataColumn(label: Text('Maximum Power')),
+      DataColumn(label: Text('Transmission & Fuel Type')),
       DataColumn(label: Text('Actions')),
     ];
   }
 
-  /// Builds individual vehicle rows in the table
-  DataRow _buildVehicleRow(int index, VehicleModel vehicle, int currentPage) {
+  DataRow _buildVehicleRow(int index, VehicleRequest vehicle, int currentPage) {
     int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
     return DataRow(
       cells: [
         DataCell(Padding(
             padding: const EdgeInsets.only(left: 30),
             child: Text('$rowNumber'))),
-        DataCell(Text(vehicle.vehicleVariants.first.name)),
-        DataCell(Text(vehicle.vehicleVariants.first.modelName)),
+        DataCell(Text(
+          '${vehicle.vehicleModels.first.name}/${vehicle.vehicleModels.first.modelName}',
+          overflow: TextOverflow.ellipsis,
+        )),
         DataCell(Text(vehicle.modelType)),
-        DataCell(Text(vehicle.wheelerType)),
-        DataCell(Text(vehicle.vendor.name)),
-        DataCell(Text(vehicle.vehicleVariants.first.fuelType)),
-        DataCell(Text(vehicle.vehicleVariants.first.transmissionType)),
-        DataCell(Text(vehicle.details.modelYear.toString())),
-        DataCell(Text(vehicle.details.month ?? 'N/A')),
-        DataCell(Text(vehicle.vehicleVariants.first.mileage.toString())),
-        DataCell(Text(vehicle.vehicleVariants.first.engineCapacity.toString())),
-        DataCell(Text(vehicle.vehicleVariants.first.fuelCapacity.toString())),
-        DataCell(Text(vehicle.vehicleVariants.first.maxPower.toString())),
+        DataCell(Text(vehicle.vendor)),
+        DataCell(Text(
+          '${vehicle.vehicleModels.first.transmissionType}/${vehicle.vehicleModels.first.fuelType}',
+          overflow: TextOverflow.ellipsis,
+        )),
         DataCell(
           Row(
             children: [
               IconButton(
-                  icon: const Icon(Icons.edit, color: Colors.black),
-                  onPressed: () {}),
+                icon: const Icon(Icons.edit, color: Colors.black),
+                onPressed: () {
+                  context.push('/edit-vehicle', extra: vehicle);
+                },
+              ),
               IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.black),
-                  onPressed: () {}),
+                  icon: const Icon(Icons.remove_red_eye_outlined,
+                      color: Colors.black),
+                  onPressed: () {
+                    context.push('/view-vehicle', extra: vehicle);
+                  }),
             ],
           ),
         ),
@@ -252,27 +244,73 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
-  /// Builds the pagination bar
   Widget _buildPaginationBar(int currentPage, int totalPages) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        const Text("Rows per page: "),
-        DropdownButton<int>(
-          value: rowsPerPage,
-          items: [10, 20]
-              .map((e) => DropdownMenuItem(value: e, child: Text(e.toString())))
-              .toList(),
-          onChanged: (value) => setState(() => rowsPerPage = value!),
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text("Rows per page: "),
+            const SizedBox(width: 8),
+            DropdownButton<int>(
+              value: rowsPerPage,
+              dropdownColor: Colors.white,
+              items: [10, 20].map((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    rowsPerPage = value;
+                  });
+                  context
+                      .read<VehicleBloc>()
+                      .add(FetchAllVehicles(page: 1, limit: rowsPerPage));
+                }
+              },
+            ),
+            const SizedBox(width: 20),
+            GestureDetector(
+              onTap: currentPage > 1
+                  ? () {
+                      context.read<VehicleBloc>().add(FetchAllVehicles(
+                          page: currentPage - 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_left,
+                size: 28,
+                color: currentPage > 1 ? Colors.black : Colors.grey[400],
+              ),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              "Page $currentPage of $totalPages",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 15),
+            GestureDetector(
+              onTap: currentPage < totalPages
+                  ? () {
+                      context.read<VehicleBloc>().add(FetchAllVehicles(
+                          page: currentPage + 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_right,
+                size: 28,
+                color:
+                    currentPage < totalPages ? Colors.black : Colors.grey[400],
+              ),
+            ),
+          ],
         ),
-        IconButton(
-            icon: const Icon(Icons.chevron_left),
-            onPressed: currentPage > 1 ? () {} : null),
-        Text("Page $currentPage of $totalPages"),
-        IconButton(
-            icon: const Icon(Icons.chevron_right),
-            onPressed: currentPage < totalPages ? () {} : null),
-      ],
+      ),
     );
   }
 }

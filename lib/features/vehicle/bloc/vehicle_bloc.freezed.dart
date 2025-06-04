@@ -22,6 +22,9 @@ mixin _$VehicleEvent {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllVehicles,
     required TResult Function(VehicleRequest vehicleData) addVehicle,
+    required TResult Function(VehicleRequest updatedVehicle)
+        updateVehicleCompany,
+    required TResult Function(String vehicleId) deleteVehicle,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -30,6 +33,8 @@ mixin _$VehicleEvent {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult? Function(VehicleRequest vehicleData)? addVehicle,
+    TResult? Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult? Function(String vehicleId)? deleteVehicle,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -38,6 +43,8 @@ mixin _$VehicleEvent {
     TResult Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult Function(VehicleRequest vehicleData)? addVehicle,
+    TResult Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult Function(String vehicleId)? deleteVehicle,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -46,6 +53,8 @@ mixin _$VehicleEvent {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllVehicles value) fetchAllVehicles,
     required TResult Function(AddVehicle value) addVehicle,
+    required TResult Function(UpdateVehicle value) updateVehicleCompany,
+    required TResult Function(DeleteVehicle value) deleteVehicle,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -53,6 +62,8 @@ mixin _$VehicleEvent {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult? Function(AddVehicle value)? addVehicle,
+    TResult? Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult? Function(DeleteVehicle value)? deleteVehicle,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -60,6 +71,8 @@ mixin _$VehicleEvent {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult Function(AddVehicle value)? addVehicle,
+    TResult Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult Function(DeleteVehicle value)? deleteVehicle,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -131,6 +144,9 @@ class _$StartedImpl implements _Started {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllVehicles,
     required TResult Function(VehicleRequest vehicleData) addVehicle,
+    required TResult Function(VehicleRequest updatedVehicle)
+        updateVehicleCompany,
+    required TResult Function(String vehicleId) deleteVehicle,
   }) {
     return started();
   }
@@ -142,6 +158,8 @@ class _$StartedImpl implements _Started {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult? Function(VehicleRequest vehicleData)? addVehicle,
+    TResult? Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult? Function(String vehicleId)? deleteVehicle,
   }) {
     return started?.call();
   }
@@ -153,6 +171,8 @@ class _$StartedImpl implements _Started {
     TResult Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult Function(VehicleRequest vehicleData)? addVehicle,
+    TResult Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult Function(String vehicleId)? deleteVehicle,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -167,6 +187,8 @@ class _$StartedImpl implements _Started {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllVehicles value) fetchAllVehicles,
     required TResult Function(AddVehicle value) addVehicle,
+    required TResult Function(UpdateVehicle value) updateVehicleCompany,
+    required TResult Function(DeleteVehicle value) deleteVehicle,
   }) {
     return started(this);
   }
@@ -177,6 +199,8 @@ class _$StartedImpl implements _Started {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult? Function(AddVehicle value)? addVehicle,
+    TResult? Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult? Function(DeleteVehicle value)? deleteVehicle,
   }) {
     return started?.call(this);
   }
@@ -187,6 +211,8 @@ class _$StartedImpl implements _Started {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult Function(AddVehicle value)? addVehicle,
+    TResult Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult Function(DeleteVehicle value)? deleteVehicle,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -294,6 +320,9 @@ class _$FetchAllVehiclesImpl implements FetchAllVehicles {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllVehicles,
     required TResult Function(VehicleRequest vehicleData) addVehicle,
+    required TResult Function(VehicleRequest updatedVehicle)
+        updateVehicleCompany,
+    required TResult Function(String vehicleId) deleteVehicle,
   }) {
     return fetchAllVehicles(page, limit, searchQuery);
   }
@@ -305,6 +334,8 @@ class _$FetchAllVehiclesImpl implements FetchAllVehicles {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult? Function(VehicleRequest vehicleData)? addVehicle,
+    TResult? Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult? Function(String vehicleId)? deleteVehicle,
   }) {
     return fetchAllVehicles?.call(page, limit, searchQuery);
   }
@@ -316,6 +347,8 @@ class _$FetchAllVehiclesImpl implements FetchAllVehicles {
     TResult Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult Function(VehicleRequest vehicleData)? addVehicle,
+    TResult Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult Function(String vehicleId)? deleteVehicle,
     required TResult orElse(),
   }) {
     if (fetchAllVehicles != null) {
@@ -330,6 +363,8 @@ class _$FetchAllVehiclesImpl implements FetchAllVehicles {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllVehicles value) fetchAllVehicles,
     required TResult Function(AddVehicle value) addVehicle,
+    required TResult Function(UpdateVehicle value) updateVehicleCompany,
+    required TResult Function(DeleteVehicle value) deleteVehicle,
   }) {
     return fetchAllVehicles(this);
   }
@@ -340,6 +375,8 @@ class _$FetchAllVehiclesImpl implements FetchAllVehicles {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult? Function(AddVehicle value)? addVehicle,
+    TResult? Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult? Function(DeleteVehicle value)? deleteVehicle,
   }) {
     return fetchAllVehicles?.call(this);
   }
@@ -350,6 +387,8 @@ class _$FetchAllVehiclesImpl implements FetchAllVehicles {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult Function(AddVehicle value)? addVehicle,
+    TResult Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult Function(DeleteVehicle value)? deleteVehicle,
     required TResult orElse(),
   }) {
     if (fetchAllVehicles != null) {
@@ -398,10 +437,10 @@ class __$$AddVehicleImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? vehicleData = freezed,
+    Object? vehicleData = null,
   }) {
     return _then(_$AddVehicleImpl(
-      vehicleData: freezed == vehicleData
+      vehicleData: null == vehicleData
           ? _value.vehicleData
           : vehicleData // ignore: cast_nullable_to_non_nullable
               as VehicleRequest,
@@ -427,13 +466,12 @@ class _$AddVehicleImpl implements AddVehicle {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$AddVehicleImpl &&
-            const DeepCollectionEquality()
-                .equals(other.vehicleData, vehicleData));
+            (identical(other.vehicleData, vehicleData) ||
+                other.vehicleData == vehicleData));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(vehicleData));
+  int get hashCode => Object.hash(runtimeType, vehicleData);
 
   /// Create a copy of VehicleEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -450,6 +488,9 @@ class _$AddVehicleImpl implements AddVehicle {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllVehicles,
     required TResult Function(VehicleRequest vehicleData) addVehicle,
+    required TResult Function(VehicleRequest updatedVehicle)
+        updateVehicleCompany,
+    required TResult Function(String vehicleId) deleteVehicle,
   }) {
     return addVehicle(vehicleData);
   }
@@ -461,6 +502,8 @@ class _$AddVehicleImpl implements AddVehicle {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult? Function(VehicleRequest vehicleData)? addVehicle,
+    TResult? Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult? Function(String vehicleId)? deleteVehicle,
   }) {
     return addVehicle?.call(vehicleData);
   }
@@ -472,6 +515,8 @@ class _$AddVehicleImpl implements AddVehicle {
     TResult Function(int? page, int? limit, String? searchQuery)?
         fetchAllVehicles,
     TResult Function(VehicleRequest vehicleData)? addVehicle,
+    TResult Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult Function(String vehicleId)? deleteVehicle,
     required TResult orElse(),
   }) {
     if (addVehicle != null) {
@@ -486,6 +531,8 @@ class _$AddVehicleImpl implements AddVehicle {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllVehicles value) fetchAllVehicles,
     required TResult Function(AddVehicle value) addVehicle,
+    required TResult Function(UpdateVehicle value) updateVehicleCompany,
+    required TResult Function(DeleteVehicle value) deleteVehicle,
   }) {
     return addVehicle(this);
   }
@@ -496,6 +543,8 @@ class _$AddVehicleImpl implements AddVehicle {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult? Function(AddVehicle value)? addVehicle,
+    TResult? Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult? Function(DeleteVehicle value)? deleteVehicle,
   }) {
     return addVehicle?.call(this);
   }
@@ -506,6 +555,8 @@ class _$AddVehicleImpl implements AddVehicle {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllVehicles value)? fetchAllVehicles,
     TResult Function(AddVehicle value)? addVehicle,
+    TResult Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult Function(DeleteVehicle value)? deleteVehicle,
     required TResult orElse(),
   }) {
     if (addVehicle != null) {
@@ -529,16 +580,346 @@ abstract class AddVehicle implements VehicleEvent {
 }
 
 /// @nodoc
+abstract class _$$UpdateVehicleImplCopyWith<$Res> {
+  factory _$$UpdateVehicleImplCopyWith(
+          _$UpdateVehicleImpl value, $Res Function(_$UpdateVehicleImpl) then) =
+      __$$UpdateVehicleImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({VehicleRequest updatedVehicle});
+}
+
+/// @nodoc
+class __$$UpdateVehicleImplCopyWithImpl<$Res>
+    extends _$VehicleEventCopyWithImpl<$Res, _$UpdateVehicleImpl>
+    implements _$$UpdateVehicleImplCopyWith<$Res> {
+  __$$UpdateVehicleImplCopyWithImpl(
+      _$UpdateVehicleImpl _value, $Res Function(_$UpdateVehicleImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? updatedVehicle = null,
+  }) {
+    return _then(_$UpdateVehicleImpl(
+      updatedVehicle: null == updatedVehicle
+          ? _value.updatedVehicle
+          : updatedVehicle // ignore: cast_nullable_to_non_nullable
+              as VehicleRequest,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UpdateVehicleImpl implements UpdateVehicle {
+  const _$UpdateVehicleImpl({required this.updatedVehicle});
+
+  @override
+  final VehicleRequest updatedVehicle;
+
+  @override
+  String toString() {
+    return 'VehicleEvent.updateVehicleCompany(updatedVehicle: $updatedVehicle)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateVehicleImpl &&
+            (identical(other.updatedVehicle, updatedVehicle) ||
+                other.updatedVehicle == updatedVehicle));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, updatedVehicle);
+
+  /// Create a copy of VehicleEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateVehicleImplCopyWith<_$UpdateVehicleImpl> get copyWith =>
+      __$$UpdateVehicleImplCopyWithImpl<_$UpdateVehicleImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int? page, int? limit, String? searchQuery)
+        fetchAllVehicles,
+    required TResult Function(VehicleRequest vehicleData) addVehicle,
+    required TResult Function(VehicleRequest updatedVehicle)
+        updateVehicleCompany,
+    required TResult Function(String vehicleId) deleteVehicle,
+  }) {
+    return updateVehicleCompany(updatedVehicle);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int? page, int? limit, String? searchQuery)?
+        fetchAllVehicles,
+    TResult? Function(VehicleRequest vehicleData)? addVehicle,
+    TResult? Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult? Function(String vehicleId)? deleteVehicle,
+  }) {
+    return updateVehicleCompany?.call(updatedVehicle);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int? page, int? limit, String? searchQuery)?
+        fetchAllVehicles,
+    TResult Function(VehicleRequest vehicleData)? addVehicle,
+    TResult Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult Function(String vehicleId)? deleteVehicle,
+    required TResult orElse(),
+  }) {
+    if (updateVehicleCompany != null) {
+      return updateVehicleCompany(updatedVehicle);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVehicles value) fetchAllVehicles,
+    required TResult Function(AddVehicle value) addVehicle,
+    required TResult Function(UpdateVehicle value) updateVehicleCompany,
+    required TResult Function(DeleteVehicle value) deleteVehicle,
+  }) {
+    return updateVehicleCompany(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVehicles value)? fetchAllVehicles,
+    TResult? Function(AddVehicle value)? addVehicle,
+    TResult? Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult? Function(DeleteVehicle value)? deleteVehicle,
+  }) {
+    return updateVehicleCompany?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVehicles value)? fetchAllVehicles,
+    TResult Function(AddVehicle value)? addVehicle,
+    TResult Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult Function(DeleteVehicle value)? deleteVehicle,
+    required TResult orElse(),
+  }) {
+    if (updateVehicleCompany != null) {
+      return updateVehicleCompany(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateVehicle implements VehicleEvent {
+  const factory UpdateVehicle({required final VehicleRequest updatedVehicle}) =
+      _$UpdateVehicleImpl;
+
+  VehicleRequest get updatedVehicle;
+
+  /// Create a copy of VehicleEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateVehicleImplCopyWith<_$UpdateVehicleImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DeleteVehicleImplCopyWith<$Res> {
+  factory _$$DeleteVehicleImplCopyWith(
+          _$DeleteVehicleImpl value, $Res Function(_$DeleteVehicleImpl) then) =
+      __$$DeleteVehicleImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String vehicleId});
+}
+
+/// @nodoc
+class __$$DeleteVehicleImplCopyWithImpl<$Res>
+    extends _$VehicleEventCopyWithImpl<$Res, _$DeleteVehicleImpl>
+    implements _$$DeleteVehicleImplCopyWith<$Res> {
+  __$$DeleteVehicleImplCopyWithImpl(
+      _$DeleteVehicleImpl _value, $Res Function(_$DeleteVehicleImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? vehicleId = null,
+  }) {
+    return _then(_$DeleteVehicleImpl(
+      vehicleId: null == vehicleId
+          ? _value.vehicleId
+          : vehicleId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DeleteVehicleImpl implements DeleteVehicle {
+  const _$DeleteVehicleImpl({required this.vehicleId});
+
+  @override
+  final String vehicleId;
+
+  @override
+  String toString() {
+    return 'VehicleEvent.deleteVehicle(vehicleId: $vehicleId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeleteVehicleImpl &&
+            (identical(other.vehicleId, vehicleId) ||
+                other.vehicleId == vehicleId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, vehicleId);
+
+  /// Create a copy of VehicleEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeleteVehicleImplCopyWith<_$DeleteVehicleImpl> get copyWith =>
+      __$$DeleteVehicleImplCopyWithImpl<_$DeleteVehicleImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int? page, int? limit, String? searchQuery)
+        fetchAllVehicles,
+    required TResult Function(VehicleRequest vehicleData) addVehicle,
+    required TResult Function(VehicleRequest updatedVehicle)
+        updateVehicleCompany,
+    required TResult Function(String vehicleId) deleteVehicle,
+  }) {
+    return deleteVehicle(vehicleId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int? page, int? limit, String? searchQuery)?
+        fetchAllVehicles,
+    TResult? Function(VehicleRequest vehicleData)? addVehicle,
+    TResult? Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult? Function(String vehicleId)? deleteVehicle,
+  }) {
+    return deleteVehicle?.call(vehicleId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int? page, int? limit, String? searchQuery)?
+        fetchAllVehicles,
+    TResult Function(VehicleRequest vehicleData)? addVehicle,
+    TResult Function(VehicleRequest updatedVehicle)? updateVehicleCompany,
+    TResult Function(String vehicleId)? deleteVehicle,
+    required TResult orElse(),
+  }) {
+    if (deleteVehicle != null) {
+      return deleteVehicle(vehicleId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVehicles value) fetchAllVehicles,
+    required TResult Function(AddVehicle value) addVehicle,
+    required TResult Function(UpdateVehicle value) updateVehicleCompany,
+    required TResult Function(DeleteVehicle value) deleteVehicle,
+  }) {
+    return deleteVehicle(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVehicles value)? fetchAllVehicles,
+    TResult? Function(AddVehicle value)? addVehicle,
+    TResult? Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult? Function(DeleteVehicle value)? deleteVehicle,
+  }) {
+    return deleteVehicle?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVehicles value)? fetchAllVehicles,
+    TResult Function(AddVehicle value)? addVehicle,
+    TResult Function(UpdateVehicle value)? updateVehicleCompany,
+    TResult Function(DeleteVehicle value)? deleteVehicle,
+    required TResult orElse(),
+  }) {
+    if (deleteVehicle != null) {
+      return deleteVehicle(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DeleteVehicle implements VehicleEvent {
+  const factory DeleteVehicle({required final String vehicleId}) =
+      _$DeleteVehicleImpl;
+
+  String get vehicleId;
+
+  /// Create a copy of VehicleEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeleteVehicleImplCopyWith<_$DeleteVehicleImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
 mixin _$VehicleState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
         loaded,
     required TResult Function(String message) error,
     required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -546,10 +927,12 @@ mixin _$VehicleState {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult? Function(String message)? error,
     TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -557,10 +940,12 @@ mixin _$VehicleState {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult Function(String message)? error,
     TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -571,6 +956,8 @@ mixin _$VehicleState {
     required TResult Function(VehicleLoaded value) loaded,
     required TResult Function(VehicleError value) error,
     required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -580,6 +967,8 @@ mixin _$VehicleState {
     TResult? Function(VehicleLoaded value)? loaded,
     TResult? Function(VehicleError value)? error,
     TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -589,6 +978,8 @@ mixin _$VehicleState {
     TResult Function(VehicleLoaded value)? loaded,
     TResult Function(VehicleError value)? error,
     TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -659,10 +1050,12 @@ class _$VehicleInitialImpl implements VehicleInitial {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
         loaded,
     required TResult Function(String message) error,
     required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return initial();
   }
@@ -673,10 +1066,12 @@ class _$VehicleInitialImpl implements VehicleInitial {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult? Function(String message)? error,
     TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return initial?.call();
   }
@@ -687,10 +1082,12 @@ class _$VehicleInitialImpl implements VehicleInitial {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult Function(String message)? error,
     TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -707,6 +1104,8 @@ class _$VehicleInitialImpl implements VehicleInitial {
     required TResult Function(VehicleLoaded value) loaded,
     required TResult Function(VehicleError value) error,
     required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
   }) {
     return initial(this);
   }
@@ -719,6 +1118,8 @@ class _$VehicleInitialImpl implements VehicleInitial {
     TResult? Function(VehicleLoaded value)? loaded,
     TResult? Function(VehicleError value)? error,
     TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
   }) {
     return initial?.call(this);
   }
@@ -731,6 +1132,8 @@ class _$VehicleInitialImpl implements VehicleInitial {
     TResult Function(VehicleLoaded value)? loaded,
     TResult Function(VehicleError value)? error,
     TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -788,10 +1191,12 @@ class _$VehicleLoadingImpl implements VehicleLoading {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
         loaded,
     required TResult Function(String message) error,
     required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return loading();
   }
@@ -802,10 +1207,12 @@ class _$VehicleLoadingImpl implements VehicleLoading {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult? Function(String message)? error,
     TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return loading?.call();
   }
@@ -816,10 +1223,12 @@ class _$VehicleLoadingImpl implements VehicleLoading {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult Function(String message)? error,
     TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -836,6 +1245,8 @@ class _$VehicleLoadingImpl implements VehicleLoading {
     required TResult Function(VehicleLoaded value) loaded,
     required TResult Function(VehicleError value) error,
     required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
   }) {
     return loading(this);
   }
@@ -848,6 +1259,8 @@ class _$VehicleLoadingImpl implements VehicleLoading {
     TResult? Function(VehicleLoaded value)? loaded,
     TResult? Function(VehicleError value)? error,
     TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
   }) {
     return loading?.call(this);
   }
@@ -860,6 +1273,8 @@ class _$VehicleLoadingImpl implements VehicleLoading {
     TResult Function(VehicleLoaded value)? loaded,
     TResult Function(VehicleError value)? error,
     TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -879,7 +1294,7 @@ abstract class _$$VehicleLoadedImplCopyWith<$Res> {
           _$VehicleLoadedImpl value, $Res Function(_$VehicleLoadedImpl) then) =
       __$$VehicleLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<VehicleModel> vehicles, int totalPages, int currentPage});
+  $Res call({List<VehicleRequest> vehicles, int totalPages, int currentPage});
 }
 
 /// @nodoc
@@ -903,7 +1318,7 @@ class __$$VehicleLoadedImplCopyWithImpl<$Res>
       vehicles: null == vehicles
           ? _value._vehicles
           : vehicles // ignore: cast_nullable_to_non_nullable
-              as List<VehicleModel>,
+              as List<VehicleRequest>,
       totalPages: null == totalPages
           ? _value.totalPages
           : totalPages // ignore: cast_nullable_to_non_nullable
@@ -920,14 +1335,16 @@ class __$$VehicleLoadedImplCopyWithImpl<$Res>
 
 class _$VehicleLoadedImpl implements VehicleLoaded {
   const _$VehicleLoadedImpl(
-      {required final List<VehicleModel> vehicles,
+      {required final List<VehicleRequest> vehicles,
       required this.totalPages,
       required this.currentPage})
       : _vehicles = vehicles;
 
-  final List<VehicleModel> _vehicles;
+//  required List<VehicleModel> vehicles,
+  final List<VehicleRequest> _vehicles;
+//  required List<VehicleModel> vehicles,
   @override
-  List<VehicleModel> get vehicles {
+  List<VehicleRequest> get vehicles {
     if (_vehicles is EqualUnmodifiableListView) return _vehicles;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_vehicles);
@@ -973,10 +1390,12 @@ class _$VehicleLoadedImpl implements VehicleLoaded {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
         loaded,
     required TResult Function(String message) error,
     required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return loaded(vehicles, totalPages, currentPage);
   }
@@ -987,10 +1406,12 @@ class _$VehicleLoadedImpl implements VehicleLoaded {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult? Function(String message)? error,
     TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return loaded?.call(vehicles, totalPages, currentPage);
   }
@@ -1001,10 +1422,12 @@ class _$VehicleLoadedImpl implements VehicleLoaded {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult Function(String message)? error,
     TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1021,6 +1444,8 @@ class _$VehicleLoadedImpl implements VehicleLoaded {
     required TResult Function(VehicleLoaded value) loaded,
     required TResult Function(VehicleError value) error,
     required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
   }) {
     return loaded(this);
   }
@@ -1033,6 +1458,8 @@ class _$VehicleLoadedImpl implements VehicleLoaded {
     TResult? Function(VehicleLoaded value)? loaded,
     TResult? Function(VehicleError value)? error,
     TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
   }) {
     return loaded?.call(this);
   }
@@ -1045,6 +1472,8 @@ class _$VehicleLoadedImpl implements VehicleLoaded {
     TResult Function(VehicleLoaded value)? loaded,
     TResult Function(VehicleError value)? error,
     TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1056,11 +1485,12 @@ class _$VehicleLoadedImpl implements VehicleLoaded {
 
 abstract class VehicleLoaded implements VehicleState {
   const factory VehicleLoaded(
-      {required final List<VehicleModel> vehicles,
+      {required final List<VehicleRequest> vehicles,
       required final int totalPages,
       required final int currentPage}) = _$VehicleLoadedImpl;
 
-  List<VehicleModel> get vehicles;
+//  required List<VehicleModel> vehicles,
+  List<VehicleRequest> get vehicles;
   int get totalPages;
   int get currentPage;
 
@@ -1142,10 +1572,12 @@ class _$VehicleErrorImpl implements VehicleError {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
         loaded,
     required TResult Function(String message) error,
     required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return error(message);
   }
@@ -1156,10 +1588,12 @@ class _$VehicleErrorImpl implements VehicleError {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult? Function(String message)? error,
     TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return error?.call(message);
   }
@@ -1170,10 +1604,12 @@ class _$VehicleErrorImpl implements VehicleError {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult Function(String message)? error,
     TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1190,6 +1626,8 @@ class _$VehicleErrorImpl implements VehicleError {
     required TResult Function(VehicleLoaded value) loaded,
     required TResult Function(VehicleError value) error,
     required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
   }) {
     return error(this);
   }
@@ -1202,6 +1640,8 @@ class _$VehicleErrorImpl implements VehicleError {
     TResult? Function(VehicleLoaded value)? loaded,
     TResult? Function(VehicleError value)? error,
     TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
   }) {
     return error?.call(this);
   }
@@ -1214,6 +1654,8 @@ class _$VehicleErrorImpl implements VehicleError {
     TResult Function(VehicleLoaded value)? loaded,
     TResult Function(VehicleError value)? error,
     TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1307,10 +1749,12 @@ class _$VehicleAddedSuccessImpl implements VehicleAddedSuccess {
     required TResult Function() initial,
     required TResult Function() loading,
     required TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
         loaded,
     required TResult Function(String message) error,
     required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return vehicleAddedSuccess(message);
   }
@@ -1321,10 +1765,12 @@ class _$VehicleAddedSuccessImpl implements VehicleAddedSuccess {
     TResult? Function()? initial,
     TResult? Function()? loading,
     TResult? Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult? Function(String message)? error,
     TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return vehicleAddedSuccess?.call(message);
   }
@@ -1335,10 +1781,12 @@ class _$VehicleAddedSuccessImpl implements VehicleAddedSuccess {
     TResult Function()? initial,
     TResult Function()? loading,
     TResult Function(
-            List<VehicleModel> vehicles, int totalPages, int currentPage)?
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
         loaded,
     TResult Function(String message)? error,
     TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (vehicleAddedSuccess != null) {
@@ -1355,6 +1803,8 @@ class _$VehicleAddedSuccessImpl implements VehicleAddedSuccess {
     required TResult Function(VehicleLoaded value) loaded,
     required TResult Function(VehicleError value) error,
     required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
   }) {
     return vehicleAddedSuccess(this);
   }
@@ -1367,6 +1817,8 @@ class _$VehicleAddedSuccessImpl implements VehicleAddedSuccess {
     TResult? Function(VehicleLoaded value)? loaded,
     TResult? Function(VehicleError value)? error,
     TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
   }) {
     return vehicleAddedSuccess?.call(this);
   }
@@ -1379,6 +1831,8 @@ class _$VehicleAddedSuccessImpl implements VehicleAddedSuccess {
     TResult Function(VehicleLoaded value)? loaded,
     TResult Function(VehicleError value)? error,
     TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (vehicleAddedSuccess != null) {
@@ -1399,4 +1853,286 @@ abstract class VehicleAddedSuccess implements VehicleState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$VehicleAddedSuccessImplCopyWith<_$VehicleAddedSuccessImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$VehicleUpdatedImplCopyWith<$Res> {
+  factory _$$VehicleUpdatedImplCopyWith(_$VehicleUpdatedImpl value,
+          $Res Function(_$VehicleUpdatedImpl) then) =
+      __$$VehicleUpdatedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$VehicleUpdatedImplCopyWithImpl<$Res>
+    extends _$VehicleStateCopyWithImpl<$Res, _$VehicleUpdatedImpl>
+    implements _$$VehicleUpdatedImplCopyWith<$Res> {
+  __$$VehicleUpdatedImplCopyWithImpl(
+      _$VehicleUpdatedImpl _value, $Res Function(_$VehicleUpdatedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$VehicleUpdatedImpl implements VehicleUpdated {
+  const _$VehicleUpdatedImpl();
+
+  @override
+  String toString() {
+    return 'VehicleState.updated()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$VehicleUpdatedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
+        loaded,
+    required TResult Function(String message) error,
+    required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
+  }) {
+    return updated();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
+        loaded,
+    TResult? Function(String message)? error,
+    TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
+  }) {
+    return updated?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
+        loaded,
+    TResult Function(String message)? error,
+    TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
+    required TResult orElse(),
+  }) {
+    if (updated != null) {
+      return updated();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(VehicleInitial value) initial,
+    required TResult Function(VehicleLoading value) loading,
+    required TResult Function(VehicleLoaded value) loaded,
+    required TResult Function(VehicleError value) error,
+    required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
+  }) {
+    return updated(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(VehicleInitial value)? initial,
+    TResult? Function(VehicleLoading value)? loading,
+    TResult? Function(VehicleLoaded value)? loaded,
+    TResult? Function(VehicleError value)? error,
+    TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
+  }) {
+    return updated?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(VehicleInitial value)? initial,
+    TResult Function(VehicleLoading value)? loading,
+    TResult Function(VehicleLoaded value)? loaded,
+    TResult Function(VehicleError value)? error,
+    TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
+    required TResult orElse(),
+  }) {
+    if (updated != null) {
+      return updated(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class VehicleUpdated implements VehicleState {
+  const factory VehicleUpdated() = _$VehicleUpdatedImpl;
+}
+
+/// @nodoc
+abstract class _$$VehicleDeletedImplCopyWith<$Res> {
+  factory _$$VehicleDeletedImplCopyWith(_$VehicleDeletedImpl value,
+          $Res Function(_$VehicleDeletedImpl) then) =
+      __$$VehicleDeletedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$VehicleDeletedImplCopyWithImpl<$Res>
+    extends _$VehicleStateCopyWithImpl<$Res, _$VehicleDeletedImpl>
+    implements _$$VehicleDeletedImplCopyWith<$Res> {
+  __$$VehicleDeletedImplCopyWithImpl(
+      _$VehicleDeletedImpl _value, $Res Function(_$VehicleDeletedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$VehicleDeletedImpl implements VehicleDeleted {
+  const _$VehicleDeletedImpl();
+
+  @override
+  String toString() {
+    return 'VehicleState.deleted()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$VehicleDeletedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)
+        loaded,
+    required TResult Function(String message) error,
+    required TResult Function(String message) vehicleAddedSuccess,
+    required TResult Function() updated,
+    required TResult Function() deleted,
+  }) {
+    return deleted();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
+        loaded,
+    TResult? Function(String message)? error,
+    TResult? Function(String message)? vehicleAddedSuccess,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
+  }) {
+    return deleted?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(
+            List<VehicleRequest> vehicles, int totalPages, int currentPage)?
+        loaded,
+    TResult Function(String message)? error,
+    TResult Function(String message)? vehicleAddedSuccess,
+    TResult Function()? updated,
+    TResult Function()? deleted,
+    required TResult orElse(),
+  }) {
+    if (deleted != null) {
+      return deleted();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(VehicleInitial value) initial,
+    required TResult Function(VehicleLoading value) loading,
+    required TResult Function(VehicleLoaded value) loaded,
+    required TResult Function(VehicleError value) error,
+    required TResult Function(VehicleAddedSuccess value) vehicleAddedSuccess,
+    required TResult Function(VehicleUpdated value) updated,
+    required TResult Function(VehicleDeleted value) deleted,
+  }) {
+    return deleted(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(VehicleInitial value)? initial,
+    TResult? Function(VehicleLoading value)? loading,
+    TResult? Function(VehicleLoaded value)? loaded,
+    TResult? Function(VehicleError value)? error,
+    TResult? Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult? Function(VehicleUpdated value)? updated,
+    TResult? Function(VehicleDeleted value)? deleted,
+  }) {
+    return deleted?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(VehicleInitial value)? initial,
+    TResult Function(VehicleLoading value)? loading,
+    TResult Function(VehicleLoaded value)? loaded,
+    TResult Function(VehicleError value)? error,
+    TResult Function(VehicleAddedSuccess value)? vehicleAddedSuccess,
+    TResult Function(VehicleUpdated value)? updated,
+    TResult Function(VehicleDeleted value)? deleted,
+    required TResult orElse(),
+  }) {
+    if (deleted != null) {
+      return deleted(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class VehicleDeleted implements VehicleState {
+  const factory VehicleDeleted() = _$VehicleDeletedImpl;
 }
