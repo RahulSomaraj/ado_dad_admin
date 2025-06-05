@@ -1,131 +1,69 @@
-import 'package:ado_dad_admin/app.dart';
-import 'package:ado_dad_admin/core/bloc/auth/auth_bloc.dart';
-import 'package:ado_dad_admin/core/bloc/auth/auth_event.dart';
-import 'package:ado_dad_admin/core/bloc/auth/auth_state.dart';
-import 'package:ado_dad_admin/core/bloc/login/login_bloc.dart';
-import 'package:ado_dad_admin/core/network/user_dio_client.dart';
-import 'package:ado_dad_admin/dashboard/home/dashboard.dart';
-import 'package:ado_dad_admin/core/repository/auth_service.dart';
-import 'package:ado_dad_admin/dashboard/login/login_repository.dart';
-import 'package:ado_dad_admin/core/repository/users/user_repository.dart';
+import 'package:ado_dad_admin/common/app_routes.dart';
+import 'package:ado_dad_admin/common/app_theme.dart';
+import 'package:ado_dad_admin/common/data_storage.dart';
+import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
+import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
+import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
+import 'package:ado_dad_admin/features/vehicle/bloc/vehicle_bloc.dart';
+import 'package:ado_dad_admin/features/vehicle_company/bloc/vehicle_company_bloc.dart';
+import 'package:ado_dad_admin/repositories/auth_rep.dart';
+import 'package:ado_dad_admin/repositories/showroom_rep.dart';
+import 'package:ado_dad_admin/repositories/user_rep.dart';
+import 'package:ado_dad_admin/repositories/vehicle_company_rep.dart';
+import 'package:ado_dad_admin/repositories/vehicle_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'core/router.dart';
-import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-// import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
+  await SharedPrefs().init();
 
-  setUrlStrategy(PathUrlStrategy());
-  final dioClient = DioClient();
-  final authService = AuthService();
-
-  // Check if the user is authenticated before app startup
-  // final bool isAuthenticated = await authService.isAuthenticated();
-
-  runApp(
-    MyApp(
-      dioClient: dioClient,
-      authService: authService,
-      // isAuthenticated: isAuthenticated,
-    ),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final DioClient dioClient;
-  final AuthService authService;
-  // final bool isAuthenticated;
-
-  const MyApp({
-    super.key,
-    required this.dioClient,
-    required this.authService,
-    // required this.isAuthenticated,
-  });
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiRepositoryProvider(
+    return MultiBlocProvider(
       providers: [
-        RepositoryProvider<LoginRepository>(
-          create: (context) => LoginRepository(dioClient: dioClient),
+        BlocProvider(
+          create: (context) => AuthBloc(authRepository: AuthRepository())
+            ..add(const AuthEvent.checkLoginStatus()),
         ),
-        RepositoryProvider<UserRepository>(
-          create: (context) => UserRepository(dioClient: dioClient),
+        BlocProvider(
+          create: (context) =>
+              UserBloc(userRepository: UserRepository())..add(FetchAllUsers()),
         ),
-        RepositoryProvider<AuthService>(
-          create: (context) => authService,
+        BlocProvider(
+          create: (context) =>
+              ShowroomBloc(showroomRepository: ShowroomRepository())
+                ..add(FetchAllShowrooms()),
+        ),
+        BlocProvider(
+          create: (context) => VehicleCompanyBloc(
+              vehicleCompanyRepository: VehicleCompanyRepository())
+            ..add(FetchAllVehicleCompany()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              VehicleBloc(vehicleRepository: VehicleRepository())
+                ..add(FetchAllVehicles()),
         ),
       ],
-      child: MultiBlocProvider(
-        providers: [
-          BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(
-              loginRepository: context.read<LoginRepository>(),
-              authBloc: context.read<AuthBloc>(), // Pass AuthBloc to LoginBloc
-            ),
-          ),
-          BlocProvider<AuthBloc>(
-            create: (context) => AuthBloc(
-              authService: context.read<AuthService>(),
-            )..add(AppStarted()), // Start AuthBloc to check auth state
-          ),
-        ],
-        child: BlocBuilder<AuthBloc, AuthState>(
-          builder: (context, state) {
-            return MaterialApp(
-              title: 'Admin Web App',
-              theme: ThemeData(
-                primarySwatch: Colors.blue,
-                fontFamily: GoogleFonts.inter().fontFamily,
-                scaffoldBackgroundColor:
-                    const Color.fromARGB(101, 247, 242, 184),
-                textTheme: TextTheme(
-                  bodyLarge: GoogleFonts.inter(
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  bodyMedium: GoogleFonts.inter(fontSize: 16.0),
-                  bodySmall: GoogleFonts.inter(
-                    fontSize: 14.0,
-                    color: Colors.grey,
-                  ),
-                  headlineLarge: GoogleFonts.poppins(
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  headlineMedium: GoogleFonts.poppins(fontSize: 24.0),
-                  titleLarge: GoogleFonts.poppins(
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                elevatedButtonTheme: ElevatedButtonThemeData(
-                  style: ElevatedButton.styleFrom(
-                    textStyle: GoogleFonts.inter(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0),
-                    ),
-                  ),
-                ),
-              ),
-              onGenerateRoute: generateRoute,
-              home: state is AuthAuthenticated
-                  ? const HomeDashBoard(initialIndex: 0)
-                  : const AdminPage(),
-            );
+      child: BlocListener<AuthBloc, AuthState>(
+          listener: (context, state) {
+            // if (state is Unauthenticated) {
+            //   Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+            // }
           },
-        ),
-      ),
+          child: MaterialApp.router(
+            routerConfig: AppRoutes.router,
+            debugShowCheckedModeBanner: false,
+            title: 'Ado-dad',
+            theme: AppThemes.lightTheme,
+          )),
     );
   }
 }
