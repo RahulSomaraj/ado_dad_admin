@@ -42,6 +42,8 @@ class VehicleBloc extends Bloc<VehicleEvent, VehicleState> {
       AddVehicle event, Emitter<VehicleState> emit) async {
     emit(const VehicleState.loading());
     try {
+      print(
+          'bloc wheeler type:...........?????????????${event.vehicleData.wheelerType}');
       final responseMessage =
           await vehicleRepository.createVehicle(event.vehicleData);
       emit(VehicleState.vehicleAddedSuccess(responseMessage));

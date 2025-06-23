@@ -141,33 +141,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
             SizedBox(height: 30),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: 40.0,
-                  border: TableBorder.all(
-                    color: Colors.black, // Border color for rows
-                    width: 1.0,
-                  ),
-                  headingRowColor: MaterialStateColor.resolveWith(
-                      (states) => Colors.black12),
-                  columns: const [
-                    DataColumn(
-                        label: Text('ID',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Vehicle Company Name',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Origin Country',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                    DataColumn(
-                        label: Text('Vehicle Type',
-                            style: TextStyle(fontWeight: FontWeight.bold))),
-                  ],
-                  rows: const [], // No data rows
-                ),
-              ),
+              child: _buildCompanyList(),
             ),
           ],
         ),
@@ -216,7 +190,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
                     ),
                   ],
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 60),
                 Column(
                   children: [
                     const Text('Country of Origin',
@@ -229,9 +203,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
                     ),
                   ],
                 ),
-                SizedBox(
-                  width: 50,
-                ),
+                SizedBox(width: 60),
                 Column(
                   children: [
                     const Text('Vehicle Type',
@@ -285,5 +257,172 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
         ),
       ),
     );
+  }
+
+  Widget _buildCompanyList() {
+    return BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
+      builder: (context, state) {
+        if (state is VehicleCompanyLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is VehicleCompanyLoaded) {
+          return Column(
+            children: [
+              _buildCompanyTable(state.companies, state.currentPage),
+              const SizedBox(height: 30),
+              _buildPaginationBar(state.currentPage, state.totalPages),
+            ],
+          );
+        } else if (state is VehicleCompanyError) {
+          return Center(
+              child: Text(state.message,
+                  style: const TextStyle(color: Colors.red)));
+        }
+        return const Center(child: Text("No Vehicle Companies Found"));
+      },
+    );
+  }
+
+  Widget _buildCompanyTable(
+      List<VehicleCompanyModel> companies, int currentPage) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: IntrinsicWidth(
+              child: Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: DataTable(
+                    columnSpacing: 175,
+                    headingRowColor: WidgetStateColor.resolveWith(
+                        (states) => Color.fromARGB(66, 144, 140, 140)),
+                    dataRowColor:
+                        WidgetStatePropertyAll(AppColors.primaryColor),
+                    dataRowMinHeight: 55,
+                    dataRowMaxHeight: 55,
+                    columns: const [
+                      DataColumn(
+                        label: Padding(
+                          padding: EdgeInsets.only(left: 30),
+                          child: Text('ID',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                      DataColumn(
+                          label: Text('Vehicle Company Name',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(
+                          label: Text('Origin Country of Vehicle Company',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(
+                          label: Text('Vehicle Type',
+                              style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                    rows: companies.asMap().entries.map((entry) {
+                      return _buildCompanyRow(
+                          entry.key, entry.value, currentPage);
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  int rowsPerPage = 10;
+
+  Widget _buildPaginationBar(int currentPage, int totalPages) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text("Rows per page: "),
+            const SizedBox(width: 8),
+            DropdownButton<int>(
+              value: rowsPerPage,
+              dropdownColor: Colors.white,
+              items: [10, 20].map((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    rowsPerPage = value;
+                  });
+                  context
+                      .read<VehicleCompanyBloc>()
+                      .add(FetchAllVehicleCompany(page: 1, limit: rowsPerPage));
+                }
+              },
+            ),
+            const SizedBox(width: 20),
+            GestureDetector(
+              onTap: currentPage > 1
+                  ? () {
+                      context.read<VehicleCompanyBloc>().add(
+                          FetchAllVehicleCompany(
+                              page: currentPage - 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_left,
+                size: 28,
+                color: currentPage > 1 ? Colors.black : Colors.grey[400],
+              ),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              "Page $currentPage of $totalPages",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 15),
+            GestureDetector(
+              onTap: currentPage < totalPages
+                  ? () {
+                      context.read<VehicleCompanyBloc>().add(
+                          FetchAllVehicleCompany(
+                              page: currentPage + 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_right,
+                size: 28,
+                color:
+                    currentPage < totalPages ? Colors.black : Colors.grey[400],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  DataRow _buildCompanyRow(
+      int index, VehicleCompanyModel company, int currentPage) {
+    int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+    return DataRow(cells: [
+      DataCell(Padding(
+        padding: const EdgeInsets.only(left: 30),
+        child: Text('$rowNumber'),
+      )),
+      DataCell(Text(company.name!)),
+      DataCell(Text(company.originCountry!)),
+      DataCell(Text(company.vehicleType!)),
+    ]);
   }
 }

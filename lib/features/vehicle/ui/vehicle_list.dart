@@ -169,7 +169,7 @@ class _VehicleListState extends State<VehicleList> {
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: DataTable(
-                columnSpacing: 105,
+                columnSpacing: 63,
                 headingRowColor: WidgetStateColor.resolveWith(
                     (states) => const Color.fromARGB(66, 144, 140, 140)),
                 dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),

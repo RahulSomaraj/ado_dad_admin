@@ -14,6 +14,8 @@ class VehicleDetailView extends StatefulWidget {
 }
 
 class _VehicleDetailViewState extends State<VehicleDetailView> {
+  int rowsPerPage = 10;
+
   void _showDeleteDialog(BuildContext context, String vehicleId) {
     showDialog(
       context: context,
@@ -89,6 +91,8 @@ class _VehicleDetailViewState extends State<VehicleDetailView> {
       child: Column(
         children: [
           buildVehicleDetailSection(),
+          const SizedBox(height: 20),
+          _buildVehicleList(),
         ],
       ),
     );
@@ -133,7 +137,7 @@ class _VehicleDetailViewState extends State<VehicleDetailView> {
                     ),
                   ],
                 ),
-                SizedBox(width: 20),
+                SizedBox(width: 30),
                 Column(
                   children: [
                     const Text('Model Type',
@@ -146,7 +150,7 @@ class _VehicleDetailViewState extends State<VehicleDetailView> {
                     ),
                   ],
                 ),
-                SizedBox(width: 20),
+                SizedBox(width: 30),
                 Column(
                   children: [
                     const Text('Company Name',
@@ -159,7 +163,7 @@ class _VehicleDetailViewState extends State<VehicleDetailView> {
                     ),
                   ],
                 ),
-                SizedBox(width: 20),
+                SizedBox(width: 30),
                 Column(
                   children: [
                     const Text('Transmission/Fuel Type',
@@ -209,6 +213,171 @@ class _VehicleDetailViewState extends State<VehicleDetailView> {
                 )
               ],
             )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVehicleList() {
+    return BlocBuilder<VehicleBloc, VehicleState>(
+      builder: (context, state) {
+        if (state is VehicleLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is VehicleLoaded) {
+          return Column(
+            children: [
+              _buildVehicleTable(state.vehicles, state.currentPage),
+              const SizedBox(height: 30),
+              _buildPaginationBar(state.currentPage, state.totalPages),
+            ],
+          );
+        } else if (state is VehicleError) {
+          return Center(
+            child:
+                Text(state.message, style: const TextStyle(color: Colors.red)),
+          );
+        }
+        return const Center(child: Text("No Vehicles Found"));
+      },
+    );
+  }
+
+  Widget _buildVehicleTable(List<VehicleRequest> vehicles, int currentPage) {
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Container(
+        width: double.infinity,
+        // constraints: const BoxConstraints(maxWidth: 1200),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Card(
+            elevation: 3,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: DataTable(
+                columnSpacing: 90,
+                headingRowColor: WidgetStateColor.resolveWith(
+                    (states) => const Color.fromARGB(66, 144, 140, 140)),
+                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+                dataRowMinHeight: 55,
+                dataRowMaxHeight: 55,
+                columns: _buildTableColumns(),
+                rows: vehicles
+                    .asMap()
+                    .entries
+                    .map(
+                      (entry) =>
+                          _buildVehicleRow(entry.key, entry.value, currentPage),
+                    )
+                    .toList(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  List<DataColumn> _buildTableColumns() {
+    return const [
+      DataColumn(
+          label:
+              Padding(padding: EdgeInsets.only(left: 30), child: Text('ID'))),
+      DataColumn(label: Text('Vehicle Name & Model')),
+      DataColumn(label: Text('Model Type')),
+      DataColumn(label: Text('Company Name')),
+      DataColumn(label: Text('Transmission & Fuel Type')),
+    ];
+  }
+
+  DataRow _buildVehicleRow(int index, VehicleRequest vehicle, int currentPage) {
+    int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+    return DataRow(
+      cells: [
+        DataCell(Padding(
+            padding: const EdgeInsets.only(left: 30),
+            child: Text('$rowNumber'))),
+        DataCell(Text(
+          '${vehicle.vehicleModels.first.name}/${vehicle.vehicleModels.first.modelName}',
+          overflow: TextOverflow.ellipsis,
+        )),
+        DataCell(Text(vehicle.modelType)),
+        DataCell(Text(vehicle.vendor)),
+        DataCell(Text(
+          '${vehicle.vehicleModels.first.transmissionType}/${vehicle.vehicleModels.first.fuelType}',
+          overflow: TextOverflow.ellipsis,
+        )),
+      ],
+    );
+  }
+
+  Widget _buildPaginationBar(int currentPage, int totalPages) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text("Rows per page: "),
+            const SizedBox(width: 8),
+            DropdownButton<int>(
+              value: rowsPerPage,
+              dropdownColor: Colors.white,
+              items: [10, 20].map((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    rowsPerPage = value;
+                  });
+                  context
+                      .read<VehicleBloc>()
+                      .add(FetchAllVehicles(page: 1, limit: rowsPerPage));
+                }
+              },
+            ),
+            const SizedBox(width: 20),
+            GestureDetector(
+              onTap: currentPage > 1
+                  ? () {
+                      context.read<VehicleBloc>().add(FetchAllVehicles(
+                          page: currentPage - 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_left,
+                size: 28,
+                color: currentPage > 1 ? Colors.black : Colors.grey[400],
+              ),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              "Page $currentPage of $totalPages",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 15),
+            GestureDetector(
+              onTap: currentPage < totalPages
+                  ? () {
+                      context.read<VehicleBloc>().add(FetchAllVehicles(
+                          page: currentPage + 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_right,
+                size: 28,
+                color:
+                    currentPage < totalPages ? Colors.black : Colors.grey[400],
+              ),
+            ),
           ],
         ),
       ),

@@ -29,8 +29,9 @@ class VehicleRepository {
           return data
               .map((vehicle) => VehicleRequest.fromJson(vehicle))
               .toList();
-        } else if (data is Map<String, dynamic> && data.containsKey("data")) {
-          return (data["data"] as List)
+        } else if (data is Map<String, dynamic> &&
+            data.containsKey("vehicles")) {
+          return (data["vehicles"] as List)
               .cast<Map<String, dynamic>>()
               .map((vehicle) => VehicleRequest.fromJson(vehicle))
               .toList();

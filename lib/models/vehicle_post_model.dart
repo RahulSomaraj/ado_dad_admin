@@ -6,6 +6,7 @@ class VehicleRequest {
   String wheelerType;
   Details details;
   String vendor;
+  // VehicleCompanyModel? vendorCompany;
   List<VehicleModel1> vehicleModels;
   List<String> color;
 
@@ -17,6 +18,7 @@ class VehicleRequest {
     required this.wheelerType,
     required this.details,
     required this.vendor,
+    // required this.vendorCompany,
     required this.vehicleModels,
     required this.color,
   });
@@ -34,6 +36,9 @@ class VehicleRequest {
       vendor: json["vendor"] is String
           ? json["vendor"]
           : json["vendor"]["name"] ?? "",
+      // vendorCompany: json["vendor"] is Map<String, dynamic>
+      //     ? VehicleCompanyModel.fromJson(json["vendor"])
+      //     : null,
 
       color: List<String>.from(json["color"] ?? []),
       vehicleModels: (json["vehicleModels"] as List<dynamic>?)
@@ -52,6 +57,7 @@ class VehicleRequest {
       "wheelerType": wheelerType,
       "details": details.toJson(),
       "vendor": vendor,
+      // "vendor": vendorCompany?.toJson(),
       "vehicleModels": vehicleModels.map((e) => e.toJson()).toList(),
       "color": color,
     };

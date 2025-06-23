@@ -119,52 +119,122 @@ class _EditVehicleState extends State<EditVehicle> {
     _fuelCapacity = vehicle.vehicleModels.first.fuelCapacity;
     _maxPower = vehicle.vehicleModels.first.maxPower;
     _selectedColors = vehicle.color;
-    _abs = vehicle.vehicleModels.first.additionalInfo!.abs;
-    _accidental = vehicle.vehicleModels.first.additionalInfo!.accidental;
-    _adjustableExternalMirror =
-        vehicle.vehicleModels.first.additionalInfo!.adjustableExternalMirror;
-    _adjustableSteering =
-        vehicle.vehicleModels.first.additionalInfo!.adjustableSteering;
-    _adjustableSeats =
-        vehicle.vehicleModels.first.additionalInfo!.adjustableSeats;
-    _airConditioning =
-        vehicle.vehicleModels.first.additionalInfo!.airConditioning;
-    _alloyWheels = vehicle.vehicleModels.first.additionalInfo!.alloyWheels;
-    _auxCompatibility =
-        vehicle.vehicleModels.first.additionalInfo!.auxCompatibility;
-    _bluetooth = vehicle.vehicleModels.first.additionalInfo!.bluetooth;
-    _vehicleCertified =
-        vehicle.vehicleModels.first.additionalInfo!.vehicleCertified;
-    _cruiseControl = vehicle.vehicleModels.first.additionalInfo!.cruiseControl;
-    _lockSystem = vehicle.vehicleModels.first.additionalInfo!.lockSystem;
-    _navigationSystem =
-        vehicle.vehicleModels.first.additionalInfo!.navigationSystem;
-    _parkingSensors =
-        vehicle.vehicleModels.first.additionalInfo!.parkingSensors;
-    _powerSteering = vehicle.vehicleModels.first.additionalInfo!.powerSteering;
-    _powerWindows = vehicle.vehicleModels.first.additionalInfo!.powerWindows;
-    _amFmRadio = vehicle.vehicleModels.first.additionalInfo!.amFmRadio;
-    _rearParkingCamera =
-        vehicle.vehicleModels.first.additionalInfo!.rearParkingCamera;
-    _exchange = vehicle.vehicleModels.first.additionalInfo!.exchange;
-    _finance = vehicle.vehicleModels.first.additionalInfo!.finance;
-    _serviceHistory =
-        vehicle.vehicleModels.first.additionalInfo!.serviceHistory;
-    _sunroof = vehicle.vehicleModels.first.additionalInfo!.sunroof;
-    _usbCompatibility =
-        vehicle.vehicleModels.first.additionalInfo!.usbCompatibility;
-    _seatWarmer = vehicle.vehicleModels.first.additionalInfo!.seatWarmer;
-    _numberOfAirbags =
-        vehicle.vehicleModels.first.additionalInfo!.numberOfAirbags;
-    _batteryCondition =
-        vehicle.vehicleModels.first.additionalInfo!.batteryCondition;
-    _insuranceType = vehicle.vehicleModels.first.additionalInfo!.insuranceType;
-    _makeMonth = vehicle.vehicleModels.first.additionalInfo!.makeMonth;
-    _registrationPlace =
-        vehicle.vehicleModels.first.additionalInfo!.registrationPlace;
-    _tyreCondition = vehicle.vehicleModels.first.additionalInfo!.tyreCondition;
-    _selectedAdditionalColors =
-        vehicle.vehicleModels.first.additionalInfo!.color;
+
+    final additionalInfo = vehicle.vehicleModels.first.additionalInfo;
+
+    if (_wheelerType == "FOUR_WHEELER" && additionalInfo != null) {
+      _abs = additionalInfo.abs;
+      _accidental = additionalInfo.accidental;
+      _adjustableExternalMirror = additionalInfo.adjustableExternalMirror;
+      _adjustableSteering = additionalInfo.adjustableSteering;
+      _adjustableSeats = additionalInfo.adjustableSeats;
+      _airConditioning = additionalInfo.airConditioning;
+      _alloyWheels = additionalInfo.alloyWheels;
+      _auxCompatibility = additionalInfo.auxCompatibility;
+      _bluetooth = additionalInfo.bluetooth;
+      _vehicleCertified = additionalInfo.vehicleCertified;
+      _cruiseControl = additionalInfo.cruiseControl;
+      _lockSystem = additionalInfo.lockSystem;
+      _navigationSystem = additionalInfo.navigationSystem;
+      _parkingSensors = additionalInfo.parkingSensors;
+      _powerSteering = additionalInfo.powerSteering;
+      _powerWindows = additionalInfo.powerWindows;
+      _amFmRadio = additionalInfo.amFmRadio;
+      _rearParkingCamera = additionalInfo.rearParkingCamera;
+      _exchange = additionalInfo.exchange;
+      _finance = additionalInfo.finance;
+      _serviceHistory = additionalInfo.serviceHistory;
+      _sunroof = additionalInfo.sunroof;
+      _usbCompatibility = additionalInfo.usbCompatibility;
+      _seatWarmer = additionalInfo.seatWarmer;
+      _numberOfAirbags = additionalInfo.numberOfAirbags;
+      _batteryCondition = additionalInfo.batteryCondition;
+      _insuranceType = additionalInfo.insuranceType;
+      _makeMonth = additionalInfo.makeMonth;
+      _registrationPlace = additionalInfo.registrationPlace;
+      _tyreCondition = additionalInfo.tyreCondition;
+      _selectedAdditionalColors = additionalInfo.color;
+    } else {
+      // Set safe default values to avoid null crash
+      _abs = false;
+      _accidental = false;
+      _adjustableExternalMirror = false;
+      _adjustableSteering = false;
+      _adjustableSeats = false;
+      _airConditioning = false;
+      _alloyWheels = false;
+      _auxCompatibility = false;
+      _bluetooth = false;
+      _vehicleCertified = false;
+      _cruiseControl = false;
+      _lockSystem = false;
+      _navigationSystem = false;
+      _parkingSensors = false;
+      _powerSteering = false;
+      _powerWindows = false;
+      _amFmRadio = false;
+      _rearParkingCamera = false;
+      _exchange = false;
+      _finance = false;
+      _serviceHistory = false;
+      _sunroof = false;
+      _usbCompatibility = false;
+      _seatWarmer = false;
+      _numberOfAirbags = 0;
+      _batteryCondition = '';
+      _insuranceType = '';
+      _makeMonth = '';
+      _registrationPlace = '';
+      _tyreCondition = '';
+      _selectedAdditionalColors = [];
+    }
+
+    // _abs = vehicle.vehicleModels.first.additionalInfo!.abs;
+    // _accidental = vehicle.vehicleModels.first.additionalInfo!.accidental;
+    // _adjustableExternalMirror =
+    //     vehicle.vehicleModels.first.additionalInfo!.adjustableExternalMirror;
+    // _adjustableSteering =
+    //     vehicle.vehicleModels.first.additionalInfo!.adjustableSteering;
+    // _adjustableSeats =
+    //     vehicle.vehicleModels.first.additionalInfo!.adjustableSeats;
+    // _airConditioning =
+    //     vehicle.vehicleModels.first.additionalInfo!.airConditioning;
+    // _alloyWheels = vehicle.vehicleModels.first.additionalInfo!.alloyWheels;
+    // _auxCompatibility =
+    //     vehicle.vehicleModels.first.additionalInfo!.auxCompatibility;
+    // _bluetooth = vehicle.vehicleModels.first.additionalInfo!.bluetooth;
+    // _vehicleCertified =
+    //     vehicle.vehicleModels.first.additionalInfo!.vehicleCertified;
+    // _cruiseControl = vehicle.vehicleModels.first.additionalInfo!.cruiseControl;
+    // _lockSystem = vehicle.vehicleModels.first.additionalInfo!.lockSystem;
+    // _navigationSystem =
+    //     vehicle.vehicleModels.first.additionalInfo!.navigationSystem;
+    // _parkingSensors =
+    //     vehicle.vehicleModels.first.additionalInfo!.parkingSensors;
+    // _powerSteering = vehicle.vehicleModels.first.additionalInfo!.powerSteering;
+    // _powerWindows = vehicle.vehicleModels.first.additionalInfo!.powerWindows;
+    // _amFmRadio = vehicle.vehicleModels.first.additionalInfo!.amFmRadio;
+    // _rearParkingCamera =
+    //     vehicle.vehicleModels.first.additionalInfo!.rearParkingCamera;
+    // _exchange = vehicle.vehicleModels.first.additionalInfo!.exchange;
+    // _finance = vehicle.vehicleModels.first.additionalInfo!.finance;
+    // _serviceHistory =
+    //     vehicle.vehicleModels.first.additionalInfo!.serviceHistory;
+    // _sunroof = vehicle.vehicleModels.first.additionalInfo!.sunroof;
+    // _usbCompatibility =
+    //     vehicle.vehicleModels.first.additionalInfo!.usbCompatibility;
+    // _seatWarmer = vehicle.vehicleModels.first.additionalInfo!.seatWarmer;
+    // _numberOfAirbags =
+    //     vehicle.vehicleModels.first.additionalInfo!.numberOfAirbags;
+    // _batteryCondition =
+    //     vehicle.vehicleModels.first.additionalInfo!.batteryCondition;
+    // _insuranceType = vehicle.vehicleModels.first.additionalInfo!.insuranceType;
+    // _makeMonth = vehicle.vehicleModels.first.additionalInfo!.makeMonth;
+    // _registrationPlace =
+    //     vehicle.vehicleModels.first.additionalInfo!.registrationPlace;
+    // _tyreCondition = vehicle.vehicleModels.first.additionalInfo!.tyreCondition;
+    // _selectedAdditionalColors =
+    //     vehicle.vehicleModels.first.additionalInfo!.color;
   }
 
   void _updateVehicle() {
