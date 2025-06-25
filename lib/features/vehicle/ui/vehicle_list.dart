@@ -37,38 +37,68 @@ class _VehicleListState extends State<VehicleList> {
   }
 
   Widget _buildHeaderSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
     return Padding(
       padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              "Vehicles Management",
-              style: TextStyle(
-                color: AppColors.blackColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+      child: isTablet
+          ? Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 250, vertical: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Vehicles Management",
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSearchBar(),
+                  const SizedBox(height: 12),
+                  _buildAddButton(),
+                ],
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Vehicles Management",
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  _buildSearchBar(),
+                  const SizedBox(width: 15),
+                  _buildAddButton(),
+                ],
               ),
             ),
-            const Spacer(),
-            _buildSearchBar(),
-            const SizedBox(width: 15),
-            _buildAddButton(),
-          ],
-        ),
-      ),
     );
   }
 
   Widget _buildSearchBar() {
+    final isTablet = MediaQuery.of(context).size.width < 900 &&
+        MediaQuery.of(context).size.width >= 550;
     return Container(
-      width: 200,
+      width: isTablet ? double.infinity : 200,
       height: 50,
       decoration: BoxDecoration(
           color: Colors.white,
@@ -105,28 +135,41 @@ class _VehicleListState extends State<VehicleList> {
   }
 
   Widget _buildAddButton() {
+    final isTablet = MediaQuery.of(context).size.width < 900 &&
+        MediaQuery.of(context).size.width >= 550;
     return SizedBox(
-      width: 160,
+      width: isTablet ? double.infinity : 160,
       height: 50,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.blackColor,
-          foregroundColor: AppColors.primaryColor,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final buttonWidth = constraints.maxWidth;
+
+        // Dynamically adjust content based on width
+        double iconSize = buttonWidth < 180 ? 18 : 20;
+        double fontSize = buttonWidth < 180 ? 14 : 16;
+        double spacing = buttonWidth < 180 ? 6 : 8;
+        return ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.blackColor,
+            foregroundColor: AppColors.primaryColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            textStyle:
+                const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        onPressed: () => context.push('/add-vehicle'),
-        child: const Row(
-          children: [
-            Icon(Icons.add, color: AppColors.primaryColor, size: 20),
-            SizedBox(width: 8),
-            Text('Add Vehicle'),
-          ],
-        ),
-      ),
+          onPressed: () => context.push('/add-vehicle'),
+          child: Row(
+            mainAxisAlignment:
+                isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
+            children: [
+              Icon(Icons.add, color: AppColors.primaryColor, size: iconSize),
+              SizedBox(width: spacing),
+              Text('Add Vehicle', style: TextStyle(fontSize: fontSize)),
+            ],
+          ),
+        );
+      }),
     );
   }
 
@@ -154,56 +197,183 @@ class _VehicleListState extends State<VehicleList> {
     );
   }
 
+  // Widget _buildVehicleTable(List<VehicleRequest> vehicles, int currentPage) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(15),
+  //     child: Container(
+  //       width: double.infinity,
+  //       // constraints: const BoxConstraints(maxWidth: 1200),
+  //       child: SingleChildScrollView(
+  //         scrollDirection: Axis.horizontal,
+  //         child: Card(
+  //           elevation: 3,
+  //           shape:
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //           child: ClipRRect(
+  //             borderRadius: BorderRadius.circular(12),
+  //             child: DataTable(
+  //               columnSpacing: 63,
+  //               headingRowColor: WidgetStateColor.resolveWith(
+  //                   (states) => const Color.fromARGB(66, 144, 140, 140)),
+  //               dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+  //               dataRowMinHeight: 55,
+  //               dataRowMaxHeight: 55,
+  //               columns: _buildTableColumns(),
+  //               rows: vehicles
+  //                   .asMap()
+  //                   .entries
+  //                   .map(
+  //                     (entry) =>
+  //                         _buildVehicleRow(entry.key, entry.value, currentPage),
+  //                   )
+  //                   .toList(),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildVehicleTable(List<VehicleRequest> vehicles, int currentPage) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+  //   return Padding(
+  //     padding: const EdgeInsets.all(20),
+  //     child: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         return SingleChildScrollView(
+  //           scrollDirection: Axis.horizontal,
+  //           child: ConstrainedBox(
+  //             constraints: BoxConstraints(
+  //               minWidth: constraints.maxWidth,
+  //             ),
+  //             child: IntrinsicWidth(
+  //               child: Card(
+  //                 elevation: 3,
+  //                 shape: RoundedRectangleBorder(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                 ),
+  //                 child: ClipRRect(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   child: DataTable(
+  //                     columnSpacing: isTablet ? 20 : 50,
+  //                     headingRowColor: WidgetStateColor.resolveWith(
+  //                       (states) => const Color.fromARGB(66, 144, 140, 140),
+  //                     ),
+  //                     dataRowColor:
+  //                         WidgetStatePropertyAll(AppColors.primaryColor),
+  //                     dataRowMinHeight: isTablet ? 45 : 55,
+  //                     dataRowMaxHeight: isTablet ? 45 : 55,
+  //                     columns: const [
+  //                       DataColumn(
+  //                           label: Padding(
+  //                               padding: EdgeInsets.only(left: 16),
+  //                               child: Text('ID',
+  //                                   style: TextStyle(
+  //                                       fontWeight: FontWeight.bold)))),
+  //                       DataColumn(label: Text('Vehicle Name & Model')),
+  //                       DataColumn(label: Text('Model Type')),
+  //                       DataColumn(label: Text('Company Name')),
+  //                       DataColumn(label: Text('Transmission & Fuel Type')),
+  //                       DataColumn(label: Text('Actions')),
+  //                     ],
+  //                     rows: vehicles
+  //                         .asMap()
+  //                         .entries
+  //                         .map((entry) => _buildVehicleRow(
+  //                             entry.key, entry.value, currentPage))
+  //                         .toList(),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
   Widget _buildVehicleTable(List<VehicleRequest> vehicles, int currentPage) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
     return Padding(
       padding: const EdgeInsets.all(15),
-      child: Container(
-        width: double.infinity,
-        // constraints: const BoxConstraints(maxWidth: 1200),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Card(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final tableWidth = constraints.maxWidth;
+
+          return Card(
             elevation: 3,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: DataTable(
-                columnSpacing: 63,
-                headingRowColor: WidgetStateColor.resolveWith(
-                    (states) => const Color.fromARGB(66, 144, 140, 140)),
-                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
-                dataRowMinHeight: 55,
-                dataRowMaxHeight: 55,
-                columns: _buildTableColumns(),
-                rows: vehicles
-                    .asMap()
-                    .entries
-                    .map(
-                      (entry) =>
-                          _buildVehicleRow(entry.key, entry.value, currentPage),
-                    )
-                    .toList(),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: tableWidth,
+                  ),
+                  child: DataTable(
+                    columnSpacing: isTablet ? 20 : 50,
+                    headingRowColor: WidgetStateColor.resolveWith(
+                      (states) => const Color.fromARGB(66, 144, 140, 140),
+                    ),
+                    dataRowColor:
+                        WidgetStatePropertyAll(AppColors.primaryColor),
+                    dataRowMinHeight: isTablet ? 45 : 55,
+                    dataRowMaxHeight: isTablet ? 45 : 55,
+                    columns: _buildTableColumns(isTablet),
+                    rows: vehicles
+                        .asMap()
+                        .entries
+                        .map((entry) => _buildVehicleRow(
+                            entry.key, entry.value, currentPage))
+                        .toList(),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
 
-  List<DataColumn> _buildTableColumns() {
-    return const [
+  List<DataColumn> _buildTableColumns([bool isTablet = false]) {
+    return [
+      const DataColumn(
+        label: Padding(
+          padding: EdgeInsets.only(left: 30),
+          child: Text('ID'),
+        ),
+      ),
+      DataColumn(label: Text(isTablet ? 'Name/Model' : 'Vehicle Name & Model')),
+      const DataColumn(label: Text('Model Type')),
+      DataColumn(label: Text(isTablet ? 'Company' : 'Company Name')),
       DataColumn(
-          label:
-              Padding(padding: EdgeInsets.only(left: 30), child: Text('ID'))),
-      DataColumn(label: Text('Vehicle Name & Model')),
-      DataColumn(label: Text('Model Type')),
-      DataColumn(label: Text('Company Name')),
-      DataColumn(label: Text('Transmission & Fuel Type')),
-      DataColumn(label: Text('Actions')),
+          label: Text(isTablet ? 'Trans/Fuel' : 'Transmission & Fuel Type')),
+      const DataColumn(label: Text('Actions')),
     ];
   }
+
+  // List<DataColumn> _buildTableColumns() {
+  //   return const [
+  //     DataColumn(
+  //         label:
+  //             Padding(padding: EdgeInsets.only(left: 30), child: Text('ID'))),
+  //     DataColumn(label: Text('Vehicle Name & Model')),
+  //     DataColumn(label: Text('Model Type')),
+  //     DataColumn(label: Text('Company Name')),
+  //     DataColumn(label: Text('Transmission & Fuel Type')),
+  //     DataColumn(label: Text('Actions')),
+  //   ];
+  // }
 
   DataRow _buildVehicleRow(int index, VehicleRequest vehicle, int currentPage) {
     int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;

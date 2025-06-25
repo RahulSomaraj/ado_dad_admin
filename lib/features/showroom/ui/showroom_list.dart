@@ -27,82 +27,183 @@ class _ShowroomState extends State<Showroom> {
     );
   }
 
+  // Widget _buildHeaderSection() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(15),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: AppColors.primaryColor,
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           const Text(
+  //             "Showroom Management",
+  //             style: TextStyle(
+  //               color: AppColors.blackColor,
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           const Spacer(),
+  //           _buildSearchBar(),
+  //           const SizedBox(width: 15),
+  //           _buildAddButton(),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
-      child: Container(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isTablet = constraints.maxWidth <= 900;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 12),
+            child: isTablet
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Showroom Management",
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSearchBar(),
+                      const SizedBox(height: 12),
+                      _buildAddButton(),
+                    ],
+                  )
+                : Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Showroom Management",
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      _buildSearchBar(),
+                      const SizedBox(width: 15),
+                      _buildAddButton(),
+                    ],
+                  ),
+          );
+        },
+      ),
+    );
+  }
+
+  // Widget _buildSearchBar() {
+  //   return Container(
+  //     width: 200,
+  //     height: 50,
+  //     decoration: BoxDecoration(
+  //         color: Colors.white,
+  //         borderRadius: BorderRadius.circular(8),
+  //         border: Border.all(color: AppColors.blackColor)),
+  //     child: Row(
+  //       children: [
+  //         const SizedBox(width: 8),
+  //         const Icon(
+  //           Icons.search,
+  //           color: Colors.black,
+  //           size: 20,
+  //         ),
+  //         const SizedBox(width: 8),
+  //         Expanded(
+  //           child: TextField(
+  //             controller: _searchController,
+  //             decoration: const InputDecoration(
+  //               hintText: "Search...",
+  //               hintStyle: TextStyle(fontSize: 14),
+  //               border: InputBorder.none,
+  //             ),
+  //             style: const TextStyle(fontSize: 14),
+  //             onChanged: (query) {
+  //               if (query.isNotEmpty) {
+  //                 context.read<ShowroomBloc>().add(FetchAllShowrooms(
+  //                     page: 1, limit: 10, searchQuery: query));
+  //               } else {
+  //                 context.read<ShowroomBloc>().add(
+  //                     FetchAllShowrooms(page: 1, limit: 10, searchQuery: ''));
+  //               }
+  //             },
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  Widget _buildSearchBar() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth <= 900 && screenWidth >= 550;
+
+    return SizedBox(
+      width: isTablet ? double.infinity : 200,
+      height: 50,
+      child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(12),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.blackColor),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text(
-              "Showroom Management",
-              style: TextStyle(
-                color: AppColors.blackColor,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            const SizedBox(width: 8),
+            const Icon(Icons.search, color: Colors.black, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                decoration: const InputDecoration(
+                  hintText: "Search...",
+                  hintStyle: TextStyle(fontSize: 14),
+                  border: InputBorder.none,
+                ),
+                style: const TextStyle(fontSize: 14),
+                onChanged: (query) {
+                  context.read<ShowroomBloc>().add(
+                        FetchAllShowrooms(
+                          page: 1,
+                          limit: 10,
+                          searchQuery: query.isNotEmpty ? query : '',
+                        ),
+                      );
+                },
               ),
             ),
-            const Spacer(),
-            _buildSearchBar(),
-            const SizedBox(width: 15),
-            _buildAddButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSearchBar() {
-    return Container(
-      width: 200,
-      height: 50,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.blackColor)),
-      child: Row(
-        children: [
-          const SizedBox(width: 8),
-          const Icon(
-            Icons.search,
-            color: Colors.black,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: "Search...",
-                hintStyle: TextStyle(fontSize: 14),
-                border: InputBorder.none,
-              ),
-              style: const TextStyle(fontSize: 14),
-              onChanged: (query) {
-                if (query.isNotEmpty) {
-                  context.read<ShowroomBloc>().add(FetchAllShowrooms(
-                      page: 1, limit: 10, searchQuery: query));
-                } else {
-                  context.read<ShowroomBloc>().add(
-                      FetchAllShowrooms(page: 1, limit: 10, searchQuery: ''));
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildAddButton() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth <= 900 && screenWidth >= 550;
+
     return SizedBox(
-      width: 210,
+      width: isTablet ? double.infinity : 210,
       height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -114,23 +215,51 @@ class _ShowroomState extends State<Showroom> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        onPressed: () {
-          context.push('/add-showroom');
-        },
+        onPressed: () => context.push('/add-showroom'),
         child: Row(
-          children: [
-            Icon(
-              Icons.add,
-              color: AppColors.primaryColor,
-              size: 20,
-            ),
+          mainAxisAlignment:
+              isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
+          children: const [
+            Icon(Icons.add, color: Colors.white, size: 20),
             SizedBox(width: 8),
-            const Text('Add New Showroom'),
+            Text('Add New Showroom'),
           ],
         ),
       ),
     );
   }
+
+  // Widget _buildAddButton() {
+  //   return SizedBox(
+  //     width: 210,
+  //     height: 50,
+  //     child: ElevatedButton(
+  //       style: ElevatedButton.styleFrom(
+  //         backgroundColor: AppColors.blackColor,
+  //         foregroundColor: AppColors.primaryColor,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(8),
+  //         ),
+  //         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  //         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //       ),
+  //       onPressed: () {
+  //         context.push('/add-showroom');
+  //       },
+  //       child: Row(
+  //         children: [
+  //           Icon(
+  //             Icons.add,
+  //             color: AppColors.primaryColor,
+  //             size: 20,
+  //           ),
+  //           SizedBox(width: 8),
+  //           const Text('Add New Showroom'),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildShowroomList() {
     return BlocBuilder<ShowroomBloc, ShowroomState>(
@@ -155,55 +284,122 @@ class _ShowroomState extends State<Showroom> {
     );
   }
 
+  // Widget _buildUserTable(List<UserModel> users) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(20),
+  //     child: SizedBox(
+  //       width: double.infinity,
+  //       child: Card(
+  //         elevation: 3,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(12),
+  //         ),
+  //         child: ClipRRect(
+  //           borderRadius: BorderRadius.circular(12),
+  //           child: SingleChildScrollView(
+  //             child: DataTable(
+  //               columnSpacing: 100,
+  //               headingRowColor: WidgetStateColor.resolveWith(
+  //                   (states) => Color.fromARGB(66, 144, 140, 140)),
+  //               dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+  //               dataRowMinHeight: 40,
+  //               dataRowMaxHeight: 40,
+  //               columns: const [
+  //                 DataColumn(
+  //                     label: Padding(
+  //                   padding: EdgeInsets.only(left: 30),
+  //                   child: Text('ID',
+  //                       style: TextStyle(fontWeight: FontWeight.bold)),
+  //                 )),
+  //                 DataColumn(
+  //                     label: Text('Name',
+  //                         style: TextStyle(fontWeight: FontWeight.bold))),
+  //                 DataColumn(
+  //                     label: Text('Email',
+  //                         style: TextStyle(fontWeight: FontWeight.bold))),
+  //                 DataColumn(
+  //                     label: Text('Phone Number',
+  //                         style: TextStyle(fontWeight: FontWeight.bold))),
+  //                 DataColumn(
+  //                     label: Text('Actions',
+  //                         style: TextStyle(fontWeight: FontWeight.bold))),
+  //               ],
+  //               rows: users.asMap().entries.map((entry) {
+  //                 return _buildUserRow(entry.key, entry.value);
+  //               }).toList(),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget _buildUserTable(List<UserModel> users) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: SizedBox(
-        width: double.infinity,
-        child: Card(
-          elevation: 3,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: SingleChildScrollView(
-              child: DataTable(
-                columnSpacing: 100,
-                headingRowColor: WidgetStateColor.resolveWith(
-                    (states) => Color.fromARGB(66, 144, 140, 140)),
-                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
-                dataRowMinHeight: 40,
-                dataRowMaxHeight: 40,
-                columns: const [
-                  DataColumn(
-                      label: Padding(
-                    padding: EdgeInsets.only(left: 30),
-                    child: Text('ID',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  )),
-                  DataColumn(
-                      label: Text('Name',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Email',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Phone Number',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Actions',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                ],
-                rows: users.asMap().entries.map((entry) {
-                  return _buildUserRow(entry.key, entry.value);
-                }).toList(),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
+              child: Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: DataTable(
+                    columnSpacing: isTablet ? 30 : 100,
+                    headingRowColor: WidgetStateColor.resolveWith(
+                        (states) => const Color.fromARGB(66, 144, 140, 140)),
+                    dataRowColor:
+                        WidgetStatePropertyAll(AppColors.primaryColor),
+                    dataRowMinHeight: isTablet ? 40 : 50,
+                    dataRowMaxHeight: isTablet ? 40 : 50,
+                    columns: _buildTableColumns(isTablet),
+                    rows: users.asMap().entries.map((entry) {
+                      return _buildUserRow(entry.key, entry.value);
+                    }).toList(),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
+  }
+
+  List<DataColumn> _buildTableColumns(bool isTablet) {
+    return [
+      const DataColumn(
+        label: Padding(
+          padding: EdgeInsets.only(left: 30),
+          child: Text('ID', style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+      ),
+      DataColumn(
+        label:
+            Text('Name', style: const TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      DataColumn(
+        label:
+            Text('Email', style: const TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      DataColumn(
+        label: Text(isTablet ? 'Phone' : 'Phone Number',
+            style: const TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      const DataColumn(
+        label: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+    ];
   }
 
   int rowsPerPage = 10;

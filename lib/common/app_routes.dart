@@ -1,5 +1,6 @@
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/admin_layout/admin_layout.dart';
+import 'package:ado_dad_admin/features/dashboard/admin_dash.dart';
 import 'package:ado_dad_admin/features/login/ui/login.dart';
 import 'package:ado_dad_admin/features/profile/user_profile.dart';
 import 'package:ado_dad_admin/features/showroom/ui/showroom_add.dart';
@@ -36,8 +37,7 @@ class AppRoutes {
           return AdminLayout(child: child);
         },
         routes: [
-          _noTransitionRoute(
-              '/dashboard', const Center(child: Text("Dashboard Content"))),
+          _noTransitionRoute('/dashboard', const AdminDashboard()),
           _noTransitionRoute('/profile', const MyProfile()),
           _noTransitionRoute('/users', Users()),
           _noTransitionRoute('/add-user', AddUser()),
