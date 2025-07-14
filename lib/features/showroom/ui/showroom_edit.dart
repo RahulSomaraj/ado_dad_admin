@@ -39,7 +39,7 @@ class _EditShowroomState extends State<EditShowroom> {
         name: _name,
         email: _email,
         phoneNumber: _phone,
-        type: 'SR',
+        userType: 'SR',
       );
       context
           .read<ShowroomBloc>()

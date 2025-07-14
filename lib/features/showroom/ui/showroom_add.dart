@@ -30,7 +30,7 @@ class _ShowroomAddState extends State<ShowroomAdd> {
           email: _email,
           phoneNumber: _phone,
           password: _password,
-          type: 'SR');
+          userType: 'SR');
 
       context.read<ShowroomBloc>().add(
             ShowroomEvent.addShowroom(showroomData: newShowroom),

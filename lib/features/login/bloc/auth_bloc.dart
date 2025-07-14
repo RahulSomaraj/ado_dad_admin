@@ -26,7 +26,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthState.success(
           username: response.userName, userType: response.userType));
     } catch (e) {
-      emit(AuthState.failure('Invalid Username or Password'));
+      emit(AuthState.failure('Admin & Super Admin only can login'));
     }
   }
 
