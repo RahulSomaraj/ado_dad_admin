@@ -69,6 +69,7 @@ class UserRepository {
         "/users",
         data: userData.toJson(),
       );
+      print(response.data);
       if (response.statusCode == 201) {
         return response.data['message'] ?? "User added successfully";
       } else {

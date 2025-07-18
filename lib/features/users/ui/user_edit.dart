@@ -36,7 +36,7 @@ class _EditUserState extends State<EditUser> {
     _name = widget.user.name;
     _email = widget.user.email;
     _phone = widget.user.phoneNumber;
-    _userType = _userTypeMap[widget.user.type] ?? "Normal User";
+    _userType = _userTypeMap[widget.user.userType] ?? "Normal User";
   }
 
   /// Convert full form to short code for API request
@@ -58,7 +58,7 @@ class _EditUserState extends State<EditUser> {
         name: _name,
         email: _email,
         phoneNumber: _phone,
-        type: _getShortForm(_userType),
+        userType: _getShortForm(_userType),
       );
 
       context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
@@ -80,6 +80,8 @@ class _EditUserState extends State<EditUser> {
           actions: [
             TextButton(
               onPressed: () {
+                // Refresh users before navigating
+                context.read<UserBloc>().add(FetchAllUsers());
                 context.pop();
                 context.go('/users');
               },

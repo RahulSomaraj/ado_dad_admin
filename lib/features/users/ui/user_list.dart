@@ -262,7 +262,15 @@ class _UsersState extends State<Users> {
               textStyle:
                   TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
             ),
-            onPressed: () => context.push('/add-user'),
+            onPressed: () async {
+              bool? result = await context.push('/add-user');
+              if (result ?? false) {
+                //REFRESH the user list if new user was added
+                context
+                    .read<UserBloc>()
+                    .add(FetchAllUsers(page: 1, limit: rowsPerPage));
+              }
+            },
             child: Row(
               mainAxisAlignment:
                   isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
