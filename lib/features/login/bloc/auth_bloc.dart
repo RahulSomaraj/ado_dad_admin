@@ -23,8 +23,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final response =
           await authRepository.login(event.username, event.password);
 
-      emit(AuthState.success(
-          username: response.userName, userType: response.userType));
+      // emit(AuthState.success(
+      //     username: response.userName, userType: response.userType));
+      if (response.userType == 'SA' || response.userType == 'AD') {
+        await saveLoginResponse(response);
+        emit(AuthState.success(
+          username: response.userName,
+          userType: response.userType,
+        ));
+      } else {
+        emit(const AuthState.failure(
+            "Only Admin and Super Admin users can log in."));
+      }
     } catch (e) {
       emit(AuthState.failure('Invalid Username or Password'));
     }

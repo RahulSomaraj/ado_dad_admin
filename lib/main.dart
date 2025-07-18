@@ -1,16 +1,20 @@
 import 'package:ado_dad_admin/common/app_routes.dart';
 import 'package:ado_dad_admin/common/app_theme.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
+import 'package:ado_dad_admin/features/banner/bloc/banner_bloc.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
-import 'package:ado_dad_admin/features/vehicle/bloc/vehicle_bloc.dart';
-import 'package:ado_dad_admin/features/vehicle_company/bloc/vehicle_company_bloc.dart';
+import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
+import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
+import 'package:ado_dad_admin/features/vehicle_variant/bloc/bloc/vehicle_variant_bloc.dart';
 import 'package:ado_dad_admin/repositories/auth_rep.dart';
+import 'package:ado_dad_admin/repositories/banner_rep.dart';
 import 'package:ado_dad_admin/repositories/showroom_rep.dart';
 import 'package:ado_dad_admin/repositories/user_rep.dart';
-import 'package:ado_dad_admin/repositories/vehicle_company_rep.dart';
-import 'package:ado_dad_admin/repositories/vehicle_rep.dart';
+import 'package:ado_dad_admin/repositories/vehicle_manufacturer_rep.dart';
+import 'package:ado_dad_admin/repositories/vehicle_model_rep.dart';
+import 'package:ado_dad_admin/repositories/vehicle_variant_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -41,15 +45,34 @@ class MyApp extends StatelessWidget {
               ShowroomBloc(showroomRepository: ShowroomRepository())
                 ..add(FetchAllShowrooms()),
         ),
+        // BlocProvider(
+        //   create: (context) => VehicleCompanyBloc(
+        //       vehicleCompanyRepository: VehicleCompanyRepository())
+        //     ..add(FetchAllVehicleCompany()),
+        // ),
         BlocProvider(
-          create: (context) => VehicleCompanyBloc(
-              vehicleCompanyRepository: VehicleCompanyRepository())
-            ..add(FetchAllVehicleCompany()),
+          create: (context) => VehicleManufacturerBloc(
+              repository: VehicleManufacturerRepository())
+            ..add(FetchAllVehicleManufacturers()),
+        ),
+        // BlocProvider(
+        //   create: (context) =>
+        //       VehicleBloc(vehicleRepository: VehicleRepository())
+        //         ..add(FetchAllVehicles()),
+        // ),
+        BlocProvider(
+          create: (context) =>
+              VehicleModelBloc(repository: VehicleModelRepository())
+                ..add(FetchAllVehicleModels()),
         ),
         BlocProvider(
           create: (context) =>
-              VehicleBloc(vehicleRepository: VehicleRepository())
-                ..add(FetchAllVehicles()),
+              VehicleVariantBloc(repository: VehicleVariantRepository()),
+        ),
+
+        BlocProvider(
+          create: (context) => BannerBloc(repository: BannerRepository())
+            ..add(FetchAllBanners()),
         ),
       ],
       child: BlocListener<AuthBloc, AuthState>(
