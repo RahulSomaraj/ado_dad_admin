@@ -36,7 +36,6 @@ class _AddUserState extends State<AddUser> {
     'SR': "Showroom"
   };
 
-  /// Convert full form to short code for API request
   String _getShortForm(String fullType) {
     return _userTypeMap.entries
         .firstWhere(
@@ -69,7 +68,8 @@ class _AddUserState extends State<AddUser> {
       context.read<UserBloc>().add(UserEvent.addUser(userData: newUser));
       // context.read<UserBloc>().add(UpdateUser(updatedUser: newUser));
 
-      Future.delayed(const Duration(milliseconds: 500), () {
+      // Show success popup safely after frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSuccessPopup(context, "User has been added successfully.");
       });
     }
@@ -106,6 +106,15 @@ class _AddUserState extends State<AddUser> {
     super.dispose();
   }
 
+  // @override
+  // void dispose() {
+  //   _nameController.dispose();
+  //   _emailController.dispose();
+  //   _phoneController.dispose();
+  //   _passwordController.dispose();
+  //   super.dispose();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<UserBloc, UserState>(
@@ -124,7 +133,6 @@ class _AddUserState extends State<AddUser> {
     );
   }
 
-  /// ✅ Header Section with Back Button
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -253,15 +261,15 @@ class _AddUserState extends State<AddUser> {
           ? TextInputType.emailAddress
           : (isPhone ? TextInputType.phone : TextInputType.text),
       validator: (value) {
-        if (value == null || value.isEmpty) {
+        if (value == null || value.trim().isEmpty) {
           return "$label is required";
         }
         if (isEmail &&
             !RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-                .hasMatch(value)) {
+                .hasMatch(value.trim())) {
           return "Enter a valid email address";
         }
-        if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value)) {
+        if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value.trim())) {
           return "Enter a valid phone number (10+ digits)";
         }
         return null;

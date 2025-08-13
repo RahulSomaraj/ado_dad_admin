@@ -157,14 +157,13 @@ class _VehicleCompanyAddState extends State<VehicleCompanyAdd> {
                   _buildFormField(
                       "Company Name", "", (value) => _name = value!),
                   const SizedBox(height: 15),
+                  _buildDropdownField(
+                      "Origin Country", _origincountry, _countryList, (value) {
+                    setState(() => _origincountry = value!);
+                  }),
                   _buildFormField(
                       "Company Logo", "", (value) => _logo = value!),
                   const SizedBox(height: 15),
-                  _buildDropdownField(
-                      "Origin of Country", _origincountry, _countryList,
-                      (value) {
-                    setState(() => _origincountry = value!);
-                  }),
                   const SizedBox(height: 15),
                   _buildDropdownField(
                       "Vehicle Type", _vehicletype, _vehicleTypes, (value) {

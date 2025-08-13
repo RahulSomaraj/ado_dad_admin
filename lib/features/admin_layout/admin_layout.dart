@@ -145,10 +145,12 @@ class _AdminLayoutState extends State<AdminLayout> {
   Future<void> _loadUserData() async {
     final name = await getUserName();
     final type = await getUserType();
-    setState(() {
-      userType = type;
-      userName = name;
-    });
+    if (mounted) {
+      setState(() {
+        userType = type;
+        userName = name;
+      });
+    }
   }
 
   String getInitials(String name) {

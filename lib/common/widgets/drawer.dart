@@ -90,16 +90,26 @@ class _AdminDrawerState extends State<AdminDrawer> {
               0, '/dashboard', 'assets/images/dashboard-icon.png', "Dashboard"),
           _buildDrawerItem(1, '/profile', 'assets/images/users.png', "Profile"),
           _buildDrawerItem(2, '/users', 'assets/images/users.png', "Users"),
-          _buildDrawerItem(
-              3, '/vehicles', 'assets/images/listing-icon.png', "Vehicles"),
-          _buildDrawerItem(4, '/vehicle-companies',
-              'assets/images/promotion-icon.png', "Vehicle Companies"),
+          // _buildDrawerItem(
+          //     3, '/vehicles', 'assets/images/listing-icon.png', "Vehicles"),
+          _buildDrawerItem(3, '/vehicle-manufactures',
+              'assets/images/promotion-icon.png', "Vehicle Manufactures"),
+          _buildDrawerItem(4, '/vehicle-models',
+              'assets/images/listing-icon.png', "Vehicle Models"),
+          // _buildDrawerItem(5, '/vehicle-variants',
+          //     'assets/images/listing-icon.png', "Vehicle Variants"),
+
+          // _buildDrawerItem(4, '/vehicle-companies',
+          //     'assets/images/promotion-icon.png', "Vehicle Companies"),
+
           _buildDrawerItem(
               5, '/showrooms', 'assets/images/showroom-icon.png', "Showrooms"),
           _buildDrawerItem(6, '/reports', 'assets/images/report-icon.png',
               "Reports Management"),
           _buildDrawerItem(7, '/notifications',
               'assets/images/notification-icon.png', "Notifications"),
+          _buildDrawerItem(8, '/banners', 'assets/images/report-icon.png',
+              "Banner Management"),
         ],
       );
     } else {
