@@ -35,14 +35,6 @@ class _ShowroomAddState extends State<ShowroomAdd> {
       context.read<ShowroomBloc>().add(
             ShowroomEvent.addShowroom(showroomData: newShowroom),
           );
-
-      // context
-      //     .read<ShowroomBloc>()
-      //     .add(ShowroomEvent.updateShowroom(updatedShowroom: newShowroom));
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(context, "Showroom has been added successfully.");
-      });
     }
   }
 
@@ -69,19 +61,33 @@ class _ShowroomAddState extends State<ShowroomAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ShowroomBloc, ShowroomState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildShowroomForm(state),
-            ],
-          ),
-        );
+    return BlocListener<ShowroomBloc, ShowroomState>(
+      listener: (context, state) {
+        if (state is ShowroomError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is ShowroomAddedSuccess) {
+          _showSuccessPopup(context, state.message);
+        }
       },
+      child: BlocBuilder<ShowroomBloc, ShowroomState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildShowroomForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -158,8 +164,8 @@ class _ShowroomAddState extends State<ShowroomAdd> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: state is ShowroomLoading ? null : _addShowroom,
-                      child: state is ShowroomLoading
+                      onPressed: state is AddingShowroom ? null : _addShowroom,
+                      child: state is AddingShowroom
                           ? const SizedBox(
                               height: 20,
                               width: 20,

@@ -127,12 +127,7 @@ class _VehicleVariantAddSafeState extends State<VehicleVariantAddSafe> {
               onPressed: () {
                 if (mounted) {
                   Navigator.of(context).pop();
-                  // Use a longer delay to ensure dialog is fully dismissed
-                  Future.delayed(const Duration(milliseconds: 100), () {
-                    if (mounted) {
-                      context.go('/vehicle-models');
-                    }
-                  });
+                  context.go('/vehicle-models');
                 }
               },
               child: const Text("OK"),

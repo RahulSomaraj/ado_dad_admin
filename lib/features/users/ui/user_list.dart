@@ -71,7 +71,9 @@ class _UsersState extends State<Users> {
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () => context.pop(),
+              onPressed: () {
+                context.pop();
+              },
               child: const Text("OK"),
             ),
           ],
@@ -82,21 +84,26 @@ class _UsersState extends State<Users> {
 
   void _deleteUser(String userId) {
     context.read<UserBloc>().add(DeleteUser(userId: userId));
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _showSuccessPopup(context, "User deleted successfully!");
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        _buildHeaderSection(),
-        const SizedBox(height: 20),
-        _buildUserList(),
-      ],
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserDeletedSuccess) {
+          _showSuccessPopup(context, state.message);
+        }
+      },
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 20),
+            _buildHeaderSection(),
+            const SizedBox(height: 20),
+            _buildUserList(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -402,65 +409,87 @@ class _UsersState extends State<Users> {
 
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minWidth: constraints.maxWidth,
+                minWidth: isTablet ? 600 : 800,
               ),
-              child: IntrinsicWidth(
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: DataTable(
-                      columnSpacing: isTablet ? 30 : 80,
-                      headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => const Color.fromARGB(66, 144, 140, 140),
-                      ),
-                      dataRowColor:
-                          WidgetStatePropertyAll(AppColors.primaryColor),
-                      dataRowMinHeight: isTablet ? 45 : 55,
-                      dataRowMaxHeight: isTablet ? 45 : 55,
-                      columns: const [
-                        DataColumn(
-                          label: Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: Text('ID',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        DataColumn(
-                            label: Text('Name',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Email',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Phone',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Actions',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                      ],
-                      rows: users.asMap().entries.map((entry) {
-                        return _buildUserRow(
-                            entry.key, entry.value, currentPage);
-                      }).toList(),
-                    ),
-                  ),
+              child: DataTable(
+                columnSpacing: isTablet ? 20 : 40,
+                headingRowColor: WidgetStateColor.resolveWith(
+                  (states) => const Color.fromARGB(66, 144, 140, 140),
                 ),
+                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+                dataRowMinHeight: isTablet ? 45 : 55,
+                dataRowMaxHeight: isTablet ? 45 : 55,
+                columns: _buildResponsiveColumns(isTablet),
+                rows: users.asMap().entries.map((entry) {
+                  return _buildUserRow(entry.key, entry.value, currentPage);
+                }).toList(),
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
+  }
+
+  List<DataColumn> _buildResponsiveColumns(bool isTablet) {
+    return [
+      DataColumn(
+        label: Container(
+          width: isTablet ? 60 : 80,
+          child: const Text(
+            'ID',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 120 : 150,
+          child: const Text(
+            'Name',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 150 : 200,
+          child: const Text(
+            'Email',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 120 : 150,
+          child: const Text(
+            'Phone',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 80 : 100,
+          child: const Text(
+            'Actions',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    ];
   }
 
   int rowsPerPage = 10;
@@ -536,17 +565,42 @@ class _UsersState extends State<Users> {
   }
 
   DataRow _buildUserRow(int index, UserModel user, int currentPage) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
     int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
     return DataRow(cells: [
-      DataCell(Padding(
-        padding: const EdgeInsets.only(left: 30),
+      DataCell(Container(
+        width: isTablet ? 60 : 80,
         child: Text('$rowNumber'),
       )),
-      DataCell(Text(user.name)),
-      DataCell(Text(user.email)),
-      DataCell(Text(user.phoneNumber)),
-      DataCell(
-        Row(
+      DataCell(Container(
+        width: isTablet ? 120 : 150,
+        child: Text(
+          user.name,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: isTablet ? 150 : 200,
+        child: Text(
+          user.email,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: isTablet ? 120 : 150,
+        child: Text(
+          user.phoneNumber,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: isTablet ? 80 : 100,
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
@@ -565,7 +619,7 @@ class _UsersState extends State<Users> {
             ),
           ],
         ),
-      ),
+      )),
     ]);
   }
 }

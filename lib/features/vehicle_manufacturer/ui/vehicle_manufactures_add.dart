@@ -66,10 +66,6 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
       context
           .read<VehicleManufacturerBloc>()
           .add(VehicleManufacturerEvent.createManufacturer(manufacturer));
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        _showSuccessPopup(context, "Manufacturer has been added successfully.");
-      });
     }
   }
 
@@ -101,19 +97,30 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildVehicleManufactureForm(state),
-            ],
-          ),
+    return BlocListener<VehicleManufacturerBloc, VehicleManufacturerState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (response) {
+            _showSuccessPopup(
+                context, "Manufacturer has been added successfully.");
+          },
+          orElse: () {},
         );
       },
+      child: BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildVehicleManufactureForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

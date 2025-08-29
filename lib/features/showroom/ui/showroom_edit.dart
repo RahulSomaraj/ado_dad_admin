@@ -44,10 +44,6 @@ class _EditShowroomState extends State<EditShowroom> {
       context
           .read<ShowroomBloc>()
           .add(UpdateShowroom(updatedShowroom: updatedShowroom));
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(
-            context, "Showroom details have been updated successfully.");
-      });
     }
   }
 
@@ -75,19 +71,27 @@ class _EditShowroomState extends State<EditShowroom> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ShowroomBloc, ShowroomState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildUpdateForm(state),
-            ],
-          ),
-        );
+    return BlocListener<ShowroomBloc, ShowroomState>(
+      listener: (context, state) {
+        if (state is ShowroomUpdated) {
+          _showSuccessPopup(
+              context, "Showroom details have been updated successfully.");
+        }
       },
+      child: BlocBuilder<ShowroomBloc, ShowroomState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildUpdateForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

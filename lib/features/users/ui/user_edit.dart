@@ -62,11 +62,6 @@ class _EditUserState extends State<EditUser> {
       );
 
       context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(
-            context, "User details have been updated successfully.");
-      });
     }
   }
 
@@ -95,19 +90,27 @@ class _EditUserState extends State<EditUser> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildUpdateForm(state),
-            ],
-          ),
-        );
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserUpdated) {
+          _showSuccessPopup(
+              context, "User details have been updated successfully.");
+        }
       },
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildUpdateForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

@@ -195,8 +195,9 @@ class _AddUserState extends State<AddUser> {
                       isPhone: true),
                   const SizedBox(height: 15),
                   _buildFormField(
-                    "Password", _passwordController,
-                    // obscureText: true,
+                    "Password",
+                    _passwordController,
+                    obscureText: true,
                   ),
                   const SizedBox(height: 15),
                   _buildDropdownField("User Type", _userType),
@@ -247,7 +248,7 @@ class _AddUserState extends State<AddUser> {
     TextEditingController controller, {
     bool isEmail = false,
     bool isPhone = false,
-    // bool obscureText = false,
+    bool obscureText = false,
   }) {
     return TextFormField(
       controller: controller,
@@ -256,7 +257,7 @@ class _AddUserState extends State<AddUser> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       // initialValue: initialValue,
-      // obscureText: obscureText,
+      obscureText: obscureText,
       keyboardType: isEmail
           ? TextInputType.emailAddress
           : (isPhone ? TextInputType.phone : TextInputType.text),

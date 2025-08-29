@@ -1,6 +1,7 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({super.key});
@@ -151,7 +152,9 @@ class _AdminDashboardState extends State<AdminDashboard> {
               textStyle:
                   TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
             ),
-            onPressed: () {},
+            onPressed: () {
+              context.push('/add-showroom');
+            },
             child: Row(
               mainAxisAlignment:
                   isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,

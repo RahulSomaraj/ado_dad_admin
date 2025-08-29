@@ -43,6 +43,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _onDeleteUser(DeleteUser event, Emitter<UserState> emit) async {
     try {
       await userRepository.deleteUser(event.userId);
+      emit(const UserState.userDeletedSuccess("User deleted successfully!"));
       add(FetchAllUsers(page: 1, limit: 10));
     } catch (e) {
       emit(UserError("Failed to delete user"));
