@@ -69,12 +69,14 @@ class UserRepository {
         "/users",
         data: userData.toJson(),
       );
+      print(response.data);
       if (response.statusCode == 201) {
         return response.data['message'] ?? "User added successfully";
       } else {
         throw Exception("Failed to add user: ${response.statusMessage}");
       }
     } on DioException catch (e) {
+      print('Error: $e');
       if (e.response != null) {
         throw Exception(e.response!.data['message'] ?? "API error occurred");
       } else {

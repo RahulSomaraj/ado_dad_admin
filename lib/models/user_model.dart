@@ -1,7 +1,7 @@
 class UserModel {
   final String id;
   final String? profilePic;
-  final String? type;
+  final String? userType; // ✅ Replaced 'type' with 'userType'
   final String name; // ✅ Ensure `name` is always non-null
   final String phoneNumber; // ✅ Ensure `phoneNumber` is always non-null
   final String email; // ✅ Ensure `email` is always non-null
@@ -16,7 +16,7 @@ class UserModel {
   UserModel({
     required this.id,
     this.profilePic,
-    this.type,
+    required this.userType, // ✅ 'type' => 'userType'
     required this.name,
     required this.phoneNumber,
     required this.email,
@@ -34,7 +34,7 @@ class UserModel {
     return UserModel(
       id: json['_id'] ?? '',
       profilePic: json['profilePic'],
-      type: json['type'],
+      userType: json['type'], // ✅ Use 'userType' instead of 'type
       name: json['name'] ?? '', // ✅ Use `?? ''` to avoid null assignment errors
       phoneNumber: json['phoneNumber'] ?? '',
       email: json['email'] ?? '',
@@ -59,7 +59,8 @@ class UserModel {
     final Map<String, dynamic> data = {};
     if (id.isNotEmpty) data['_id'] = id;
     if (profilePic != null) data['profilePic'] = profilePic;
-    if (type != null) data['type'] = type;
+    if (userType != null)
+      data['type'] = userType; // ✅ Use 'userType' instead of 'type'
     data['name'] = name; // ✅ Always send `name` (non-null)
     data['phoneNumber'] = phoneNumber;
     data['email'] = email;
@@ -76,7 +77,7 @@ class UserModel {
   /// ✅ Copy method to update only changed fields
   UserModel copyWith({
     String? profilePic,
-    String? type,
+    String? userType,
     String? name,
     String? phoneNumber,
     String? email,
@@ -91,7 +92,7 @@ class UserModel {
     return UserModel(
       id: id,
       profilePic: profilePic ?? this.profilePic,
-      type: type ?? this.type,
+      userType: userType ?? this.userType,
       name: name ?? this.name, // ✅ Ensure `name` is non-null
       phoneNumber: phoneNumber ?? this.phoneNumber,
       email: email ?? this.email,

@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_company/bloc/vehicle_company_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_company_model.dart';
 import 'package:country_picker/country_picker.dart';
@@ -28,9 +29,9 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
   @override
   void initState() {
     super.initState();
-    _companyName = widget.vehiclecompany.name;
-    _originContry = widget.vehiclecompany.originCountry;
-    _vehicleType = widget.vehiclecompany.vehicleType;
+    _companyName = widget.vehiclecompany.name!;
+    _originContry = widget.vehiclecompany.originCountry!;
+    _vehicleType = widget.vehiclecompany.vehicleType!;
     _logo = widget.vehiclecompany.logo ?? '';
     _loadCountries();
   }
@@ -58,11 +59,6 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
 
       context.read<VehicleCompanyBloc>().add(
           UpdateVehicleCompany(updatedVehicleCompany: updatedVehicleCompany));
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(
-            context, "Vehicle Company details have been updated successfully.");
-      });
     }
   }
 
@@ -89,19 +85,27 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildUpdateForm(state),
-            ],
-          ),
-        );
+    return BlocListener<VehicleCompanyBloc, VehicleCompanyState>(
+      listener: (context, state) {
+        if (state is VehicleCompanyUpdated) {
+          _showSuccessPopup(context,
+              "Vehicle Company details have been updated successfully.");
+        }
       },
+      child: BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildUpdateForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -110,14 +114,15 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.blackColor),
               onPressed: () {
                 context.pop();
                 context
@@ -130,7 +135,7 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
               child: Text(
                 "Edit Vehicle Company",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.blackColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
@@ -147,6 +152,7 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
         width: 500,
         child: Card(
           elevation: 5,
+          color: AppColors.primaryColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(

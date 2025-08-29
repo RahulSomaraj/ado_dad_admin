@@ -71,7 +71,9 @@ class _UsersState extends State<Users> {
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () => context.pop(),
+              onPressed: () {
+                context.pop();
+              },
               child: const Text("OK"),
             ),
           ],
@@ -82,63 +84,130 @@ class _UsersState extends State<Users> {
 
   void _deleteUser(String userId) {
     context.read<UserBloc>().add(DeleteUser(userId: userId));
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _showSuccessPopup(context, "User deleted successfully!");
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        _buildHeaderSection(),
-        const SizedBox(height: 20),
-        _buildUserList(),
-      ],
-    );
-  }
-
-  Widget _buildHeaderSection() {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserDeletedSuccess) {
+          _showSuccessPopup(context, state.message);
+        }
+      },
+      child: SingleChildScrollView(
+        child: Column(
           children: [
-            const Text(
-              "Users Management",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const Spacer(),
-            _buildSearchBar(),
-            const SizedBox(width: 15),
-            _buildAddButton(),
+            const SizedBox(height: 20),
+            _buildHeaderSection(),
+            const SizedBox(height: 20),
+            _buildUserList(),
           ],
         ),
       ),
     );
   }
 
+  // Widget _buildHeaderSection() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(15),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: AppColors.primaryColor,
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         crossAxisAlignment: CrossAxisAlignment.center,
+  //         children: [
+  //           const Text(
+  //             "Users Management",
+  //             style: TextStyle(
+  //               color: AppColors.blackColor,
+  //               fontSize: 18,
+  //               fontWeight: FontWeight.bold,
+  //             ),
+  //           ),
+  //           const Spacer(),
+  //           _buildSearchBar(),
+  //           const SizedBox(width: 15),
+  //           _buildAddButton(),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _buildHeaderSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: isTablet
+          ? Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 250, vertical: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Users Management",
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _buildSearchBar(),
+                  const SizedBox(height: 12),
+                  _buildAddButton(),
+                ],
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Users Management",
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  _buildSearchBar(),
+                  const SizedBox(width: 15),
+                  _buildAddButton(),
+                ],
+              ),
+            ),
+    );
+  }
+
   Widget _buildSearchBar() {
+    final isTablet = MediaQuery.of(context).size.width < 900 &&
+        MediaQuery.of(context).size.width >= 550;
+
     return Container(
-      width: 200,
+      width: isTablet ? double.infinity : 200,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+          // color: Colors.black,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.blackColor)),
       child: Row(
         children: [
           const SizedBox(width: 8),
@@ -175,33 +244,81 @@ class _UsersState extends State<Users> {
   }
 
   Widget _buildAddButton() {
+    final isTablet = MediaQuery.of(context).size.width < 900 &&
+        MediaQuery.of(context).size.width >= 550;
     return SizedBox(
-      width: 150,
+      width: isTablet ? double.infinity : 150,
       height: 50,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        onPressed: () {
-          context.push('/add-user');
-        },
-        child: Row(
-          children: [
-            Icon(
-              Icons.add,
-              color: Colors.black,
-              size: 20,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final buttonWidth = constraints.maxWidth;
+
+          // Dynamically adjust content based on width
+          double iconSize = buttonWidth < 180 ? 18 : 20;
+          double fontSize = buttonWidth < 180 ? 14 : 16;
+          double spacing = buttonWidth < 180 ? 6 : 8;
+
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.blackColor,
+              foregroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              textStyle:
+                  TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 8),
-            const Text('Add User'),
-          ],
-        ),
+            onPressed: () async {
+              bool? result = await context.push('/add-user');
+              if (result ?? false) {
+                //REFRESH the user list if new user was added
+                context
+                    .read<UserBloc>()
+                    .add(FetchAllUsers(page: 1, limit: rowsPerPage));
+              }
+            },
+            child: Row(
+              mainAxisAlignment:
+                  isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
+              children: [
+                Icon(Icons.add, color: Colors.white, size: iconSize),
+                SizedBox(width: spacing),
+                Text('Add User', style: TextStyle(fontSize: fontSize)),
+              ],
+            ),
+          );
+        },
+        // child: ElevatedButton(
+        //   style: ElevatedButton.styleFrom(
+        //     backgroundColor: AppColors.blackColor,
+        //     foregroundColor: AppColors.primaryColor,
+        //     shape: RoundedRectangleBorder(
+        //       borderRadius: BorderRadius.circular(8),
+        //     ),
+        //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        //     textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        //   ),
+        //   onPressed: () {
+        //     context.push('/add-user');
+        //   },
+        //   child: isTablet
+        //       ? Row(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: const [
+        //             Icon(Icons.add, color: Colors.white, size: 20),
+        //             SizedBox(width: 8),
+        //             Text('Add User'),
+        //           ],
+        //         )
+        //       : Row(
+        //           children: const [
+        //             Icon(Icons.add, color: Colors.white, size: 20),
+        //             SizedBox(width: 8),
+        //             Text('Add User'),
+        //           ],
+        //         ),
+        // ),
       ),
     );
   }
@@ -229,59 +346,150 @@ class _UsersState extends State<Users> {
     );
   }
 
+  // Widget _buildUserTable(List<UserModel> users, int currentPage) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(20),
+  //     child: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         return SingleChildScrollView(
+  //           scrollDirection: Axis.horizontal,
+  //           child: IntrinsicWidth(
+  //             child: Card(
+  //               elevation: 3,
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(12),
+  //               ),
+  //               child: ClipRRect(
+  //                 borderRadius: BorderRadius.circular(12),
+  //                 child: DataTable(
+  //                   columnSpacing: 150,
+  //                   headingRowColor: WidgetStateColor.resolveWith(
+  //                       (states) => const Color.fromARGB(66, 144, 140, 140)),
+  //                   dataRowColor:
+  //                       WidgetStatePropertyAll(AppColors.primaryColor),
+  //                   dataRowMinHeight: 55,
+  //                   dataRowMaxHeight: 55,
+  //                   columns: const [
+  //                     DataColumn(
+  //                       label: Padding(
+  //                         padding: EdgeInsets.only(left: 30),
+  //                         child: Text('ID',
+  //                             style: TextStyle(fontWeight: FontWeight.bold)),
+  //                       ),
+  //                     ),
+  //                     DataColumn(
+  //                         label: Text('Name',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                     DataColumn(
+  //                         label: Text('Email',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                     DataColumn(
+  //                         label: Text('Phone Number',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                     DataColumn(
+  //                         label: Text('Actions',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                   ],
+  //                   rows: users.asMap().entries.map((entry) {
+  //                     return _buildUserRow(entry.key, entry.value, currentPage);
+  //                   }).toList(),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
   Widget _buildUserTable(List<UserModel> users, int currentPage) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
     return Padding(
       padding: const EdgeInsets.all(20),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return SingleChildScrollView(
+      child: Card(
+        elevation: 3,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: IntrinsicWidth(
-              child: Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: isTablet ? 600 : 800,
+              ),
+              child: DataTable(
+                columnSpacing: isTablet ? 20 : 40,
+                headingRowColor: WidgetStateColor.resolveWith(
+                  (states) => const Color.fromARGB(66, 144, 140, 140),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: DataTable(
-                    columnSpacing: 150,
-                    headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => AppColors.greyColor2),
-                    dataRowMinHeight: 55,
-                    dataRowMaxHeight: 55,
-                    columns: const [
-                      DataColumn(
-                        label: Padding(
-                          padding: EdgeInsets.only(left: 30),
-                          child: Text('ID',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                      DataColumn(
-                          label: Text('Name',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Email',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Phone Number',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Actions',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                    rows: users.asMap().entries.map((entry) {
-                      return _buildUserRow(entry.key, entry.value, currentPage);
-                    }).toList(),
-                  ),
-                ),
+                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+                dataRowMinHeight: isTablet ? 45 : 55,
+                dataRowMaxHeight: isTablet ? 45 : 55,
+                columns: _buildResponsiveColumns(isTablet),
+                rows: users.asMap().entries.map((entry) {
+                  return _buildUserRow(entry.key, entry.value, currentPage);
+                }).toList(),
               ),
             ),
-          );
-        },
+          ),
+        ),
       ),
     );
+  }
+
+  List<DataColumn> _buildResponsiveColumns(bool isTablet) {
+    return [
+      DataColumn(
+        label: Container(
+          width: isTablet ? 60 : 80,
+          child: const Text(
+            'ID',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 120 : 150,
+          child: const Text(
+            'Name',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 150 : 200,
+          child: const Text(
+            'Email',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 120 : 150,
+          child: const Text(
+            'Phone',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Container(
+          width: isTablet ? 80 : 100,
+          child: const Text(
+            'Actions',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+    ];
   }
 
   int rowsPerPage = 10;
@@ -357,17 +565,42 @@ class _UsersState extends State<Users> {
   }
 
   DataRow _buildUserRow(int index, UserModel user, int currentPage) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
     int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
     return DataRow(cells: [
-      DataCell(Padding(
-        padding: const EdgeInsets.only(left: 30),
+      DataCell(Container(
+        width: isTablet ? 60 : 80,
         child: Text('$rowNumber'),
       )),
-      DataCell(Text(user.name)),
-      DataCell(Text(user.email)),
-      DataCell(Text(user.phoneNumber)),
-      DataCell(
-        Row(
+      DataCell(Container(
+        width: isTablet ? 120 : 150,
+        child: Text(
+          user.name,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: isTablet ? 150 : 200,
+        child: Text(
+          user.email,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: isTablet ? 120 : 150,
+        child: Text(
+          user.phoneNumber,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: isTablet ? 80 : 100,
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
@@ -386,7 +619,7 @@ class _UsersState extends State<Users> {
             ),
           ],
         ),
-      ),
+      )),
     ]);
   }
 }

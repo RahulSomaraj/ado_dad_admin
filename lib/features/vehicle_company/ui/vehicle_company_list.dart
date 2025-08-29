@@ -27,45 +27,129 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
     );
   }
 
+  // Widget _buildHeaderSection() {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final isTablet = screenWidth > 600 && screenWidth <= 900;
+  //   return Padding(
+  //     padding: const EdgeInsets.all(15),
+  //     child: isTablet
+  //         ? Container(
+  //             decoration: BoxDecoration(
+  //               color: AppColors.primaryColor,
+  //               borderRadius: BorderRadius.circular(12),
+  //             ),
+  //             padding:
+  //                 const EdgeInsets.symmetric(horizontal: 250, vertical: 12),
+  //             child: Column(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 const Text(
+  //                   "Vehicle Company Management",
+  //                   style: TextStyle(
+  //                     color: AppColors.blackColor,
+  //                     fontSize: 18,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: 12),
+  //                 _buildSearchBar(),
+  //                 const SizedBox(height: 12),
+  //                 _buildAddButton(),
+  //               ],
+  //             ),
+  //           )
+  //         : Container(
+  //             decoration: BoxDecoration(
+  //               color: AppColors.primaryColor,
+  //               borderRadius: BorderRadius.circular(12),
+  //             ),
+  //             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+  //             child: Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               children: [
+  //                 const Text(
+  //                   "Vehicle Company Management",
+  //                   style: TextStyle(
+  //                     color: AppColors.blackColor,
+  //                     fontSize: 18,
+  //                     fontWeight: FontWeight.bold,
+  //                   ),
+  //                 ),
+  //                 const Spacer(),
+  //                 _buildSearchBar(),
+  //                 const SizedBox(width: 15),
+  //                 _buildAddButton(),
+  //               ],
+  //             ),
+  //           ),
+  //   );
+  // }
+
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Text(
-              "Vehicle Company Management",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isNarrow =
+              constraints.maxWidth < 900 && constraints.maxWidth >= 550;
+
+          return Container(
+            decoration: BoxDecoration(
+              color: AppColors.primaryColor,
+              borderRadius: BorderRadius.circular(12),
             ),
-            const Spacer(),
-            _buildSearchBar(),
-            const SizedBox(width: 15),
-            _buildAddButton(),
-          ],
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            child: isNarrow
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Vehicle Company Management",
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildSearchBar(),
+                      const SizedBox(height: 12),
+                      _buildAddButton(),
+                    ],
+                  )
+                : Row(
+                    children: [
+                      const Text(
+                        "Vehicle Company Management",
+                        style: TextStyle(
+                          color: AppColors.blackColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Spacer(),
+                      _buildSearchBar(),
+                      const SizedBox(width: 15),
+                      _buildAddButton(),
+                    ],
+                  ),
+          );
+        },
       ),
     );
   }
 
   Widget _buildSearchBar() {
+    final isTablet = MediaQuery.of(context).size.width < 900 &&
+        MediaQuery.of(context).size.width >= 550;
     return Container(
-      width: 200,
+      width: isTablet ? double.infinity : 200,
       height: 50,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.blackColor)),
       child: Row(
         children: [
           const SizedBox(width: 8),
@@ -101,33 +185,49 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
   }
 
   Widget _buildAddButton() {
+    final isTablet = MediaQuery.of(context).size.width < 900 &&
+        MediaQuery.of(context).size.width >= 550;
     return SizedBox(
-      width: 250,
+      width: isTablet ? double.infinity : 260,
       height: 50,
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-        onPressed: () {
-          context.push('/add-vehiclecompany');
-        },
-        child: Row(
-          children: [
-            Icon(
-              Icons.add,
-              color: Colors.black,
-              size: 20,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final buttonWidth = constraints.maxWidth;
+
+          // Dynamically adjust content based on width
+          double iconSize = buttonWidth < 180 ? 18 : 20;
+          double fontSize = buttonWidth < 180 ? 14 : 16;
+          double spacing = buttonWidth < 180 ? 6 : 8;
+          return ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.blackColor,
+              foregroundColor: AppColors.primaryColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              textStyle:
+                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(width: 8),
-            const Text('Add Vehicle Companies'),
-          ],
-        ),
+            onPressed: () {
+              context.push('/add-vehiclecompany');
+            },
+            child: Row(
+              mainAxisAlignment:
+                  isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.add,
+                  color: AppColors.primaryColor,
+                  size: iconSize,
+                ),
+                SizedBox(width: spacing),
+                Text('Add Vehicle Companies',
+                    style: TextStyle(fontSize: fontSize)),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -155,15 +255,78 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
     );
   }
 
+  // Widget _buildCompanyTable(
+  //     List<VehicleCompanyModel> companies, int currentPage) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(20),
+  //     child: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         return SingleChildScrollView(
+  //           scrollDirection: Axis.horizontal,
+  //           child: IntrinsicWidth(
+  //             child: Card(
+  //               elevation: 3,
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(12),
+  //               ),
+  //               child: ClipRRect(
+  //                 borderRadius: BorderRadius.circular(12),
+  //                 child: DataTable(
+  //                   columnSpacing: 120,
+  //                   headingRowColor: WidgetStateColor.resolveWith(
+  //                       (states) => Color.fromARGB(66, 144, 140, 140)),
+  //                   dataRowColor:
+  //                       WidgetStatePropertyAll(AppColors.primaryColor),
+  //                   dataRowMinHeight: 55,
+  //                   dataRowMaxHeight: 55,
+  //                   columns: const [
+  //                     DataColumn(
+  //                       label: Padding(
+  //                         padding: EdgeInsets.only(left: 30),
+  //                         child: Text('ID',
+  //                             style: TextStyle(fontWeight: FontWeight.bold)),
+  //                       ),
+  //                     ),
+  //                     DataColumn(
+  //                         label: Text('Vehicle Company Name',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                     DataColumn(
+  //                         label: Text('Origin Country of Vehicle Company',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                     DataColumn(
+  //                         label: Text('Vehicle Type',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                     DataColumn(
+  //                         label: Text('Actions',
+  //                             style: TextStyle(fontWeight: FontWeight.bold))),
+  //                   ],
+  //                   rows: companies.asMap().entries.map((entry) {
+  //                     return _buildCompanyRow(
+  //                         entry.key, entry.value, currentPage);
+  //                   }).toList(),
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
+
   Widget _buildCompanyTable(
       List<VehicleCompanyModel> companies, int currentPage) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: IntrinsicWidth(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth),
               child: Card(
                 elevation: 3,
                 shape: RoundedRectangleBorder(
@@ -172,36 +335,21 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: DataTable(
-                    columnSpacing: 120,
+                    columnSpacing: isTablet ? 30 : 100,
                     headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => AppColors.greyColor2),
-                    dataRowMinHeight: 55,
-                    dataRowMaxHeight: 55,
-                    columns: const [
-                      DataColumn(
-                        label: Padding(
-                          padding: EdgeInsets.only(left: 30),
-                          child: Text('ID',
-                              style: TextStyle(fontWeight: FontWeight.bold)),
-                        ),
-                      ),
-                      DataColumn(
-                          label: Text('Vehicle Company Name',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Origin Country of Vehicle Company',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Vehicle Type',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                      DataColumn(
-                          label: Text('Actions',
-                              style: TextStyle(fontWeight: FontWeight.bold))),
-                    ],
-                    rows: companies.asMap().entries.map((entry) {
-                      return _buildCompanyRow(
-                          entry.key, entry.value, currentPage);
-                    }).toList(),
+                      (states) => const Color.fromARGB(66, 144, 140, 140),
+                    ),
+                    dataRowColor:
+                        WidgetStatePropertyAll(AppColors.primaryColor),
+                    dataRowMinHeight: isTablet ? 45 : 55,
+                    dataRowMaxHeight: isTablet ? 45 : 55,
+                    columns: _buildResponsiveColumns(isTablet),
+                    rows: companies
+                        .asMap()
+                        .entries
+                        .map((entry) => _buildCompanyRow(
+                            entry.key, entry.value, currentPage))
+                        .toList(),
                   ),
                 ),
               ),
@@ -210,6 +358,44 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
         },
       ),
     );
+  }
+
+  List<DataColumn> _buildResponsiveColumns(bool isTablet) {
+    return [
+      const DataColumn(
+        label: Padding(
+          padding: EdgeInsets.only(left: 30),
+          child: Text(
+            'ID',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ),
+      DataColumn(
+        label: Text(
+          isTablet ? 'Company Name' : 'Vehicle Company Name',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      DataColumn(
+        label: Text(
+          isTablet ? 'Origin Country' : 'Origin Country of Vehicle Company',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      DataColumn(
+        label: Text(
+          isTablet ? 'Type' : 'Vehicle Type',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      const DataColumn(
+        label: Text(
+          'Actions',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+    ];
   }
 
   int rowsPerPage = 10;
@@ -294,9 +480,9 @@ class _VehicleCompanyListState extends State<VehicleCompanyList> {
         padding: const EdgeInsets.only(left: 30),
         child: Text('$rowNumber'),
       )),
-      DataCell(Text(company.name)),
-      DataCell(Text(company.originCountry)),
-      DataCell(Text(company.vehicleType)),
+      DataCell(Text(company.name!)),
+      DataCell(Text(company.originCountry!)),
+      DataCell(Text(company.vehicleType!)),
       DataCell(
         Row(
           mainAxisSize: MainAxisSize.min,

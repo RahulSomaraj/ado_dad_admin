@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -29,19 +30,11 @@ class _ShowroomAddState extends State<ShowroomAdd> {
           email: _email,
           phoneNumber: _phone,
           password: _password,
-          type: 'SR');
+          userType: 'SR');
 
       context.read<ShowroomBloc>().add(
             ShowroomEvent.addShowroom(showroomData: newShowroom),
           );
-
-      context
-          .read<ShowroomBloc>()
-          .add(ShowroomEvent.updateShowroom(updatedShowroom: newShowroom));
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(context, "Showroom has been added successfully.");
-      });
     }
   }
 
@@ -68,19 +61,33 @@ class _ShowroomAddState extends State<ShowroomAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ShowroomBloc, ShowroomState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildShowroomForm(state),
-            ],
-          ),
-        );
+    return BlocListener<ShowroomBloc, ShowroomState>(
+      listener: (context, state) {
+        if (state is ShowroomError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is ShowroomAddedSuccess) {
+          _showSuccessPopup(context, state.message);
+        }
       },
+      child: BlocBuilder<ShowroomBloc, ShowroomState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildShowroomForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -89,14 +96,15 @@ class _ShowroomAddState extends State<ShowroomAdd> {
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.blackColor),
               onPressed: () {
                 context.pop();
                 context.read<ShowroomBloc>().add(FetchAllShowrooms());
@@ -107,7 +115,7 @@ class _ShowroomAddState extends State<ShowroomAdd> {
               child: Text(
                 "Add Showroom",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.blackColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
@@ -124,6 +132,7 @@ class _ShowroomAddState extends State<ShowroomAdd> {
         width: 500,
         child: Card(
           elevation: 5,
+          color: AppColors.primaryColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
@@ -143,7 +152,7 @@ class _ShowroomAddState extends State<ShowroomAdd> {
                       isPhone: true),
                   const SizedBox(height: 15),
                   _buildFormField("Password", "", (value) => _password = value!,
-                      obscureText: true),
+                      obscureText: false),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -155,8 +164,8 @@ class _ShowroomAddState extends State<ShowroomAdd> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: state is ShowroomLoading ? null : _addShowroom,
-                      child: state is ShowroomLoading
+                      onPressed: state is AddingShowroom ? null : _addShowroom,
+                      child: state is AddingShowroom
                           ? const SizedBox(
                               height: 20,
                               width: 20,

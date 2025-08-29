@@ -43,13 +43,13 @@ class _AdminDrawerState extends State<AdminDrawer> {
   Widget build(BuildContext context) {
     return Drawer(
       width: 500,
-      backgroundColor: Colors.grey[300],
+      backgroundColor: AppColors.primaryColor,
       shape: const ContinuousRectangleBorder(),
       child: Column(
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Image.asset('assets/images/Ado-dad.png'),
+            child: Image.asset('assets/images/ado-dad-logo.png'),
           ),
           const Divider(),
           _buildDrawerMenu(),
@@ -90,16 +90,26 @@ class _AdminDrawerState extends State<AdminDrawer> {
               0, '/dashboard', 'assets/images/dashboard-icon.png', "Dashboard"),
           _buildDrawerItem(1, '/profile', 'assets/images/users.png', "Profile"),
           _buildDrawerItem(2, '/users', 'assets/images/users.png', "Users"),
-          _buildDrawerItem(
-              3, '/vehicles', 'assets/images/listing-icon.png', "Vehicles"),
-          _buildDrawerItem(4, '/vehicle-companies',
-              'assets/images/promotion-icon.png', "Vehicle Companies"),
+          // _buildDrawerItem(
+          //     3, '/vehicles', 'assets/images/listing-icon.png', "Vehicles"),
+          _buildDrawerItem(3, '/vehicle-manufactures',
+              'assets/images/promotion-icon.png', "Vehicle Manufactures"),
+          _buildDrawerItem(4, '/vehicle-models',
+              'assets/images/listing-icon.png', "Vehicle Models"),
+          // _buildDrawerItem(5, '/vehicle-variants',
+          //     'assets/images/listing-icon.png', "Vehicle Variants"),
+
+          // _buildDrawerItem(4, '/vehicle-companies',
+          //     'assets/images/promotion-icon.png', "Vehicle Companies"),
+
           _buildDrawerItem(
               5, '/showrooms', 'assets/images/showroom-icon.png', "Showrooms"),
           _buildDrawerItem(6, '/reports', 'assets/images/report-icon.png',
               "Reports Management"),
           _buildDrawerItem(7, '/notifications',
               'assets/images/notification-icon.png', "Notifications"),
+          _buildDrawerItem(8, '/banners', 'assets/images/report-icon.png',
+              "Banner Management"),
         ],
       );
     } else {
@@ -117,7 +127,12 @@ class _AdminDrawerState extends State<AdminDrawer> {
 
   Widget _buildDrawerItem(int index, String route, String image, String title) {
     return ListTile(
-      leading: Image.asset(image),
+      leading: Image.asset(
+        image,
+        color: selectedIndex == index
+            ? AppColors.primaryColor
+            : AppColors.blackColor,
+      ),
       title: Text(
         title,
         style: AppTextStyle.drawerTextstyle.copyWith(
@@ -129,7 +144,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         ),
       ),
       tileColor:
-          selectedIndex == index ? AppColors.greyColor2 : Colors.transparent,
+          selectedIndex == index ? AppColors.logoColor : Colors.transparent,
       onTap: () {
         setState(() {
           selectedIndex = index;

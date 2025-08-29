@@ -1,7 +1,127 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/common/widgets/drawer.dart';
 import 'package:flutter/material.dart';
+
+// class AdminLayout extends StatefulWidget {
+//   final Widget child;
+
+//   const AdminLayout({super.key, required this.child});
+
+//   @override
+//   State<AdminLayout> createState() => _AdminLayoutState();
+// }
+
+// class _AdminLayoutState extends State<AdminLayout> {
+//   String? userType;
+//   String? userName;
+
+//   @override
+//   void initState() {
+//     super.initState();
+//     _loadUserData();
+//   }
+
+//   Future<void> _loadUserData() async {
+//     final name = await getUserName();
+//     final type = await getUserType();
+//     setState(() {
+//       userType = type;
+//       userName = name;
+//     });
+//   }
+
+//   String getInitials(String name) {
+//     List<String> words = name.trim().split(RegExp(r'\s+'));
+//     if (words.length > 1) {
+//       return "${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}";
+//     }
+//     return words[0][0].toUpperCase();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     if (userType == null) {
+//       return const Scaffold(
+//         body: Center(child: CircularProgressIndicator()),
+//       );
+//     }
+
+//     return Scaffold(
+//       backgroundColor: AppColors.scaffoldColor,
+//       body: Row(
+//         children: [
+//           SizedBox(
+//             width: 250,
+//             child: AdminDrawer(userType: userType),
+//           ),
+//           Expanded(
+//             child: LayoutBuilder(
+//               builder: (context, constraints) {
+//                 return SingleChildScrollView(
+//                   child: ConstrainedBox(
+//                     constraints:
+//                         BoxConstraints(minHeight: constraints.maxHeight),
+//                     child: Column(
+//                       crossAxisAlignment: CrossAxisAlignment.stretch,
+//                       mainAxisAlignment: MainAxisAlignment.start,
+//                       children: [
+//                         _buildProfileBar(),
+//                         widget.child,
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildProfileBar() {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.1),
+//             blurRadius: 6,
+//             spreadRadius: 2,
+//             offset: const Offset(0, 2),
+//           ),
+//         ],
+//       ),
+//       child: Row(
+//         mainAxisAlignment: MainAxisAlignment.end,
+//         children: [
+//           Text(
+//             userName ?? "Guest",
+//             style: AppTextStyle.title2Textstyle.copyWith(
+//               color: Colors.black,
+//             ),
+//           ),
+//           const SizedBox(width: 10),
+//           CircleAvatar(
+//             radius: 22,
+//             backgroundColor: Colors.black,
+//             child: Text(
+//               getInitials(userName ?? "Guest"),
+//               style: const TextStyle(
+//                 fontSize: 20,
+//                 fontWeight: FontWeight.bold,
+//                 color: Colors.white,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 class AdminLayout extends StatefulWidget {
   final Widget child;
@@ -25,57 +145,75 @@ class _AdminLayoutState extends State<AdminLayout> {
   Future<void> _loadUserData() async {
     final name = await getUserName();
     final type = await getUserType();
-    setState(() {
-      userType = type;
-      userName = name;
-    });
+    if (mounted) {
+      setState(() {
+        userType = type;
+        userName = name;
+      });
+    }
   }
 
   String getInitials(String name) {
-    List<String> words = name.trim().split(RegExp(r'\s+'));
-    if (words.length > 1) {
-      return "${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}";
-    }
-    return words[0][0].toUpperCase();
+    final words = name.trim().split(RegExp(r'\s+'));
+    return words.length > 1
+        ? "${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}"
+        : words[0][0].toUpperCase();
   }
 
   @override
   Widget build(BuildContext context) {
     if (userType == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    return Scaffold(
-      body: Row(
-        children: [
-          SizedBox(
-            width: 250,
-            child: AdminDrawer(userType: userType),
-          ),
-          Expanded(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints:
-                        BoxConstraints(minHeight: constraints.maxHeight),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        _buildProfileBar(),
-                        widget.child,
-                      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isTablet = constraints.maxWidth < 900;
+
+        return Scaffold(
+          backgroundColor: AppColors.scaffoldColor,
+          drawer: isTablet ? AdminDrawer(userType: userType) : null,
+          appBar: isTablet
+              ? AppBar(
+                  backgroundColor: AppColors.scaffoldColor,
+                  // title: Text(userName ?? "Dashboard"),
+                  // actions: [
+                  // Text(
+                  //   userName ?? "Dashboard",
+                  //   style: AppTextStyle.title2Textstyle
+                  //       .copyWith(color: Colors.black),
+                  // ),
+                  // SizedBox(width: 20),
+                  // CircleAvatar(
+                  //   backgroundColor: Colors.black,
+                  //   radius: 20,
+                  //   child: Text(
+                  //     getInitials(userName ?? ""),
+                  //     style: const TextStyle(color: Colors.white),
+                  //   ),
+                  // ),
+                  // const SizedBox(width: 16),
+                  // ],
+                )
+              : null,
+          body: Row(
+            children: [
+              if (!isTablet)
+                SizedBox(width: 250, child: AdminDrawer(userType: userType)),
+              Expanded(
+                child: Column(
+                  children: [
+                    // if (!isTablet) _buildProfileBar(),
+                    Expanded(
+                      child: widget.child,
                     ),
-                  ),
-                );
-              },
-            ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -84,23 +222,14 @@ class _AdminLayoutState extends State<AdminLayout> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 6,
-            spreadRadius: 2,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
             userName ?? "Guest",
-            style: AppTextStyle.title2Textstyle.copyWith(
-              color: Colors.black,
-            ),
+            style: AppTextStyle.title2Textstyle.copyWith(color: Colors.black),
           ),
           const SizedBox(width: 10),
           CircleAvatar(
@@ -108,11 +237,7 @@ class _AdminLayoutState extends State<AdminLayout> {
             backgroundColor: Colors.black,
             child: Text(
               getInitials(userName ?? "Guest"),
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: const TextStyle(fontSize: 20, color: Colors.white),
             ),
           ),
         ],

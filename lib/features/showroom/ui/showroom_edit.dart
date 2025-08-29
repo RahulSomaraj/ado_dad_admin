@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,15 +39,11 @@ class _EditShowroomState extends State<EditShowroom> {
         name: _name,
         email: _email,
         phoneNumber: _phone,
-        type: 'SR',
+        userType: 'SR',
       );
       context
           .read<ShowroomBloc>()
           .add(UpdateShowroom(updatedShowroom: updatedShowroom));
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(
-            context, "Showroom details have been updated successfully.");
-      });
     }
   }
 
@@ -74,19 +71,27 @@ class _EditShowroomState extends State<EditShowroom> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ShowroomBloc, ShowroomState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildUpdateForm(state),
-            ],
-          ),
-        );
+    return BlocListener<ShowroomBloc, ShowroomState>(
+      listener: (context, state) {
+        if (state is ShowroomUpdated) {
+          _showSuccessPopup(
+              context, "Showroom details have been updated successfully.");
+        }
       },
+      child: BlocBuilder<ShowroomBloc, ShowroomState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildUpdateForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -95,14 +100,15 @@ class _EditShowroomState extends State<EditShowroom> {
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.blackColor),
               onPressed: () {
                 context.pop();
                 context.read<ShowroomBloc>().add(FetchAllShowrooms());
@@ -113,7 +119,7 @@ class _EditShowroomState extends State<EditShowroom> {
               child: Text(
                 "Edit Showroom",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.blackColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
@@ -130,6 +136,7 @@ class _EditShowroomState extends State<EditShowroom> {
         width: 500,
         child: Card(
           elevation: 5,
+          color: AppColors.primaryColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(

@@ -15,6 +15,12 @@ class AuthRepository {
 
       if (response.statusCode == 201) {
         final loginResponse = LoginResponse.fromJson(response.data);
+        // Allow only Amin & Super Admin
+        final allowedTypes = ['AD', 'SA'];
+        if (!allowedTypes.contains(loginResponse.userType)) {
+          throw Exception(
+              "Access Denied: Only Admin and Super Admin can log in.");
+        }
         await saveLoginResponse(loginResponse);
         return loginResponse;
       } else {

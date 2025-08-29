@@ -1,0 +1,691 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/features/vehicle/bloc/vehicle_bloc.dart';
+import 'package:ado_dad_admin/models/vehicle_post_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+class VehicleDetailView extends StatefulWidget {
+  final VehicleRequest vehicle;
+  const VehicleDetailView({super.key, required this.vehicle});
+
+  @override
+  State<VehicleDetailView> createState() => _VehicleDetailViewState();
+}
+
+class _VehicleDetailViewState extends State<VehicleDetailView> {
+  int rowsPerPage = 10;
+
+  void _showDeleteDialog(BuildContext context, String vehicleId) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+          title: Center(
+            child: const Text(
+              "Confirm Delete",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          content: const Text(
+            "Are you sure you want to delete this vehicle?",
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => context.pop(),
+              child: const Text(
+                "Cancel",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.red,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+              onPressed: () {
+                _deleteVehicle(vehicleId);
+                // page pop list
+                context.pop();
+              },
+              child: const Text(
+                "Delete",
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildDetailColumn(String title, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(title,
+            style: const TextStyle(
+                fontWeight: FontWeight.bold, color: AppColors.blackColor)),
+        const SizedBox(height: 4),
+        Text(value, style: const TextStyle(color: AppColors.blackColor)),
+      ],
+    );
+  }
+
+  void _deleteVehicle(String vehicleId) {
+    print('Deleting vehicle with ID: $vehicleId');
+    Navigator.of(context).pop();
+    context.read<VehicleBloc>().add(DeleteVehicle(vehicleId: vehicleId));
+
+    context
+        .read<VehicleBloc>()
+        .stream
+        .firstWhere((state) => state is VehicleDeleted)
+        .then((_) {
+      print("✅ Vehicle Deleted Successfully!");
+
+      // Delay popup to prevent UI conflict
+      // Future.delayed(const Duration(milliseconds: 300), () {
+      //   _showSuccessPopup(context, "Vehicle Company deleted successfully!");
+      // });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    print(widget.vehicle.id);
+    return Padding(
+      padding: EdgeInsets.all(0),
+      child: Column(
+        children: [
+          buildVehicleDetailSection(),
+          const SizedBox(height: 20),
+          _buildVehicleList(),
+        ],
+      ),
+    );
+  }
+
+  // Widget buildVehicleDetailSection() {
+  //   return Padding(
+  //     padding: EdgeInsets.all(15),
+  //     child: Container(
+  //       height: 100,
+  //       decoration: BoxDecoration(
+  //         color: AppColors.primaryColor,
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Row(
+  //             children: [
+  //               IconButton(
+  //                 icon: const Icon(Icons.arrow_back_ios_new,
+  //                     color: AppColors.blackColor),
+  //                 onPressed: () {
+  //                   context.pop();
+  //                 },
+  //               ),
+  //             ],
+  //           ),
+  //           Row(
+  //             children: [
+  //               Column(
+  //                 children: [
+  //                   const Text('Vehicle Name/Model Name',
+  //                       style: TextStyle(
+  //                           fontWeight: FontWeight.bold,
+  //                           color: AppColors.blackColor)),
+  //                   // Text('Vehicle ID: ${widget.vehicle.id}'),
+  //                   Text(
+  //                     '${widget.vehicle.vehicleModels.first.name}/${widget.vehicle.vehicleModels.first.modelName}',
+  //                     style: TextStyle(color: AppColors.blackColor),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(width: 30),
+  //               Column(
+  //                 children: [
+  //                   const Text('Model Type',
+  //                       style: TextStyle(
+  //                           fontWeight: FontWeight.bold,
+  //                           color: AppColors.blackColor)),
+  //                   Text(
+  //                     widget.vehicle.modelType,
+  //                     style: TextStyle(color: AppColors.blackColor),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(width: 30),
+  //               Column(
+  //                 children: [
+  //                   const Text('Company Name',
+  //                       style: TextStyle(
+  //                           fontWeight: FontWeight.bold,
+  //                           color: AppColors.blackColor)),
+  //                   Text(
+  //                     widget.vehicle.vendor,
+  //                     style: TextStyle(color: AppColors.blackColor),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(width: 30),
+  //               Column(
+  //                 children: [
+  //                   const Text('Transmission/Fuel Type',
+  //                       style: TextStyle(
+  //                           fontWeight: FontWeight.bold,
+  //                           color: AppColors.blackColor)),
+  //                   Text(
+  //                     '${widget.vehicle.vehicleModels.first.transmissionType}/${widget.vehicle.vehicleModels.first.fuelType}',
+  //                     style: TextStyle(color: AppColors.blackColor),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //           Row(
+  //             children: [
+  //               SizedBox(
+  //                 width: 250,
+  //                 height: 50,
+  //                 child: ElevatedButton(
+  //                   style: ElevatedButton.styleFrom(
+  //                     backgroundColor: AppColors.blackColor,
+  //                     foregroundColor: AppColors.primaryColor,
+  //                     shape: RoundedRectangleBorder(
+  //                       borderRadius: BorderRadius.circular(8),
+  //                     ),
+  //                     padding: const EdgeInsets.symmetric(
+  //                         horizontal: 16, vertical: 10),
+  //                     textStyle: const TextStyle(
+  //                         fontSize: 16, fontWeight: FontWeight.bold),
+  //                   ),
+  //                   onPressed: () {
+  //                     _showDeleteDialog(context, widget.vehicle.id);
+  //                   },
+  //                   child: Row(
+  //                     children: [
+  //                       Icon(
+  //                         Icons.delete,
+  //                         color: AppColors.primaryColor,
+  //                         size: 20,
+  //                       ),
+  //                       SizedBox(width: 8),
+  //                       const Text('Delete Vehicle'),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               )
+  //             ],
+  //           )
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // Widget buildVehicleDetailSection() {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final isTablet = screenWidth < 900;
+
+  //   return Padding(
+  //     padding: const EdgeInsets.all(15),
+  //     child: Container(
+  //       decoration: BoxDecoration(
+  //         color: AppColors.primaryColor,
+  //         borderRadius: BorderRadius.circular(12),
+  //       ),
+  //       padding: const EdgeInsets.all(20),
+  //       child: isTablet
+  //           ? Column(
+  //               crossAxisAlignment: CrossAxisAlignment.start,
+  //               children: [
+  //                 Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     Text(
+  //                       'Vehicle Details',
+  //                       style: TextStyle(
+  //                           fontWeight: FontWeight.bold, fontSize: 20),
+  //                     ),
+  //                     Align(
+  //                       alignment: Alignment.topRight,
+  //                       child: IconButton(
+  //                         icon: const Icon(Icons.delete, color: Colors.black),
+  //                         onPressed: () {
+  //                           _showDeleteDialog(context, widget.vehicle.id);
+  //                         },
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 const SizedBox(height: 10),
+  //                 _buildDetailColumn('Vehicle Name/Model Name',
+  //                     '${widget.vehicle.vehicleModels.first.name}/${widget.vehicle.vehicleModels.first.modelName}'),
+  //                 const SizedBox(height: 10),
+  //                 _buildDetailColumn('Model Type', widget.vehicle.modelType),
+  //                 const SizedBox(height: 10),
+  //                 _buildDetailColumn('Company Name', widget.vehicle.vendor),
+  //                 const SizedBox(height: 10),
+  //                 _buildDetailColumn('Transmission/Fuel Type',
+  //                     '${widget.vehicle.vehicleModels.first.transmissionType}/${widget.vehicle.vehicleModels.first.fuelType}'),
+  //               ],
+  //             )
+  //           : Row(
+  //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //               children: [
+  //                 IconButton(
+  //                   icon: const Icon(Icons.arrow_back_ios_new,
+  //                       color: AppColors.blackColor),
+  //                   onPressed: () {
+  //                     context.pop();
+  //                   },
+  //                 ),
+  //                 Row(
+  //                   children: [
+  //                     _buildDetailColumn('Vehicle Name/Model Name',
+  //                         '${widget.vehicle.vehicleModels.first.name}/${widget.vehicle.vehicleModels.first.modelName}'),
+  //                     const SizedBox(width: 30),
+  //                     _buildDetailColumn(
+  //                         'Model Type', widget.vehicle.modelType),
+  //                     const SizedBox(width: 30),
+  //                     _buildDetailColumn('Company Name', widget.vehicle.vendor),
+  //                     const SizedBox(width: 30),
+  //                     _buildDetailColumn('Transmission/Fuel Type',
+  //                         '${widget.vehicle.vehicleModels.first.transmissionType}/${widget.vehicle.vehicleModels.first.fuelType}'),
+  //                   ],
+  //                 ),
+  //                 IconButton(
+  //                   icon: const Icon(Icons.delete, color: Colors.black),
+  //                   onPressed: () {
+  //                     _showDeleteDialog(context, widget.vehicle.id);
+  //                   },
+  //                 ),
+  //               ],
+  //             ),
+  //     ),
+  //   );
+  // }
+
+  Widget buildVehicleDetailSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth < 900 && screenWidth >= 550;
+
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.primaryColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.all(20),
+        child: isTablet
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back_ios_new,
+                            color: AppColors.blackColor),
+                        onPressed: () {
+                          context.pop();
+                        },
+                      ),
+                      Expanded(
+                        child: Text(
+                          'Vehicle Details',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: AppColors.blackColor,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.black),
+                        onPressed: () {
+                          _showDeleteDialog(context, widget.vehicle.id);
+                        },
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    runSpacing: 10,
+                    spacing: 20,
+                    children: [
+                      _buildDetailColumn(
+                        'Vehicle Name/Model Name',
+                        '${widget.vehicle.vehicleModels.first.name}/${widget.vehicle.vehicleModels.first.modelName}',
+                      ),
+                      _buildDetailColumn(
+                          'Model Type', widget.vehicle.modelType),
+                      _buildDetailColumn('Company Name', widget.vehicle.vendor),
+                      _buildDetailColumn(
+                        'Transmission/Fuel Type',
+                        '${widget.vehicle.vehicleModels.first.transmissionType}/${widget.vehicle.vehicleModels.first.fuelType}',
+                      ),
+                    ],
+                  ),
+                ],
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new,
+                        color: AppColors.blackColor),
+                    onPressed: () {
+                      context.pop();
+                    },
+                  ),
+                  Expanded(
+                    child: Wrap(
+                      runSpacing: 10,
+                      spacing: 30,
+                      alignment: WrapAlignment.spaceBetween,
+                      children: [
+                        _buildDetailColumn(
+                          'Vehicle Name/Model Name',
+                          '${widget.vehicle.vehicleModels.first.name}/${widget.vehicle.vehicleModels.first.modelName}',
+                        ),
+                        _buildDetailColumn(
+                            'Model Type', widget.vehicle.modelType),
+                        _buildDetailColumn(
+                            'Company Name', widget.vehicle.vendor),
+                        _buildDetailColumn(
+                          'Transmission/Fuel Type',
+                          '${widget.vehicle.vehicleModels.first.transmissionType}/${widget.vehicle.vehicleModels.first.fuelType}',
+                        ),
+                      ],
+                    ),
+                  ),
+                  // IconButton(
+                  //   icon: const Icon(Icons.delete, color: Colors.black),
+                  //   onPressed: () {
+                  //     _showDeleteDialog(context, widget.vehicle.id);
+                  //   },
+                  // ),
+                  SizedBox(width: 10),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 250,
+                        height: 50,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.blackColor,
+                            foregroundColor: AppColors.primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            textStyle: const TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () {
+                            _showDeleteDialog(context, widget.vehicle.id);
+                          },
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.delete,
+                                color: AppColors.primaryColor,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              const Text('Delete Vehicle'),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  )
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildVehicleList() {
+    return BlocBuilder<VehicleBloc, VehicleState>(
+      builder: (context, state) {
+        if (state is VehicleLoading) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is VehicleLoaded) {
+          return Column(
+            children: [
+              _buildVehicleTable(state.vehicles, state.currentPage),
+              const SizedBox(height: 30),
+              _buildPaginationBar(state.currentPage, state.totalPages),
+            ],
+          );
+        } else if (state is VehicleError) {
+          return Center(
+            child:
+                Text(state.message, style: const TextStyle(color: Colors.red)),
+          );
+        }
+        return const Center(child: Text("No Vehicles Found"));
+      },
+    );
+  }
+
+  // Widget _buildVehicleTable(List<VehicleRequest> vehicles, int currentPage) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(15),
+  //     child: Container(
+  //       width: double.infinity,
+  //       // constraints: const BoxConstraints(maxWidth: 1200),
+  //       child: SingleChildScrollView(
+  //         scrollDirection: Axis.horizontal,
+  //         child: Card(
+  //           elevation: 3,
+  //           shape:
+  //               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+  //           child: ClipRRect(
+  //             borderRadius: BorderRadius.circular(12),
+  //             child: DataTable(
+  //               columnSpacing: 90,
+  //               headingRowColor: WidgetStateColor.resolveWith(
+  //                   (states) => const Color.fromARGB(66, 144, 140, 140)),
+  //               dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+  //               dataRowMinHeight: 55,
+  //               dataRowMaxHeight: 55,
+  //               columns: _buildTableColumns(),
+  //               rows: vehicles
+  //                   .asMap()
+  //                   .entries
+  //                   .map(
+  //                     (entry) =>
+  //                         _buildVehicleRow(entry.key, entry.value, currentPage),
+  //                   )
+  //                   .toList(),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  // List<DataColumn> _buildTableColumns() {
+  //   return const [
+  //     DataColumn(
+  //         label:
+  //             Padding(padding: EdgeInsets.only(left: 30), child: Text('ID'))),
+  //     DataColumn(label: Text('Vehicle Name & Model')),
+  //     DataColumn(label: Text('Model Type')),
+  //     DataColumn(label: Text('Company Name')),
+  //     DataColumn(label: Text('Transmission & Fuel Type')),
+  //   ];
+  // }
+
+  Widget _buildVehicleTable(List<VehicleRequest> vehicles, int currentPage) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final tableWidth = constraints.maxWidth;
+
+          return Card(
+            elevation: 3,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minWidth: tableWidth,
+                  ),
+                  child: DataTable(
+                    columnSpacing: isTablet ? 20 : 50,
+                    headingRowColor: WidgetStateColor.resolveWith(
+                      (states) => const Color.fromARGB(66, 144, 140, 140),
+                    ),
+                    dataRowColor:
+                        WidgetStatePropertyAll(AppColors.primaryColor),
+                    dataRowMinHeight: isTablet ? 45 : 55,
+                    dataRowMaxHeight: isTablet ? 45 : 55,
+                    columns: _buildTableColumns(isTablet),
+                    rows: vehicles
+                        .asMap()
+                        .entries
+                        .map((entry) => _buildVehicleRow(
+                            entry.key, entry.value, currentPage))
+                        .toList(),
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  List<DataColumn> _buildTableColumns([bool isTablet = false]) {
+    return [
+      const DataColumn(
+        label: Padding(
+          padding: EdgeInsets.only(left: 30),
+          child: Text('ID'),
+        ),
+      ),
+      DataColumn(label: Text(isTablet ? 'Name/Model' : 'Vehicle Name & Model')),
+      const DataColumn(label: Text('Model Type')),
+      DataColumn(label: Text(isTablet ? 'Company' : 'Company Name')),
+      DataColumn(
+          label: Text(isTablet ? 'Trans/Fuel' : 'Transmission & Fuel Type')),
+      // const DataColumn(label: Text('Actions')),
+    ];
+  }
+
+  DataRow _buildVehicleRow(int index, VehicleRequest vehicle, int currentPage) {
+    int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+    return DataRow(
+      cells: [
+        DataCell(Padding(
+            padding: const EdgeInsets.only(left: 30),
+            child: Text('$rowNumber'))),
+        DataCell(Text(
+          '${vehicle.vehicleModels.first.name}/${vehicle.vehicleModels.first.modelName}',
+          overflow: TextOverflow.ellipsis,
+        )),
+        DataCell(Text(vehicle.modelType)),
+        DataCell(Text(vehicle.vendor)),
+        DataCell(Text(
+          '${vehicle.vehicleModels.first.transmissionType}/${vehicle.vehicleModels.first.fuelType}',
+          overflow: TextOverflow.ellipsis,
+        )),
+      ],
+    );
+  }
+
+  Widget _buildPaginationBar(int currentPage, int totalPages) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text("Rows per page: "),
+            const SizedBox(width: 8),
+            DropdownButton<int>(
+              value: rowsPerPage,
+              dropdownColor: Colors.white,
+              items: [10, 20].map((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
+                  setState(() {
+                    rowsPerPage = value;
+                  });
+                  context
+                      .read<VehicleBloc>()
+                      .add(FetchAllVehicles(page: 1, limit: rowsPerPage));
+                }
+              },
+            ),
+            const SizedBox(width: 20),
+            GestureDetector(
+              onTap: currentPage > 1
+                  ? () {
+                      context.read<VehicleBloc>().add(FetchAllVehicles(
+                          page: currentPage - 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_left,
+                size: 28,
+                color: currentPage > 1 ? Colors.black : Colors.grey[400],
+              ),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              "Page $currentPage of $totalPages",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 15),
+            GestureDetector(
+              onTap: currentPage < totalPages
+                  ? () {
+                      context.read<VehicleBloc>().add(FetchAllVehicles(
+                          page: currentPage + 1, limit: rowsPerPage));
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_right,
+                size: 28,
+                color:
+                    currentPage < totalPages ? Colors.black : Colors.grey[400],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

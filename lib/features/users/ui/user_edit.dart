@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
@@ -35,7 +36,7 @@ class _EditUserState extends State<EditUser> {
     _name = widget.user.name;
     _email = widget.user.email;
     _phone = widget.user.phoneNumber;
-    _userType = _userTypeMap[widget.user.type] ?? "Normal User";
+    _userType = _userTypeMap[widget.user.userType] ?? "Normal User";
   }
 
   /// Convert full form to short code for API request
@@ -57,15 +58,10 @@ class _EditUserState extends State<EditUser> {
         name: _name,
         email: _email,
         phoneNumber: _phone,
-        type: _getShortForm(_userType),
+        userType: _getShortForm(_userType),
       );
 
       context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(
-            context, "User details have been updated successfully.");
-      });
     }
   }
 
@@ -79,6 +75,8 @@ class _EditUserState extends State<EditUser> {
           actions: [
             TextButton(
               onPressed: () {
+                // Refresh users before navigating
+                context.read<UserBloc>().add(FetchAllUsers());
                 context.pop();
                 context.go('/users');
               },
@@ -92,19 +90,27 @@ class _EditUserState extends State<EditUser> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildUpdateForm(state),
-            ],
-          ),
-        );
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserUpdated) {
+          _showSuccessPopup(
+              context, "User details have been updated successfully.");
+        }
       },
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildUpdateForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -114,14 +120,15 @@ class _EditUserState extends State<EditUser> {
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.blackColor),
               onPressed: () {
                 context.pop();
                 context.read<UserBloc>().add(FetchAllUsers());
@@ -132,7 +139,7 @@ class _EditUserState extends State<EditUser> {
               child: Text(
                 "Edit User",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.blackColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
@@ -149,6 +156,7 @@ class _EditUserState extends State<EditUser> {
         width: 500,
         child: Card(
           elevation: 5,
+          color: AppColors.primaryColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
