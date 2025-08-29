@@ -76,6 +76,7 @@ class UserRepository {
         throw Exception("Failed to add user: ${response.statusMessage}");
       }
     } on DioException catch (e) {
+      print('Error: $e');
       if (e.response != null) {
         throw Exception(e.response!.data['message'] ?? "API error occurred");
       } else {

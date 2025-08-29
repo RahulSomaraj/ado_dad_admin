@@ -19,6 +19,7 @@ import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactu
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_list.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_view.dart';
 import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_model_add.dart';
+import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_model_edit.dart';
 import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_model_view.dart';
 import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_models_list.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_add.dart';
@@ -129,13 +130,13 @@ class AppRoutes {
                       vehiclemanufacturer: vehiclemanufacturer));
             },
           ),
-          GoRoute(
-            path: '/edit-vehicle',
-            pageBuilder: (context, state) {
-              final vehicle = state.extra as VehicleRequest;
-              return NoTransitionPage(child: EditVehicle(vehicle: vehicle));
-            },
-          ),
+          // GoRoute(
+          //   path: '/edit-vehicle',
+          //   pageBuilder: (context, state) {
+          //     final vehicle = state.extra as VehicleRequest;
+          //     return NoTransitionPage(child: EditVehicle(vehicle: vehicle));
+          //   },
+          // ),
           // GoRoute(
           //   path: '/view-vehicle',
           //   pageBuilder: (context, state) {
@@ -166,6 +167,19 @@ class AppRoutes {
 
               return NoTransitionPage(
                   child: VehicleModelView(vehiclemodel: extra));
+            },
+          ),
+          GoRoute(
+            path: '/edit-vehicle_model',
+            pageBuilder: (context, state) {
+              final extra = state.extra;
+              if (extra is! VehicleModel) {
+                return const NoTransitionPage(
+                  child: Center(
+                      child: Text("⚠️ Vehicle Model data missing or invalid.")),
+                );
+              }
+              return NoTransitionPage(child: VehicleModelEdit(model: extra));
             },
           ),
 

@@ -9,30 +9,25 @@ part of 'vehicle_model.dart';
 _$VehicleModelImpl _$$VehicleModelImplFromJson(Map<String, dynamic> json) =>
     _$VehicleModelImpl(
       id: json['_id'] as String?,
-      name: json['name'] as String,
-      displayName: json['displayName'] as String,
+      name: json['name'] as String? ?? '',
+      displayName: json['displayName'] as String? ?? '',
       manufacturer: VehicleManufacturer.fromJson(
           json['manufacturer'] as Map<String, dynamic>),
-      vehicleType: json['vehicleType'] as String,
+      vehicleType: json['vehicleType'] as String? ?? '',
       description: json['description'] as String?,
       launchYear: (json['launchYear'] as num?)?.toInt(),
       segment: json['segment'] as String?,
       bodyType: json['bodyType'] as String?,
-      images:
-          (json['images'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      images: _stringList(json['images']),
       brochureUrl: json['brochureUrl'] as String?,
       isActive: json['isActive'] as bool?,
       variantCount: (json['variantCount'] as num?)?.toInt(),
       priceRange: json['priceRange'] == null
           ? null
           : PriceRange.fromJson(json['priceRange'] as Map<String, dynamic>),
-      availableFuelTypes: (json['availableFuelTypes'] as List<dynamic>?)
-          ?.map((e) => e as String)
-          .toList(),
+      availableFuelTypes: _stringList(json['availableFuelTypes']),
       availableTransmissionTypes:
-          (json['availableTransmissionTypes'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList(),
+          _stringList(json['availableTransmissionTypes']),
       isCommercialVehicle: json['isCommercialVehicle'] as bool?,
       commercialVehicleType: json['commercialVehicleType'] as String?,
       commercialBodyType: json['commercialBodyType'] as String?,
@@ -53,13 +48,14 @@ Map<String, dynamic> _$$VehicleModelImplToJson(_$VehicleModelImpl instance) =>
       'launchYear': instance.launchYear,
       'segment': instance.segment,
       'bodyType': instance.bodyType,
-      'images': instance.images,
+      'images': _stringListToJson(instance.images),
       'brochureUrl': instance.brochureUrl,
       'isActive': instance.isActive,
       'variantCount': instance.variantCount,
       'priceRange': instance.priceRange?.toJson(),
-      'availableFuelTypes': instance.availableFuelTypes,
-      'availableTransmissionTypes': instance.availableTransmissionTypes,
+      'availableFuelTypes': _stringListToJson(instance.availableFuelTypes),
+      'availableTransmissionTypes':
+          _stringListToJson(instance.availableTransmissionTypes),
       'isCommercialVehicle': instance.isCommercialVehicle,
       'commercialVehicleType': instance.commercialVehicleType,
       'commercialBodyType': instance.commercialBodyType,

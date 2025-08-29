@@ -19,4 +19,11 @@ class VehicleModelEvent with _$VehicleModelEvent {
     @Default(1) int page,
     @Default(10) int limit,
   }) = FetchVehicleModelsByManufacturer;
+  const factory VehicleModelEvent.fetchOptions() = FetchVehicleOptions;
+  const factory VehicleModelEvent.fetchOne(String id) = FetchOneVehicleModel;
+  const factory VehicleModelEvent.updateVehicleModel({
+    required VehicleModel model,
+    @Default(<String>[]) List<String> keepImageUrls,
+    @Default(<PlatformFile>[]) List<PlatformFile> newRawImages,
+  }) = UpdateVehicleModel;
 }

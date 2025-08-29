@@ -2,6 +2,7 @@ import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
+import 'package:ado_dad_admin/models/vehicle_model/fuel_transmission_models.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -59,28 +60,28 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
   ];
   final segments = ['A', 'B', 'C', 'D', 'E'];
 
-  final Map<String, String> fuelTypeOptions = {
-    'Petrol': 'Petrol',
-    'Diesel': 'Diesel',
-    'Compressed Natural Gas': 'CNG',
-    'Electric': 'Electric',
-    'Hybrid': 'Hybrid',
-    'Plugin Hybrid': 'Pligin_Hybrid',
-    'Flex Fuel': 'Flex_Fuel',
-  };
+  // final Map<String, String> fuelTypeOptions = {
+  //   'Petrol': 'Petrol',
+  //   'Diesel': 'Diesel',
+  //   'Compressed Natural Gas': 'CNG',
+  //   'Electric': 'Electric',
+  //   'Hybrid': 'Hybrid',
+  //   'Plugin Hybrid': 'Pligin_Hybrid',
+  //   'Flex Fuel': 'Flex_Fuel',
+  // };
 
-  final Map<String, String> transmissionTypeOptions = {
-    'Manual': 'Manual',
-    'Automatic': 'Automatic',
-    'AMT/Automated Manual Transmission': 'AMT',
-    'CVT/Continuously Variable Transmission': 'CVT',
-    'Dual-Clutch': 'Dual_Clutch',
-    'Semi-Automatic': 'Semi_Automatic',
-    'IMT/Intelligent Manual Transmission': 'IMT',
-  };
+  // final Map<String, String> transmissionTypeOptions = {
+  //   'Manual': 'Manual',
+  //   'Automatic': 'Automatic',
+  //   'AMT/Automated Manual Transmission': 'AMT',
+  //   'CVT/Continuously Variable Transmission': 'CVT',
+  //   'Dual-Clutch': 'Dual_Clutch',
+  //   'Semi-Automatic': 'Semi_Automatic',
+  //   'IMT/Intelligent Manual Transmission': 'IMT',
+  // };
 
-  // final List<String> _selectedFuelTypes = [];
-  // final List<String> _selectedTransmissionTypes = [];
+  final List<String> _selectedFuelTypeKeys = [];
+  final List<String> _selectedTransmissionKeys = [];
 
   final payloadUnits = ['kg', 'ton', 'lbs'];
   final commercialBodyTypes = ['flatbed', 'container', 'box', 'dump'];
@@ -131,6 +132,11 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
         segment: _segment,
         images: [],
         isActive: _isActive,
+        availableFuelTypes:
+            _selectedFuelTypeKeys.isNotEmpty ? _selectedFuelTypeKeys : null,
+        availableTransmissionTypes: _selectedTransmissionKeys.isNotEmpty
+            ? _selectedTransmissionKeys
+            : null,
       );
 
       context.read<VehicleModelBloc>().add(
@@ -139,11 +145,11 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
               rawImages: _selectedImages,
             ),
           );
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        _showSuccessPopup(
-            context, "Vehicle Model has been added successfully.");
-      });
+      // Future.delayed(const Duration(milliseconds: 500), () {
+      //   if (!mounted) return;
+      //   _showSuccessPopup(
+      //       context, "Vehicle Model has been added successfully.");
+      // });
     }
   }
 
@@ -198,23 +204,45 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
     context
         .read<VehicleManufacturerBloc>()
         .add(FetchAllManufacturersForDropdown());
+    context
+        .read<VehicleModelBloc>()
+        .add(const VehicleModelEvent.fetchOptions());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VehicleModelBloc, VehicleModelState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildVehicleModelForm(state),
-            ],
+    return BlocListener<VehicleModelBloc, VehicleModelState>(
+      listenWhen: (prev, curr) => curr.maybeWhen(
+        created: () => true,
+        error: (_) => true,
+        orElse: () => false,
+      ),
+      listener: (context, state) {
+        state.maybeWhen(
+          created: () => _showSuccessPopup(
+              context, "Vehicle Model has been added successfully."),
+          error: (msg) => ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content: Text('Create failed: $msg'),
+                backgroundColor: Colors.red),
           ),
+          orElse: () {},
         );
       },
+      child: BlocBuilder<VehicleModelBloc, VehicleModelState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildVehicleModelForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -360,6 +388,54 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
                   ),
 
                   const SizedBox(height: 15),
+
+                  BlocBuilder<VehicleModelBloc, VehicleModelState>(
+                    // Only rebuild this part for the states we care about
+                    buildWhen: (prev, curr) => curr.maybeWhen(
+                      loading: () => true,
+                      optionsLoaded: (_, __) => true,
+                      error: (_) => true,
+                      orElse: () => false,
+                    ),
+                    builder: (context, state) {
+                      return state.maybeWhen(
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
+                        optionsLoaded: (fuelOpts, transOpts) {
+                          return _buildFormRow([
+                            _buildMultiSelectChips<FuelType>(
+                              label: 'Fuel Types',
+                              options: fuelOpts,
+                              selectedValues: _selectedFuelTypeKeys,
+                              displayLabel: (f) => f.displayName ?? f.name,
+                              valueKey: (f) => f.name,
+                              onChanged: (list) => setState(() {
+                                _selectedFuelTypeKeys
+                                  ..clear()
+                                  ..addAll(list);
+                              }),
+                            ),
+                            _buildMultiSelectChips<TransmissionType>(
+                              label: 'Transmission Types',
+                              options: transOpts,
+                              selectedValues: _selectedTransmissionKeys,
+                              displayLabel: (t) => t.displayName ?? t.name,
+                              valueKey: (t) => t.name,
+                              onChanged: (list) => setState(() {
+                                _selectedTransmissionKeys
+                                  ..clear()
+                                  ..addAll(list);
+                              }),
+                            ),
+                          ]);
+                        },
+                        error: (msg) => Text(msg,
+                            style: const TextStyle(color: Colors.red)),
+                        orElse: () => const SizedBox.shrink(),
+                      );
+                    },
+                  ),
+
                   // _buildFormRow([
                   // buildDropdownField<String>(
                   //   label: 'Body Type',
@@ -654,6 +730,47 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMultiSelectChips<T>({
+    required String label,
+    required List<T> options,
+    required List<String> selectedValues, // stores keys
+    required String Function(T) displayLabel, // e.g., (FuelType f) => f.name
+    required String Function(T) valueKey, // e.g., (FuelType f) => f.key
+    required void Function(List<String>) onChanged,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          contentPadding: const EdgeInsets.all(10),
+        ),
+        child: Wrap(
+          spacing: 10,
+          runSpacing: 10,
+          children: options.map((opt) {
+            final key = valueKey(opt);
+            final selected = selectedValues.contains(key);
+            return FilterChip(
+              label: Text(displayLabel(opt)),
+              selected: selected,
+              onSelected: (s) {
+                final updated = List<String>.from(selectedValues);
+                if (s) {
+                  if (!updated.contains(key)) updated.add(key);
+                } else {
+                  updated.remove(key);
+                }
+                onChanged(updated);
+              },
+            );
+          }).toList(),
+        ),
       ),
     );
   }

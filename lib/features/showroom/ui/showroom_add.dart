@@ -36,9 +36,9 @@ class _ShowroomAddState extends State<ShowroomAdd> {
             ShowroomEvent.addShowroom(showroomData: newShowroom),
           );
 
-      context
-          .read<ShowroomBloc>()
-          .add(ShowroomEvent.updateShowroom(updatedShowroom: newShowroom));
+      // context
+      //     .read<ShowroomBloc>()
+      //     .add(ShowroomEvent.updateShowroom(updatedShowroom: newShowroom));
 
       Future.delayed(const Duration(milliseconds: 500), () {
         _showSuccessPopup(context, "Showroom has been added successfully.");
@@ -146,7 +146,7 @@ class _ShowroomAddState extends State<ShowroomAdd> {
                       isPhone: true),
                   const SizedBox(height: 15),
                   _buildFormField("Password", "", (value) => _password = value!,
-                      obscureText: true),
+                      obscureText: false),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
