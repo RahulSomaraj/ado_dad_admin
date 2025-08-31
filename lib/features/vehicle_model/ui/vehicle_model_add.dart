@@ -231,14 +231,17 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
       },
       child: BlocBuilder<VehicleModelBloc, VehicleModelState>(
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildHeaderSection(),
-                const SizedBox(height: 30),
-                _buildVehicleModelForm(state),
-              ],
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 30),
+                  _buildVehicleModelForm(state),
+                  const SizedBox(height: 50), // Add bottom padding
+                ],
+              ),
             ),
           );
         },

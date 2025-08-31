@@ -29,13 +29,27 @@ class VehicleModelRepository {
       // print('Model Datas: ${response.data}');
 
       if (response.statusCode == 200) {
+        // Add null safety check for response data
+        if (response.data == null) {
+          throw Exception("API returned null response");
+        }
+
+        // Handle case where API returns empty data or malformed response
+        if (response.data is! Map<String, dynamic>) {
+          throw Exception("API returned invalid response format");
+        }
+
         return VehicleModelResponse.fromJson(response.data);
       } else {
         throw Exception("Failed to load vehicle models");
       }
     } on DioException catch (e) {
+      print("Exception on fetch of vehicle models: $e");
       throw Exception(
           'Failed to load vehicle models: ${e.response?.data ?? e.message}');
+    } catch (e) {
+      print("Unexpected error in fetchAllModels: $e");
+      throw Exception("Unexpected error while loading vehicle models: $e");
     }
   }
 
@@ -142,7 +156,15 @@ class VehicleModelRepository {
 
   Future<void> createVehicleModel(VehicleModel model) async {
     try {
-      final payload = model.toJson()..['manufacturer'] = model.manufacturer.id;
+      final payload = model.toJson();
+
+      // Handle nullable manufacturer
+      if (model.manufacturer != null) {
+        payload['manufacturer'] = model.manufacturer!.id;
+      } else {
+        // Remove manufacturer field if it's null
+        payload.remove('manufacturer');
+      }
 
       // Remove all null, empty string, or disallowed fields
       payload.removeWhere((key, value) =>
@@ -232,7 +254,15 @@ class VehicleModelRepository {
       throw Exception('Cannot update: model id is missing');
     }
     try {
-      final payload = model.toJson()..['manufacturer'] = model.manufacturer.id;
+      final payload = model.toJson();
+
+      // Handle nullable manufacturer
+      if (model.manufacturer != null) {
+        payload['manufacturer'] = model.manufacturer!.id;
+      } else {
+        // Remove manufacturer field if it's null
+        payload.remove('manufacturer');
+      }
 
       // Strip disallowed/empty fields (same idea as create)
       payload.removeWhere((key, value) =>

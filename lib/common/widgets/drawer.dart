@@ -76,9 +76,41 @@ class _AdminDrawerState extends State<AdminDrawer> {
           ),
         ),
         onTap: () {
-          context.read<AuthBloc>().add(AuthEvent.logout());
+          _showLogoutConfirmationDialog(context);
         },
       ),
+    );
+  }
+
+  void _showLogoutConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Logout'),
+          content: const Text('Are you sure you want to logout?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+                context
+                    .read<AuthBloc>()
+                    .add(AuthEvent.logout()); // Proceed with logout
+              },
+              child: const Text(
+                'Logout',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

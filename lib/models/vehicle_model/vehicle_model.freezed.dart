@@ -27,7 +27,8 @@ mixin _$VehicleModel {
   String get name => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: '')
   String get displayName => throw _privateConstructorUsedError;
-  VehicleManufacturer get manufacturer => throw _privateConstructorUsedError;
+  VehicleManufacturer? get manufacturer =>
+      throw _privateConstructorUsedError; // Make nullable to handle API null responses
   @JsonKey(defaultValue: '')
   String get vehicleType => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
@@ -74,7 +75,7 @@ abstract class $VehicleModelCopyWith<$Res> {
       {@JsonKey(name: '_id') String? id,
       @JsonKey(defaultValue: '') String name,
       @JsonKey(defaultValue: '') String displayName,
-      VehicleManufacturer manufacturer,
+      VehicleManufacturer? manufacturer,
       @JsonKey(defaultValue: '') String vehicleType,
       String? description,
       int? launchYear,
@@ -98,7 +99,7 @@ abstract class $VehicleModelCopyWith<$Res> {
       int? defaultAxleCount,
       int? defaultSeatingCapacity});
 
-  $VehicleManufacturerCopyWith<$Res> get manufacturer;
+  $VehicleManufacturerCopyWith<$Res>? get manufacturer;
   $PriceRangeCopyWith<$Res>? get priceRange;
 }
 
@@ -120,7 +121,7 @@ class _$VehicleModelCopyWithImpl<$Res, $Val extends VehicleModel>
     Object? id = freezed,
     Object? name = null,
     Object? displayName = null,
-    Object? manufacturer = null,
+    Object? manufacturer = freezed,
     Object? vehicleType = null,
     Object? description = freezed,
     Object? launchYear = freezed,
@@ -154,10 +155,10 @@ class _$VehicleModelCopyWithImpl<$Res, $Val extends VehicleModel>
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
               as String,
-      manufacturer: null == manufacturer
+      manufacturer: freezed == manufacturer
           ? _value.manufacturer
           : manufacturer // ignore: cast_nullable_to_non_nullable
-              as VehicleManufacturer,
+              as VehicleManufacturer?,
       vehicleType: null == vehicleType
           ? _value.vehicleType
           : vehicleType // ignore: cast_nullable_to_non_nullable
@@ -241,8 +242,12 @@ class _$VehicleModelCopyWithImpl<$Res, $Val extends VehicleModel>
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  $VehicleManufacturerCopyWith<$Res> get manufacturer {
-    return $VehicleManufacturerCopyWith<$Res>(_value.manufacturer, (value) {
+  $VehicleManufacturerCopyWith<$Res>? get manufacturer {
+    if (_value.manufacturer == null) {
+      return null;
+    }
+
+    return $VehicleManufacturerCopyWith<$Res>(_value.manufacturer!, (value) {
       return _then(_value.copyWith(manufacturer: value) as $Val);
     });
   }
@@ -274,7 +279,7 @@ abstract class _$$VehicleModelImplCopyWith<$Res>
       {@JsonKey(name: '_id') String? id,
       @JsonKey(defaultValue: '') String name,
       @JsonKey(defaultValue: '') String displayName,
-      VehicleManufacturer manufacturer,
+      VehicleManufacturer? manufacturer,
       @JsonKey(defaultValue: '') String vehicleType,
       String? description,
       int? launchYear,
@@ -299,7 +304,7 @@ abstract class _$$VehicleModelImplCopyWith<$Res>
       int? defaultSeatingCapacity});
 
   @override
-  $VehicleManufacturerCopyWith<$Res> get manufacturer;
+  $VehicleManufacturerCopyWith<$Res>? get manufacturer;
   @override
   $PriceRangeCopyWith<$Res>? get priceRange;
 }
@@ -320,7 +325,7 @@ class __$$VehicleModelImplCopyWithImpl<$Res>
     Object? id = freezed,
     Object? name = null,
     Object? displayName = null,
-    Object? manufacturer = null,
+    Object? manufacturer = freezed,
     Object? vehicleType = null,
     Object? description = freezed,
     Object? launchYear = freezed,
@@ -354,10 +359,10 @@ class __$$VehicleModelImplCopyWithImpl<$Res>
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
               as String,
-      manufacturer: null == manufacturer
+      manufacturer: freezed == manufacturer
           ? _value.manufacturer
           : manufacturer // ignore: cast_nullable_to_non_nullable
-              as VehicleManufacturer,
+              as VehicleManufacturer?,
       vehicleType: null == vehicleType
           ? _value.vehicleType
           : vehicleType // ignore: cast_nullable_to_non_nullable
@@ -446,7 +451,7 @@ class _$VehicleModelImpl implements _VehicleModel {
       {@JsonKey(name: '_id') this.id,
       @JsonKey(defaultValue: '') required this.name,
       @JsonKey(defaultValue: '') required this.displayName,
-      required this.manufacturer,
+      this.manufacturer,
       @JsonKey(defaultValue: '') required this.vehicleType,
       this.description,
       this.launchYear,
@@ -487,7 +492,8 @@ class _$VehicleModelImpl implements _VehicleModel {
   @JsonKey(defaultValue: '')
   final String displayName;
   @override
-  final VehicleManufacturer manufacturer;
+  final VehicleManufacturer? manufacturer;
+// Make nullable to handle API null responses
   @override
   @JsonKey(defaultValue: '')
   final String vehicleType;
@@ -664,7 +670,7 @@ abstract class _VehicleModel implements VehicleModel {
       {@JsonKey(name: '_id') final String? id,
       @JsonKey(defaultValue: '') required final String name,
       @JsonKey(defaultValue: '') required final String displayName,
-      required final VehicleManufacturer manufacturer,
+      final VehicleManufacturer? manufacturer,
       @JsonKey(defaultValue: '') required final String vehicleType,
       final String? description,
       final int? launchYear,
@@ -702,7 +708,8 @@ abstract class _VehicleModel implements VehicleModel {
   @JsonKey(defaultValue: '')
   String get displayName;
   @override
-  VehicleManufacturer get manufacturer;
+  VehicleManufacturer?
+      get manufacturer; // Make nullable to handle API null responses
   @override
   @JsonKey(defaultValue: '')
   String get vehicleType;

@@ -22,6 +22,7 @@ class VehicleModelEdit extends StatefulWidget {
 class _VehicleModelEditState extends State<VehicleModelEdit> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isSubmitting = false;
+  bool _hasShownSuccessDialog = false; // Add flag to prevent multiple popups
 
   late String _name;
   late String _displayName;
@@ -81,6 +82,12 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
     context
         .read<VehicleModelBloc>()
         .add(const VehicleModelEvent.fetchOptions());
+  }
+
+  @override
+  void dispose() {
+    // Don't access bloc context in dispose - it's unsafe
+    super.dispose();
   }
 
   Future<void> _pickNewImages() async {
@@ -151,6 +158,9 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
 
     setState(() => _isSubmitting = true);
 
+    // Reset the success dialog flag when submitting
+    _hasShownSuccessDialog = false;
+
     context.read<VehicleModelBloc>().add(
           VehicleModelEvent.updateVehicleModel(
             model: base,
@@ -160,24 +170,30 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
         );
   }
 
-  void _showSuccessDialog() {
+  void _showSuccessDialog(BuildContext successcontext, String message) {
+    if (!mounted) return;
+
     showDialog(
-      context: context,
+      context: successcontext,
       barrierDismissible: false,
-      builder: (_) => AlertDialog(
+      builder: (dialogCtx) => AlertDialog(
         title: const Text('Success'),
-        content: const Text('Vehicle Model has been updated successfully.'),
+        content: Text(message),
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop();
-              context.go('/vehicle-models');
+              // ✅ Pop the dialog using its own context
+              Navigator.of(dialogCtx).pop();
             },
             child: const Text('OK'),
           ),
         ],
       ),
     );
+    // After the dialog is closed, go to the list
+    if (mounted) {
+      context.go('/vehicle-models');
+    }
   }
 
   void _showErrorSnack(String msg) {
@@ -189,15 +205,28 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<VehicleModelBloc, VehicleModelState>(
-      listenWhen: (prev, curr) =>
-          _isSubmitting &&
-          curr.maybeWhen(
-              loaded: (_) => true, error: (_) => true, orElse: () => false),
+      listenWhen: (prev, curr) {
+        // Only listen when we're submitting and the state changes to updated or error
+        // AND we haven't shown the dialog yet
+        return _isSubmitting &&
+            !_hasShownSuccessDialog &&
+            curr.maybeWhen(
+              updated: () => true,
+              error: (_) => true,
+              orElse: () => false,
+            );
+      },
       listener: (context, state) {
         setState(() => _isSubmitting = false);
         state.maybeWhen(
-          loaded: (_) => _showSuccessDialog(), // ✅ show only on success
-          error: (msg) => _showErrorSnack(msg), // ❌ show failure
+          updated: () async {
+            if (!_hasShownSuccessDialog && mounted) {
+              _hasShownSuccessDialog = true;
+              _showSuccessDialog(
+                  context, "Vehicle Model has been updated successfully.");
+            }
+          },
+          error: (msg) => _showErrorSnack(msg), // Show error snack on failure
           orElse: () {},
         );
       },
@@ -211,14 +240,17 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
         final isLoading =
             state.maybeWhen(loading: () => true, orElse: () => false);
 
-        return Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 30),
-              _buildForm(isLoading, state),
-            ],
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                _buildHeader(),
+                const SizedBox(height: 30),
+                _buildForm(isLoading, state),
+                const SizedBox(height: 50), // Add bottom padding
+              ],
+            ),
           ),
         );
       },
@@ -257,16 +289,21 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
   }
 
   Widget _buildForm(bool isLoading, VehicleModelState state) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 900),
+        constraints: BoxConstraints(
+          maxWidth: isTablet ? screenWidth - 32 : 900,
+        ),
         child: Card(
           elevation: 5,
           color: AppColors.primaryColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(isTablet ? 16.0 : 20.0),
             child: Form(
               key: _formKey,
               child: Column(
@@ -426,6 +463,19 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
   // ————— helpers —————
 
   Widget _row(Widget left, Widget right) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+    if (isTablet) {
+      return Column(
+        children: [
+          left,
+          const SizedBox(height: 15),
+          right,
+        ],
+      );
+    }
+
     return Row(
       children: [
         Expanded(child: left),

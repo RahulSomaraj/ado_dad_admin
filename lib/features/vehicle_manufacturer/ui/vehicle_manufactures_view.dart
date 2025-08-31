@@ -318,8 +318,9 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
                                 return DataRow(
                                   cells: [
                                     DataCell(Text(model.displayName)),
-                                    DataCell(
-                                        Text(model.manufacturer.displayName)),
+                                    DataCell(Text(
+                                        model.manufacturer?.displayName ??
+                                            'N/A')),
                                     DataCell(Text(model.vehicleType)),
                                     DataCell(SizedBox(
                                       width: 150,

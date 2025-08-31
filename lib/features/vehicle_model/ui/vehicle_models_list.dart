@@ -270,6 +270,19 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600 && screenWidth <= 900;
 
+    // Add null safety check for models list
+    if (models.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Text(
+            "No vehicle models found",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
+
     return Padding(
       padding: const EdgeInsets.all(20),
       child: LayoutBuilder(
@@ -286,7 +299,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: DataTable(
-                    columnSpacing: isTablet ? 20 : 40,
+                    columnSpacing: isTablet ? 20 : 25,
                     headingRowColor: WidgetStateColor.resolveWith(
                       (states) => const Color.fromARGB(66, 144, 140, 140),
                     ),
@@ -467,12 +480,12 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       )),
       DataCell(Text(models.name)),
       DataCell(Text(models.displayName)),
-      DataCell(Text(models.manufacturer.name)),
+      DataCell(Text(models.manufacturer?.name ?? 'N/A')),
       DataCell(Text(models.vehicleType)),
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.description!,
+            models.description ?? 'N/A',
             softWrap: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -480,7 +493,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.launchYear.toString(),
+            models.launchYear?.toString() ?? 'N/A',
             softWrap: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -488,17 +501,17 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.segment!,
+            models.segment ?? 'N/A',
             softWrap: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ))),
-      DataCell(Text(models.bodyType!)),
+      DataCell(Text(models.bodyType ?? 'N/A')),
       DataCell(SizedBox(
         width: 150,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: models.images!.map((img) {
+          children: (models.images ?? []).map((img) {
             return Text(
               img,
               maxLines: 2,
@@ -511,12 +524,12 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.brochureUrl!,
+            models.brochureUrl ?? 'N/A',
             maxLines: 2,
             softWrap: true,
             overflow: TextOverflow.ellipsis,
           ))),
-      DataCell(Text(models.isActive.toString())),
+      DataCell(Text(models.isActive?.toString() ?? 'N/A')),
       // DataCell(Text(models.isCommercialVehicle?.toString() ?? '-')),
       // DataCell(Text(models.commercialVehicleType ?? '-')),
       // DataCell(Text(models.commercialBodyType ?? '-')),
@@ -565,7 +578,9 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
               icon: const Icon(Icons.remove_red_eye_outlined,
                   color: Color.fromARGB(255, 20, 20, 20)),
               onPressed: () {
-                context.push('/view-vehicle_model', extra: models);
+                if (models.id != null) {
+                  context.push('/view-vehicle_model', extra: models);
+                }
               },
             ),
           ],

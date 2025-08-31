@@ -11,8 +11,10 @@ _$VehicleModelImpl _$$VehicleModelImplFromJson(Map<String, dynamic> json) =>
       id: json['_id'] as String?,
       name: json['name'] as String? ?? '',
       displayName: json['displayName'] as String? ?? '',
-      manufacturer: VehicleManufacturer.fromJson(
-          json['manufacturer'] as Map<String, dynamic>),
+      manufacturer: json['manufacturer'] == null
+          ? null
+          : VehicleManufacturer.fromJson(
+              json['manufacturer'] as Map<String, dynamic>),
       vehicleType: json['vehicleType'] as String? ?? '',
       description: json['description'] as String?,
       launchYear: (json['launchYear'] as num?)?.toInt(),
@@ -42,7 +44,7 @@ Map<String, dynamic> _$$VehicleModelImplToJson(_$VehicleModelImpl instance) =>
       '_id': instance.id,
       'name': instance.name,
       'displayName': instance.displayName,
-      'manufacturer': instance.manufacturer.toJson(),
+      'manufacturer': instance.manufacturer?.toJson(),
       'vehicleType': instance.vehicleType,
       'description': instance.description,
       'launchYear': instance.launchYear,

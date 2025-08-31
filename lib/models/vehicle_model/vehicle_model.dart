@@ -98,7 +98,8 @@ class VehicleModel with _$VehicleModel {
     // These are required in your UI, but backend may send null on fresh create
     @JsonKey(defaultValue: '') required String name,
     @JsonKey(defaultValue: '') required String displayName,
-    required VehicleManufacturer manufacturer,
+    VehicleManufacturer?
+        manufacturer, // Make nullable to handle API null responses
     @JsonKey(defaultValue: '') required String vehicleType,
     String? description,
     int? launchYear,

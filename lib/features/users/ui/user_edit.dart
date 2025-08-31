@@ -305,7 +305,7 @@ class _EditUserState extends State<EditUser> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Profile Picture (Optional)",
+          "Profile Picture",
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w500,
