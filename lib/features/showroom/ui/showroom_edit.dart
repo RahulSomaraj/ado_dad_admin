@@ -59,7 +59,6 @@ class _EditShowroomState extends State<EditShowroom> {
               onPressed: () {
                 context.pop();
                 context.go('/showrooms');
-                context.read<ShowroomBloc>().add(FetchAllShowrooms());
               },
               child: const Text("OK"),
             ),

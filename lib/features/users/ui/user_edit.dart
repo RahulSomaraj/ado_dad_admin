@@ -75,8 +75,8 @@ class _EditUserState extends State<EditUser> {
           actions: [
             TextButton(
               onPressed: () {
-                // Refresh users before navigating
-                context.read<UserBloc>().add(FetchAllUsers());
+                // Explicitly refresh data before navigating
+                context.read<UserBloc>().add(const FetchAllUsers());
                 context.pop();
                 context.go('/users');
               },

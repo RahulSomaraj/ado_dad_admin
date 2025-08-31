@@ -55,7 +55,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       await userRepository.updateUser(event.updatedUser);
       emit(const UserState.updated());
-      add(FetchAllUsers(page: 1, limit: 10));
     } catch (e) {
       emit(UserState.error("Failed to update user"));
     }

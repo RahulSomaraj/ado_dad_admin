@@ -17,6 +17,17 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
   VehicleModelResponse? _lastListResponse;
 
   @override
+  void initState() {
+    super.initState();
+    // Fetch vehicle models when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<VehicleModelBloc>()
+          .add(const VehicleModelEvent.fetchAllModels());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(

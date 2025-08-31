@@ -16,6 +16,15 @@ class _ShowroomState extends State<Showroom> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Fetch showrooms when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ShowroomBloc>().add(const FetchAllShowrooms());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [

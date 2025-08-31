@@ -15,6 +15,18 @@ class VehicleManufacturesList extends StatefulWidget {
 
 class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
   final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch vehicle manufacturers when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<VehicleManufacturerBloc>()
+          .add(const FetchAllVehicleManufacturers());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(

@@ -346,63 +346,6 @@ class _UsersState extends State<Users> {
     );
   }
 
-  // Widget _buildUserTable(List<UserModel> users, int currentPage) {
-  //   return Padding(
-  //     padding: const EdgeInsets.all(20),
-  //     child: LayoutBuilder(
-  //       builder: (context, constraints) {
-  //         return SingleChildScrollView(
-  //           scrollDirection: Axis.horizontal,
-  //           child: IntrinsicWidth(
-  //             child: Card(
-  //               elevation: 3,
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(12),
-  //               ),
-  //               child: ClipRRect(
-  //                 borderRadius: BorderRadius.circular(12),
-  //                 child: DataTable(
-  //                   columnSpacing: 150,
-  //                   headingRowColor: WidgetStateColor.resolveWith(
-  //                       (states) => const Color.fromARGB(66, 144, 140, 140)),
-  //                   dataRowColor:
-  //                       WidgetStatePropertyAll(AppColors.primaryColor),
-  //                   dataRowMinHeight: 55,
-  //                   dataRowMaxHeight: 55,
-  //                   columns: const [
-  //                     DataColumn(
-  //                       label: Padding(
-  //                         padding: EdgeInsets.only(left: 30),
-  //                         child: Text('ID',
-  //                             style: TextStyle(fontWeight: FontWeight.bold)),
-  //                       ),
-  //                     ),
-  //                     DataColumn(
-  //                         label: Text('Name',
-  //                             style: TextStyle(fontWeight: FontWeight.bold))),
-  //                     DataColumn(
-  //                         label: Text('Email',
-  //                             style: TextStyle(fontWeight: FontWeight.bold))),
-  //                     DataColumn(
-  //                         label: Text('Phone Number',
-  //                             style: TextStyle(fontWeight: FontWeight.bold))),
-  //                     DataColumn(
-  //                         label: Text('Actions',
-  //                             style: TextStyle(fontWeight: FontWeight.bold))),
-  //                   ],
-  //                   rows: users.asMap().entries.map((entry) {
-  //                     return _buildUserRow(entry.key, entry.value, currentPage);
-  //                   }).toList(),
-  //                 ),
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-
   Widget _buildUserTable(List<UserModel> users, int currentPage) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600 && screenWidth <= 900;
@@ -423,7 +366,7 @@ class _UsersState extends State<Users> {
                 minWidth: isTablet ? 600 : 800,
               ),
               child: DataTable(
-                columnSpacing: isTablet ? 20 : 40,
+                columnSpacing: isTablet ? 20 : 80,
                 headingRowColor: WidgetStateColor.resolveWith(
                   (states) => const Color.fromARGB(66, 144, 140, 140),
                 ),
