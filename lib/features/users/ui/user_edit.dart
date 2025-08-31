@@ -1,9 +1,11 @@
+import 'dart:typed_data';
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditUser extends StatefulWidget {
   final UserModel user;
@@ -22,6 +24,10 @@ class _EditUserState extends State<EditUser> {
   late String _phone;
   late String _userType;
 
+  // Profile picture state
+  Uint8List? _profilePicBytes;
+  String? _currentProfilePicUrl;
+
   /// Short form to full form mapping
   final Map<String, String> _userTypeMap = {
     'SA': "Super Admin",
@@ -37,6 +43,7 @@ class _EditUserState extends State<EditUser> {
     _email = widget.user.email;
     _phone = widget.user.phoneNumber;
     _userType = _userTypeMap[widget.user.userType] ?? "Normal User";
+    _currentProfilePicUrl = widget.user.profilePic;
   }
 
   /// Convert full form to short code for API request
@@ -49,6 +56,23 @@ class _EditUserState extends State<EditUser> {
         .key;
   }
 
+  Future<void> _pickProfilePicture() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 80,
+    );
+
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _profilePicBytes = bytes;
+      });
+    }
+  }
+
   void _updateUser() {
     if (_userEditFormKey.currentState!.validate()) {
       _userEditFormKey.currentState!.save();
@@ -59,9 +83,19 @@ class _EditUserState extends State<EditUser> {
         email: _email,
         phoneNumber: _phone,
         userType: _getShortForm(_userType),
+        profilePic: _currentProfilePicUrl,
       );
 
-      context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
+      if (_profilePicBytes != null) {
+        // Update user with new profile picture
+        context.read<UserBloc>().add(UserEvent.updateUserWithProfilePic(
+              updatedUser: updatedUser,
+              profilePicBytes: _profilePicBytes!,
+            ));
+      } else {
+        // Update user without changing profile picture
+        context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
+      }
     }
   }
 
@@ -99,14 +133,17 @@ class _EditUserState extends State<EditUser> {
       },
       child: BlocBuilder<UserBloc, UserState>(
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildHeaderSection(),
-                const SizedBox(height: 30),
-                _buildUpdateForm(state),
-              ],
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 30),
+                  _buildUpdateForm(state),
+                  const SizedBox(height: 50), // Add bottom padding
+                ],
+              ),
             ),
           );
         },
@@ -152,19 +189,25 @@ class _EditUserState extends State<EditUser> {
 
   Center _buildUpdateForm(UserState state) {
     return Center(
-      child: SizedBox(
-        width: 500,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.of(context).size.width > 600
+              ? 600
+              : MediaQuery.of(context).size.width - 32,
+        ),
         child: Card(
           elevation: 5,
           color: AppColors.primaryColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.all(
+                MediaQuery.of(context).size.width > 600 ? 20 : 16),
             child: Form(
               key: _userEditFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildFormField("Name", _name, (value) => _name = value!),
                   const SizedBox(height: 15),
@@ -174,6 +217,8 @@ class _EditUserState extends State<EditUser> {
                   _buildFormField(
                       "Phone Number", _phone, (value) => _phone = value!,
                       isPhone: true),
+                  const SizedBox(height: 15),
+                  _buildProfilePictureSection(),
                   const SizedBox(height: 15),
                   _buildDropdownField("User Type", _userType),
                   const SizedBox(height: 20),
@@ -252,6 +297,74 @@ class _EditUserState extends State<EditUser> {
           .toList(),
       onChanged: (value) => setState(() => _userType = value!),
       validator: (value) => value == null ? "Please select a user type" : null,
+    );
+  }
+
+  Widget _buildProfilePictureSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Profile Picture (Optional)",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: _pickProfilePicture,
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: _profilePicBytes != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.memory(
+                      _profilePicBytes!,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : _currentProfilePicUrl != null &&
+                        _currentProfilePicUrl!.isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          _currentProfilePicUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _buildPlaceholder(),
+                        ),
+                      )
+                    : _buildPlaceholder(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.add_a_photo,
+          size: 40,
+          color: Colors.grey.shade600,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Add Photo",
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+          ),
+        ),
+      ],
     );
   }
 }

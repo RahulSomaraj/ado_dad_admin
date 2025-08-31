@@ -10,9 +10,18 @@ class UserEvent with _$UserEvent {
   }) = FetchAllUsers;
 
   const factory UserEvent.addUser({required UserModel userData}) = AddUser;
+  const factory UserEvent.addUserWithProfilePic({
+    required UserModel userData,
+    required Uint8List profilePicBytes,
+  }) = AddUserWithProfilePic;
+
   const factory UserEvent.deleteUser({required String userId}) = DeleteUser;
   const factory UserEvent.updateUser({required UserModel updatedUser}) =
       UpdateUser;
+  const factory UserEvent.updateUserWithProfilePic({
+    required UserModel updatedUser,
+    required Uint8List profilePicBytes,
+  }) = UpdateUserWithProfilePic;
 
   const factory UserEvent.userListNavigation() = UserListNavigation;
 }

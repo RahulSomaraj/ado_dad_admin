@@ -58,6 +58,7 @@ class UserRepository {
         'phoneNumber': user.phoneNumber,
         // Backend expects 'type' for user type, not 'userType'
         'type': user.userType,
+        'profilePic': user.profilePic,
       });
 
       if (response.statusCode == 200) {
