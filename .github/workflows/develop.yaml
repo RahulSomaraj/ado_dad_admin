@@ -18,7 +18,7 @@ jobs:
           script: |
             set -e
 
-            cd /var/www/html/ado-dad-web
+            cd /var/www/html/ado_dad_admin
             git stash
             git pull origin develop
 
