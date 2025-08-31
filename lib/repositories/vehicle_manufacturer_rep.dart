@@ -53,6 +53,7 @@ class VehicleManufacturerRepository {
           "foundedYear": manufacturerData.foundedYear,
           "headquarters": manufacturerData.headquarters,
           "isActive": manufacturerData.isActive,
+          "isPremium": manufacturerData.isPremium,
         },
       );
       print('create called:$response');
@@ -89,6 +90,7 @@ class VehicleManufacturerRepository {
           "foundedYear": manufacturerData.foundedYear,
           "headquarters": manufacturerData.headquarters,
           "isActive": manufacturerData.isActive,
+          "isPremium": manufacturerData.isPremium,
         },
       );
       if (response.statusCode == 200) {

@@ -27,6 +27,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
   late String _headquarters;
   late String _originCountry;
   late bool _isActive;
+  late bool _isPremium;
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     _headquarters = m.headquarters;
     _originCountry = m.originCountry;
     _isActive = m.isActive;
+    _isPremium = m.isPremium;
   }
 
   void _updateVehicleManufacturer() {
@@ -58,6 +60,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
         foundedYear: int.tryParse(_foundedYear) ?? 0,
         headquarters: _headquarters,
         isActive: _isActive,
+        isPremium: _isPremium,
       );
 
       context.read<VehicleManufacturerBloc>().add(
@@ -230,6 +233,14 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                     value: _isActive,
                     onChanged: (v) => setState(() => _isActive = v ?? true),
                     title: const Text("Is Active"),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  const SizedBox(height: 15),
+                  CheckboxListTile(
+                    value: _isPremium,
+                    onChanged: (v) => setState(() => _isPremium = v ?? false),
+                    title: const Text("Is Premium"),
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
                   ),

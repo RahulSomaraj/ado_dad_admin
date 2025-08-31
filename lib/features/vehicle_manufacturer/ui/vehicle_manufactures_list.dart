@@ -331,6 +331,12 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
+      DataColumn(
+        label: Text(
+          isTablet ? 'Is Premium' : 'Is Premium',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       const DataColumn(
         label: Text(
           'Actions',
@@ -414,6 +420,14 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
           maxLines: 2,
           softWrap: true,
           overflow: TextOverflow.ellipsis,
+        ),
+      )),
+      DataCell(Container(
+        width: 80,
+        child: Text(
+          manufacturer.isPremium ? 'Yes' : 'No',
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
         ),
       )),
       DataCell(

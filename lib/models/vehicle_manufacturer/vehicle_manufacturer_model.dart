@@ -17,6 +17,7 @@ class VehicleManufacturer with _$VehicleManufacturer {
     required int foundedYear,
     required String headquarters,
     required bool isActive,
+    @Default(false) bool isPremium,
     // required bool isDeleted,
     // required DateTime createdAt,
     // required DateTime updatedAt,

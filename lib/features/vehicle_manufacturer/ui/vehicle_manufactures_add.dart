@@ -26,6 +26,7 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
   String _foundedyear = '';
   String _headquarters = '';
   bool _isActive = false;
+  bool _isPremium = false;
 
   String? _country;
 
@@ -58,6 +59,7 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
         foundedYear: int.tryParse(_foundedyear) ?? 0,
         headquarters: _headquarters,
         isActive: _isActive,
+        isPremium: _isPremium,
         // isDeleted: false,
         // createdAt: DateTime.now(),
         // updatedAt: DateTime.now(),
@@ -259,6 +261,18 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                       }
                     },
                     title: const Text("Is Active"),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                  const SizedBox(height: 15),
+                  CheckboxListTile(
+                    value: _isPremium,
+                    onChanged: (value) {
+                      if (mounted) {
+                        setState(() => _isPremium = value ?? false);
+                      }
+                    },
+                    title: const Text("Is Premium"),
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
                   ),
