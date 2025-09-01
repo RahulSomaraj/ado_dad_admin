@@ -14,6 +14,7 @@ class Users extends StatefulWidget {
 
 class _UsersState extends State<Users> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _horizontalScrollController = ScrollController();
 
   void _showDeleteDialog(BuildContext context, String userId) {
     showDialog(
@@ -105,6 +106,13 @@ class _UsersState extends State<Users> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   // Widget _buildHeaderSection() {
@@ -359,24 +367,29 @@ class _UsersState extends State<Users> {
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: isTablet ? 600 : 800,
-              ),
-              child: DataTable(
-                columnSpacing: isTablet ? 20 : 80,
-                headingRowColor: WidgetStateColor.resolveWith(
-                  (states) => const Color.fromARGB(66, 144, 140, 140),
+          child: Scrollbar(
+            thumbVisibility: true,
+            controller: _horizontalScrollController,
+            child: SingleChildScrollView(
+              controller: _horizontalScrollController,
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: isTablet ? 600 : 800,
                 ),
-                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
-                dataRowMinHeight: isTablet ? 45 : 55,
-                dataRowMaxHeight: isTablet ? 45 : 55,
-                columns: _buildResponsiveColumns(isTablet),
-                rows: users.asMap().entries.map((entry) {
-                  return _buildUserRow(entry.key, entry.value, currentPage);
-                }).toList(),
+                child: DataTable(
+                  columnSpacing: isTablet ? 20 : 80,
+                  headingRowColor: WidgetStateColor.resolveWith(
+                    (states) => const Color.fromARGB(66, 144, 140, 140),
+                  ),
+                  dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+                  dataRowMinHeight: isTablet ? 45 : 55,
+                  dataRowMaxHeight: isTablet ? 45 : 55,
+                  columns: _buildResponsiveColumns(isTablet),
+                  rows: users.asMap().entries.map((entry) {
+                    return _buildUserRow(entry.key, entry.value, currentPage);
+                  }).toList(),
+                ),
               ),
             ),
           ),

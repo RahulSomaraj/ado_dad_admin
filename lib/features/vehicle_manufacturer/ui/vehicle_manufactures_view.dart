@@ -171,6 +171,7 @@ class _VehicleModelListSection extends StatefulWidget {
 class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
   int currentPage = 1;
   int rowsPerPage = 10;
+  final ScrollController _horizontalScrollController = ScrollController();
 
   void _fetchPage(
       BuildContext context, String manufacturerId, int page, int limit) {
@@ -182,6 +183,12 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
       currentPage = page;
       rowsPerPage = limit;
     });
+  }
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   Widget _buildPaginationBar(String manufacturerId, int totalPages) {
@@ -284,75 +291,81 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: DataTable(
-                              columnSpacing: isTablet ? 20 : 40,
-                              headingRowColor: WidgetStateColor.resolveWith(
-                                (states) =>
-                                    const Color.fromARGB(66, 144, 140, 140),
+                        child: Scrollbar(
+                          thumbVisibility: true,
+                          controller: _horizontalScrollController,
+                          child: SingleChildScrollView(
+                            controller: _horizontalScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: DataTable(
+                                columnSpacing: isTablet ? 20 : 40,
+                                headingRowColor: WidgetStateColor.resolveWith(
+                                  (states) =>
+                                      const Color.fromARGB(66, 144, 140, 140),
+                                ),
+                                dataRowColor: WidgetStatePropertyAll(
+                                    AppColors.primaryColor),
+                                dataRowMinHeight: isTablet ? 45 : 55,
+                                dataRowMaxHeight: isTablet ? 45 : 55,
+                                columns: const [
+                                  // DataColumn(label: Text("ID")),
+                                  DataColumn(label: Text("Display Name")),
+                                  DataColumn(label: Text("Manufacturer")),
+                                  DataColumn(label: Text("Vehicle Type")),
+                                  DataColumn(label: Text("Description")),
+                                  DataColumn(label: Text("Launch Year")),
+                                  DataColumn(label: Text("Segment")),
+                                  DataColumn(label: Text("Body Type")),
+                                  // DataColumn(label: Text("Images")),
+                                  DataColumn(label: Text("Brochur")),
+                                  DataColumn(label: Text("Is Active")),
+                                  DataColumn(label: Text("Fuel Types")),
+                                  DataColumn(label: Text("Transmission")),
+                                ],
+                                rows: models.map((model) {
+                                  return DataRow(
+                                    cells: [
+                                      DataCell(Text(model.displayName)),
+                                      DataCell(Text(
+                                          model.manufacturer?.displayName ??
+                                              'N/A')),
+                                      DataCell(Text(model.vehicleType)),
+                                      DataCell(SizedBox(
+                                        width: 150,
+                                        child: Text(
+                                          model.description!,
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
+                                      DataCell(
+                                          Text(model.launchYear.toString())),
+                                      DataCell(Text(model.segment!)),
+                                      DataCell(Text(
+                                        model.bodyType!,
+                                      )),
+                                      DataCell(SizedBox(
+                                        width: 150,
+                                        child: Text(
+                                          model.brochureUrl!,
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
+                                      DataCell(Text(model.isActive.toString())),
+                                      DataCell(Text(model.availableFuelTypes!
+                                          .join(', '))),
+                                      DataCell(Text(model
+                                          .availableTransmissionTypes!
+                                          .join(', '))),
+                                    ],
+                                  );
+                                }).toList(),
                               ),
-                              dataRowColor: WidgetStatePropertyAll(
-                                  AppColors.primaryColor),
-                              dataRowMinHeight: isTablet ? 45 : 55,
-                              dataRowMaxHeight: isTablet ? 45 : 55,
-                              columns: const [
-                                // DataColumn(label: Text("ID")),
-                                DataColumn(label: Text("Display Name")),
-                                DataColumn(label: Text("Manufacturer")),
-                                DataColumn(label: Text("Vehicle Type")),
-                                DataColumn(label: Text("Description")),
-                                DataColumn(label: Text("Launch Year")),
-                                DataColumn(label: Text("Segment")),
-                                DataColumn(label: Text("Body Type")),
-                                // DataColumn(label: Text("Images")),
-                                DataColumn(label: Text("Brochur")),
-                                DataColumn(label: Text("Is Active")),
-                                DataColumn(label: Text("Fuel Types")),
-                                DataColumn(label: Text("Transmission")),
-                              ],
-                              rows: models.map((model) {
-                                return DataRow(
-                                  cells: [
-                                    DataCell(Text(model.displayName)),
-                                    DataCell(Text(
-                                        model.manufacturer?.displayName ??
-                                            'N/A')),
-                                    DataCell(Text(model.vehicleType)),
-                                    DataCell(SizedBox(
-                                      width: 150,
-                                      child: Text(
-                                        model.description!,
-                                        softWrap: true,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                                    DataCell(Text(model.launchYear.toString())),
-                                    DataCell(Text(model.segment!)),
-                                    DataCell(Text(
-                                      model.bodyType!,
-                                    )),
-                                    DataCell(SizedBox(
-                                      width: 150,
-                                      child: Text(
-                                        model.brochureUrl!,
-                                        softWrap: true,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    )),
-                                    DataCell(Text(model.isActive.toString())),
-                                    DataCell(Text(
-                                        model.availableFuelTypes!.join(', '))),
-                                    DataCell(Text(model
-                                        .availableTransmissionTypes!
-                                        .join(', '))),
-                                  ],
-                                );
-                              }).toList(),
                             ),
                           ),
                         ),

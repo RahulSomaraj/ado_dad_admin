@@ -22,6 +22,7 @@ class VehicleVariantListSection extends StatefulWidget {
 class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
   int currentPage = 1;
   int rowsPerPage = 10;
+  final ScrollController _horizontalScrollController = ScrollController();
 
   void _fetchPage(String modelId, int page, int limit) {
     context.read<VehicleVariantBloc>().add(
@@ -35,6 +36,12 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
       currentPage = page;
       rowsPerPage = limit;
     });
+  }
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -77,40 +84,46 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: DataTable(
-                          columnSpacing: isTablet ? 20 : 115,
-                          headingRowColor: WidgetStateColor.resolveWith(
-                            (states) => const Color.fromARGB(66, 144, 140, 140),
+                    child: Scrollbar(
+                      thumbVisibility: true,
+                      controller: _horizontalScrollController,
+                      child: SingleChildScrollView(
+                        controller: _horizontalScrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: DataTable(
+                            columnSpacing: isTablet ? 20 : 115,
+                            headingRowColor: WidgetStateColor.resolveWith(
+                              (states) =>
+                                  const Color.fromARGB(66, 144, 140, 140),
+                            ),
+                            dataRowColor:
+                                WidgetStatePropertyAll(AppColors.primaryColor),
+                            dataRowMinHeight: isTablet ? 45 : 55,
+                            dataRowMaxHeight: isTablet ? 45 : 55,
+                            columns: const [
+                              DataColumn(label: Text("Name")),
+                              DataColumn(label: Text("Display Name")),
+                              // DataColumn(label: Text("Vehicle Model")),
+                              DataColumn(label: Text("Fuel")),
+                              DataColumn(label: Text("Transmission")),
+                              DataColumn(label: Text("Price")),
+                              DataColumn(label: Text("Active")),
+                            ],
+                            rows: variants.map((v) {
+                              return DataRow(cells: [
+                                DataCell(Text(v.name)),
+                                DataCell(Text(v.displayName)),
+                                // DataCell(Text(v.vehicleModel.displayName)),
+                                DataCell(Text(v.fuelType?.displayName ?? "-")),
+                                DataCell(Text(
+                                    v.transmissionType?.displayName ?? "-")),
+                                DataCell(Text("₹${v.price}")),
+                                DataCell(Text(v.isActive ? "Yes" : "No")),
+                              ]);
+                            }).toList(),
                           ),
-                          dataRowColor:
-                              WidgetStatePropertyAll(AppColors.primaryColor),
-                          dataRowMinHeight: isTablet ? 45 : 55,
-                          dataRowMaxHeight: isTablet ? 45 : 55,
-                          columns: const [
-                            DataColumn(label: Text("Name")),
-                            DataColumn(label: Text("Display Name")),
-                            // DataColumn(label: Text("Vehicle Model")),
-                            DataColumn(label: Text("Fuel")),
-                            DataColumn(label: Text("Transmission")),
-                            DataColumn(label: Text("Price")),
-                            DataColumn(label: Text("Active")),
-                          ],
-                          rows: variants.map((v) {
-                            return DataRow(cells: [
-                              DataCell(Text(v.name)),
-                              DataCell(Text(v.displayName)),
-                              // DataCell(Text(v.vehicleModel.displayName)),
-                              DataCell(Text(v.fuelType?.displayName ?? "-")),
-                              DataCell(
-                                  Text(v.transmissionType?.displayName ?? "-")),
-                              DataCell(Text("₹${v.price}")),
-                              DataCell(Text(v.isActive ? "Yes" : "No")),
-                            ]);
-                          }).toList(),
                         ),
                       ),
                     ),

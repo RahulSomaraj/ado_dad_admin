@@ -15,6 +15,7 @@ class VehicleModelsList extends StatefulWidget {
 class _VehicleModelsListState extends State<VehicleModelsList> {
   final TextEditingController _searchController = TextEditingController();
   VehicleModelResponse? _lastListResponse;
+  final ScrollController _horizontalScrollController = ScrollController();
 
   @override
   void initState() {
@@ -25,6 +26,13 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
           .read<VehicleModelBloc>()
           .add(const VehicleModelEvent.fetchAllModels());
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -287,33 +295,38 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       padding: const EdgeInsets.all(20),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: constraints.maxWidth),
-              child: Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: DataTable(
-                    columnSpacing: isTablet ? 20 : 25,
-                    headingRowColor: WidgetStateColor.resolveWith(
-                      (states) => const Color.fromARGB(66, 144, 140, 140),
+          return Scrollbar(
+            thumbVisibility: true,
+            controller: _horizontalScrollController,
+            child: SingleChildScrollView(
+              controller: _horizontalScrollController,
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: DataTable(
+                      columnSpacing: isTablet ? 20 : 25,
+                      headingRowColor: WidgetStateColor.resolveWith(
+                        (states) => const Color.fromARGB(66, 144, 140, 140),
+                      ),
+                      dataRowColor:
+                          WidgetStatePropertyAll(AppColors.primaryColor),
+                      dataRowMinHeight: isTablet ? 45 : 55,
+                      dataRowMaxHeight: isTablet ? 45 : 55,
+                      columns: _buildResponsiveColumns(isTablet),
+                      rows: models
+                          .asMap()
+                          .entries
+                          .map((entry) => _buildVehicleModelRow(
+                              entry.key, entry.value, currentPage))
+                          .toList(),
                     ),
-                    dataRowColor:
-                        WidgetStatePropertyAll(AppColors.primaryColor),
-                    dataRowMinHeight: isTablet ? 45 : 55,
-                    dataRowMaxHeight: isTablet ? 45 : 55,
-                    columns: _buildResponsiveColumns(isTablet),
-                    rows: models
-                        .asMap()
-                        .entries
-                        .map((entry) => _buildVehicleModelRow(
-                            entry.key, entry.value, currentPage))
-                        .toList(),
                   ),
                 ),
               ),
@@ -508,19 +521,15 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
           ))),
       DataCell(Text(models.bodyType ?? 'N/A')),
       DataCell(SizedBox(
-        width: 150,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: (models.images ?? []).map((img) {
-            return Text(
-              img,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 12),
-            );
-          }).toList(),
-        ),
-      )),
+          width: 150,
+          child: Text(
+            (models.images == null || models.images!.isEmpty)
+                ? 'N/A'
+                : models.images!.join(', '),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12),
+          ))),
       DataCell(SizedBox(
           width: 150,
           child: Text(

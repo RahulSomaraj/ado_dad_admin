@@ -15,6 +15,7 @@ class VehicleCompanyDetailView extends StatefulWidget {
 }
 
 class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
+  final ScrollController _horizontalScrollController = ScrollController();
   void _showDeleteDialog(BuildContext context, String companyId) {
     showDialog(
       context: context,
@@ -79,6 +80,12 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
       //   _showSuccessPopup(context, "Vehicle Company deleted successfully!");
       // });
     });
+  }
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   void _showSuccessPopup(BuildContext context, String message) {
@@ -618,33 +625,38 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
       padding: const EdgeInsets.all(20),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: constraints.maxWidth),
-              child: Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: DataTable(
-                    columnSpacing: isTablet ? 30 : 100,
-                    headingRowColor: WidgetStateColor.resolveWith(
-                      (states) => const Color.fromARGB(66, 144, 140, 140),
+          return Scrollbar(
+            thumbVisibility: true,
+            controller: _horizontalScrollController,
+            child: SingleChildScrollView(
+              controller: _horizontalScrollController,
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: DataTable(
+                      columnSpacing: isTablet ? 30 : 100,
+                      headingRowColor: WidgetStateColor.resolveWith(
+                        (states) => const Color.fromARGB(66, 144, 140, 140),
+                      ),
+                      dataRowColor:
+                          WidgetStatePropertyAll(AppColors.primaryColor),
+                      dataRowMinHeight: isTablet ? 45 : 55,
+                      dataRowMaxHeight: isTablet ? 45 : 55,
+                      columns: _buildResponsiveColumns(isTablet),
+                      rows: companies
+                          .asMap()
+                          .entries
+                          .map((entry) => _buildCompanyRow(
+                              entry.key, entry.value, currentPage))
+                          .toList(),
                     ),
-                    dataRowColor:
-                        WidgetStatePropertyAll(AppColors.primaryColor),
-                    dataRowMinHeight: isTablet ? 45 : 55,
-                    dataRowMaxHeight: isTablet ? 45 : 55,
-                    columns: _buildResponsiveColumns(isTablet),
-                    rows: companies
-                        .asMap()
-                        .entries
-                        .map((entry) => _buildCompanyRow(
-                            entry.key, entry.value, currentPage))
-                        .toList(),
                   ),
                 ),
               ),

@@ -15,6 +15,7 @@ class BannerPage extends StatefulWidget {
 }
 
 class _BannerPageState extends State<BannerPage> {
+  final ScrollController _horizontalScrollController = ScrollController();
   // @override
   // void initState() {
   //   super.initState();
@@ -164,6 +165,12 @@ class _BannerPageState extends State<BannerPage> {
     );
   }
 
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
+  }
+
   Widget _buildBannerList() {
     return BlocBuilder<BannerBloc, BannerState>(
       builder: (context, state) {
@@ -203,60 +210,72 @@ class _BannerPageState extends State<BannerPage> {
       padding: const EdgeInsets.all(20),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minWidth: constraints.maxWidth,
-              ),
-              child: IntrinsicWidth(
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: DataTable(
-                      columnSpacing: isTablet ? 20 : 40,
-                      headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => const Color.fromARGB(66, 144, 140, 140),
-                      ),
-                      dataRowColor:
-                          WidgetStatePropertyAll(AppColors.primaryColor),
-                      dataRowMinHeight: isTablet ? 45 : 55,
-                      dataRowMaxHeight: isTablet ? 45 : 55,
-                      columns: const [
-                        DataColumn(
-                          label: Padding(
-                            padding: EdgeInsets.only(left: 16),
-                            child: Text('ID',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
-                          ),
+          return Scrollbar(
+            thumbVisibility: true,
+            controller: _horizontalScrollController,
+            child: SingleChildScrollView(
+              controller: _horizontalScrollController,
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minWidth: constraints.maxWidth,
+                ),
+                child: IntrinsicWidth(
+                  child: Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: DataTable(
+                        columnSpacing: isTablet ? 20 : 40,
+                        headingRowColor: WidgetStateColor.resolveWith(
+                          (states) => const Color.fromARGB(66, 144, 140, 140),
                         ),
-                        DataColumn(
-                            label: Text('Title',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Desktop Image',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Phone Image',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Tablet Image',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Date Uploaded',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                        DataColumn(
-                            label: Text('Actions',
-                                style: TextStyle(fontWeight: FontWeight.bold))),
-                      ],
-                      rows: banners.asMap().entries.map((entry) {
-                        return _buildBannerRow(
-                            entry.key, entry.value, currentPage);
-                      }).toList(),
+                        dataRowColor:
+                            WidgetStatePropertyAll(AppColors.primaryColor),
+                        dataRowMinHeight: isTablet ? 45 : 55,
+                        dataRowMaxHeight: isTablet ? 45 : 55,
+                        columns: const [
+                          DataColumn(
+                            label: Padding(
+                              padding: EdgeInsets.only(left: 16),
+                              child: Text('ID',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                            ),
+                          ),
+                          DataColumn(
+                              label: Text('Title',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('Desktop Image',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('Phone Image',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('Tablet Image',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('Date Uploaded',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                          DataColumn(
+                              label: Text('Actions',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold))),
+                        ],
+                        rows: banners.asMap().entries.map((entry) {
+                          return _buildBannerRow(
+                              entry.key, entry.value, currentPage);
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ),

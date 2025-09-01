@@ -15,6 +15,7 @@ class VehicleManufacturesList extends StatefulWidget {
 
 class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _horizontalScrollController = ScrollController();
 
   @override
   void initState() {
@@ -25,6 +26,13 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
           .read<VehicleManufacturerBloc>()
           .add(const FetchAllVehicleManufacturers());
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -235,33 +243,38 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
       padding: const EdgeInsets.all(20),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minWidth: constraints.maxWidth),
-              child: Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: DataTable(
-                    columnSpacing: isTablet ? 20 : 40,
-                    headingRowColor: WidgetStateColor.resolveWith(
-                      (states) => const Color.fromARGB(66, 144, 140, 140),
+          return Scrollbar(
+            thumbVisibility: true,
+            controller: _horizontalScrollController,
+            child: SingleChildScrollView(
+              controller: _horizontalScrollController,
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                child: Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: DataTable(
+                      columnSpacing: isTablet ? 20 : 40,
+                      headingRowColor: WidgetStateColor.resolveWith(
+                        (states) => const Color.fromARGB(66, 144, 140, 140),
+                      ),
+                      dataRowColor:
+                          WidgetStatePropertyAll(AppColors.primaryColor),
+                      dataRowMinHeight: isTablet ? 45 : 55,
+                      dataRowMaxHeight: isTablet ? 45 : 55,
+                      columns: _buildResponsiveColumns(isTablet),
+                      rows: manufactures
+                          .asMap()
+                          .entries
+                          .map((entry) => _buildCompanyRow(
+                              entry.key, entry.value, currentPage))
+                          .toList(),
                     ),
-                    dataRowColor:
-                        WidgetStatePropertyAll(AppColors.primaryColor),
-                    dataRowMinHeight: isTablet ? 45 : 55,
-                    dataRowMaxHeight: isTablet ? 45 : 55,
-                    columns: _buildResponsiveColumns(isTablet),
-                    rows: manufactures
-                        .asMap()
-                        .entries
-                        .map((entry) => _buildCompanyRow(
-                            entry.key, entry.value, currentPage))
-                        .toList(),
                   ),
                 ),
               ),
