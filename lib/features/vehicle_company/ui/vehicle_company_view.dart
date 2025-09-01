@@ -18,7 +18,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
   void _showDeleteDialog(BuildContext context, String companyId) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.0),
@@ -34,7 +34,7 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
           ),
           actions: [
             TextButton(
-              onPressed: () => context.pop(),
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: const Text(
                 "Cancel",
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -48,9 +48,8 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
                 ),
               ),
               onPressed: () {
+                Navigator.of(dialogContext).pop(); // close dialog
                 _deleteVehicleCompany(companyId);
-                // page pop list
-                context.pop();
               },
               child: const Text(
                 "Delete",
@@ -64,7 +63,6 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
   }
 
   void _deleteVehicleCompany(String companyId) {
-    Navigator.of(context).pop();
     context
         .read<VehicleCompanyBloc>()
         .add(DeleteVehicleCompany(companyId: companyId));
@@ -86,16 +84,15 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
   void _showSuccessPopup(BuildContext context, String message) {
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text("Success"),
           content: Text(message),
           actions: [
             TextButton(
               onPressed: () {
-                // context.pop();
+                Navigator.of(dialogContext).pop();
                 // Navigation handled in BlocListener
-                // Navigator.of(context).pop();
                 // context.go('/vehicle-companies');
               },
               child: const Text("OK"),
@@ -114,15 +111,14 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
         if (state is VehicleCompanyDeleted) {
           showDialog(
             context: context,
-            builder: (context) {
+            builder: (dialogContext) {
               return AlertDialog(
                 title: const Text("Success"),
                 content: const Text("Vehicle Company deleted successfully!"),
                 actions: [
                   TextButton(
                     onPressed: () {
-                      // Navigator.of(context).pop(); // close dialog
-                      context.pop();
+                      Navigator.of(dialogContext).pop(); // close dialog
                       context.go('/vehicle-companies'); // then navigate
                     },
                     child: const Text("OK"),

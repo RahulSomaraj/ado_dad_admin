@@ -19,6 +19,7 @@ _$VehicleManufacturerImpl _$$VehicleManufacturerImplFromJson(
       foundedYear: (json['foundedYear'] as num).toInt(),
       headquarters: json['headquarters'] as String,
       isActive: json['isActive'] as bool,
+      isPremium: json['isPremium'] as bool? ?? false,
       isDeleted: json['isDeleted'] as bool? ?? false,
       createdAt: json['createdAt'] == null
           ? null
@@ -42,6 +43,7 @@ Map<String, dynamic> _$$VehicleManufacturerImplToJson(
       'foundedYear': instance.foundedYear,
       'headquarters': instance.headquarters,
       'isActive': instance.isActive,
+      'isPremium': instance.isPremium,
       'isDeleted': instance.isDeleted,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),

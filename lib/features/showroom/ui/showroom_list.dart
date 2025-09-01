@@ -16,6 +16,15 @@ class _ShowroomState extends State<Showroom> {
   final TextEditingController _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    // Fetch showrooms when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ShowroomBloc>().add(const FetchAllShowrooms());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -215,7 +224,13 @@ class _ShowroomState extends State<Showroom> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         ),
-        onPressed: () => context.push('/add-showroom'),
+        onPressed: () {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              context.push('/add-showroom');
+            }
+          });
+        },
         child: Row(
           mainAxisAlignment:
               isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,

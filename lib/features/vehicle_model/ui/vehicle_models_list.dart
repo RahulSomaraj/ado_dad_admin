@@ -14,6 +14,19 @@ class VehicleModelsList extends StatefulWidget {
 
 class _VehicleModelsListState extends State<VehicleModelsList> {
   final TextEditingController _searchController = TextEditingController();
+  VehicleModelResponse? _lastListResponse;
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch vehicle models when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<VehicleModelBloc>()
+          .add(const VehicleModelEvent.fetchAllModels());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -185,13 +198,54 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
     );
   }
 
+  Widget _renderFromCacheOrEmpty() {
+    if (_lastListResponse == null) return const SizedBox.shrink();
+    final r = _lastListResponse!;
+    return Column(
+      children: [
+        _buildVehicleModelsTable(r.data, r.page),
+        const SizedBox(height: 30),
+        _buildPaginationBar(r.page, r.totalPages),
+      ],
+    );
+  }
+
   Widget _buildVehicleModelsList() {
     return BlocBuilder<VehicleModelBloc, VehicleModelState>(
       builder: (context, state) {
+        // return state.when(
+        //   initial: () => const Center(child: Text("No Vehicle Models Found")),
+        //   loading: () => const Center(child: CircularProgressIndicator()),
+        //   loaded: (response) {
+        //     return Column(
+        //       children: [
+        //         _buildVehicleModelsTable(response.data, response.page),
+        //         const SizedBox(height: 30),
+        //         _buildPaginationBar(response.page, response.totalPages),
+        //       ],
+        //     );
+        //   },
+        //   error: (message) => Center(
+        //     child: Text(message, style: const TextStyle(color: Colors.red)),
+        //   ),
+        //   optionsLoaded: (fuelTypes, transmissionTypes) => _lastListResponse !=
+        //           null
+        //       ? Column(
+        //           children: [
+        //             _buildVehicleModelsTable(
+        //                 _lastListResponse!.data, _lastListResponse!.page),
+        //             const SizedBox(height: 30),
+        //             _buildPaginationBar(
+        //                 _lastListResponse!.page, _lastListResponse!.totalPages),
+        //           ],
+        //         )
+        //       : const SizedBox.shrink(),
+        // );
         return state.when(
           initial: () => const Center(child: Text("No Vehicle Models Found")),
           loading: () => const Center(child: CircularProgressIndicator()),
           loaded: (response) {
+            _lastListResponse = response;
             return Column(
               children: [
                 _buildVehicleModelsTable(response.data, response.page),
@@ -203,6 +257,10 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
           error: (message) => Center(
             child: Text(message, style: const TextStyle(color: Colors.red)),
           ),
+          optionsLoaded: (_, __) => _renderFromCacheOrEmpty(),
+          oneLoaded: (_) => _renderFromCacheOrEmpty(),
+          created: () => Center(),
+          updated: () => Center(), // 👈 handled, but no list fetch
         );
       },
     );
@@ -211,6 +269,19 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
   Widget _buildVehicleModelsTable(List<VehicleModel> models, int currentPage) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+    // Add null safety check for models list
+    if (models.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(20),
+          child: Text(
+            "No vehicle models found",
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.all(20),
@@ -228,7 +299,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(12),
                   child: DataTable(
-                    columnSpacing: isTablet ? 20 : 40,
+                    columnSpacing: isTablet ? 20 : 25,
                     headingRowColor: WidgetStateColor.resolveWith(
                       (states) => const Color.fromARGB(66, 144, 140, 140),
                     ),
@@ -409,12 +480,12 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       )),
       DataCell(Text(models.name)),
       DataCell(Text(models.displayName)),
-      DataCell(Text(models.manufacturer.name)),
+      DataCell(Text(models.manufacturer?.name ?? 'N/A')),
       DataCell(Text(models.vehicleType)),
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.description!,
+            models.description ?? 'N/A',
             softWrap: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -422,7 +493,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.launchYear.toString(),
+            models.launchYear?.toString() ?? 'N/A',
             softWrap: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
@@ -430,17 +501,17 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.segment!,
+            models.segment ?? 'N/A',
             softWrap: true,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ))),
-      DataCell(Text(models.bodyType!)),
+      DataCell(Text(models.bodyType ?? 'N/A')),
       DataCell(SizedBox(
         width: 150,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: models.images!.map((img) {
+          children: (models.images ?? []).map((img) {
             return Text(
               img,
               maxLines: 2,
@@ -453,12 +524,12 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.brochureUrl!,
+            models.brochureUrl ?? 'N/A',
             maxLines: 2,
             softWrap: true,
             overflow: TextOverflow.ellipsis,
           ))),
-      DataCell(Text(models.isActive.toString())),
+      DataCell(Text(models.isActive?.toString() ?? 'N/A')),
       // DataCell(Text(models.isCommercialVehicle?.toString() ?? '-')),
       // DataCell(Text(models.commercialVehicleType ?? '-')),
       // DataCell(Text(models.commercialBodyType ?? '-')),
@@ -496,18 +567,20 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // IconButton(
-            //   icon: const Icon(Icons.edit,
-            //       color: Color.fromARGB(255, 59, 59, 59)),
-            //   onPressed: () {
-            //     // context.push('/edit-vehicle_company', extra: company);
-            //   },
-            // ),
+            IconButton(
+              icon: const Icon(Icons.edit,
+                  color: Color.fromARGB(255, 59, 59, 59)),
+              onPressed: () {
+                context.push('/edit-vehicle_model', extra: models);
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.remove_red_eye_outlined,
                   color: Color.fromARGB(255, 20, 20, 20)),
               onPressed: () {
-                context.push('/view-vehicle_model', extra: models);
+                if (models.id != null) {
+                  context.push('/view-vehicle_model', extra: models);
+                }
               },
             ),
           ],

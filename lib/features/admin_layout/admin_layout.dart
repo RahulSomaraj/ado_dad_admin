@@ -205,9 +205,7 @@ class _AdminLayoutState extends State<AdminLayout> {
                   children: [
                     // if (!isTablet) _buildProfileBar(),
                     Expanded(
-                      child: SingleChildScrollView(
-                        child: widget.child,
-                      ),
+                      child: widget.child,
                     ),
                   ],
                 ),

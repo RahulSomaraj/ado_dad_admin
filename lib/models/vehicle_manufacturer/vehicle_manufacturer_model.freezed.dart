@@ -30,7 +30,8 @@ mixin _$VehicleManufacturer {
   String get website => throw _privateConstructorUsedError;
   int get foundedYear => throw _privateConstructorUsedError;
   String get headquarters => throw _privateConstructorUsedError;
-  bool get isActive =>
+  bool get isActive => throw _privateConstructorUsedError;
+  bool get isPremium =>
       throw _privateConstructorUsedError; // required bool isDeleted,
 // required DateTime createdAt,
 // required DateTime updatedAt,
@@ -66,6 +67,7 @@ abstract class $VehicleManufacturerCopyWith<$Res> {
       int foundedYear,
       String headquarters,
       bool isActive,
+      bool isPremium,
       bool isDeleted,
       DateTime? createdAt,
       DateTime? updatedAt,
@@ -97,6 +99,7 @@ class _$VehicleManufacturerCopyWithImpl<$Res, $Val extends VehicleManufacturer>
     Object? foundedYear = null,
     Object? headquarters = null,
     Object? isActive = null,
+    Object? isPremium = null,
     Object? isDeleted = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -143,6 +146,10 @@ class _$VehicleManufacturerCopyWithImpl<$Res, $Val extends VehicleManufacturer>
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
               as bool,
+      isPremium: null == isPremium
+          ? _value.isPremium
+          : isPremium // ignore: cast_nullable_to_non_nullable
+              as bool,
       isDeleted: null == isDeleted
           ? _value.isDeleted
           : isDeleted // ignore: cast_nullable_to_non_nullable
@@ -182,6 +189,7 @@ abstract class _$$VehicleManufacturerImplCopyWith<$Res>
       int foundedYear,
       String headquarters,
       bool isActive,
+      bool isPremium,
       bool isDeleted,
       DateTime? createdAt,
       DateTime? updatedAt,
@@ -211,6 +219,7 @@ class __$$VehicleManufacturerImplCopyWithImpl<$Res>
     Object? foundedYear = null,
     Object? headquarters = null,
     Object? isActive = null,
+    Object? isPremium = null,
     Object? isDeleted = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
@@ -257,6 +266,10 @@ class __$$VehicleManufacturerImplCopyWithImpl<$Res>
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
               as bool,
+      isPremium: null == isPremium
+          ? _value.isPremium
+          : isPremium // ignore: cast_nullable_to_non_nullable
+              as bool,
       isDeleted: null == isDeleted
           ? _value.isDeleted
           : isDeleted // ignore: cast_nullable_to_non_nullable
@@ -292,6 +305,7 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
       required this.foundedYear,
       required this.headquarters,
       required this.isActive,
+      this.isPremium = false,
       this.isDeleted = false,
       this.createdAt,
       this.updatedAt,
@@ -321,6 +335,9 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
   final String headquarters;
   @override
   final bool isActive;
+  @override
+  @JsonKey()
+  final bool isPremium;
 // required bool isDeleted,
 // required DateTime createdAt,
 // required DateTime updatedAt,
@@ -337,7 +354,7 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
 
   @override
   String toString() {
-    return 'VehicleManufacturer(id: $id, name: $name, displayName: $displayName, originCountry: $originCountry, description: $description, logo: $logo, website: $website, foundedYear: $foundedYear, headquarters: $headquarters, isActive: $isActive, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+    return 'VehicleManufacturer(id: $id, name: $name, displayName: $displayName, originCountry: $originCountry, description: $description, logo: $logo, website: $website, foundedYear: $foundedYear, headquarters: $headquarters, isActive: $isActive, isPremium: $isPremium, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
   }
 
   @override
@@ -361,6 +378,8 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
                 other.headquarters == headquarters) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
+            (identical(other.isPremium, isPremium) ||
+                other.isPremium == isPremium) &&
             (identical(other.isDeleted, isDeleted) ||
                 other.isDeleted == isDeleted) &&
             (identical(other.createdAt, createdAt) ||
@@ -384,6 +403,7 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
       foundedYear,
       headquarters,
       isActive,
+      isPremium,
       isDeleted,
       createdAt,
       updatedAt,
@@ -418,6 +438,7 @@ abstract class _VehicleManufacturer implements VehicleManufacturer {
       required final int foundedYear,
       required final String headquarters,
       required final bool isActive,
+      final bool isPremium,
       final bool isDeleted,
       final DateTime? createdAt,
       final DateTime? updatedAt,
@@ -446,7 +467,9 @@ abstract class _VehicleManufacturer implements VehicleManufacturer {
   @override
   String get headquarters;
   @override
-  bool get isActive; // required bool isDeleted,
+  bool get isActive;
+  @override
+  bool get isPremium; // required bool isDeleted,
 // required DateTime createdAt,
 // required DateTime updatedAt,
   @override

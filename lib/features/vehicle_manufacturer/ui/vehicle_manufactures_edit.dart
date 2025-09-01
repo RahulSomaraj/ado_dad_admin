@@ -27,6 +27,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
   late String _headquarters;
   late String _originCountry;
   late bool _isActive;
+  late bool _isPremium;
 
   @override
   void initState() {
@@ -41,33 +42,30 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     _headquarters = m.headquarters;
     _originCountry = m.originCountry;
     _isActive = m.isActive;
+    _isPremium = m.isPremium;
   }
 
-  void _updateManufacturer() {
-    if (!mounted) return;
-    if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save();
+  void _updateVehicleManufacturer() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
-      final updated = widget.vehiclemanufacturer.copyWith(
+      final updated = VehicleManufacturer(
+        id: widget.vehiclemanufacturer.id,
         name: _name,
         displayName: _displayname,
+        originCountry: _originCountry,
         description: _description,
         logo: _logo,
         website: _website,
         foundedYear: int.tryParse(_foundedYear) ?? 0,
         headquarters: _headquarters,
-        originCountry: _originCountry,
         isActive: _isActive,
+        isPremium: _isPremium,
       );
 
       context.read<VehicleManufacturerBloc>().add(
             VehicleManufacturerEvent.updateManufacturer(updated),
           );
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        if (!mounted) return;
-        _showSuccessPopup(context, "Manufacturer updated successfully.");
-      });
     }
   }
 
@@ -95,19 +93,29 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildUpdateForm(state),
-            ],
-          ),
+    return BlocListener<VehicleManufacturerBloc, VehicleManufacturerState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (response) {
+            _showSuccessPopup(context, "Manufacturer updated successfully.");
+          },
+          orElse: () {},
         );
       },
+      child: BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildUpdateForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -228,6 +236,14 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
                   ),
+                  const SizedBox(height: 15),
+                  CheckboxListTile(
+                    value: _isPremium,
+                    onChanged: (v) => setState(() => _isPremium = v ?? false),
+                    title: const Text("Is Premium"),
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                  ),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -239,7 +255,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: isLoading ? null : _updateManufacturer,
+                      onPressed: isLoading ? null : _updateVehicleManufacturer,
                       child: isLoading
                           ? const SizedBox(
                               height: 20,

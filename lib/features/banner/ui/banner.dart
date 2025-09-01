@@ -77,7 +77,9 @@ class _BannerPageState extends State<BannerPage> {
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () => context.pop(),
+              onPressed: () {
+                context.pop();
+              },
               child: const Text("OK"),
             ),
           ],
@@ -88,70 +90,77 @@ class _BannerPageState extends State<BannerPage> {
 
   void _deleteUser(String bannerId) {
     context.read<BannerBloc>().add(DeleteBanner(bannerId: bannerId));
-
-    Future.delayed(const Duration(milliseconds: 500), () {
-      _showSuccessPopup(context, "Banner deleted successfully!");
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(30),
-          child: Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Container(
-              height: 80,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-              decoration: BoxDecoration(
-                color: Colors.white,
+    return BlocListener<BannerBloc, BannerState>(
+      listener: (context, state) {
+        state.maybeWhen(
+          updated: () {
+            _showSuccessPopup(context, "Banner deleted successfully!");
+          },
+          orElse: () {},
+        );
+      },
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(30),
+            child: Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Banner Management",
-                    style: AppTextStyle.titleTextstyle,
-                  ),
-                  // Text(
-                  //   "",
-                  //   style: AppTextStyle.titleTextstyle,
-                  // ),
-
-                  ElevatedButton.icon(
-                    onPressed: () async {
-                      context.push('/upload-banners');
-                      // final result = await context.push('/upload-banners');
-                      // if (result == true) {
-                      //   context
-                      //       .read<BannerBloc>()
-                      //       .add(const FetchAllBanners(page: 1, limit: 10));
-                      // }
-                    },
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.blackColor,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12))),
-                    icon: const Icon(
-                      Icons.add,
-                      color: Colors.white,
+              child: Container(
+                height: 80,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Banner Management",
+                      style: AppTextStyle.titleTextstyle,
                     ),
-                    label: const Text("Add Banner"),
-                  ),
-                ],
+                    // Text(
+                    //   "",
+                    //   style: AppTextStyle.titleTextstyle,
+                    // ),
+
+                    ElevatedButton.icon(
+                      onPressed: () async {
+                        context.push('/upload-banners');
+                        // final result = await context.push('/upload-banners');
+                        // if (result == true) {
+                        //   context
+                        //       .read<BannerBloc>()
+                        //       .add(const FetchAllBanners(page: 1, limit: 10));
+                        // }
+                      },
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blackColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12))),
+                      icon: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                      label: const Text("Add Banner"),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-        _buildBannerList(),
-      ],
+          _buildBannerList(),
+        ],
+      ),
     );
   }
 

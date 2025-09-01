@@ -47,18 +47,18 @@ class ShowroomBloc extends Bloc<ShowroomEvent, ShowroomState> {
       emit(ShowroomState.showroomAddedSuccess(responseMessage));
       add(const FetchAllShowrooms());
     } catch (e) {
-      emit(ShowroomError(e.toString()));
+      emit(ShowroomState.error(e.toString()));
     }
   }
 
   Future<void> _onUpdateShowroom(
       UpdateShowroom event, Emitter<ShowroomState> emit) async {
-    emit(ShowroomLoading());
+    emit(const ShowroomState.loading());
     try {
       await showroomRepository.updateShowroom(event.updatedShowroom);
       emit(const ShowroomState.updated());
     } catch (e) {
-      emit(ShowroomError("Failed to update showroom"));
+      emit(ShowroomState.error("Failed to update showroom"));
     }
   }
 }

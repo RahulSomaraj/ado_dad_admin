@@ -22,19 +22,18 @@ class _VehicleManufacturerDetailViewState
   void _confirmDelete(BuildContext context, VehicleManufacturer m) {
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text("Delete Manufacturer"),
         content: Text("Are you sure you want to delete '${m.displayName}'?"),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: const Text("Cancel"),
           ),
           ElevatedButton(
             onPressed: () {
-              // Navigator.of(context).pop(); // close dialog
+              Navigator.of(dialogContext).pop(); // close dialog
               _deleteManufacturer(context, m.id);
-              context.pop();
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text("Delete"),
@@ -45,7 +44,6 @@ class _VehicleManufacturerDetailViewState
   }
 
   void _deleteManufacturer(BuildContext context, String id) {
-    Navigator.of(context).pop();
     context.read<VehicleManufacturerBloc>().add(
           VehicleManufacturerEvent.deleteManufacturer(id),
         );
@@ -138,6 +136,7 @@ class _VehicleManufacturerDetailViewState
             _infoTile("Website", m.website),
             _infoTile("Headquarters", m.headquarters),
             _infoTile("Active", m.isActive ? "Yes" : "No"),
+            _infoTile("Premium", m.isPremium ? "Yes" : "No"),
             _infoTile("Description", m.description),
             _infoTile("Logo", m.logo),
           ],
@@ -318,8 +317,9 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
                                 return DataRow(
                                   cells: [
                                     DataCell(Text(model.displayName)),
-                                    DataCell(
-                                        Text(model.manufacturer.displayName)),
+                                    DataCell(Text(
+                                        model.manufacturer?.displayName ??
+                                            'N/A')),
                                     DataCell(Text(model.vehicleType)),
                                     DataCell(SizedBox(
                                       width: 150,

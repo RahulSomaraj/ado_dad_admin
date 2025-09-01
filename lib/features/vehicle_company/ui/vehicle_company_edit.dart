@@ -59,11 +59,6 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
 
       context.read<VehicleCompanyBloc>().add(
           UpdateVehicleCompany(updatedVehicleCompany: updatedVehicleCompany));
-
-      Future.delayed(const Duration(milliseconds: 500), () {
-        _showSuccessPopup(
-            context, "Vehicle Company details have been updated successfully.");
-      });
     }
   }
 
@@ -90,19 +85,27 @@ class _EditVehicleCompanyState extends State<EditVehicleCompany> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildUpdateForm(state),
-            ],
-          ),
-        );
+    return BlocListener<VehicleCompanyBloc, VehicleCompanyState>(
+      listener: (context, state) {
+        if (state is VehicleCompanyUpdated) {
+          _showSuccessPopup(context,
+              "Vehicle Company details have been updated successfully.");
+        }
       },
+      child: BlocBuilder<VehicleCompanyBloc, VehicleCompanyState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildUpdateForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

@@ -72,7 +72,7 @@ class _VehicleModelViewState extends State<VehicleModelView> {
               children: [
                 _infoTile("Name", m.name),
                 _infoTile("Display Name", m.displayName),
-                _infoTile("Manufacturer", m.manufacturer.displayName),
+                _infoTile("Manufacturer", m.manufacturer?.displayName ?? 'N/A'),
                 _infoTile("Vehicle Type", m.vehicleType),
                 _infoTile("Description", m.description ?? "N/A"),
                 _infoTile("Active", m.isActive! ? "Yes" : "No"),

@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/repositories/user_rep.dart';
 import 'package:bloc/bloc.dart';
@@ -15,6 +16,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<DeleteUser>(_onDeleteUser);
     on<UpdateUser>(_onUpdateUser);
     on<AddUser>(_onAddUser);
+
+    on<AddUserWithProfilePic>(_onAddUserWithProfilePic);
+    on<UpdateUserWithProfilePic>(_onUpdateUserWithProfilePic);
 
     on<UserListNavigation>(_onUserListNavigation);
   }
@@ -43,6 +47,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _onDeleteUser(DeleteUser event, Emitter<UserState> emit) async {
     try {
       await userRepository.deleteUser(event.userId);
+      emit(const UserState.userDeletedSuccess("User deleted successfully!"));
       add(FetchAllUsers(page: 1, limit: 10));
     } catch (e) {
       emit(UserError("Failed to delete user"));
@@ -54,7 +59,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     try {
       await userRepository.updateUser(event.updatedUser);
       emit(const UserState.updated());
-      add(FetchAllUsers(page: 1, limit: 10));
     } catch (e) {
       emit(UserState.error("Failed to update user"));
     }
@@ -68,6 +72,56 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       add(const FetchAllUsers());
     } catch (e) {
       emit(UserError(e.toString()));
+    }
+  }
+
+  Future<void> _onAddUserWithProfilePic(
+      AddUserWithProfilePic event, Emitter<UserState> emit) async {
+    emit(const UserState.loading());
+    try {
+      // Upload profile picture to S3
+      final profilePicUrl = await userRepository.uploadImageToS3(
+        event.profilePicBytes,
+        'profilePic_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      if (profilePicUrl == null) {
+        throw Exception("Failed to upload profile picture");
+      }
+
+      // Create user with profile picture URL
+      final userWithProfilePic =
+          event.userData.copyWith(profilePic: profilePicUrl);
+      final responseMessage =
+          await userRepository.createUser(userWithProfilePic);
+      emit(UserState.userAddedSuccess(responseMessage));
+      add(const FetchAllUsers());
+    } catch (e) {
+      emit(UserError(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateUserWithProfilePic(
+      UpdateUserWithProfilePic event, Emitter<UserState> emit) async {
+    emit(UserLoading());
+    try {
+      // Upload profile picture to S3
+      final profilePicUrl = await userRepository.uploadImageToS3(
+        event.profilePicBytes,
+        'profilePic_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      if (profilePicUrl == null) {
+        throw Exception("Failed to upload profile picture");
+      }
+
+      // Update user with profile picture URL
+      final userWithProfilePic =
+          event.updatedUser.copyWith(profilePic: profilePicUrl);
+      await userRepository.updateUser(userWithProfilePic);
+      emit(const UserState.updated());
+    } catch (e) {
+      emit(UserState.error("Failed to update user"));
     }
   }
 

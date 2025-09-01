@@ -15,15 +15,29 @@ class VehicleManufacturesList extends StatefulWidget {
 
 class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
   final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch vehicle manufacturers when the page is initialized
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<VehicleManufacturerBloc>()
+          .add(const FetchAllVehicleManufacturers());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        _buildHeaderSection(),
-        const SizedBox(height: 20),
-        _buildCompanyList(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          _buildHeaderSection(),
+          const SizedBox(height: 20),
+          _buildCompanyList(),
+        ],
+      ),
     );
   }
 
@@ -317,6 +331,12 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
+      DataColumn(
+        label: Text(
+          isTablet ? 'Is Premium' : 'Is Premium',
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
       const DataColumn(
         label: Text(
           'Actions',
@@ -334,42 +354,82 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
         padding: const EdgeInsets.only(left: 30),
         child: Text('$rowNumber'),
       )),
-      DataCell(Text(manufacturer.name)),
-      DataCell(Text(manufacturer.displayName)),
-      DataCell(Text(manufacturer.originCountry)),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            manufacturer.description,
-            softWrap: true,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ))),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            manufacturer.logo,
-            softWrap: true,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ))),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            manufacturer.website,
-            softWrap: true,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ))),
-      DataCell(Text(manufacturer.foundedYear.toString())),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            manufacturer.headquarters,
-            maxLines: 2,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-          ))),
+      DataCell(Container(
+        width: 120,
+        child: Text(
+          manufacturer.name,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: 120,
+        child: Text(
+          manufacturer.displayName,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: 100,
+        child: Text(
+          manufacturer.originCountry,
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: 150,
+        child: Text(
+          manufacturer.description,
+          softWrap: true,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      )),
+      DataCell(Container(
+        width: 100,
+        child: Text(
+          manufacturer.logo,
+          softWrap: true,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      )),
+      DataCell(Container(
+        width: 120,
+        child: Text(
+          manufacturer.website,
+          softWrap: true,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+      )),
+      DataCell(Container(
+        width: 80,
+        child: Text(
+          manufacturer.foundedYear.toString(),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
+      DataCell(Container(
+        width: 120,
+        child: Text(
+          manufacturer.headquarters,
+          maxLines: 2,
+          softWrap: true,
+          overflow: TextOverflow.ellipsis,
+        ),
+      )),
+      DataCell(Container(
+        width: 80,
+        child: Text(
+          manufacturer.isPremium ? 'Yes' : 'No',
+          overflow: TextOverflow.ellipsis,
+          maxLines: 1,
+        ),
+      )),
       DataCell(
         Row(
           mainAxisSize: MainAxisSize.min,
