@@ -327,41 +327,59 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
                                 rows: models.map((model) {
                                   return DataRow(
                                     cells: [
-                                      DataCell(Text(model.displayName)),
+                                      DataCell(Text(
+                                          (model.displayName).isNotEmpty
+                                              ? model.displayName
+                                              : '-')),
                                       DataCell(Text(
                                           model.manufacturer?.displayName ??
                                               'N/A')),
-                                      DataCell(Text(model.vehicleType)),
-                                      DataCell(SizedBox(
-                                        width: 150,
-                                        child: Text(
-                                          model.description!,
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      )),
-                                      DataCell(
-                                          Text(model.launchYear.toString())),
-                                      DataCell(Text(model.segment!)),
                                       DataCell(Text(
-                                        model.bodyType!,
-                                      )),
+                                          (model.vehicleType).isNotEmpty
+                                              ? model.vehicleType
+                                              : '-')),
                                       DataCell(SizedBox(
                                         width: 150,
                                         child: Text(
-                                          model.brochureUrl!,
+                                          model.description ?? '-',
                                           softWrap: true,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       )),
-                                      DataCell(Text(model.isActive.toString())),
-                                      DataCell(Text(model.availableFuelTypes!
-                                          .join(', '))),
-                                      DataCell(Text(model
-                                          .availableTransmissionTypes!
-                                          .join(', '))),
+                                      DataCell(Text(
+                                          model.launchYear?.toString() ?? '-')),
+                                      DataCell(Text(model.segment ?? '-')),
+                                      DataCell(Text(
+                                        model.bodyType ?? '-',
+                                      )),
+                                      DataCell(SizedBox(
+                                        width: 150,
+                                        child: Text(
+                                          model.brochureUrl ?? '-',
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
+                                      DataCell(Text(
+                                          model.isActive?.toString() ?? '-')),
+                                      DataCell(Text((model.availableFuelTypes !=
+                                                  null &&
+                                              model.availableFuelTypes!
+                                                  .isNotEmpty)
+                                          ? model.availableFuelTypes!.join(', ')
+                                          : '-')),
+                                      DataCell(Text(
+                                          (model.availableTransmissionTypes !=
+                                                      null &&
+                                                  model
+                                                      .availableTransmissionTypes!
+                                                      .isNotEmpty)
+                                              ? model
+                                                  .availableTransmissionTypes!
+                                                  .join(', ')
+                                              : '-')),
                                     ],
                                   );
                                 }).toList(),

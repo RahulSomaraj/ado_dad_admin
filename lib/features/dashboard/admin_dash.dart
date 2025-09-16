@@ -13,32 +13,35 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        _buildHeaderSection(),
-        const SizedBox(height: 20),
-        _buildStatCards(),
-        const SizedBox(height: 20),
-        _buildAnalyticsSection()
-      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          _buildHeaderSection(),
+          const SizedBox(height: 20),
+          _buildStatCards(),
+          const SizedBox(height: 20),
+          _buildAnalyticsSection()
+        ],
+      ),
     );
   }
 
   Widget _buildHeaderSection() {
     final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
+    final isNarrow = screenWidth <= 900; // stack on <= 900 to avoid overflow
 
     return Padding(
       padding: const EdgeInsets.all(15),
-      child: isTablet
+      child: isNarrow
           ? Container(
               decoration: BoxDecoration(
                 color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 150, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -85,10 +88,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildNewAddButton() {
-    final isTablet = MediaQuery.of(context).size.width < 900 &&
-        MediaQuery.of(context).size.width >= 550;
+    final width = MediaQuery.of(context).size.width;
+    final isNarrow = width <= 900;
     return SizedBox(
-      width: isTablet ? double.infinity : 150,
+      width: isNarrow ? double.infinity : 150,
       height: 50,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -113,7 +116,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             onPressed: () {},
             child: Row(
               mainAxisAlignment:
-                  isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
+                  isNarrow ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
                 Icon(Icons.add, color: Colors.white, size: iconSize),
                 SizedBox(width: spacing),
@@ -127,10 +130,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
   }
 
   Widget _buildNewShowroomAddButton() {
-    final isTablet = MediaQuery.of(context).size.width < 900 &&
-        MediaQuery.of(context).size.width >= 550;
+    final width = MediaQuery.of(context).size.width;
+    final isNarrow = width <= 900;
     return SizedBox(
-      width: isTablet ? double.infinity : 200,
+      width: isNarrow ? double.infinity : 200,
       height: 50,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -157,7 +160,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
             },
             child: Row(
               mainAxisAlignment:
-                  isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
+                  isNarrow ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
                 Icon(Icons.add, color: Colors.white, size: iconSize),
                 SizedBox(width: spacing),
@@ -175,9 +178,6 @@ class _AdminDashboardState extends State<AdminDashboard> {
       padding: const EdgeInsets.symmetric(horizontal: 15),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          bool isTablet =
-              constraints.maxWidth <= 900 && constraints.maxWidth >= 550;
-
           return Wrap(
             spacing: 20,
             runSpacing: 20,
