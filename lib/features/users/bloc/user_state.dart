@@ -12,6 +12,8 @@ class UserState with _$UserState {
   }) = UserLoaded;
   const factory UserState.updated() = UserUpdated;
   const factory UserState.userAddedSuccess(String message) = UserAddedSuccess;
+  const factory UserState.userDeletedSuccess(String message) =
+      UserDeletedSuccess;
 
   const factory UserState.error(String message) = UserError;
   const factory UserState.userListNavigated() = UserListNavigated;

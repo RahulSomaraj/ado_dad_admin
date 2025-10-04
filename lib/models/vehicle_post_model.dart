@@ -1,32 +1,63 @@
 class VehicleRequest {
+  final String id;
   String name;
   String modelName;
   String modelType;
-  String wheelerType; // "TWO_WHEELER" or "FOUR_WHEELER"
+  String wheelerType;
   Details details;
   String vendor;
+  // VehicleCompanyModel? vendorCompany;
   List<VehicleModel1> vehicleModels;
   List<String> color;
 
   VehicleRequest({
+    required this.id,
     required this.name,
     required this.modelName,
     required this.modelType,
     required this.wheelerType,
     required this.details,
     required this.vendor,
+    // required this.vendorCompany,
     required this.vehicleModels,
     required this.color,
   });
 
+  factory VehicleRequest.fromJson(Map<String, dynamic> json) {
+    return VehicleRequest(
+      // id: json["id"] ?? "",
+      id: json['id'] ?? json['_id'] ?? '',
+      name: json["name"] ?? "",
+      modelName: json["modelName"] ?? "",
+      modelType: json["modelType"] ?? "",
+      wheelerType: json["wheelerType"] ?? "",
+      details: Details.fromJson(json["details"] ?? {}),
+      // vendor: json["vendor"] ?? "",
+      vendor: json["vendor"] is String
+          ? json["vendor"]
+          : json["vendor"]["name"] ?? "",
+      // vendorCompany: json["vendor"] is Map<String, dynamic>
+      //     ? VehicleCompanyModel.fromJson(json["vendor"])
+      //     : null,
+
+      color: List<String>.from(json["color"] ?? []),
+      vehicleModels: (json["vehicleModels"] as List<dynamic>?)
+              ?.map((e) => VehicleModel1.fromJson(e))
+              .toList() ??
+          [],
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
+      "id": id,
       "name": name,
       "modelName": modelName,
       "modelType": modelType,
       "wheelerType": wheelerType,
       "details": details.toJson(),
       "vendor": vendor,
+      // "vendor": vendorCompany?.toJson(),
       "vehicleModels": vehicleModels.map((e) => e.toJson()).toList(),
       "color": color,
     };
@@ -42,6 +73,13 @@ class Details {
     required this.month,
   });
 
+  factory Details.fromJson(Map<String, dynamic> json) {
+    return Details(
+      modelYear: json["modelYear"] ?? 0,
+      month: json["month"] ?? "",
+    );
+  }
+
   Map<String, dynamic> toJson() {
     return {
       "modelYear": modelYear,
@@ -53,35 +91,49 @@ class Details {
 class VehicleModel1 {
   String name;
   String modelName;
-  String modelDetails;
-  List<String> images;
+  String? modelDetails;
+  List<String>? images;
   String fuelType;
   String transmissionType;
   int mileage;
-  List<String>? color;
-
+  int engineCapacity;
+  int fuelCapacity;
+  int maxPower;
   // Fields only for Four-Wheelers
-  int? engineCapacity;
-  int? fuelCapacity;
-  int? maxPower;
   AdditionalInfo? additionalInfo;
 
   VehicleModel1({
     required this.name,
     required this.modelName,
-    required this.modelDetails,
-    required this.images,
+    this.modelDetails,
+    this.images,
     required this.fuelType,
     required this.transmissionType,
     required this.mileage,
-    this.color,
-
-    // These fields are only required for Four-Wheelers
-    this.engineCapacity,
-    this.fuelCapacity,
-    this.maxPower,
+    required this.engineCapacity,
+    required this.fuelCapacity,
+    required this.maxPower,
     this.additionalInfo,
   });
+
+  factory VehicleModel1.fromJson(Map<String, dynamic> json) {
+    return VehicleModel1(
+      name: json["name"] ?? "",
+      modelName: json["modelName"] ?? "",
+      modelDetails: json["modelDetails"],
+      images:
+          (json["images"] as List<dynamic>?)?.map((e) => e.toString()).toList(),
+      fuelType: json["fuelType"] ?? "",
+      transmissionType: json["transmissionType"] ?? "",
+      mileage: json["mileage"] ?? 0,
+      engineCapacity: json["engineCapacity"] ?? 0,
+      fuelCapacity: json["fuelCapacity"] ?? 0,
+      maxPower: json["maxPower"] ?? 0,
+      additionalInfo: json["additionalInfo"] != null
+          ? AdditionalInfo.fromJson(json["additionalInfo"])
+          : null,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = {
@@ -92,15 +144,14 @@ class VehicleModel1 {
       "fuelType": fuelType,
       "transmissionType": transmissionType,
       "mileage": mileage,
-      "color": color,
+      "engineCapacity": engineCapacity,
+      "fuelCapacity": fuelCapacity,
+      "maxPower": maxPower
     };
 
-    // Only add Four-Wheeler fields if available
-    if (engineCapacity != null) data["engineCapacity"] = engineCapacity;
-    if (fuelCapacity != null) data["fuelCapacity"] = fuelCapacity;
-    if (maxPower != null) data["maxPower"] = maxPower;
-    if (additionalInfo != null)
+    if (additionalInfo != null) {
       data["additionalInfo"] = additionalInfo!.toJson();
+    }
 
     return data;
   }
@@ -172,6 +223,42 @@ class AdditionalInfo {
     required this.usbCompatibility,
     required this.seatWarmer,
   });
+
+  factory AdditionalInfo.fromJson(Map<String, dynamic> json) {
+    return AdditionalInfo(
+      abs: json["abs"] ?? false,
+      accidental: json["accidental"] ?? false,
+      adjustableExternalMirror: json["adjustableExternalMirror"] ?? false,
+      adjustableSteering: json["adjustableSteering"] ?? false,
+      adjustableSeats: json["adjustableSeats"] ?? false,
+      airConditioning: json["airConditioning"] ?? false,
+      numberOfAirbags: json["numberOfAirbags"] ?? 0,
+      alloyWheels: json["alloyWheels"] ?? false,
+      auxCompatibility: json["auxCompatibility"] ?? false,
+      batteryCondition: json["batteryCondition"] ?? "",
+      bluetooth: json["bluetooth"] ?? false,
+      vehicleCertified: json["vehicleCertified"] ?? false,
+      color: List<String>.from(json["color"] ?? []),
+      cruiseControl: json["cruiseControl"] ?? false,
+      insuranceType: json["insuranceType"] ?? "",
+      lockSystem: json["lockSystem"] ?? false,
+      makeMonth: json["makeMonth"] ?? "",
+      navigationSystem: json["navigationSystem"] ?? false,
+      parkingSensors: json["parkingSensors"] ?? false,
+      powerSteering: json["powerSteering"] ?? false,
+      powerWindows: json["powerWindows"] ?? false,
+      amFmRadio: json["amFmRadio"] ?? false,
+      rearParkingCamera: json["rearParkingCamera"] ?? false,
+      registrationPlace: json["registrationPlace"] ?? "",
+      exchange: json["exchange"] ?? false,
+      finance: json["finance"] ?? false,
+      serviceHistory: json["serviceHistory"] ?? false,
+      sunroof: json["sunroof"] ?? false,
+      tyreCondition: json["tyreCondition"] ?? "",
+      usbCompatibility: json["usbCompatibility"] ?? false,
+      seatWarmer: json["seatWarmer"] ?? false,
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {

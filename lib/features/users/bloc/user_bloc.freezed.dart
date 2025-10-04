@@ -22,8 +22,12 @@ mixin _$UserEvent {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
     required TResult Function() userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
@@ -33,8 +37,12 @@ mixin _$UserEvent {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult? Function()? userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
@@ -43,8 +51,12 @@ mixin _$UserEvent {
     TResult Function()? started,
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult Function()? userListNavigation,
     required TResult orElse(),
   }) =>
@@ -54,8 +66,12 @@ mixin _$UserEvent {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
     required TResult Function(UserListNavigation value) userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
@@ -64,8 +80,10 @@ mixin _$UserEvent {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult? Function(UserListNavigation value)? userListNavigation,
   }) =>
       throw _privateConstructorUsedError;
@@ -74,8 +92,10 @@ mixin _$UserEvent {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) =>
@@ -147,8 +167,12 @@ class _$StartedImpl implements _Started {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
     required TResult Function() userListNavigation,
   }) {
     return started();
@@ -161,8 +185,12 @@ class _$StartedImpl implements _Started {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult? Function()? userListNavigation,
   }) {
     return started?.call();
@@ -174,8 +202,12 @@ class _$StartedImpl implements _Started {
     TResult Function()? started,
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
@@ -191,8 +223,12 @@ class _$StartedImpl implements _Started {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
     required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return started(this);
@@ -204,8 +240,10 @@ class _$StartedImpl implements _Started {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return started?.call(this);
@@ -217,8 +255,10 @@ class _$StartedImpl implements _Started {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
@@ -326,8 +366,12 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
     required TResult Function() userListNavigation,
   }) {
     return fetchAllUsers(page, limit, searchQuery);
@@ -340,8 +384,12 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult? Function()? userListNavigation,
   }) {
     return fetchAllUsers?.call(page, limit, searchQuery);
@@ -353,8 +401,12 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult Function()? started,
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
@@ -370,8 +422,12 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
     required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return fetchAllUsers(this);
@@ -383,8 +439,10 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return fetchAllUsers?.call(this);
@@ -396,8 +454,10 @@ class _$FetchAllUsersImpl implements FetchAllUsers {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
@@ -498,8 +558,12 @@ class _$AddUserImpl implements AddUser {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
     required TResult Function() userListNavigation,
   }) {
     return addUser(userData);
@@ -512,8 +576,12 @@ class _$AddUserImpl implements AddUser {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult? Function()? userListNavigation,
   }) {
     return addUser?.call(userData);
@@ -525,8 +593,12 @@ class _$AddUserImpl implements AddUser {
     TResult Function()? started,
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
@@ -542,8 +614,12 @@ class _$AddUserImpl implements AddUser {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
     required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return addUser(this);
@@ -555,8 +631,10 @@ class _$AddUserImpl implements AddUser {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return addUser?.call(this);
@@ -568,8 +646,10 @@ class _$AddUserImpl implements AddUser {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
@@ -590,6 +670,209 @@ abstract class AddUser implements UserEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AddUserImplCopyWith<_$AddUserImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AddUserWithProfilePicImplCopyWith<$Res> {
+  factory _$$AddUserWithProfilePicImplCopyWith(
+          _$AddUserWithProfilePicImpl value,
+          $Res Function(_$AddUserWithProfilePicImpl) then) =
+      __$$AddUserWithProfilePicImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel userData, Uint8List profilePicBytes});
+}
+
+/// @nodoc
+class __$$AddUserWithProfilePicImplCopyWithImpl<$Res>
+    extends _$UserEventCopyWithImpl<$Res, _$AddUserWithProfilePicImpl>
+    implements _$$AddUserWithProfilePicImplCopyWith<$Res> {
+  __$$AddUserWithProfilePicImplCopyWithImpl(_$AddUserWithProfilePicImpl _value,
+      $Res Function(_$AddUserWithProfilePicImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? userData = null,
+    Object? profilePicBytes = null,
+  }) {
+    return _then(_$AddUserWithProfilePicImpl(
+      userData: null == userData
+          ? _value.userData
+          : userData // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      profilePicBytes: null == profilePicBytes
+          ? _value.profilePicBytes
+          : profilePicBytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AddUserWithProfilePicImpl implements AddUserWithProfilePic {
+  const _$AddUserWithProfilePicImpl(
+      {required this.userData, required this.profilePicBytes});
+
+  @override
+  final UserModel userData;
+  @override
+  final Uint8List profilePicBytes;
+
+  @override
+  String toString() {
+    return 'UserEvent.addUserWithProfilePic(userData: $userData, profilePicBytes: $profilePicBytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AddUserWithProfilePicImpl &&
+            (identical(other.userData, userData) ||
+                other.userData == userData) &&
+            const DeepCollectionEquality()
+                .equals(other.profilePicBytes, profilePicBytes));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, userData,
+      const DeepCollectionEquality().hash(profilePicBytes));
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AddUserWithProfilePicImplCopyWith<_$AddUserWithProfilePicImpl>
+      get copyWith => __$$AddUserWithProfilePicImplCopyWithImpl<
+          _$AddUserWithProfilePicImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int? page, int? limit, String? searchQuery)
+        fetchAllUsers,
+    required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
+    required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
+    required TResult Function() userListNavigation,
+  }) {
+    return addUserWithProfilePic(userData, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int? page, int? limit, String? searchQuery)?
+        fetchAllUsers,
+    TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
+    TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
+    TResult? Function()? userListNavigation,
+  }) {
+    return addUserWithProfilePic?.call(userData, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
+    TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
+    TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
+    TResult Function()? userListNavigation,
+    required TResult orElse(),
+  }) {
+    if (addUserWithProfilePic != null) {
+      return addUserWithProfilePic(userData, profilePicBytes);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllUsers value) fetchAllUsers,
+    required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
+    required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
+    required TResult Function(UserListNavigation value) userListNavigation,
+  }) {
+    return addUserWithProfilePic(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllUsers value)? fetchAllUsers,
+    TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
+    TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
+    TResult? Function(UserListNavigation value)? userListNavigation,
+  }) {
+    return addUserWithProfilePic?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllUsers value)? fetchAllUsers,
+    TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
+    TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
+    TResult Function(UserListNavigation value)? userListNavigation,
+    required TResult orElse(),
+  }) {
+    if (addUserWithProfilePic != null) {
+      return addUserWithProfilePic(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AddUserWithProfilePic implements UserEvent {
+  const factory AddUserWithProfilePic(
+      {required final UserModel userData,
+      required final Uint8List profilePicBytes}) = _$AddUserWithProfilePicImpl;
+
+  UserModel get userData;
+  Uint8List get profilePicBytes;
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AddUserWithProfilePicImplCopyWith<_$AddUserWithProfilePicImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -664,8 +947,12 @@ class _$DeleteUserImpl implements DeleteUser {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
     required TResult Function() userListNavigation,
   }) {
     return deleteUser(userId);
@@ -678,8 +965,12 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult? Function()? userListNavigation,
   }) {
     return deleteUser?.call(userId);
@@ -691,8 +982,12 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult Function()? started,
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
@@ -708,8 +1003,12 @@ class _$DeleteUserImpl implements DeleteUser {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
     required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return deleteUser(this);
@@ -721,8 +1020,10 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return deleteUser?.call(this);
@@ -734,8 +1035,10 @@ class _$DeleteUserImpl implements DeleteUser {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
@@ -831,8 +1134,12 @@ class _$UpdateUserImpl implements UpdateUser {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
     required TResult Function() userListNavigation,
   }) {
     return updateUser(updatedUser);
@@ -845,8 +1152,12 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult? Function()? userListNavigation,
   }) {
     return updateUser?.call(updatedUser);
@@ -858,8 +1169,12 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult Function()? started,
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
@@ -875,8 +1190,12 @@ class _$UpdateUserImpl implements UpdateUser {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
     required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return updateUser(this);
@@ -888,8 +1207,10 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return updateUser?.call(this);
@@ -901,8 +1222,10 @@ class _$UpdateUserImpl implements UpdateUser {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
@@ -924,6 +1247,211 @@ abstract class UpdateUser implements UserEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UpdateUserImplCopyWith<_$UpdateUserImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UpdateUserWithProfilePicImplCopyWith<$Res> {
+  factory _$$UpdateUserWithProfilePicImplCopyWith(
+          _$UpdateUserWithProfilePicImpl value,
+          $Res Function(_$UpdateUserWithProfilePicImpl) then) =
+      __$$UpdateUserWithProfilePicImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel updatedUser, Uint8List profilePicBytes});
+}
+
+/// @nodoc
+class __$$UpdateUserWithProfilePicImplCopyWithImpl<$Res>
+    extends _$UserEventCopyWithImpl<$Res, _$UpdateUserWithProfilePicImpl>
+    implements _$$UpdateUserWithProfilePicImplCopyWith<$Res> {
+  __$$UpdateUserWithProfilePicImplCopyWithImpl(
+      _$UpdateUserWithProfilePicImpl _value,
+      $Res Function(_$UpdateUserWithProfilePicImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? updatedUser = null,
+    Object? profilePicBytes = null,
+  }) {
+    return _then(_$UpdateUserWithProfilePicImpl(
+      updatedUser: null == updatedUser
+          ? _value.updatedUser
+          : updatedUser // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      profilePicBytes: null == profilePicBytes
+          ? _value.profilePicBytes
+          : profilePicBytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UpdateUserWithProfilePicImpl implements UpdateUserWithProfilePic {
+  const _$UpdateUserWithProfilePicImpl(
+      {required this.updatedUser, required this.profilePicBytes});
+
+  @override
+  final UserModel updatedUser;
+  @override
+  final Uint8List profilePicBytes;
+
+  @override
+  String toString() {
+    return 'UserEvent.updateUserWithProfilePic(updatedUser: $updatedUser, profilePicBytes: $profilePicBytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateUserWithProfilePicImpl &&
+            (identical(other.updatedUser, updatedUser) ||
+                other.updatedUser == updatedUser) &&
+            const DeepCollectionEquality()
+                .equals(other.profilePicBytes, profilePicBytes));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, updatedUser,
+      const DeepCollectionEquality().hash(profilePicBytes));
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateUserWithProfilePicImplCopyWith<_$UpdateUserWithProfilePicImpl>
+      get copyWith => __$$UpdateUserWithProfilePicImplCopyWithImpl<
+          _$UpdateUserWithProfilePicImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int? page, int? limit, String? searchQuery)
+        fetchAllUsers,
+    required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
+    required TResult Function(String userId) deleteUser,
+    required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
+    required TResult Function() userListNavigation,
+  }) {
+    return updateUserWithProfilePic(updatedUser, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int? page, int? limit, String? searchQuery)?
+        fetchAllUsers,
+    TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
+    TResult? Function(String userId)? deleteUser,
+    TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
+    TResult? Function()? userListNavigation,
+  }) {
+    return updateUserWithProfilePic?.call(updatedUser, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
+    TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
+    TResult Function(String userId)? deleteUser,
+    TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
+    TResult Function()? userListNavigation,
+    required TResult orElse(),
+  }) {
+    if (updateUserWithProfilePic != null) {
+      return updateUserWithProfilePic(updatedUser, profilePicBytes);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllUsers value) fetchAllUsers,
+    required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
+    required TResult Function(DeleteUser value) deleteUser,
+    required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
+    required TResult Function(UserListNavigation value) userListNavigation,
+  }) {
+    return updateUserWithProfilePic(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllUsers value)? fetchAllUsers,
+    TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
+    TResult? Function(DeleteUser value)? deleteUser,
+    TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
+    TResult? Function(UserListNavigation value)? userListNavigation,
+  }) {
+    return updateUserWithProfilePic?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllUsers value)? fetchAllUsers,
+    TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
+    TResult Function(DeleteUser value)? deleteUser,
+    TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
+    TResult Function(UserListNavigation value)? userListNavigation,
+    required TResult orElse(),
+  }) {
+    if (updateUserWithProfilePic != null) {
+      return updateUserWithProfilePic(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateUserWithProfilePic implements UserEvent {
+  const factory UpdateUserWithProfilePic(
+          {required final UserModel updatedUser,
+          required final Uint8List profilePicBytes}) =
+      _$UpdateUserWithProfilePicImpl;
+
+  UserModel get updatedUser;
+  Uint8List get profilePicBytes;
+
+  /// Create a copy of UserEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateUserWithProfilePicImplCopyWith<_$UpdateUserWithProfilePicImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -971,8 +1499,12 @@ class _$UserListNavigationImpl implements UserListNavigation {
     required TResult Function(int? page, int? limit, String? searchQuery)
         fetchAllUsers,
     required TResult Function(UserModel userData) addUser,
+    required TResult Function(UserModel userData, Uint8List profilePicBytes)
+        addUserWithProfilePic,
     required TResult Function(String userId) deleteUser,
     required TResult Function(UserModel updatedUser) updateUser,
+    required TResult Function(UserModel updatedUser, Uint8List profilePicBytes)
+        updateUserWithProfilePic,
     required TResult Function() userListNavigation,
   }) {
     return userListNavigation();
@@ -985,8 +1517,12 @@ class _$UserListNavigationImpl implements UserListNavigation {
     TResult? Function(int? page, int? limit, String? searchQuery)?
         fetchAllUsers,
     TResult? Function(UserModel userData)? addUser,
+    TResult? Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult? Function(String userId)? deleteUser,
     TResult? Function(UserModel updatedUser)? updateUser,
+    TResult? Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult? Function()? userListNavigation,
   }) {
     return userListNavigation?.call();
@@ -998,8 +1534,12 @@ class _$UserListNavigationImpl implements UserListNavigation {
     TResult Function()? started,
     TResult Function(int? page, int? limit, String? searchQuery)? fetchAllUsers,
     TResult Function(UserModel userData)? addUser,
+    TResult Function(UserModel userData, Uint8List profilePicBytes)?
+        addUserWithProfilePic,
     TResult Function(String userId)? deleteUser,
     TResult Function(UserModel updatedUser)? updateUser,
+    TResult Function(UserModel updatedUser, Uint8List profilePicBytes)?
+        updateUserWithProfilePic,
     TResult Function()? userListNavigation,
     required TResult orElse(),
   }) {
@@ -1015,8 +1555,12 @@ class _$UserListNavigationImpl implements UserListNavigation {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllUsers value) fetchAllUsers,
     required TResult Function(AddUser value) addUser,
+    required TResult Function(AddUserWithProfilePic value)
+        addUserWithProfilePic,
     required TResult Function(DeleteUser value) deleteUser,
     required TResult Function(UpdateUser value) updateUser,
+    required TResult Function(UpdateUserWithProfilePic value)
+        updateUserWithProfilePic,
     required TResult Function(UserListNavigation value) userListNavigation,
   }) {
     return userListNavigation(this);
@@ -1028,8 +1572,10 @@ class _$UserListNavigationImpl implements UserListNavigation {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllUsers value)? fetchAllUsers,
     TResult? Function(AddUser value)? addUser,
+    TResult? Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult? Function(DeleteUser value)? deleteUser,
     TResult? Function(UpdateUser value)? updateUser,
+    TResult? Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult? Function(UserListNavigation value)? userListNavigation,
   }) {
     return userListNavigation?.call(this);
@@ -1041,8 +1587,10 @@ class _$UserListNavigationImpl implements UserListNavigation {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllUsers value)? fetchAllUsers,
     TResult Function(AddUser value)? addUser,
+    TResult Function(AddUserWithProfilePic value)? addUserWithProfilePic,
     TResult Function(DeleteUser value)? deleteUser,
     TResult Function(UpdateUser value)? updateUser,
+    TResult Function(UpdateUserWithProfilePic value)? updateUserWithProfilePic,
     TResult Function(UserListNavigation value)? userListNavigation,
     required TResult orElse(),
   }) {
@@ -1068,6 +1616,7 @@ mixin _$UserState {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) =>
@@ -1080,6 +1629,7 @@ mixin _$UserState {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) =>
@@ -1092,6 +1642,7 @@ mixin _$UserState {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1104,6 +1655,7 @@ mixin _$UserState {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) =>
@@ -1115,6 +1667,7 @@ mixin _$UserState {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) =>
@@ -1126,6 +1679,7 @@ mixin _$UserState {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1201,6 +1755,7 @@ class _$UserInitialImpl implements UserInitial {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1216,6 +1771,7 @@ class _$UserInitialImpl implements UserInitial {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1231,6 +1787,7 @@ class _$UserInitialImpl implements UserInitial {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1249,6 +1806,7 @@ class _$UserInitialImpl implements UserInitial {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1263,6 +1821,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1277,6 +1836,7 @@ class _$UserInitialImpl implements UserInitial {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1340,6 +1900,7 @@ class _$UserLoadingImpl implements UserLoading {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1355,6 +1916,7 @@ class _$UserLoadingImpl implements UserLoading {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1370,6 +1932,7 @@ class _$UserLoadingImpl implements UserLoading {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1388,6 +1951,7 @@ class _$UserLoadingImpl implements UserLoading {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1402,6 +1966,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1416,6 +1981,7 @@ class _$UserLoadingImpl implements UserLoading {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1535,6 +2101,7 @@ class _$UserLoadedImpl implements UserLoaded {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1550,6 +2117,7 @@ class _$UserLoadedImpl implements UserLoaded {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1565,6 +2133,7 @@ class _$UserLoadedImpl implements UserLoaded {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1583,6 +2152,7 @@ class _$UserLoadedImpl implements UserLoaded {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1597,6 +2167,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1611,6 +2182,7 @@ class _$UserLoadedImpl implements UserLoaded {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1687,6 +2259,7 @@ class _$UserUpdatedImpl implements UserUpdated {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1702,6 +2275,7 @@ class _$UserUpdatedImpl implements UserUpdated {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1717,6 +2291,7 @@ class _$UserUpdatedImpl implements UserUpdated {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1735,6 +2310,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1749,6 +2325,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1763,6 +2340,7 @@ class _$UserUpdatedImpl implements UserUpdated {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1854,6 +2432,7 @@ class _$UserAddedSuccessImpl implements UserAddedSuccess {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -1869,6 +2448,7 @@ class _$UserAddedSuccessImpl implements UserAddedSuccess {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -1884,6 +2464,7 @@ class _$UserAddedSuccessImpl implements UserAddedSuccess {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -1902,6 +2483,7 @@ class _$UserAddedSuccessImpl implements UserAddedSuccess {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -1916,6 +2498,7 @@ class _$UserAddedSuccessImpl implements UserAddedSuccess {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -1930,6 +2513,7 @@ class _$UserAddedSuccessImpl implements UserAddedSuccess {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -1950,6 +2534,188 @@ abstract class UserAddedSuccess implements UserState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UserAddedSuccessImplCopyWith<_$UserAddedSuccessImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UserDeletedSuccessImplCopyWith<$Res> {
+  factory _$$UserDeletedSuccessImplCopyWith(_$UserDeletedSuccessImpl value,
+          $Res Function(_$UserDeletedSuccessImpl) then) =
+      __$$UserDeletedSuccessImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$UserDeletedSuccessImplCopyWithImpl<$Res>
+    extends _$UserStateCopyWithImpl<$Res, _$UserDeletedSuccessImpl>
+    implements _$$UserDeletedSuccessImplCopyWith<$Res> {
+  __$$UserDeletedSuccessImplCopyWithImpl(_$UserDeletedSuccessImpl _value,
+      $Res Function(_$UserDeletedSuccessImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_$UserDeletedSuccessImpl(
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UserDeletedSuccessImpl implements UserDeletedSuccess {
+  const _$UserDeletedSuccessImpl(this.message);
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'UserState.userDeletedSuccess(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UserDeletedSuccessImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UserDeletedSuccessImplCopyWith<_$UserDeletedSuccessImpl> get copyWith =>
+      __$$UserDeletedSuccessImplCopyWithImpl<_$UserDeletedSuccessImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(
+            List<UserModel> users, int totalPages, int currentPage)
+        loaded,
+    required TResult Function() updated,
+    required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
+    required TResult Function(String message) error,
+    required TResult Function() userListNavigated,
+  }) {
+    return userDeletedSuccess(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult? Function()? updated,
+    TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
+    TResult? Function(String message)? error,
+    TResult? Function()? userListNavigated,
+  }) {
+    return userDeletedSuccess?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<UserModel> users, int totalPages, int currentPage)?
+        loaded,
+    TResult Function()? updated,
+    TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
+    TResult Function(String message)? error,
+    TResult Function()? userListNavigated,
+    required TResult orElse(),
+  }) {
+    if (userDeletedSuccess != null) {
+      return userDeletedSuccess(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(UserInitial value) initial,
+    required TResult Function(UserLoading value) loading,
+    required TResult Function(UserLoaded value) loaded,
+    required TResult Function(UserUpdated value) updated,
+    required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
+    required TResult Function(UserError value) error,
+    required TResult Function(UserListNavigated value) userListNavigated,
+  }) {
+    return userDeletedSuccess(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(UserInitial value)? initial,
+    TResult? Function(UserLoading value)? loading,
+    TResult? Function(UserLoaded value)? loaded,
+    TResult? Function(UserUpdated value)? updated,
+    TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
+    TResult? Function(UserError value)? error,
+    TResult? Function(UserListNavigated value)? userListNavigated,
+  }) {
+    return userDeletedSuccess?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(UserInitial value)? initial,
+    TResult Function(UserLoading value)? loading,
+    TResult Function(UserLoaded value)? loaded,
+    TResult Function(UserUpdated value)? updated,
+    TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
+    TResult Function(UserError value)? error,
+    TResult Function(UserListNavigated value)? userListNavigated,
+    required TResult orElse(),
+  }) {
+    if (userDeletedSuccess != null) {
+      return userDeletedSuccess(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UserDeletedSuccess implements UserState {
+  const factory UserDeletedSuccess(final String message) =
+      _$UserDeletedSuccessImpl;
+
+  String get message;
+
+  /// Create a copy of UserState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UserDeletedSuccessImplCopyWith<_$UserDeletedSuccessImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -2028,6 +2794,7 @@ class _$UserErrorImpl implements UserError {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -2043,6 +2810,7 @@ class _$UserErrorImpl implements UserError {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -2058,6 +2826,7 @@ class _$UserErrorImpl implements UserError {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -2076,6 +2845,7 @@ class _$UserErrorImpl implements UserError {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -2090,6 +2860,7 @@ class _$UserErrorImpl implements UserError {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -2104,6 +2875,7 @@ class _$UserErrorImpl implements UserError {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),
@@ -2175,6 +2947,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
         loaded,
     required TResult Function() updated,
     required TResult Function(String message) userAddedSuccess,
+    required TResult Function(String message) userDeletedSuccess,
     required TResult Function(String message) error,
     required TResult Function() userListNavigated,
   }) {
@@ -2190,6 +2963,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
         loaded,
     TResult? Function()? updated,
     TResult? Function(String message)? userAddedSuccess,
+    TResult? Function(String message)? userDeletedSuccess,
     TResult? Function(String message)? error,
     TResult? Function()? userListNavigated,
   }) {
@@ -2205,6 +2979,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
         loaded,
     TResult Function()? updated,
     TResult Function(String message)? userAddedSuccess,
+    TResult Function(String message)? userDeletedSuccess,
     TResult Function(String message)? error,
     TResult Function()? userListNavigated,
     required TResult orElse(),
@@ -2223,6 +2998,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     required TResult Function(UserLoaded value) loaded,
     required TResult Function(UserUpdated value) updated,
     required TResult Function(UserAddedSuccess value) userAddedSuccess,
+    required TResult Function(UserDeletedSuccess value) userDeletedSuccess,
     required TResult Function(UserError value) error,
     required TResult Function(UserListNavigated value) userListNavigated,
   }) {
@@ -2237,6 +3013,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     TResult? Function(UserLoaded value)? loaded,
     TResult? Function(UserUpdated value)? updated,
     TResult? Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult? Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult? Function(UserError value)? error,
     TResult? Function(UserListNavigated value)? userListNavigated,
   }) {
@@ -2251,6 +3028,7 @@ class _$UserListNavigatedImpl implements UserListNavigated {
     TResult Function(UserLoaded value)? loaded,
     TResult Function(UserUpdated value)? updated,
     TResult Function(UserAddedSuccess value)? userAddedSuccess,
+    TResult Function(UserDeletedSuccess value)? userDeletedSuccess,
     TResult Function(UserError value)? error,
     TResult Function(UserListNavigated value)? userListNavigated,
     required TResult orElse(),

@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// 🏠 Dashboard Main Screen with Sidebar and AppBar
@@ -21,6 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.scaffoldColor,
       body: Row(
         children: [
           /// 🌟 Sidebar Menu

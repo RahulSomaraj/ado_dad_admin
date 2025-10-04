@@ -23,7 +23,13 @@ mixin _$ShowroomEvent {
             int? page, int? limit, String? userType, String? searchQuery)
         fetchAllShowrooms,
     required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
     required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -33,7 +39,12 @@ mixin _$ShowroomEvent {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -43,7 +54,12 @@ mixin _$ShowroomEvent {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -52,7 +68,13 @@ mixin _$ShowroomEvent {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
     required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
     required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -60,7 +82,12 @@ mixin _$ShowroomEvent {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -68,7 +95,12 @@ mixin _$ShowroomEvent {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -141,7 +173,13 @@ class _$StartedImpl implements _Started {
             int? page, int? limit, String? userType, String? searchQuery)
         fetchAllShowrooms,
     required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
     required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
   }) {
     return started();
   }
@@ -154,7 +192,12 @@ class _$StartedImpl implements _Started {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
   }) {
     return started?.call();
   }
@@ -167,7 +210,12 @@ class _$StartedImpl implements _Started {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -182,7 +230,13 @@ class _$StartedImpl implements _Started {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
     required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
     required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
   }) {
     return started(this);
   }
@@ -193,7 +247,12 @@ class _$StartedImpl implements _Started {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
   }) {
     return started?.call(this);
   }
@@ -204,7 +263,12 @@ class _$StartedImpl implements _Started {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -327,7 +391,13 @@ class _$FetchAllShowroomsImpl implements FetchAllShowrooms {
             int? page, int? limit, String? userType, String? searchQuery)
         fetchAllShowrooms,
     required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
     required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
   }) {
     return fetchAllShowrooms(page, limit, userType, searchQuery);
   }
@@ -340,7 +410,12 @@ class _$FetchAllShowroomsImpl implements FetchAllShowrooms {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
   }) {
     return fetchAllShowrooms?.call(page, limit, userType, searchQuery);
   }
@@ -353,7 +428,12 @@ class _$FetchAllShowroomsImpl implements FetchAllShowrooms {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (fetchAllShowrooms != null) {
@@ -368,7 +448,13 @@ class _$FetchAllShowroomsImpl implements FetchAllShowrooms {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
     required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
     required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
   }) {
     return fetchAllShowrooms(this);
   }
@@ -379,7 +465,12 @@ class _$FetchAllShowroomsImpl implements FetchAllShowrooms {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
   }) {
     return fetchAllShowrooms?.call(this);
   }
@@ -390,7 +481,12 @@ class _$FetchAllShowroomsImpl implements FetchAllShowrooms {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (fetchAllShowrooms != null) {
@@ -493,7 +589,13 @@ class _$AddShowroomImpl implements AddShowroom {
             int? page, int? limit, String? userType, String? searchQuery)
         fetchAllShowrooms,
     required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
     required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
   }) {
     return addShowroom(showroomData);
   }
@@ -506,7 +608,12 @@ class _$AddShowroomImpl implements AddShowroom {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
   }) {
     return addShowroom?.call(showroomData);
   }
@@ -519,7 +626,12 @@ class _$AddShowroomImpl implements AddShowroom {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (addShowroom != null) {
@@ -534,7 +646,13 @@ class _$AddShowroomImpl implements AddShowroom {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
     required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
     required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
   }) {
     return addShowroom(this);
   }
@@ -545,7 +663,12 @@ class _$AddShowroomImpl implements AddShowroom {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
   }) {
     return addShowroom?.call(this);
   }
@@ -556,7 +679,12 @@ class _$AddShowroomImpl implements AddShowroom {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (addShowroom != null) {
@@ -577,6 +705,215 @@ abstract class AddShowroom implements ShowroomEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AddShowroomImplCopyWith<_$AddShowroomImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$AddShowroomWithProfilePicImplCopyWith<$Res> {
+  factory _$$AddShowroomWithProfilePicImplCopyWith(
+          _$AddShowroomWithProfilePicImpl value,
+          $Res Function(_$AddShowroomWithProfilePicImpl) then) =
+      __$$AddShowroomWithProfilePicImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel showroomData, Uint8List profilePicBytes});
+}
+
+/// @nodoc
+class __$$AddShowroomWithProfilePicImplCopyWithImpl<$Res>
+    extends _$ShowroomEventCopyWithImpl<$Res, _$AddShowroomWithProfilePicImpl>
+    implements _$$AddShowroomWithProfilePicImplCopyWith<$Res> {
+  __$$AddShowroomWithProfilePicImplCopyWithImpl(
+      _$AddShowroomWithProfilePicImpl _value,
+      $Res Function(_$AddShowroomWithProfilePicImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ShowroomEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? showroomData = null,
+    Object? profilePicBytes = null,
+  }) {
+    return _then(_$AddShowroomWithProfilePicImpl(
+      showroomData: null == showroomData
+          ? _value.showroomData
+          : showroomData // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      profilePicBytes: null == profilePicBytes
+          ? _value.profilePicBytes
+          : profilePicBytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$AddShowroomWithProfilePicImpl implements AddShowroomWithProfilePic {
+  const _$AddShowroomWithProfilePicImpl(
+      {required this.showroomData, required this.profilePicBytes});
+
+  @override
+  final UserModel showroomData;
+  @override
+  final Uint8List profilePicBytes;
+
+  @override
+  String toString() {
+    return 'ShowroomEvent.addShowroomWithProfilePic(showroomData: $showroomData, profilePicBytes: $profilePicBytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$AddShowroomWithProfilePicImpl &&
+            (identical(other.showroomData, showroomData) ||
+                other.showroomData == showroomData) &&
+            const DeepCollectionEquality()
+                .equals(other.profilePicBytes, profilePicBytes));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, showroomData,
+      const DeepCollectionEquality().hash(profilePicBytes));
+
+  /// Create a copy of ShowroomEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$AddShowroomWithProfilePicImplCopyWith<_$AddShowroomWithProfilePicImpl>
+      get copyWith => __$$AddShowroomWithProfilePicImplCopyWithImpl<
+          _$AddShowroomWithProfilePicImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(
+            int? page, int? limit, String? userType, String? searchQuery)
+        fetchAllShowrooms,
+    required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
+    required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
+  }) {
+    return addShowroomWithProfilePic(showroomData, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(
+            int? page, int? limit, String? userType, String? searchQuery)?
+        fetchAllShowrooms,
+    TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
+    TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
+  }) {
+    return addShowroomWithProfilePic?.call(showroomData, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(
+            int? page, int? limit, String? userType, String? searchQuery)?
+        fetchAllShowrooms,
+    TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
+    TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
+    required TResult orElse(),
+  }) {
+    if (addShowroomWithProfilePic != null) {
+      return addShowroomWithProfilePic(showroomData, profilePicBytes);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
+    required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
+    required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
+  }) {
+    return addShowroomWithProfilePic(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
+    TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
+    TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
+  }) {
+    return addShowroomWithProfilePic?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
+    TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
+    TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
+    required TResult orElse(),
+  }) {
+    if (addShowroomWithProfilePic != null) {
+      return addShowroomWithProfilePic(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class AddShowroomWithProfilePic implements ShowroomEvent {
+  const factory AddShowroomWithProfilePic(
+          {required final UserModel showroomData,
+          required final Uint8List profilePicBytes}) =
+      _$AddShowroomWithProfilePicImpl;
+
+  UserModel get showroomData;
+  Uint8List get profilePicBytes;
+
+  /// Create a copy of ShowroomEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$AddShowroomWithProfilePicImplCopyWith<_$AddShowroomWithProfilePicImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -654,7 +991,13 @@ class _$UpdateShowroomImpl implements UpdateShowroom {
             int? page, int? limit, String? userType, String? searchQuery)
         fetchAllShowrooms,
     required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
     required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
   }) {
     return updateShowroom(updatedShowroom);
   }
@@ -667,7 +1010,12 @@ class _$UpdateShowroomImpl implements UpdateShowroom {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
   }) {
     return updateShowroom?.call(updatedShowroom);
   }
@@ -680,7 +1028,12 @@ class _$UpdateShowroomImpl implements UpdateShowroom {
             int? page, int? limit, String? userType, String? searchQuery)?
         fetchAllShowrooms,
     TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
     TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (updateShowroom != null) {
@@ -695,7 +1048,13 @@ class _$UpdateShowroomImpl implements UpdateShowroom {
     required TResult Function(_Started value) started,
     required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
     required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
     required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
   }) {
     return updateShowroom(this);
   }
@@ -706,7 +1065,12 @@ class _$UpdateShowroomImpl implements UpdateShowroom {
     TResult? Function(_Started value)? started,
     TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
   }) {
     return updateShowroom?.call(this);
   }
@@ -717,7 +1081,12 @@ class _$UpdateShowroomImpl implements UpdateShowroom {
     TResult Function(_Started value)? started,
     TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
     TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
     TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
     required TResult orElse(),
   }) {
     if (updateShowroom != null) {
@@ -738,6 +1107,377 @@ abstract class UpdateShowroom implements ShowroomEvent {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UpdateShowroomImplCopyWith<_$UpdateShowroomImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UpdateShowroomWithProfilePicImplCopyWith<$Res> {
+  factory _$$UpdateShowroomWithProfilePicImplCopyWith(
+          _$UpdateShowroomWithProfilePicImpl value,
+          $Res Function(_$UpdateShowroomWithProfilePicImpl) then) =
+      __$$UpdateShowroomWithProfilePicImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel updatedShowroom, Uint8List profilePicBytes});
+}
+
+/// @nodoc
+class __$$UpdateShowroomWithProfilePicImplCopyWithImpl<$Res>
+    extends _$ShowroomEventCopyWithImpl<$Res,
+        _$UpdateShowroomWithProfilePicImpl>
+    implements _$$UpdateShowroomWithProfilePicImplCopyWith<$Res> {
+  __$$UpdateShowroomWithProfilePicImplCopyWithImpl(
+      _$UpdateShowroomWithProfilePicImpl _value,
+      $Res Function(_$UpdateShowroomWithProfilePicImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ShowroomEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? updatedShowroom = null,
+    Object? profilePicBytes = null,
+  }) {
+    return _then(_$UpdateShowroomWithProfilePicImpl(
+      updatedShowroom: null == updatedShowroom
+          ? _value.updatedShowroom
+          : updatedShowroom // ignore: cast_nullable_to_non_nullable
+              as UserModel,
+      profilePicBytes: null == profilePicBytes
+          ? _value.profilePicBytes
+          : profilePicBytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UpdateShowroomWithProfilePicImpl
+    implements UpdateShowroomWithProfilePic {
+  const _$UpdateShowroomWithProfilePicImpl(
+      {required this.updatedShowroom, required this.profilePicBytes});
+
+  @override
+  final UserModel updatedShowroom;
+  @override
+  final Uint8List profilePicBytes;
+
+  @override
+  String toString() {
+    return 'ShowroomEvent.updateShowroomWithProfilePic(updatedShowroom: $updatedShowroom, profilePicBytes: $profilePicBytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateShowroomWithProfilePicImpl &&
+            (identical(other.updatedShowroom, updatedShowroom) ||
+                other.updatedShowroom == updatedShowroom) &&
+            const DeepCollectionEquality()
+                .equals(other.profilePicBytes, profilePicBytes));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, updatedShowroom,
+      const DeepCollectionEquality().hash(profilePicBytes));
+
+  /// Create a copy of ShowroomEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateShowroomWithProfilePicImplCopyWith<
+          _$UpdateShowroomWithProfilePicImpl>
+      get copyWith => __$$UpdateShowroomWithProfilePicImplCopyWithImpl<
+          _$UpdateShowroomWithProfilePicImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(
+            int? page, int? limit, String? userType, String? searchQuery)
+        fetchAllShowrooms,
+    required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
+    required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
+  }) {
+    return updateShowroomWithProfilePic(updatedShowroom, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(
+            int? page, int? limit, String? userType, String? searchQuery)?
+        fetchAllShowrooms,
+    TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
+    TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
+  }) {
+    return updateShowroomWithProfilePic?.call(updatedShowroom, profilePicBytes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(
+            int? page, int? limit, String? userType, String? searchQuery)?
+        fetchAllShowrooms,
+    TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
+    TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
+    required TResult orElse(),
+  }) {
+    if (updateShowroomWithProfilePic != null) {
+      return updateShowroomWithProfilePic(updatedShowroom, profilePicBytes);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
+    required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
+    required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
+  }) {
+    return updateShowroomWithProfilePic(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
+    TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
+    TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
+  }) {
+    return updateShowroomWithProfilePic?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
+    TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
+    TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
+    required TResult orElse(),
+  }) {
+    if (updateShowroomWithProfilePic != null) {
+      return updateShowroomWithProfilePic(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateShowroomWithProfilePic implements ShowroomEvent {
+  const factory UpdateShowroomWithProfilePic(
+          {required final UserModel updatedShowroom,
+          required final Uint8List profilePicBytes}) =
+      _$UpdateShowroomWithProfilePicImpl;
+
+  UserModel get updatedShowroom;
+  Uint8List get profilePicBytes;
+
+  /// Create a copy of ShowroomEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateShowroomWithProfilePicImplCopyWith<
+          _$UpdateShowroomWithProfilePicImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$FetchCurrentUserShowroomImplCopyWith<$Res> {
+  factory _$$FetchCurrentUserShowroomImplCopyWith(
+          _$FetchCurrentUserShowroomImpl value,
+          $Res Function(_$FetchCurrentUserShowroomImpl) then) =
+      __$$FetchCurrentUserShowroomImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$FetchCurrentUserShowroomImplCopyWithImpl<$Res>
+    extends _$ShowroomEventCopyWithImpl<$Res, _$FetchCurrentUserShowroomImpl>
+    implements _$$FetchCurrentUserShowroomImplCopyWith<$Res> {
+  __$$FetchCurrentUserShowroomImplCopyWithImpl(
+      _$FetchCurrentUserShowroomImpl _value,
+      $Res Function(_$FetchCurrentUserShowroomImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of ShowroomEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$FetchCurrentUserShowroomImpl implements FetchCurrentUserShowroom {
+  const _$FetchCurrentUserShowroomImpl();
+
+  @override
+  String toString() {
+    return 'ShowroomEvent.fetchCurrentUserShowroom()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$FetchCurrentUserShowroomImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(
+            int? page, int? limit, String? userType, String? searchQuery)
+        fetchAllShowrooms,
+    required TResult Function(UserModel showroomData) addShowroom,
+    required TResult Function(UserModel showroomData, Uint8List profilePicBytes)
+        addShowroomWithProfilePic,
+    required TResult Function(UserModel updatedShowroom) updateShowroom,
+    required TResult Function(
+            UserModel updatedShowroom, Uint8List profilePicBytes)
+        updateShowroomWithProfilePic,
+    required TResult Function() fetchCurrentUserShowroom,
+  }) {
+    return fetchCurrentUserShowroom();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(
+            int? page, int? limit, String? userType, String? searchQuery)?
+        fetchAllShowrooms,
+    TResult? Function(UserModel showroomData)? addShowroom,
+    TResult? Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
+    TResult? Function(UserModel updatedShowroom)? updateShowroom,
+    TResult? Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult? Function()? fetchCurrentUserShowroom,
+  }) {
+    return fetchCurrentUserShowroom?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(
+            int? page, int? limit, String? userType, String? searchQuery)?
+        fetchAllShowrooms,
+    TResult Function(UserModel showroomData)? addShowroom,
+    TResult Function(UserModel showroomData, Uint8List profilePicBytes)?
+        addShowroomWithProfilePic,
+    TResult Function(UserModel updatedShowroom)? updateShowroom,
+    TResult Function(UserModel updatedShowroom, Uint8List profilePicBytes)?
+        updateShowroomWithProfilePic,
+    TResult Function()? fetchCurrentUserShowroom,
+    required TResult orElse(),
+  }) {
+    if (fetchCurrentUserShowroom != null) {
+      return fetchCurrentUserShowroom();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllShowrooms value) fetchAllShowrooms,
+    required TResult Function(AddShowroom value) addShowroom,
+    required TResult Function(AddShowroomWithProfilePic value)
+        addShowroomWithProfilePic,
+    required TResult Function(UpdateShowroom value) updateShowroom,
+    required TResult Function(UpdateShowroomWithProfilePic value)
+        updateShowroomWithProfilePic,
+    required TResult Function(FetchCurrentUserShowroom value)
+        fetchCurrentUserShowroom,
+  }) {
+    return fetchCurrentUserShowroom(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllShowrooms value)? fetchAllShowrooms,
+    TResult? Function(AddShowroom value)? addShowroom,
+    TResult? Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
+    TResult? Function(UpdateShowroom value)? updateShowroom,
+    TResult? Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult? Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
+  }) {
+    return fetchCurrentUserShowroom?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllShowrooms value)? fetchAllShowrooms,
+    TResult Function(AddShowroom value)? addShowroom,
+    TResult Function(AddShowroomWithProfilePic value)?
+        addShowroomWithProfilePic,
+    TResult Function(UpdateShowroom value)? updateShowroom,
+    TResult Function(UpdateShowroomWithProfilePic value)?
+        updateShowroomWithProfilePic,
+    TResult Function(FetchCurrentUserShowroom value)? fetchCurrentUserShowroom,
+    required TResult orElse(),
+  }) {
+    if (fetchCurrentUserShowroom != null) {
+      return fetchCurrentUserShowroom(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class FetchCurrentUserShowroom implements ShowroomEvent {
+  const factory FetchCurrentUserShowroom() = _$FetchCurrentUserShowroomImpl;
 }
 
 /// @nodoc

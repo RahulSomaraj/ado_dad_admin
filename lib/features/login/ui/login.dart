@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
 import 'package:ado_dad_admin/features/widgets/input_decoration.dart';
@@ -18,49 +19,115 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _obscureText = true;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(0),
-          ),
-          child: Container(
-            color: Colors.white,
-            width: 500,
-            padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 25),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    "assets/images/logo.png",
-                    height: 40,
+      backgroundColor: AppColors.scaffoldColor,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          double width = constraints.maxWidth;
+
+          // if (width < 768) {
+          //   // For mobile screens: Show nothing or a message
+          //   return const Center(
+          //     child: Text(
+          //       "Please use a tablet or desktop to access the admin panel.",
+          //       textAlign: TextAlign.center,
+          //       style: TextStyle(fontSize: 18),
+          //     ),
+          //   );
+          // }
+
+          // iPad and desktop
+          double cardWidth = width >= 1024 ? 600 : 500;
+
+          return Center(
+            child: Card(
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(0),
+              ),
+              child: Container(
+                color: Colors.white,
+                width: cardWidth,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 100, horizontal: 25),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        "assets/images/ado-dad-logo.png",
+                        height: 100,
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        "Login",
+                        style: TextStyle(
+                            fontSize: 25, fontWeight: FontWeight.bold),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildUsername(),
+                      const SizedBox(height: 16),
+                      _buildPassword(),
+                      const SizedBox(height: 20),
+                      _buildLoginBtnn(),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Login",
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildUsername(),
-                  const SizedBox(height: 16),
-                  _buildPassword(),
-                  const SizedBox(height: 20),
-                  _buildLoginBtnn(),
-                ],
+                ),
               ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     backgroundColor: AppColors.scaffoldColor,
+  //     body: Center(
+  //       child: Card(
+  //         elevation: 4,
+  //         shape: RoundedRectangleBorder(
+  //           borderRadius: BorderRadius.circular(0),
+  //         ),
+  //         child: Container(
+  //           color: Colors.white,
+  //           width: 500,
+  //           padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 25),
+  //           child: Form(
+  //             key: _formKey,
+  //             child: Column(
+  //               mainAxisSize: MainAxisSize.min,
+  //               crossAxisAlignment: CrossAxisAlignment.center,
+  //               children: [
+  //                 Image.asset(
+  //                   "assets/images/ado-dad-logo.png",
+  //                   height: 100,
+  //                 ),
+  //                 const SizedBox(height: 20),
+  //                 const Text(
+  //                   "Login",
+  //                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+  //                 ),
+  //                 const SizedBox(height: 20),
+  //                 _buildUsername(),
+  //                 const SizedBox(height: 16),
+  //                 _buildPassword(),
+  //                 const SizedBox(height: 20),
+  //                 _buildLoginBtnn(),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   TextFormField _buildUsername() {
     return TextFormField(
@@ -139,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
+              backgroundColor: AppColors.logoColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

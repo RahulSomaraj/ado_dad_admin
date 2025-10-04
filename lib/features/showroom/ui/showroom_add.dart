@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ShowroomAdd extends StatefulWidget {
   const ShowroomAdd({super.key});
@@ -19,7 +22,82 @@ class _ShowroomAddState extends State<ShowroomAdd> {
   String _phone = '';
   String _password = '';
 
+  // Profile picture state
+  Uint8List? _profilePicBytes;
+
+  // Password visibility state
+  bool _isPasswordVisible = false;
+
+  /// Validate password strength
+  String? _validatePasswordStrength(String password) {
+    if (password.isEmpty) {
+      return null; // Let required validation handle empty passwords
+    }
+
+    List<String> errors = [];
+
+    // Check for uppercase letter
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      errors.add('uppercase letter');
+    }
+
+    // Check for lowercase letter
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      errors.add('lowercase letter');
+    }
+
+    // Check for number
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      errors.add('number');
+    }
+
+    // Check for special character
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      errors.add('special character');
+    }
+
+    // Check minimum length
+    if (password.length < 6) {
+      errors.add('at least 6 characters');
+    }
+
+    if (errors.isNotEmpty) {
+      return 'Password must contain ${errors.join(', ')}';
+    }
+
+    return null;
+  }
+
+  Future<void> _pickProfilePicture() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 80,
+    );
+
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _profilePicBytes = bytes;
+      });
+    }
+  }
+
   void _addShowroom() {
+    // Validate password strength first
+    String? strengthError = _validatePasswordStrength(_password.trim());
+    if (strengthError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(strengthError),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     if (_showroomFormKey.currentState!.validate()) {
       _showroomFormKey.currentState!.save();
 
@@ -29,17 +107,25 @@ class _ShowroomAddState extends State<ShowroomAdd> {
           email: _email,
           phoneNumber: _phone,
           password: _password,
-          type: 'SR');
+          userType: 'SR');
 
-      context.read<ShowroomBloc>().add(
-            ShowroomEvent.addShowroom(showroomData: newShowroom),
-          );
+      if (_profilePicBytes != null) {
+        // Add showroom with profile picture
+        context
+            .read<ShowroomBloc>()
+            .add(ShowroomEvent.addShowroomWithProfilePic(
+              showroomData: newShowroom,
+              profilePicBytes: _profilePicBytes!,
+            ));
+      } else {
+        // Add showroom without profile picture
+        context.read<ShowroomBloc>().add(
+              ShowroomEvent.addShowroom(showroomData: newShowroom),
+            );
+      }
 
-      context
-          .read<ShowroomBloc>()
-          .add(ShowroomEvent.updateShowroom(updatedShowroom: newShowroom));
-
-      Future.delayed(const Duration(milliseconds: 500), () {
+      // Show success popup safely after frame
+      WidgetsBinding.instance.addPostFrameCallback((_) {
         _showSuccessPopup(context, "Showroom has been added successfully.");
       });
     }
@@ -68,19 +154,33 @@ class _ShowroomAddState extends State<ShowroomAdd> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ShowroomBloc, ShowroomState>(
-      builder: (context, state) {
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              _buildHeaderSection(),
-              const SizedBox(height: 30),
-              _buildShowroomForm(state),
-            ],
-          ),
-        );
+    return BlocListener<ShowroomBloc, ShowroomState>(
+      listener: (context, state) {
+        if (state is ShowroomError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        } else if (state is ShowroomAddedSuccess) {
+          _showSuccessPopup(context, state.message);
+        }
       },
+      child: BlocBuilder<ShowroomBloc, ShowroomState>(
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 30),
+                _buildShowroomForm(state),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -89,14 +189,15 @@ class _ShowroomAddState extends State<ShowroomAdd> {
       padding: const EdgeInsets.all(15),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.black,
+          color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.blackColor),
               onPressed: () {
                 context.pop();
                 context.read<ShowroomBloc>().add(FetchAllShowrooms());
@@ -107,7 +208,7 @@ class _ShowroomAddState extends State<ShowroomAdd> {
               child: Text(
                 "Add Showroom",
                 style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.blackColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
@@ -124,6 +225,7 @@ class _ShowroomAddState extends State<ShowroomAdd> {
         width: 500,
         child: Card(
           elevation: 5,
+          color: AppColors.primaryColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           child: Padding(
@@ -143,7 +245,9 @@ class _ShowroomAddState extends State<ShowroomAdd> {
                       isPhone: true),
                   const SizedBox(height: 15),
                   _buildFormField("Password", "", (value) => _password = value!,
-                      obscureText: true),
+                      isPassword: true),
+                  const SizedBox(height: 15),
+                  _buildProfilePictureSection(),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -155,8 +259,8 @@ class _ShowroomAddState extends State<ShowroomAdd> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: state is ShowroomLoading ? null : _addShowroom,
-                      child: state is ShowroomLoading
+                      onPressed: state is AddingShowroom ? null : _addShowroom,
+                      child: state is AddingShowroom
                           ? const SizedBox(
                               height: 20,
                               width: 20,
@@ -179,13 +283,29 @@ class _ShowroomAddState extends State<ShowroomAdd> {
 
   Widget _buildFormField(
       String label, String initialValue, Function(String?) onSaved,
-      {bool isEmail = false, bool isPhone = false, bool obscureText = false}) {
+      {bool isEmail = false,
+      bool isPhone = false,
+      bool obscureText = false,
+      bool isPassword = false}) {
     return TextFormField(
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              )
+            : null,
       ),
-      obscureText: obscureText,
+      obscureText: isPassword ? !_isPasswordVisible : obscureText,
       keyboardType: isEmail
           ? TextInputType.emailAddress
           : (isPhone ? TextInputType.phone : TextInputType.text),
@@ -201,9 +321,73 @@ class _ShowroomAddState extends State<ShowroomAdd> {
         if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value)) {
           return "Enter a valid phone number (10+ digits)";
         }
+
+        // For password field, validate password strength
+        if (isPassword) {
+          String? strengthError = _validatePasswordStrength(value.trim());
+          if (strengthError != null) {
+            return strengthError;
+          }
+        }
+
         return null;
       },
       onSaved: onSaved,
+    );
+  }
+
+  Widget _buildProfilePictureSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Profile Picture",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Center(
+          child: GestureDetector(
+            onTap: _pickProfilePicture,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade400),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: _profilePicBytes != null
+                  ? ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.memory(
+                        _profilePicBytes!,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.add_a_photo,
+                          size: 40,
+                          color: Colors.grey.shade600,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          "Add Photo",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

@@ -1,8 +1,8 @@
 class VehicleCompanyModel {
   final String id;
-  final String name;
-  final String originCountry;
-  final String vehicleType;
+  final String? name;
+  final String? originCountry;
+  final String? vehicleType;
   final String? logo;
   final bool? isDeleted;
   final DateTime? createdAt;
@@ -11,9 +11,9 @@ class VehicleCompanyModel {
 
   VehicleCompanyModel({
     required this.id,
-    required this.name,
-    required this.originCountry,
-    required this.vehicleType,
+    this.name,
+    this.originCountry,
+    this.vehicleType,
     this.logo,
     this.isDeleted,
     this.createdAt,

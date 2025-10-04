@@ -3,7 +3,7 @@ import 'package:ado_dad_admin/models/vehicle_company_model.dart';
 import 'package:ado_dad_admin/models/vehicle_detail_model.dart';
 import 'package:ado_dad_admin/models/vehicle_variant_model.dart';
 
-class VehicleModel {
+class VehicleModel1 {
   final String id;
   final String name;
   final String modelName;
@@ -19,7 +19,7 @@ class VehicleModel {
   final DateTime? createdAt;
   final DateTime? updatedAt;
 
-  VehicleModel({
+  VehicleModel1({
     required this.id,
     required this.name,
     required this.modelName,
@@ -36,8 +36,8 @@ class VehicleModel {
     this.updatedAt,
   });
 
-  factory VehicleModel.fromJson(Map<String, dynamic> json) {
-    return VehicleModel(
+  factory VehicleModel1.fromJson(Map<String, dynamic> json) {
+    return VehicleModel1(
       id: json['_id'] ?? '',
       name: json['name'] ?? '',
       modelName: json['modelName'] ?? '',
