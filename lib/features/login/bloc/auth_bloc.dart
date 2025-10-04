@@ -36,7 +36,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             "Only Admin and Super Admin users can log in."));
       }
     } catch (e) {
-      emit(AuthState.failure('Admin & Super Admin only can login'));
+      if (e is InvalidCredentialsException) {
+        emit(AuthState.failure('Invalid Username or Password'));
+      } else if (e is UserTypeRestrictedException) {
+        emit(AuthState.failure('Only Admin and Super Admin users can log in.'));
+      } else {
+        emit(AuthState.failure('Invalid Username or Password'));
+      }
     }
   }
 

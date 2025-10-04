@@ -5,6 +5,7 @@ import 'package:ado_dad_admin/features/banner/bloc/banner_bloc.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
+import 'package:ado_dad_admin/features/users/bloc/user_ads_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/bloc/bloc/vehicle_variant_bloc.dart';
@@ -39,6 +40,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) =>
               UserBloc(userRepository: UserRepository())..add(FetchAllUsers()),
+        ),
+        BlocProvider(
+          create: (context) => UserAdsBloc(userRepository: UserRepository()),
         ),
         BlocProvider(
           create: (context) =>

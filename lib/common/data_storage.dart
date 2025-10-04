@@ -40,6 +40,25 @@ Future<void> saveLoginResponse(LoginResponse loginResponse) async {
   await sharedPrefs.setString('refreshToken', loginResponse.refreshToken);
   await sharedPrefs.setString('userType', loginResponse.userType);
   await sharedPrefs.setString('email', loginResponse.email);
+
+  // Save phone number if available
+  if (loginResponse.phoneNumber != null &&
+      loginResponse.phoneNumber!.isNotEmpty) {
+    await sharedPrefs.setString('phoneNumber', loginResponse.phoneNumber!);
+  }
+
+  // Save profile picture if available
+  print('🔍 DataStorage: Saving login response');
+  print(
+      '🔍 DataStorage: Profile Pic from login: "${loginResponse.profilePic}"');
+
+  if (loginResponse.profilePic != null &&
+      loginResponse.profilePic!.isNotEmpty) {
+    await sharedPrefs.setString('profilePicture', loginResponse.profilePic!);
+    print('🔍 DataStorage: Profile picture saved to SharedPreferences');
+  } else {
+    print('🔍 DataStorage: No profile picture to save');
+  }
 }
 
 /// Retrieve stored token
@@ -67,6 +86,11 @@ Future<String?> getUserType() async {
   return SharedPrefs().getString('userType');
 }
 
+/// Retrieve stored user phone number
+Future<String?> getUserPhoneNumber() async {
+  return SharedPrefs().getString('phoneNumber');
+}
+
 /// Retrieve stored profile picture (if applicable)
 Future<String?> getUserProfilePicture() async {
   return SharedPrefs().getString('profilePicture');
@@ -80,5 +104,6 @@ Future<void> clearUserData() async {
   await sharedPrefs.remove('name');
   await sharedPrefs.remove('userType');
   await sharedPrefs.remove('email');
+  await sharedPrefs.remove('phoneNumber');
   await sharedPrefs.remove('profilePicture');
 }

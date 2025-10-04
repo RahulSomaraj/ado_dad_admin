@@ -4,7 +4,9 @@ class LoginResponse {
   final String refreshToken;
   final String userName;
   final String email;
+  final String? phoneNumber;
   final String userType;
+  final String? profilePic;
 
   LoginResponse({
     required this.id,
@@ -12,7 +14,9 @@ class LoginResponse {
     required this.refreshToken,
     required this.userName,
     required this.email,
+    this.phoneNumber,
     required this.userType,
+    this.profilePic,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
@@ -22,7 +26,10 @@ class LoginResponse {
       refreshToken: json['refreshToken'],
       userName: json['userName'],
       email: json['email'],
-      userType: json['userType'],
+      phoneNumber: json['phoneNumber'],
+      userType: json['type'] ??
+          json['userType'], // Try 'type' first, fallback to 'userType'
+      profilePic: json['profilePic'] ?? json['profilePicture'],
     );
   }
 }

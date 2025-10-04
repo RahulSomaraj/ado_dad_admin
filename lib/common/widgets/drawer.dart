@@ -24,19 +24,80 @@ class _AdminDrawerState extends State<AdminDrawer> {
   @override
   void initState() {
     super.initState();
-    _loadSelectedIndex();
   }
 
-  Future<void> _loadSelectedIndex() async {
-    final prefs = await SharedPreferences.getInstance();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateSelectedIndexFromRoute();
+  }
+
+  void _updateSelectedIndexFromRoute() {
+    final currentRoute = GoRouterState.of(context).uri.toString();
     setState(() {
-      selectedIndex = prefs.getInt('selected_index') ?? 0;
+      selectedIndex = _getIndexFromRoute(currentRoute);
     });
+  }
+
+  int _getIndexFromRoute(String route) {
+    if (widget.userType == "AD" || widget.userType == "SA") {
+      switch (route) {
+        case '/dashboard':
+          return 0;
+        case '/profile':
+          return 1;
+        case '/users':
+        case '/add-user':
+        case '/edit-user':
+          return 2;
+        case '/vehicle-manufactures':
+        case '/add-vehiclemanufacturer':
+        case '/edit-vehicle_manufacturer':
+        case '/view-vehicle_manufacturer':
+          return 3;
+        case '/vehicle-models':
+        case '/add-vehiclemodel':
+        case '/edit-vehicle_model':
+        case '/view-vehicle_model':
+          return 4;
+        case '/showrooms':
+        case '/add-showroom':
+        case '/edit-showroom':
+        case '/view-showroom':
+          return 5;
+        case '/reports':
+          return 6;
+        case '/notifications':
+          return 7;
+        case '/banners':
+        case '/upload-banners':
+        case '/edit-banner':
+          return 8;
+        default:
+          return 0; // Default to dashboard
+      }
+    } else {
+      switch (route) {
+        case '/dashboard':
+          return 0;
+        case '/profile':
+          return 1;
+        case '/create-ad':
+          return 2;
+        default:
+          return 0; // Default to dashboard
+      }
+    }
   }
 
   Future<void> _saveSelectedIndex(int index) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selected_index', index);
+  }
+
+  Future<void> _clearSelectedIndex() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('selected_index');
   }
 
   @override
@@ -64,6 +125,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Initial) {
+          _clearSelectedIndex();
           context.replace('/');
         }
       },

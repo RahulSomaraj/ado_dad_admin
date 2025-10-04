@@ -13,6 +13,7 @@ import 'package:ado_dad_admin/features/showroom/ui/showroom_list.dart';
 import 'package:ado_dad_admin/features/users/ui/add_user.dart';
 import 'package:ado_dad_admin/features/users/ui/user_edit.dart';
 import 'package:ado_dad_admin/features/users/ui/user_list.dart';
+import 'package:ado_dad_admin/features/users/ui/user_view.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_add.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_edit.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_list.dart';
@@ -69,6 +70,13 @@ class AppRoutes {
             pageBuilder: (context, state) {
               final user = state.extra as UserModel;
               return NoTransitionPage(child: EditUser(user: user));
+            },
+          ),
+          GoRoute(
+            path: '/view-user',
+            pageBuilder: (context, state) {
+              final user = state.extra as UserModel;
+              return NoTransitionPage(child: UserView(user: user));
             },
           ),
           GoRoute(

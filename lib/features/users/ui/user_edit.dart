@@ -28,6 +28,14 @@ class _EditUserState extends State<EditUser> {
   Uint8List? _profilePicBytes;
   String? _currentProfilePicUrl;
 
+  // Password change state
+  bool _showPasswordSection = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   /// Short form to full form mapping
   final Map<String, String> _userTypeMap = {
     'SA': "Super Admin",
@@ -46,6 +54,13 @@ class _EditUserState extends State<EditUser> {
     _currentProfilePicUrl = widget.user.profilePic;
   }
 
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
   /// Convert full form to short code for API request
   String _getShortForm(String fullType) {
     return _userTypeMap.entries
@@ -54,6 +69,45 @@ class _EditUserState extends State<EditUser> {
           orElse: () => const MapEntry('NU', "Normal User"),
         )
         .key;
+  }
+
+  /// Validate password strength
+  String? _validatePasswordStrength(String password) {
+    if (password.isEmpty)
+      return null; // Let required validation handle empty passwords
+
+    List<String> errors = [];
+
+    // Check for uppercase letter
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      errors.add('uppercase letter');
+    }
+
+    // Check for lowercase letter
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      errors.add('lowercase letter');
+    }
+
+    // Check for number
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      errors.add('number');
+    }
+
+    // Check for special character
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      errors.add('special character');
+    }
+
+    // Check minimum length
+    if (password.length < 6) {
+      errors.add('at least 6 characters');
+    }
+
+    if (errors.isNotEmpty) {
+      return 'Password must contain ${errors.join(', ')}';
+    }
+
+    return null;
   }
 
   Future<void> _pickProfilePicture() async {
@@ -74,6 +128,33 @@ class _EditUserState extends State<EditUser> {
   }
 
   void _updateUser() {
+    // Validate password strength and matching if password section is shown and has content
+    if (_showPasswordSection && _passwordController.text.isNotEmpty) {
+      // Check password strength
+      String? strengthError =
+          _validatePasswordStrength(_passwordController.text.trim());
+      if (strengthError != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(strengthError),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Check password matching
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Password and Confirm Password do not match"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
     if (_userEditFormKey.currentState!.validate()) {
       _userEditFormKey.currentState!.save();
 
@@ -84,22 +165,33 @@ class _EditUserState extends State<EditUser> {
         phoneNumber: _phone,
         userType: _getShortForm(_userType),
         profilePic: _currentProfilePicUrl,
+        password: _showPasswordSection && _passwordController.text.isNotEmpty
+            ? _passwordController.text.trim()
+            : null, // Only include password if it's being changed
       );
 
+      print(
+          '🔍 UserEdit: Profile pic bytes: ${_profilePicBytes != null ? "Has new image" : "No new image"}');
+      print('🔍 UserEdit: Current profile pic URL: "$_currentProfilePicUrl"');
+
       if (_profilePicBytes != null) {
-        // Update user with new profile picture
+        // User is uploading a new profile picture
+        print('🔍 UserEdit: Using profile picture upload path');
         context.read<UserBloc>().add(UserEvent.updateUserWithProfilePic(
               updatedUser: updatedUser,
               profilePicBytes: _profilePicBytes!,
             ));
       } else {
-        // Update user without changing profile picture
+        // User is not changing profile picture (keep existing or no profile picture)
+        // Always use the regular update path - it handles existing profilePic URLs correctly
+        print('🔍 UserEdit: Using regular update path');
         context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
       }
     }
   }
 
   void _showSuccessPopup(BuildContext context, String message) {
+    print('🔍 UserEdit: Showing success popup with message: "$message"');
     showDialog(
       context: context,
       builder: (context) {
@@ -109,6 +201,8 @@ class _EditUserState extends State<EditUser> {
           actions: [
             TextButton(
               onPressed: () {
+                print(
+                    '🔍 UserEdit: Success popup OK clicked, refreshing users list');
                 // Explicitly refresh data before navigating
                 context.read<UserBloc>().add(const FetchAllUsers());
                 context.pop();
@@ -126,9 +220,14 @@ class _EditUserState extends State<EditUser> {
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
       listener: (context, state) {
+        print('🔍 UserEdit: BlocListener received state: ${state.runtimeType}');
         if (state is UserUpdated) {
+          print(
+              '🔍 UserEdit: UserUpdated state received, showing success popup');
           _showSuccessPopup(
               context, "User details have been updated successfully.");
+        } else if (state is UserError) {
+          print('🔍 UserEdit: UserError state received: ${state.message}');
         }
       },
       child: BlocBuilder<UserBloc, UserState>(
@@ -218,9 +317,11 @@ class _EditUserState extends State<EditUser> {
                       "Phone Number", _phone, (value) => _phone = value!,
                       isPhone: true),
                   const SizedBox(height: 15),
+                  _buildDropdownField("User Type", _userType),
+                  const SizedBox(height: 15),
                   _buildProfilePictureSection(),
                   const SizedBox(height: 15),
-                  _buildDropdownField("User Type", _userType),
+                  _buildChangePasswordSection(),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -365,6 +466,112 @@ class _EditUserState extends State<EditUser> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildChangePasswordSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Change Password Header
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _showPasswordSection = !_showPasswordSection;
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lock_outline,
+                  color: Colors.grey.shade600,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  "Change Password",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  _showPasswordSection ? Icons.expand_less : Icons.expand_more,
+                  color: Colors.grey.shade600,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Password Fields (shown when expanded)
+        if (_showPasswordSection) ...[
+          const SizedBox(height: 15),
+          _buildPasswordField(
+              "New Password", _passwordController, _isPasswordVisible, (value) {
+            setState(() {
+              _isPasswordVisible = value;
+            });
+          }),
+          const SizedBox(height: 15),
+          _buildPasswordField("Confirm Password", _confirmPasswordController,
+              _isConfirmPasswordVisible, (value) {
+            setState(() {
+              _isConfirmPasswordVisible = value;
+            });
+          }),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildPasswordField(String label, TextEditingController controller,
+      bool isVisible, Function(bool) onToggleVisibility) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey,
+          ),
+          onPressed: () => onToggleVisibility(!isVisible),
+        ),
+      ),
+      obscureText: !isVisible,
+      validator: (value) {
+        if (_showPasswordSection) {
+          if (value == null || value.trim().isEmpty) {
+            return "$label is required";
+          }
+
+          // For "New Password" field, validate password strength
+          if (label == "New Password") {
+            String? strengthError = _validatePasswordStrength(value.trim());
+            if (strengthError != null) {
+              return strengthError;
+            }
+          }
+
+          // For "Confirm Password" field, check if it matches the new password
+          if (label == "Confirm Password") {
+            if (value.trim() != _passwordController.text.trim()) {
+              return "Passwords do not match";
+            }
+          }
+        }
+        return null;
+      },
     );
   }
 }

@@ -57,10 +57,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   Future<void> _onUpdateUser(UpdateUser event, Emitter<UserState> emit) async {
     emit(UserLoading());
     try {
+      print(
+          '🔍 UserBloc: Starting user update for user ID: ${event.updatedUser.id}');
       await userRepository.updateUser(event.updatedUser);
+      print('✅ UserBloc: User update completed successfully');
       emit(const UserState.updated());
     } catch (e) {
-      emit(UserState.error("Failed to update user"));
+      print('❌ UserBloc: User update failed with error: $e');
+      emit(UserState.error("Failed to update user: $e"));
     }
   }
 

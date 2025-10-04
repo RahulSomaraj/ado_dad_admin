@@ -26,6 +26,9 @@ class _AddUserState extends State<AddUser> {
   // Profile picture state
   Uint8List? _profilePicBytes;
 
+  // Password visibility state
+  bool _isPasswordVisible = false;
+
   // String _name = '';
   // String _email = '';
   // String _phone = '';
@@ -228,12 +231,12 @@ class _AddUserState extends State<AddUser> {
                   _buildFormField(
                     "Password",
                     _passwordController,
-                    obscureText: true,
+                    isPassword: true,
                   ),
                   const SizedBox(height: 15),
-                  _buildProfilePictureSection(),
-                  const SizedBox(height: 15),
                   _buildDropdownField("User Type", _userType),
+                  const SizedBox(height: 15),
+                  _buildProfilePictureSection(),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -282,15 +285,29 @@ class _AddUserState extends State<AddUser> {
     bool isEmail = false,
     bool isPhone = false,
     bool obscureText = false,
+    bool isPassword = false,
   }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: Colors.grey,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              )
+            : null,
       ),
       // initialValue: initialValue,
-      obscureText: obscureText,
+      obscureText: isPassword ? !_isPasswordVisible : obscureText,
       keyboardType: isEmail
           ? TextInputType.emailAddress
           : (isPhone ? TextInputType.phone : TextInputType.text),

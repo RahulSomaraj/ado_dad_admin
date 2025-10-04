@@ -438,7 +438,7 @@ class _UsersState extends State<Users> {
       ),
       DataColumn(
         label: Container(
-          width: isTablet ? 80 : 100,
+          width: isTablet ? 120 : 140,
           child: const Text(
             'Actions',
             style: TextStyle(fontWeight: FontWeight.bold),
@@ -555,7 +555,7 @@ class _UsersState extends State<Users> {
         ),
       )),
       DataCell(Container(
-        width: isTablet ? 80 : 100,
+        width: isTablet ? 120 : 140,
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -564,6 +564,13 @@ class _UsersState extends State<Users> {
                   color: Color.fromARGB(255, 59, 59, 59)),
               onPressed: () {
                 context.push('/edit-user', extra: user);
+              },
+            ),
+            IconButton(
+              icon: const Icon(Icons.visibility,
+                  color: Color.fromARGB(255, 20, 20, 20)),
+              onPressed: () {
+                context.push('/view-user', extra: user);
               },
             ),
             IconButton(
