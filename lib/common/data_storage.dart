@@ -40,6 +40,7 @@ Future<void> saveLoginResponse(LoginResponse loginResponse) async {
   await sharedPrefs.setString('refreshToken', loginResponse.refreshToken);
   await sharedPrefs.setString('userType', loginResponse.userType);
   await sharedPrefs.setString('email', loginResponse.email);
+  await sharedPrefs.setString('userId', loginResponse.id);
 
   // Save phone number if available
   if (loginResponse.phoneNumber != null &&
@@ -81,6 +82,11 @@ Future<String?> getUserEmail() async {
   return SharedPrefs().getString('email');
 }
 
+/// Retrieve stored user ID
+Future<String?> getUserId() async {
+  return SharedPrefs().getString('userId');
+}
+
 /// Retrieve stored user type
 Future<String?> getUserType() async {
   return SharedPrefs().getString('userType');
@@ -104,6 +110,7 @@ Future<void> clearUserData() async {
   await sharedPrefs.remove('name');
   await sharedPrefs.remove('userType');
   await sharedPrefs.remove('email');
+  await sharedPrefs.remove('userId');
   await sharedPrefs.remove('phoneNumber');
   await sharedPrefs.remove('profilePicture');
 }

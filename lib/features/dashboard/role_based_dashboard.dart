@@ -1,6 +1,7 @@
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/dashboard/admin_ads_dashboard.dart';
 import 'package:ado_dad_admin/features/dashboard/admin_dash.dart';
+import 'package:ado_dad_admin/features/dashboard/showroom_dashboard.dart';
 import 'package:flutter/material.dart';
 
 class RoleBasedDashboard extends StatefulWidget {
@@ -44,6 +45,8 @@ class _RoleBasedDashboardState extends State<RoleBasedDashboard> {
         return const AdminDashboard();
       case 'AD': // Admin
         return const AdminAdsDashboard();
+      case 'SR': // Showroom
+        return const ShowroomDashboard();
       default:
         // Fallback to Super Admin dashboard for any other user types
         return const AdminDashboard();

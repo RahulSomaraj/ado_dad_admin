@@ -1,9 +1,11 @@
+import 'dart:typed_data';
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
 class EditShowroom extends StatefulWidget {
   final UserModel showroomuser;
@@ -22,15 +24,119 @@ class _EditShowroomState extends State<EditShowroom> {
   late String _email;
   late String _phone;
 
+  // Profile picture state
+  Uint8List? _profilePicBytes;
+  String? _currentProfilePicUrl;
+
+  // Password change state
+  bool _showPasswordSection = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _name = widget.showroomuser.name;
     _email = widget.showroomuser.email;
     _phone = widget.showroomuser.phoneNumber;
+    _currentProfilePicUrl = widget.showroomuser.profilePic;
+  }
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
+  }
+
+  /// Validate password strength
+  String? _validatePasswordStrength(String password) {
+    if (password.isEmpty) {
+      return null; // Let required validation handle empty passwords
+    }
+
+    List<String> errors = [];
+
+    // Check for uppercase letter
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      errors.add('uppercase letter');
+    }
+
+    // Check for lowercase letter
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      errors.add('lowercase letter');
+    }
+
+    // Check for number
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      errors.add('number');
+    }
+
+    // Check for special character
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      errors.add('special character');
+    }
+
+    // Check minimum length
+    if (password.length < 6) {
+      errors.add('at least 6 characters');
+    }
+
+    if (errors.isNotEmpty) {
+      return 'Password must contain ${errors.join(', ')}';
+    }
+
+    return null;
+  }
+
+  Future<void> _pickProfilePicture() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 80,
+    );
+
+    if (pickedFile != null) {
+      final bytes = await pickedFile.readAsBytes();
+      setState(() {
+        _profilePicBytes = bytes;
+      });
+    }
   }
 
   void _updateShowroom() {
+    // Validate password strength and matching if password section is shown and has content
+    if (_showPasswordSection && _passwordController.text.isNotEmpty) {
+      // Check password strength
+      String? strengthError =
+          _validatePasswordStrength(_passwordController.text.trim());
+      if (strengthError != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(strengthError),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Check password matching
+      if (_passwordController.text != _confirmPasswordController.text) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Password and Confirm Password do not match"),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+    }
+
     if (_showroomEditFormKey.currentState!.validate()) {
       _showroomEditFormKey.currentState!.save();
 
@@ -40,10 +146,26 @@ class _EditShowroomState extends State<EditShowroom> {
         email: _email,
         phoneNumber: _phone,
         userType: 'SR',
+        profilePic: _currentProfilePicUrl,
+        password: _showPasswordSection && _passwordController.text.isNotEmpty
+            ? _passwordController.text.trim()
+            : null, // Only include password if it's being changed
       );
-      context
-          .read<ShowroomBloc>()
-          .add(UpdateShowroom(updatedShowroom: updatedShowroom));
+
+      if (_profilePicBytes != null) {
+        // Showroom is uploading a new profile picture
+        context
+            .read<ShowroomBloc>()
+            .add(ShowroomEvent.updateShowroomWithProfilePic(
+              updatedShowroom: updatedShowroom,
+              profilePicBytes: _profilePicBytes!,
+            ));
+      } else {
+        // Showroom is not changing profile picture (keep existing or no profile picture)
+        context
+            .read<ShowroomBloc>()
+            .add(UpdateShowroom(updatedShowroom: updatedShowroom));
+      }
     }
   }
 
@@ -154,6 +276,10 @@ class _EditShowroomState extends State<EditShowroom> {
                   _buildFormField(
                       "Phone Number", _phone, (value) => _phone = value!,
                       isPhone: true),
+                  const SizedBox(height: 15),
+                  _buildProfilePictureSection(),
+                  const SizedBox(height: 15),
+                  _buildChangePasswordSection(),
                   const SizedBox(height: 20),
                   SizedBox(
                     width: double.infinity,
@@ -215,6 +341,180 @@ class _EditShowroomState extends State<EditShowroom> {
         return null;
       },
       onSaved: onSaved,
+    );
+  }
+
+  Widget _buildProfilePictureSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Profile Picture",
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: _pickProfilePicture,
+          child: Container(
+            width: 120,
+            height: 120,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade400),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: _profilePicBytes != null
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.memory(
+                      _profilePicBytes!,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : _currentProfilePicUrl != null &&
+                        _currentProfilePicUrl!.isNotEmpty
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          _currentProfilePicUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _buildPlaceholder(),
+                        ),
+                      )
+                    : _buildPlaceholder(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          Icons.add_a_photo,
+          size: 40,
+          color: Colors.grey.shade600,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "Add Photo",
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey.shade600,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChangePasswordSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Change Password Header
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _showPasswordSection = !_showPasswordSection;
+            });
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.lock_outline,
+                  color: Colors.grey.shade600,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  "Change Password",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  _showPasswordSection ? Icons.expand_less : Icons.expand_more,
+                  color: Colors.grey.shade600,
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Password Fields (shown when expanded)
+        if (_showPasswordSection) ...[
+          const SizedBox(height: 15),
+          _buildPasswordField(
+              "New Password", _passwordController, _isPasswordVisible, (value) {
+            setState(() {
+              _isPasswordVisible = value;
+            });
+          }),
+          const SizedBox(height: 15),
+          _buildPasswordField("Confirm Password", _confirmPasswordController,
+              _isConfirmPasswordVisible, (value) {
+            setState(() {
+              _isConfirmPasswordVisible = value;
+            });
+          }),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildPasswordField(String label, TextEditingController controller,
+      bool isVisible, Function(bool) onToggleVisibility) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        suffixIcon: IconButton(
+          icon: Icon(
+            isVisible ? Icons.visibility : Icons.visibility_off,
+            color: Colors.grey,
+          ),
+          onPressed: () => onToggleVisibility(!isVisible),
+        ),
+      ),
+      obscureText: !isVisible,
+      validator: (value) {
+        if (_showPasswordSection) {
+          if (value == null || value.trim().isEmpty) {
+            return "$label is required";
+          }
+
+          // For "New Password" field, validate password strength
+          if (label == "New Password") {
+            String? strengthError = _validatePasswordStrength(value.trim());
+            if (strengthError != null) {
+              return strengthError;
+            }
+          }
+
+          // For "Confirm Password" field, check if it matches the new password
+          if (label == "Confirm Password") {
+            if (value.trim() != _passwordController.text.trim()) {
+              return "Passwords do not match";
+            }
+          }
+        }
+        return null;
+      },
     );
   }
 }

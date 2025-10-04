@@ -37,11 +37,11 @@ class AuthRepository {
         print('🔍 Auth: Login response received');
         print('🔍 Auth: Profile Pic: "${loginResponse.profilePic}"');
 
-        // Allow only Admin & Super Admin
-        final allowedTypes = ['AD', 'SA'];
+        // Allow Admin, Super Admin & Showroom users
+        final allowedTypes = ['AD', 'SA', 'SR'];
         if (!allowedTypes.contains(loginResponse.userType)) {
           throw UserTypeRestrictedException(
-              "Access Denied: Only Admin and Super Admin can log in.");
+              "Access Denied: Only Admin, Super Admin, and Showroom users can log in.");
         }
         await saveLoginResponse(loginResponse);
         print('🔍 Auth: Login response saved to SharedPreferences');

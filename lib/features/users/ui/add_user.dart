@@ -53,6 +53,46 @@ class _AddUserState extends State<AddUser> {
         .key;
   }
 
+  /// Validate password strength
+  String? _validatePasswordStrength(String password) {
+    if (password.isEmpty) {
+      return null; // Let required validation handle empty passwords
+    }
+
+    List<String> errors = [];
+
+    // Check for uppercase letter
+    if (!password.contains(RegExp(r'[A-Z]'))) {
+      errors.add('uppercase letter');
+    }
+
+    // Check for lowercase letter
+    if (!password.contains(RegExp(r'[a-z]'))) {
+      errors.add('lowercase letter');
+    }
+
+    // Check for number
+    if (!password.contains(RegExp(r'[0-9]'))) {
+      errors.add('number');
+    }
+
+    // Check for special character
+    if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      errors.add('special character');
+    }
+
+    // Check minimum length
+    if (password.length < 6) {
+      errors.add('at least 6 characters');
+    }
+
+    if (errors.isNotEmpty) {
+      return 'Password must contain ${errors.join(', ')}';
+    }
+
+    return null;
+  }
+
   Future<void> _pickProfilePicture() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(
@@ -71,6 +111,19 @@ class _AddUserState extends State<AddUser> {
   }
 
   void _addUser() {
+    // Validate password strength first
+    String? strengthError =
+        _validatePasswordStrength(_passwordController.text.trim());
+    if (strengthError != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(strengthError),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     if (_userFormKey.currentState!.validate()) {
       // _userFormKey.currentState!.save();
       final newUser = UserModel(
@@ -323,6 +376,15 @@ class _AddUserState extends State<AddUser> {
         if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value.trim())) {
           return "Enter a valid phone number (10+ digits)";
         }
+
+        // For password field, validate password strength
+        if (isPassword) {
+          String? strengthError = _validatePasswordStrength(value.trim());
+          if (strengthError != null) {
+            return strengthError;
+          }
+        }
+
         return null;
       },
       // onSaved: onSaved,

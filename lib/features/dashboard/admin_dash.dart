@@ -46,7 +46,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    "Dashboard",
+                    "Super Admin Dashboard",
                     style: TextStyle(
                       color: AppColors.blackColor,
                       fontSize: 18,

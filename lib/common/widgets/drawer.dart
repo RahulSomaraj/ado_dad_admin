@@ -76,6 +76,16 @@ class _AdminDrawerState extends State<AdminDrawer> {
         default:
           return 0; // Default to dashboard
       }
+    } else if (widget.userType == "SR") {
+      // Showroom users have limited access - only dashboard and profile
+      switch (route) {
+        case '/dashboard':
+          return 0;
+        case '/profile':
+          return 1;
+        default:
+          return 0; // Default to dashboard
+      }
     } else {
       switch (route) {
         case '/dashboard':
@@ -204,6 +214,15 @@ class _AdminDrawerState extends State<AdminDrawer> {
               'assets/images/notification-icon.png', "Notifications"),
           _buildDrawerItem(8, '/banners', 'assets/images/report-icon.png',
               "Banner Management"),
+        ],
+      );
+    } else if (widget.userType == "SR") {
+      // Showroom users have limited access - only dashboard and profile
+      return Column(
+        children: [
+          _buildDrawerItem(
+              0, '/dashboard', 'assets/images/dashboard-icon.png', "Dashboard"),
+          _buildDrawerItem(1, '/profile', 'assets/images/users.png', "Profile"),
         ],
       );
     } else {

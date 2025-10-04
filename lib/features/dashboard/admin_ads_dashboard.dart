@@ -96,7 +96,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           // ),
           const SizedBox(width: 16),
           Text(
-            "Dashboard",
+            "Admin Dashboard",
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,

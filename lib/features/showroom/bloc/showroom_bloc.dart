@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/repositories/showroom_rep.dart';
@@ -14,7 +15,10 @@ class ShowroomBloc extends Bloc<ShowroomEvent, ShowroomState> {
   ShowroomBloc({required this.showroomRepository}) : super(ShowroomInitial()) {
     on<FetchAllShowrooms>(_onFetchAllShowrooms);
     on<AddShowroom>(_onAddShowroom);
+    on<AddShowroomWithProfilePic>(_onAddShowroomWithProfilePic);
     on<UpdateShowroom>(_onUpdateShowroom);
+    on<UpdateShowroomWithProfilePic>(_onUpdateShowroomWithProfilePic);
+    on<FetchCurrentUserShowroom>(_onFetchCurrentUserShowroom);
   }
 
   Future<void> _onFetchAllShowrooms(
@@ -27,7 +31,7 @@ class ShowroomBloc extends Bloc<ShowroomEvent, ShowroomState> {
           limit: event.limit ?? 10,
           userType: event.userType ?? '',
           searchQuery: event.searchQuery ?? '');
-      print(userResponse.users);
+      // print(userResponse.users);
       emit(ShowroomState.loaded(
         showroomusers: userResponse.users,
         totalPages: userResponse.totalPages,
@@ -51,14 +55,84 @@ class ShowroomBloc extends Bloc<ShowroomEvent, ShowroomState> {
     }
   }
 
+  Future<void> _onAddShowroomWithProfilePic(
+      AddShowroomWithProfilePic event, Emitter<ShowroomState> emit) async {
+    emit(const ShowroomState.addingShowroom());
+    try {
+      // Upload profile picture to S3
+      final profilePicUrl = await showroomRepository.uploadImageToS3(
+        event.profilePicBytes,
+        'showroomProfilePic_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      if (profilePicUrl == null) {
+        throw Exception("Failed to upload profile picture");
+      }
+
+      // Create showroom with profile picture URL
+      final showroomWithProfilePic =
+          event.showroomData.copyWith(profilePic: profilePicUrl);
+      final responseMessage =
+          await showroomRepository.createShowroom(showroomWithProfilePic);
+      emit(ShowroomState.showroomAddedSuccess(responseMessage));
+      add(const FetchAllShowrooms());
+    } catch (e) {
+      emit(ShowroomState.error(e.toString()));
+    }
+  }
+
   Future<void> _onUpdateShowroom(
       UpdateShowroom event, Emitter<ShowroomState> emit) async {
     emit(const ShowroomState.loading());
     try {
       await showroomRepository.updateShowroom(event.updatedShowroom);
       emit(const ShowroomState.updated());
+      // Refresh the showroom list after successful update
+      add(const FetchAllShowrooms());
     } catch (e) {
       emit(ShowroomState.error("Failed to update showroom"));
+    }
+  }
+
+  Future<void> _onUpdateShowroomWithProfilePic(
+      UpdateShowroomWithProfilePic event, Emitter<ShowroomState> emit) async {
+    emit(const ShowroomState.loading());
+    try {
+      // Upload profile picture to S3
+      final profilePicUrl = await showroomRepository.uploadImageToS3(
+        event.profilePicBytes,
+        'showroomProfilePic_${DateTime.now().millisecondsSinceEpoch}',
+      );
+
+      if (profilePicUrl == null) {
+        throw Exception("Failed to upload profile picture");
+      }
+
+      // Update showroom with profile picture URL
+      final showroomWithProfilePic =
+          event.updatedShowroom.copyWith(profilePic: profilePicUrl);
+      await showroomRepository.updateShowroom(showroomWithProfilePic);
+      emit(const ShowroomState.updated());
+      // Refresh the showroom list after successful update
+      add(const FetchAllShowrooms());
+    } catch (e) {
+      emit(ShowroomState.error("Failed to update showroom"));
+    }
+  }
+
+  Future<void> _onFetchCurrentUserShowroom(
+      FetchCurrentUserShowroom event, Emitter<ShowroomState> emit) async {
+    emit(const ShowroomState.loading());
+
+    try {
+      final userResponse = await showroomRepository.fetchCurrentUserShowroom();
+      emit(ShowroomState.loaded(
+        showroomusers: userResponse.users,
+        totalPages: userResponse.totalPages,
+        currentPage: userResponse.currentPage,
+      ));
+    } catch (e) {
+      emit(ShowroomState.error("Failed to fetch your showroom information"));
     }
   }
 }

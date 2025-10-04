@@ -1,4 +1,5 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,21 @@ class _ShowroomState extends State<Showroom> {
     super.initState();
     // Fetch showrooms when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<ShowroomBloc>().add(const FetchAllShowrooms());
+      _fetchShowrooms();
     });
+  }
+
+  Future<void> _fetchShowrooms() async {
+    final userType = await getUserType();
+    if (mounted) {
+      if (userType == 'SR') {
+        // For SR users, fetch their own showroom information
+        context.read<ShowroomBloc>().add(const FetchCurrentUserShowroom());
+      } else {
+        // For admin users, fetch all showrooms
+        context.read<ShowroomBloc>().add(const FetchAllShowrooms());
+      }
+    }
   }
 
   @override

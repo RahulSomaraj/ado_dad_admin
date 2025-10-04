@@ -25,7 +25,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       // emit(AuthState.success(
       //     username: response.userName, userType: response.userType));
-      if (response.userType == 'SA' || response.userType == 'AD') {
+      if (response.userType == 'SA' ||
+          response.userType == 'AD' ||
+          response.userType == 'SR') {
         await saveLoginResponse(response);
         emit(AuthState.success(
           username: response.userName,
@@ -33,13 +35,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ));
       } else {
         emit(const AuthState.failure(
-            "Only Admin and Super Admin users can log in."));
+            "Only Admin, Super Admin, and Showroom users can log in."));
       }
     } catch (e) {
       if (e is InvalidCredentialsException) {
         emit(AuthState.failure('Invalid Username or Password'));
       } else if (e is UserTypeRestrictedException) {
-        emit(AuthState.failure('Only Admin and Super Admin users can log in.'));
+        emit(AuthState.failure(
+            'Only Admin, Super Admin, and Showroom users can log in.'));
       } else {
         emit(AuthState.failure('Invalid Username or Password'));
       }
