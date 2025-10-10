@@ -105,7 +105,7 @@ class ShowroomRepository {
     }
   }
 
-  Future<void> updateShowroom(UserModel showroomuser) async {
+  Future<UserModel> updateShowroom(UserModel showroomuser) async {
     try {
       final Map<String, dynamic> updateData = {
         'name': showroomuser.name,
@@ -122,14 +122,29 @@ class ShowroomRepository {
         updateData['profilePic'] = showroomuser.profilePic;
       }
 
+      // Include password if it's being changed
+      if (showroomuser.password != null && showroomuser.password!.isNotEmpty) {
+        updateData['password'] = showroomuser.password;
+      }
+
+      print('🔍 Debug - API Update Data: $updateData');
+
       final response =
           await _dio.put('/users/${showroomuser.id}', data: updateData);
 
+      print('🔍 Debug - API Response Status: ${response.statusCode}');
+      print('🔍 Debug - API Response Data: ${response.data}');
+
       if (response.statusCode == 200) {
+        // Return the updated user data from the server response
+        return UserModel.fromJson(response.data['user'] ?? response.data);
       } else {
         throw Exception("Failed to update user");
       }
     } on DioException catch (e) {
+      print('🔍 Debug - DioException: ${e.message}');
+      print('🔍 Debug - DioException Response: ${e.response?.data}');
+      print('🔍 Debug - DioException Status Code: ${e.response?.statusCode}');
       throw Exception(DioErrorHandler.handleError(e));
     }
   }

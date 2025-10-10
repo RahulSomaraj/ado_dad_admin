@@ -1,5 +1,6 @@
 class AdModel {
   final String id;
+  final String title;
   final String description;
   final int price;
   final List<String> images;
@@ -7,6 +8,9 @@ class AdModel {
   final String category;
   final bool isActive;
   final bool soldOut;
+  final bool isApproved;
+  final String? approvedBy;
+  final AdUser? approvedByUser;
   final DateTime postedAt;
   final DateTime updatedAt;
   final String postedBy;
@@ -15,9 +19,11 @@ class AdModel {
   final List<dynamic> commercialVehicleDetails;
   final List<dynamic> propertyDetails;
   final int? year;
+  final bool isFavorite;
 
   AdModel({
     required this.id,
+    required this.title,
     required this.description,
     required this.price,
     required this.images,
@@ -25,6 +31,9 @@ class AdModel {
     required this.category,
     required this.isActive,
     required this.soldOut,
+    required this.isApproved,
+    this.approvedBy,
+    this.approvedByUser,
     required this.postedAt,
     required this.updatedAt,
     required this.postedBy,
@@ -33,6 +42,7 @@ class AdModel {
     required this.commercialVehicleDetails,
     required this.propertyDetails,
     this.year,
+    required this.isFavorite,
   });
 
   factory AdModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +54,7 @@ class AdModel {
           '📄 commercialVehicleDetails type: ${json['commercialVehicleDetails'].runtimeType}');
       final result = AdModel(
         id: json['id']?.toString() ?? '',
+        title: json['title']?.toString() ?? '',
         description: json['description']?.toString() ?? '',
         price: (json['price'] is int)
             ? json['price']
@@ -55,6 +66,13 @@ class AdModel {
         category: json['category']?.toString() ?? '',
         isActive: json['isActive'] == true,
         soldOut: json['soldOut'] == true,
+        isApproved: json['isApproved'] == true,
+        approvedBy: json['approvedBy']?.toString(),
+        approvedByUser: (json['approvedByUser'] != null &&
+                json['approvedByUser'] is Map &&
+                json['approvedByUser'].isNotEmpty)
+            ? AdUser.fromJson(json['approvedByUser'])
+            : null,
         postedAt: DateTime.tryParse(json['postedAt']?.toString() ?? '') ??
             DateTime.now(),
         updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
@@ -74,6 +92,7 @@ class AdModel {
         year: (json['year'] is int)
             ? json['year']
             : int.tryParse(json['year']?.toString() ?? ''),
+        isFavorite: json['isFavorite'] == true,
       );
       print('✅ Successfully parsed AdModel for ID: ${json['id']}');
       return result;
@@ -87,6 +106,7 @@ class AdModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'title': title,
       'description': description,
       'price': price,
       'images': images,
@@ -94,6 +114,9 @@ class AdModel {
       'category': category,
       'isActive': isActive,
       'soldOut': soldOut,
+      'isApproved': isApproved,
+      'approvedBy': approvedBy,
+      'approvedByUser': approvedByUser?.toJson(),
       'postedAt': postedAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
       'postedBy': postedBy,
@@ -102,6 +125,7 @@ class AdModel {
       'commercialVehicleDetails': commercialVehicleDetails,
       'propertyDetails': propertyDetails,
       'year': year,
+      'isFavorite': isFavorite,
     };
   }
 }
@@ -110,11 +134,15 @@ class AdUser {
   final String id;
   final String name;
   final String email;
+  final String phone;
+  final String profilePic;
 
   AdUser({
     required this.id,
     required this.name,
     required this.email,
+    required this.phone,
+    required this.profilePic,
   });
 
   factory AdUser.fromJson(Map<String, dynamic> json) {
@@ -123,6 +151,8 @@ class AdUser {
         id: json['id']?.toString() ?? '',
         name: json['name']?.toString() ?? '',
         email: json['email']?.toString() ?? '',
+        phone: json['phone']?.toString() ?? '',
+        profilePic: json['profilePic']?.toString() ?? '',
       );
     } catch (e) {
       print('❌ Error parsing AdUser: $e');
@@ -136,6 +166,478 @@ class AdUser {
       'id': id,
       'name': name,
       'email': email,
+      'phone': phone,
+      'profilePic': profilePic,
+    };
+  }
+}
+
+class Manufacturer {
+  final String id;
+  final String name;
+  final String displayName;
+  final String originCountry;
+  final String description;
+  final String logo;
+  final String website;
+  final int foundedYear;
+  final String headquarters;
+  final bool isActive;
+  final bool isPremium;
+  final bool isDeleted;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  Manufacturer({
+    required this.id,
+    required this.name,
+    required this.displayName,
+    required this.originCountry,
+    required this.description,
+    required this.logo,
+    required this.website,
+    required this.foundedYear,
+    required this.headquarters,
+    required this.isActive,
+    required this.isPremium,
+    required this.isDeleted,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Manufacturer.fromJson(Map<String, dynamic> json) {
+    return Manufacturer(
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      displayName: json['displayName']?.toString() ?? '',
+      originCountry: json['originCountry']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      logo: json['logo']?.toString() ?? '',
+      website: json['website']?.toString() ?? '',
+      foundedYear: json['foundedYear'] ?? 0,
+      headquarters: json['headquarters']?.toString() ?? '',
+      isActive: json['isActive'] == true,
+      isPremium: json['isPremium'] == true,
+      isDeleted: json['isDeleted'] == true,
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'displayName': displayName,
+      'originCountry': originCountry,
+      'description': description,
+      'logo': logo,
+      'website': website,
+      'foundedYear': foundedYear,
+      'headquarters': headquarters,
+      'isActive': isActive,
+      'isPremium': isPremium,
+      'isDeleted': isDeleted,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+}
+
+class VehicleModel {
+  final String id;
+  final String name;
+  final String displayName;
+  final Manufacturer manufacturer;
+  final String vehicleType;
+  final int launchYear;
+  final String segment;
+  final String bodyType;
+  final List<String> images;
+  final List<String> fuelTypes;
+  final List<String> transmissionTypes;
+  final bool isActive;
+  final bool isDeleted;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  VehicleModel({
+    required this.id,
+    required this.name,
+    required this.displayName,
+    required this.manufacturer,
+    required this.vehicleType,
+    required this.launchYear,
+    required this.segment,
+    required this.bodyType,
+    required this.images,
+    required this.fuelTypes,
+    required this.transmissionTypes,
+    required this.isActive,
+    required this.isDeleted,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory VehicleModel.fromJson(Map<String, dynamic> json) {
+    return VehicleModel(
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      displayName: json['displayName']?.toString() ?? '',
+      manufacturer: Manufacturer.fromJson(json['manufacturer'] ?? {}),
+      vehicleType: json['vehicleType']?.toString() ?? '',
+      launchYear: json['launchYear'] ?? 0,
+      segment: json['segment']?.toString() ?? '',
+      bodyType: json['bodyType']?.toString() ?? '',
+      images: (json['images'] is List) ? List<String>.from(json['images']) : [],
+      fuelTypes: (json['fuelTypes'] is List)
+          ? List<String>.from(json['fuelTypes'])
+          : [],
+      transmissionTypes: (json['transmissionTypes'] is List)
+          ? List<String>.from(json['transmissionTypes'])
+          : [],
+      isActive: json['isActive'] == true,
+      isDeleted: json['isDeleted'] == true,
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'displayName': displayName,
+      'manufacturer': manufacturer.toJson(),
+      'vehicleType': vehicleType,
+      'launchYear': launchYear,
+      'segment': segment,
+      'bodyType': bodyType,
+      'images': images,
+      'fuelTypes': fuelTypes,
+      'transmissionTypes': transmissionTypes,
+      'isActive': isActive,
+      'isDeleted': isDeleted,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+}
+
+class VehicleVariant {
+  final String id;
+  final String name;
+  final String displayName;
+  final VehicleModelRef vehicleModel;
+  final FuelType fuelType;
+  final TransmissionType transmissionType;
+  final String featurePackage;
+  final EngineSpecs engineSpecs;
+  final PerformanceSpecs performanceSpecs;
+  final int seatingCapacity;
+  final int price;
+  final int exShowroomPrice;
+  final int onRoadPrice;
+  final List<String> colors;
+  final List<String> images;
+  final bool isActive;
+  final bool isLaunched;
+  final bool isDeleted;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  VehicleVariant({
+    required this.id,
+    required this.name,
+    required this.displayName,
+    required this.vehicleModel,
+    required this.fuelType,
+    required this.transmissionType,
+    required this.featurePackage,
+    required this.engineSpecs,
+    required this.performanceSpecs,
+    required this.seatingCapacity,
+    required this.price,
+    required this.exShowroomPrice,
+    required this.onRoadPrice,
+    required this.colors,
+    required this.images,
+    required this.isActive,
+    required this.isLaunched,
+    required this.isDeleted,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory VehicleVariant.fromJson(Map<String, dynamic> json) {
+    return VehicleVariant(
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      displayName: json['displayName']?.toString() ?? '',
+      vehicleModel: VehicleModelRef.fromJson(json['vehicleModel'] ?? {}),
+      fuelType: FuelType.fromJson(json['fuelType'] ?? {}),
+      transmissionType:
+          TransmissionType.fromJson(json['transmissionType'] ?? {}),
+      featurePackage: json['featurePackage']?.toString() ?? '',
+      engineSpecs: EngineSpecs.fromJson(json['engineSpecs'] ?? {}),
+      performanceSpecs:
+          PerformanceSpecs.fromJson(json['performanceSpecs'] ?? {}),
+      seatingCapacity: json['seatingCapacity'] ?? 0,
+      price: json['price'] ?? 0,
+      exShowroomPrice: json['exShowroomPrice'] ?? 0,
+      onRoadPrice: json['onRoadPrice'] ?? 0,
+      colors: (json['colors'] is List) ? List<String>.from(json['colors']) : [],
+      images: (json['images'] is List) ? List<String>.from(json['images']) : [],
+      isActive: json['isActive'] == true,
+      isLaunched: json['isLaunched'] == true,
+      isDeleted: json['isDeleted'] == true,
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'displayName': displayName,
+      'vehicleModel': vehicleModel.toJson(),
+      'fuelType': fuelType.toJson(),
+      'transmissionType': transmissionType.toJson(),
+      'featurePackage': featurePackage,
+      'engineSpecs': engineSpecs.toJson(),
+      'performanceSpecs': performanceSpecs.toJson(),
+      'seatingCapacity': seatingCapacity,
+      'price': price,
+      'exShowroomPrice': exShowroomPrice,
+      'onRoadPrice': onRoadPrice,
+      'colors': colors,
+      'images': images,
+      'isActive': isActive,
+      'isLaunched': isLaunched,
+      'isDeleted': isDeleted,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+}
+
+class VehicleModelRef {
+  final String id;
+  final String name;
+  final String displayName;
+
+  VehicleModelRef({
+    required this.id,
+    required this.name,
+    required this.displayName,
+  });
+
+  factory VehicleModelRef.fromJson(Map<String, dynamic> json) {
+    return VehicleModelRef(
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      displayName: json['displayName']?.toString() ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'displayName': displayName,
+    };
+  }
+}
+
+class FuelType {
+  final String id;
+  final String name;
+  final String displayName;
+  final String description;
+  final String category;
+  final bool isActive;
+  final int sortOrder;
+  final bool isDeleted;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  FuelType({
+    required this.id,
+    required this.name,
+    required this.displayName,
+    required this.description,
+    required this.category,
+    required this.isActive,
+    required this.sortOrder,
+    required this.isDeleted,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory FuelType.fromJson(Map<String, dynamic> json) {
+    return FuelType(
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      displayName: json['displayName']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      category: json['category']?.toString() ?? '',
+      isActive: json['isActive'] == true,
+      sortOrder: json['sortOrder'] ?? 0,
+      isDeleted: json['isDeleted'] == true,
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'displayName': displayName,
+      'description': description,
+      'category': category,
+      'isActive': isActive,
+      'sortOrder': sortOrder,
+      'isDeleted': isDeleted,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+}
+
+class TransmissionType {
+  final String id;
+  final String name;
+  final String displayName;
+  final String description;
+  final String type;
+  final bool isActive;
+  final int sortOrder;
+  final bool isDeleted;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+
+  TransmissionType({
+    required this.id,
+    required this.name,
+    required this.displayName,
+    required this.description,
+    required this.type,
+    required this.isActive,
+    required this.sortOrder,
+    required this.isDeleted,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory TransmissionType.fromJson(Map<String, dynamic> json) {
+    return TransmissionType(
+      id: json['_id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      displayName: json['displayName']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      type: json['type']?.toString() ?? '',
+      isActive: json['isActive'] == true,
+      sortOrder: json['sortOrder'] ?? 0,
+      isDeleted: json['isDeleted'] == true,
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.now(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      '_id': id,
+      'name': name,
+      'displayName': displayName,
+      'description': description,
+      'type': type,
+      'isActive': isActive,
+      'sortOrder': sortOrder,
+      'isDeleted': isDeleted,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
+  }
+}
+
+class EngineSpecs {
+  final int capacity;
+  final int maxPower;
+  final int maxTorque;
+  final int cylinders;
+  final bool turbocharged;
+
+  EngineSpecs({
+    required this.capacity,
+    required this.maxPower,
+    required this.maxTorque,
+    required this.cylinders,
+    required this.turbocharged,
+  });
+
+  factory EngineSpecs.fromJson(Map<String, dynamic> json) {
+    return EngineSpecs(
+      capacity: json['capacity'] ?? 0,
+      maxPower: json['maxPower'] ?? 0,
+      maxTorque: json['maxTorque'] ?? 0,
+      cylinders: json['cylinders'] ?? 0,
+      turbocharged: json['turbocharged'] == true,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'capacity': capacity,
+      'maxPower': maxPower,
+      'maxTorque': maxTorque,
+      'cylinders': cylinders,
+      'turbocharged': turbocharged,
+    };
+  }
+}
+
+class PerformanceSpecs {
+  final int mileage;
+  final double acceleration;
+  final int topSpeed;
+  final int fuelCapacity;
+
+  PerformanceSpecs({
+    required this.mileage,
+    required this.acceleration,
+    required this.topSpeed,
+    required this.fuelCapacity,
+  });
+
+  factory PerformanceSpecs.fromJson(Map<String, dynamic> json) {
+    return PerformanceSpecs(
+      mileage: json['mileage'] ?? 0,
+      acceleration: (json['acceleration'] is double)
+          ? json['acceleration']
+          : (json['acceleration'] ?? 0).toDouble(),
+      topSpeed: json['topSpeed'] ?? 0,
+      fuelCapacity: json['fuelCapacity'] ?? 0,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'mileage': mileage,
+      'acceleration': acceleration,
+      'topSpeed': topSpeed,
+      'fuelCapacity': fuelCapacity,
     };
   }
 }
@@ -158,6 +660,11 @@ class VehicleDetails {
   final List<dynamic> additionalFeatures;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final Manufacturer manufacturer;
+  final VehicleModel model;
+  final VehicleVariant variant;
+  final FuelType fuelType;
+  final TransmissionType transmissionType;
 
   VehicleDetails({
     required this.id,
@@ -177,6 +684,11 @@ class VehicleDetails {
     required this.additionalFeatures,
     required this.createdAt,
     required this.updatedAt,
+    required this.manufacturer,
+    required this.model,
+    required this.variant,
+    required this.fuelType,
+    required this.transmissionType,
   });
 
   factory VehicleDetails.fromJson(Map<String, dynamic> json) {
@@ -205,6 +717,12 @@ class VehicleDetails {
             DateTime.now(),
         updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
             DateTime.now(),
+        manufacturer: Manufacturer.fromJson(json['manufacturer'] ?? {}),
+        model: VehicleModel.fromJson(json['model'] ?? {}),
+        variant: VehicleVariant.fromJson(json['variant'] ?? {}),
+        fuelType: FuelType.fromJson(json['fuelType'] ?? {}),
+        transmissionType:
+            TransmissionType.fromJson(json['transmissionType'] ?? {}),
       );
     } catch (e) {
       print('❌ Error parsing VehicleDetails: $e');
@@ -232,6 +750,11 @@ class VehicleDetails {
       'additionalFeatures': additionalFeatures,
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'manufacturer': manufacturer.toJson(),
+      'model': model.toJson(),
+      'variant': variant.toJson(),
+      'fuelType': fuelType.toJson(),
+      'transmissionType': transmissionType.toJson(),
     };
   }
 }

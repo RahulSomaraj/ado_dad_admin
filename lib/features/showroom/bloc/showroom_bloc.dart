@@ -85,8 +85,9 @@ class ShowroomBloc extends Bloc<ShowroomEvent, ShowroomState> {
       UpdateShowroom event, Emitter<ShowroomState> emit) async {
     emit(const ShowroomState.loading());
     try {
-      await showroomRepository.updateShowroom(event.updatedShowroom);
-      emit(const ShowroomState.updated());
+      final updatedUser =
+          await showroomRepository.updateShowroom(event.updatedShowroom);
+      emit(ShowroomState.updated(updatedUser: updatedUser));
       // Refresh the showroom list after successful update
       add(const FetchAllShowrooms());
     } catch (e) {
@@ -111,8 +112,9 @@ class ShowroomBloc extends Bloc<ShowroomEvent, ShowroomState> {
       // Update showroom with profile picture URL
       final showroomWithProfilePic =
           event.updatedShowroom.copyWith(profilePic: profilePicUrl);
-      await showroomRepository.updateShowroom(showroomWithProfilePic);
-      emit(const ShowroomState.updated());
+      final updatedUser =
+          await showroomRepository.updateShowroom(showroomWithProfilePic);
+      emit(ShowroomState.updated(updatedUser: updatedUser));
       // Refresh the showroom list after successful update
       add(const FetchAllShowrooms());
     } catch (e) {

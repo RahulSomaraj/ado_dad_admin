@@ -16,5 +16,6 @@ class ShowroomState with _$ShowroomState {
   const factory ShowroomState.showroomAddedSuccess(String message) =
       ShowroomAddedSuccess;
 
-  const factory ShowroomState.updated() = ShowroomUpdated;
+  const factory ShowroomState.updated({UserModel? updatedUser}) =
+      ShowroomUpdated;
 }

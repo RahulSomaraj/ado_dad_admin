@@ -1,6 +1,10 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
+import 'package:ado_dad_admin/models/ad_model.dart';
+import 'package:ado_dad_admin/features/users/bloc/user_ads_bloc.dart';
+import 'package:ado_dad_admin/features/users/bloc/user_ads_event.dart';
+import 'package:ado_dad_admin/features/users/bloc/user_ads_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,84 +18,73 @@ class ShowroomDetailView extends StatefulWidget {
 }
 
 class _ShowroomDetailViewState extends State<ShowroomDetailView> {
+  int _currentPage = 1;
+  int _itemsPerPage = 10;
+  int _totalAds = 0;
+  final ScrollController _horizontalScrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Trigger the bloc to fetch showroom ads
+    print(
+        '🏪 ShowroomDetailView: Fetching ads for showroom: ${widget.showroomuser.name} (ID: ${widget.showroomuser.id})');
+    context
+        .read<UserAdsBloc>()
+        .add(UserAdsEvent.fetchUserAds(userId: widget.showroomuser.id));
+  }
+
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(0),
       child: Column(
         children: [
-          _buildShowroomDetailSection(),
-          SizedBox(height: 30),
-          _buildShowroomList(),
+          _buildHeaderSection(context),
+          const SizedBox(height: 30),
+          _buildShowroomProfileSection(),
+          const SizedBox(height: 30),
+          _buildAdsSection(),
         ],
       ),
     );
   }
 
-  Widget _buildShowroomDetailSection() {
+  /// Header Section with Back Button
+  Widget _buildHeaderSection(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(15),
       child: Container(
-        height: 100,
         decoration: BoxDecoration(
           color: AppColors.primaryColor,
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new,
-                      color: AppColors.blackColor),
-                  onPressed: () {
-                    context.pop();
-                    context.read<ShowroomBloc>().add(FetchAllShowrooms());
-                  },
-                ),
-              ],
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new,
+                  color: AppColors.blackColor),
+              onPressed: () {
+                context.pop();
+                context.read<ShowroomBloc>().add(FetchAllShowrooms());
+              },
             ),
-            Row(
-              children: [
-                Column(
-                  children: [
-                    const Text('Showroom Name',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.blackColor)),
-                    Text(
-                      widget.showroomuser.name,
-                      style: TextStyle(color: AppColors.blackColor),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                const Text('Email',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.blackColor)),
-                Text(
-                  widget.showroomuser.email,
-                  style: TextStyle(color: AppColors.blackColor),
-                ),
-              ],
-            ),
-            Column(
-              children: [
-                const Text('Phone Number',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.blackColor)),
-                Text(
-                  widget.showroomuser.phoneNumber,
-                  style: TextStyle(color: AppColors.blackColor),
-                ),
-              ],
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                "Showroom Details",
+                style: TextStyle(
+                    color: AppColors.blackColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),
@@ -99,30 +92,279 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
     );
   }
 
-  Widget _buildShowroomList() {
-    return BlocBuilder<ShowroomBloc, ShowroomState>(
-      builder: (context, state) {
-        if (state is ShowroomLoading) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (state is ShowroomLoaded) {
-          return Column(
+  /// Showroom Profile Section with Avatar and Details
+  Widget _buildShowroomProfileSection() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 1070),
+      child: Card(
+        elevation: 5,
+        color: AppColors.primaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Row(
+          children: [
+            // First Container - Profile Picture and Name
+            Expanded(
+              flex: 1,
+              child: _buildProfileContainer(),
+            ),
+            const SizedBox(width: 20),
+            // Second Container - Email, Phone, User Type
+            Expanded(
+              flex: 2,
+              child: _buildDetailsContainer(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// First Container - Profile Picture and Name with Yellow Background
+  Widget _buildProfileContainer() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.yellow.shade100,
+        borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(12), bottomLeft: Radius.circular(12)),
+        border: Border.all(color: Colors.yellow.shade300),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Profile Picture with Circle Avatar
+          _buildProfilePicture(),
+          const SizedBox(height: 16),
+          // Name below the avatar
+          Text(
+            widget.showroomuser.name,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Profile Picture with Circle Avatar
+  Widget _buildProfilePicture() {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.grey.shade300,
+          width: 3,
+        ),
+      ),
+      child: ClipOval(
+        child: (widget.showroomuser.profilePic?.isNotEmpty == true)
+            ? Image.network(
+                widget.showroomuser.profilePic!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildDefaultAvatar(),
+              )
+            : _buildDefaultAvatar(),
+      ),
+    );
+  }
+
+  /// Default Avatar when no profile picture
+  Widget _buildDefaultAvatar() {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.grey.shade200,
+      ),
+      child: const Icon(
+        Icons.business,
+        size: 60,
+        color: Colors.grey,
+      ),
+    );
+  }
+
+  /// Second Container - Email, Phone, User Type
+  Widget _buildDetailsContainer() {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Email and Phone in same row
+          Row(
             children: [
-              _buildTable(state.showroomusers),
-              const SizedBox(height: 30),
-              // _buildPaginationBar(state.currentPage, state.totalPages),
+              Expanded(
+                child: _buildDetailItem("Email", widget.showroomuser.email),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child:
+                    _buildDetailItem("Phone", widget.showroomuser.phoneNumber),
+              ),
             ],
-          );
-        } else if (state is ShowroomError) {
-          return Center(
-              child: Text(state.message,
-                  style: const TextStyle(color: Colors.red)));
-        }
-        return const Center(child: Text("No Showroom Users Found"));
+          ),
+          const SizedBox(height: 20),
+          // User Type and Total Ads in same row
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailItem("User Type",
+                    _getUserTypeDisplay(widget.showroomuser.userType)),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildDetailItem("Total Ads", _totalAds.toString()),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Individual Detail Item
+  Widget _buildDetailItem(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.black87,
+            fontSize: 16,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Convert user type code to display text
+  String _getUserTypeDisplay(String? userType) {
+    switch (userType) {
+      case 'SA':
+        return 'Super Admin';
+      case 'AD':
+        return 'Admin';
+      case 'NU':
+        return 'Normal User';
+      case 'SR':
+        return 'Showroom';
+      default:
+        return 'Showroom';
+    }
+  }
+
+  Widget _buildAdsSection() {
+    return BlocBuilder<UserAdsBloc, UserAdsState>(
+      builder: (context, state) {
+        return state.when(
+          initial: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(40.0),
+              child: Text('Loading...'),
+            ),
+          ),
+          loading: () => const Center(
+            child: Padding(
+              padding: EdgeInsets.all(40.0),
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          loaded: (ads, total) {
+            // Update total ads count
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                setState(() {
+                  _totalAds = total;
+                });
+              }
+            });
+            if (ads.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(40.0),
+                  child: Column(
+                    children: [
+                      const Icon(
+                        Icons.inbox_outlined,
+                        size: 48,
+                        color: Colors.grey,
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        'No ads found for this showroom',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return Column(
+                children: [
+                  _buildAdsTable(ads),
+                  const SizedBox(height: 20),
+                  _buildPagination(ads),
+                ],
+              );
+            }
+          },
+          error: (message) => Center(
+            child: Padding(
+              padding: const EdgeInsets.all(40.0),
+              child: Column(
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: Colors.red,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    message,
+                    style: const TextStyle(color: Colors.red),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<UserAdsBloc>().add(UserAdsEvent.fetchUserAds(
+                          userId: widget.showroomuser.id));
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
       },
     );
   }
 
-  Widget _buildTable(List<UserModel> users) {
+  Widget _buildAdsTable(List<AdModel> ads) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: SizedBox(
@@ -134,37 +376,72 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: SingleChildScrollView(
-              child: DataTable(
-                columnSpacing: 100,
-                headingRowColor: WidgetStateColor.resolveWith(
-                    (states) => Color.fromARGB(66, 144, 140, 140)),
-                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
-                dataRowMinHeight: 40,
-                dataRowMaxHeight: 40,
-                columns: const [
-                  DataColumn(
-                      label: Padding(
-                    padding: EdgeInsets.only(left: 30),
-                    child: Text('ID',
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                  )),
-                  DataColumn(
-                      label: Text('Name',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Email',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Phone Number',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                  DataColumn(
-                      label: Text('Status',
-                          style: TextStyle(fontWeight: FontWeight.bold))),
-                ],
-                rows: users.asMap().entries.map((entry) {
-                  return _buildUserRow(entry.key, entry.value);
-                }).toList(),
+            child: Scrollbar(
+              controller: _horizontalScrollController,
+              thumbVisibility: true,
+              trackVisibility: true,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                controller: _horizontalScrollController,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 1000),
+                  child: DataTable(
+                    columnSpacing: 100,
+                    headingRowColor: WidgetStateColor.resolveWith(
+                        (states) => Color.fromARGB(66, 144, 140, 140)),
+                    dataRowColor:
+                        WidgetStatePropertyAll(AppColors.primaryColor),
+                    dataRowMinHeight: 60,
+                    dataRowMaxHeight: 80,
+                    columns: const [
+                      DataColumn(
+                        label: Text(
+                          'Image',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Name',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Category',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Posted Date',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Location',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Price',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Status',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ],
+                    rows: _getPaginatedAds(ads)
+                        .map((ad) => _buildAdRow(ad))
+                        .toList(),
+                  ),
+                ),
               ),
             ),
           ),
@@ -173,21 +450,253 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
     );
   }
 
-  DataRow _buildUserRow(int index, UserModel user) {
-    return DataRow(cells: [
-      DataCell(Padding(
-        padding: const EdgeInsets.only(left: 30),
-        child: Text('${index + 1}'),
-      )),
-      DataCell(Text(user.name)),
-      DataCell(Text(user.email)),
-      DataCell(Text(user.phoneNumber)),
-      DataCell(
-        ElevatedButton(
-          onPressed: () {},
-          child: Text('Status'),
+  /// Build individual ad row
+  DataRow _buildAdRow(AdModel ad) {
+    return DataRow(
+      cells: [
+        DataCell(
+          SizedBox(
+            width: 80,
+            height: 50,
+            child: _buildAdImage(ad),
+          ),
+        ),
+        DataCell(
+          SizedBox(
+            width: 100,
+            child: Text(
+              _buildVehicleTitle(ad),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ),
+          ),
+        ),
+        DataCell(
+          Text(
+            _formatCategory(ad.category),
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+        DataCell(
+          Text(
+            _formatDate(ad.postedAt),
+            style: const TextStyle(fontSize: 12),
+          ),
+        ),
+        DataCell(
+          Text(
+            ad.location,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
+        DataCell(
+          Text(
+            '₹${ad.price.toString()}',
+            style: const TextStyle(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        DataCell(
+          SizedBox(
+            width: 60,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+              decoration: BoxDecoration(
+                color: ad.soldOut ? Colors.black : Colors.green,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                ad.soldOut ? 'SoldOut' : 'Active',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11,
+                  color: ad.soldOut ? Colors.white : Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Build title based on category with null safety
+  String _buildVehicleTitle(AdModel ad) {
+    // For property category, show description
+    if (ad.category == 'property') {
+      return ad.description.isNotEmpty
+          ? ad.description
+          : 'Property Description Not Available';
+    }
+
+    // For vehicle categories, show vehicle details
+    if (ad.category == 'two_wheeler' ||
+        ad.category == 'four_wheeler' ||
+        ad.category == 'commercial_vehicle' ||
+        ad.category == 'private_vehicle') {
+      if (ad.vehicleDetails == null) {
+        return 'Vehicle Details Not Available';
+      }
+
+      final manufacturer =
+          ad.vehicleDetails?.manufacturer.displayName ?? 'Unknown';
+      final model = ad.vehicleDetails?.model.displayName ?? 'Unknown';
+      final year = ad.vehicleDetails?.year.toString() ?? 'Unknown';
+
+      return '$manufacturer $model($year)';
+    }
+
+    // For other categories, show title or description
+    return ad.title.isNotEmpty
+        ? ad.title
+        : (ad.description.isNotEmpty ? ad.description : 'No Title Available');
+  }
+
+  /// Build ad image widget
+  Widget _buildAdImage(AdModel ad) {
+    if (ad.images.isNotEmpty) {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.network(
+            ad.images.first,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) =>
+                _buildImagePlaceholder(),
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                color: Colors.grey.shade200,
+                child: const Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    }
+    return _buildImagePlaceholder();
+  }
+
+  /// Build image placeholder
+  Widget _buildImagePlaceholder() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: const Center(
+        child: Icon(
+          Icons.image_not_supported,
+          color: Colors.grey,
+          size: 24,
         ),
       ),
-    ]);
+    );
+  }
+
+  /// Format category for display
+  String _formatCategory(String category) {
+    switch (category) {
+      case 'two_wheeler':
+        return 'Two Wheeler';
+      case 'four_wheeler':
+        return 'Four Wheeler';
+      case 'commercial_vehicle':
+        return 'Commercial Vehicle';
+      case 'property':
+        return 'Property';
+      default:
+        return category
+            .replaceAll('_', ' ')
+            .split(' ')
+            .map((word) => word.isNotEmpty
+                ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+                : '')
+            .join(' ');
+    }
+  }
+
+  /// Format date for display
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      return 'Today';
+    } else if (difference.inDays == 1) {
+      return 'Yesterday';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} days ago';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
+  }
+
+  /// Get paginated ads
+  List<AdModel> _getPaginatedAds(List<AdModel> allAds) {
+    final startIndex = (_currentPage - 1) * _itemsPerPage;
+    final endIndex = startIndex + _itemsPerPage;
+    return allAds.sublist(
+      startIndex,
+      endIndex > allAds.length ? allAds.length : endIndex,
+    );
+  }
+
+  /// Get total pages for pagination
+  int _getTotalPages(List<AdModel> allAds) {
+    return (allAds.length / _itemsPerPage).ceil();
+  }
+
+  /// Build pagination widget
+  Widget _buildPagination(List<AdModel> allAds) {
+    final totalPages = _getTotalPages(allAds);
+
+    if (totalPages <= 1) return const SizedBox.shrink();
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: _currentPage > 1
+              ? () {
+                  setState(() {
+                    _currentPage--;
+                  });
+                }
+              : null,
+          icon: const Icon(Icons.chevron_left),
+        ),
+        Text(
+          'Page $_currentPage of $totalPages',
+          style: const TextStyle(fontSize: 14),
+        ),
+        IconButton(
+          onPressed: _currentPage < totalPages
+              ? () {
+                  setState(() {
+                    _currentPage++;
+                  });
+                }
+              : null,
+          icon: const Icon(Icons.chevron_right),
+        ),
+      ],
+    );
   }
 }

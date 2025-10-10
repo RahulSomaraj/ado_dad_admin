@@ -2,6 +2,8 @@ import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_ads_bloc.dart';
 import 'package:ado_dad_admin/models/ad_model.dart';
+import 'package:ado_dad_admin/models/user_model.dart';
+import 'package:ado_dad_admin/features/showroom/ui/showroom_edit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -16,6 +18,7 @@ class _ShowroomDashboardState extends State<ShowroomDashboard> {
   String? userName;
   String? userEmail;
   String? userId;
+  String? userType;
   int _currentPage = 1;
   int _itemsPerPage = 10;
   final ScrollController _horizontalScrollController = ScrollController();
@@ -36,11 +39,13 @@ class _ShowroomDashboardState extends State<ShowroomDashboard> {
     final name = await getUserName();
     final email = await getUserEmail();
     final id = await getUserId();
+    final type = await getUserType();
     if (mounted) {
       setState(() {
         userName = name;
         userEmail = email;
         userId = id;
+        userType = type;
       });
       // Automatically load ads when userId is available
       if (userId != null) {
@@ -70,10 +75,6 @@ class _ShowroomDashboardState extends State<ShowroomDashboard> {
         children: [
           const SizedBox(height: 20),
           _buildHeaderSection(),
-          const SizedBox(height: 30),
-          // _buildWelcomeCard(),
-          const SizedBox(height: 30),
-          // _buildInfoCard(),
           const SizedBox(height: 30),
           if (userId != null) _buildAdsSection(),
         ],
@@ -143,179 +144,6 @@ class _ShowroomDashboardState extends State<ShowroomDashboard> {
         color: AppColors.blackColor,
         fontSize: 14,
         fontWeight: FontWeight.w500,
-      ),
-    );
-  }
-
-  Widget _buildWelcomeCard() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Card(
-        elevation: 5,
-        color: AppColors.primaryColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: Colors.black,
-                    child: Text(
-                      getInitials(userName ?? "SU"),
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          userName ?? "Showroom User",
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.blackColor,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          userEmail ?? "showroom@example.com",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade100,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: const Text(
-                            "Showroom Account",
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.green,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoCard() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Card(
-        elevation: 5,
-        color: AppColors.primaryColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                "Account Information",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.blackColor,
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildInfoRow("Account Type", "Showroom"),
-              _buildInfoRow("Status", "Active"),
-              _buildInfoRow("Access Level", "Showroom Dashboard"),
-              const SizedBox(height: 20),
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.shade200),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: Colors.blue.shade600,
-                      size: 24,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        "This is your dedicated showroom dashboard. Contact your administrator for any assistance or to request additional features.",
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 120,
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.blackColor,
-              ),
-            ),
-          ),
-          const Text(
-            ": ",
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.blackColor,
-            ),
-          ),
-          Expanded(
-            child: Text(
-              value,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.blackColor,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -451,7 +279,7 @@ class _ShowroomDashboardState extends State<ShowroomDashboard> {
                   ),
                   DataColumn(
                     label: Text(
-                      'Description',
+                      'Name',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -509,7 +337,7 @@ class _ShowroomDashboardState extends State<ShowroomDashboard> {
           SizedBox(
             width: 100,
             child: Text(
-              ad.description,
+              _buildVehicleTitle(ad),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
@@ -565,6 +393,38 @@ class _ShowroomDashboardState extends State<ShowroomDashboard> {
         ),
       ],
     );
+  }
+
+  /// Build title based on category with null safety
+  String _buildVehicleTitle(AdModel ad) {
+    // For property category, show description
+    if (ad.category == 'property') {
+      return ad.description.isNotEmpty
+          ? ad.description
+          : 'Property Description Not Available';
+    }
+
+    // For vehicle categories, show vehicle details
+    if (ad.category == 'two_wheeler' ||
+        ad.category == 'four_wheeler' ||
+        ad.category == 'commercial_vehicle' ||
+        ad.category == 'private_vehicle') {
+      if (ad.vehicleDetails == null) {
+        return 'Vehicle Details Not Available';
+      }
+
+      final manufacturer =
+          ad.vehicleDetails?.manufacturer.displayName ?? 'Unknown';
+      final model = ad.vehicleDetails?.model.displayName ?? 'Unknown';
+      final year = ad.vehicleDetails?.year.toString() ?? 'Unknown';
+
+      return '$manufacturer $model($year)';
+    }
+
+    // For other categories, show title or description
+    return ad.title.isNotEmpty
+        ? ad.title
+        : (ad.description.isNotEmpty ? ad.description : 'No Title Available');
   }
 
   Widget _buildAdImage(AdModel ad) {

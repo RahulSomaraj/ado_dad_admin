@@ -102,6 +102,30 @@ Future<String?> getUserProfilePicture() async {
   return SharedPrefs().getString('profilePicture');
 }
 
+/// Update stored username
+Future<void> updateUserName(String name) async {
+  final sharedPrefs = SharedPrefs();
+  await sharedPrefs.setString('name', name);
+}
+
+/// Update stored user email
+Future<void> updateUserEmail(String email) async {
+  final sharedPrefs = SharedPrefs();
+  await sharedPrefs.setString('email', email);
+}
+
+/// Update stored user phone number
+Future<void> updateUserPhoneNumber(String phoneNumber) async {
+  final sharedPrefs = SharedPrefs();
+  await sharedPrefs.setString('phoneNumber', phoneNumber);
+}
+
+/// Update stored user profile picture
+Future<void> updateUserProfilePicture(String profilePicture) async {
+  final sharedPrefs = SharedPrefs();
+  await sharedPrefs.setString('profilePicture', profilePicture);
+}
+
 /// Clear user-specific stored data
 Future<void> clearUserData() async {
   final sharedPrefs = SharedPrefs();

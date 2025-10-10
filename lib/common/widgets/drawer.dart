@@ -82,6 +82,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         case '/dashboard':
           return 0;
         case '/profile':
+        case '/edit-showroom':
           return 1;
         default:
           return 0; // Default to dashboard
@@ -217,7 +218,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         ],
       );
     } else if (widget.userType == "SR") {
-      // Showroom users have limited access - only dashboard and profile
+      // Showroom users have limited access - only dashboard, profile, and logout
       return Column(
         children: [
           _buildDrawerItem(

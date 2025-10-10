@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -166,21 +167,75 @@ class _EditShowroomState extends State<EditShowroom> {
             .read<ShowroomBloc>()
             .add(UpdateShowroom(updatedShowroom: updatedShowroom));
       }
+    } else {}
+  }
+
+  /// Update stored user data with current form values
+  Future<void> _updateStoredUserData() async {
+    await updateUserName(_name);
+    await updateUserEmail(_email);
+    await updateUserPhoneNumber(_phone);
+    if (_currentProfilePicUrl != null && _currentProfilePicUrl!.isNotEmpty) {
+      await updateUserProfilePicture(_currentProfilePicUrl!);
     }
   }
 
-  void _showSuccessPopup(BuildContext context, String message) {
+  /// Update stored user data with updated user from server
+  Future<void> _updateStoredUserDataFromServer(UserModel updatedUser) async {
+    await updateUserName(updatedUser.name);
+    await updateUserEmail(updatedUser.email);
+    await updateUserPhoneNumber(updatedUser.phoneNumber);
+    if (updatedUser.profilePic != null && updatedUser.profilePic!.isNotEmpty) {
+      await updateUserProfilePicture(updatedUser.profilePic!);
+    }
+  }
+
+  /// Update stored user data only if SR user is editing their own profile
+  Future<void> _updateStoredUserDataIfOwnProfile() async {
+    final userType = await getUserType();
+    final currentUserId = await getUserId();
+
+    // Only update stored data if SR user is editing their own profile
+    if (userType == 'SR' && currentUserId == widget.showroomuser.id) {
+      await _updateStoredUserData();
+    }
+  }
+
+  void _showSuccessPopup(BuildContext context, String message) async {
+    // Get current user type and ID to determine navigation
+    final userType = await getUserType();
+    final currentUserId = await getUserId();
+
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text("Success"),
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () {
-                context.pop();
-                context.go('/showrooms');
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+
+                // Wait a moment for dialog to close, then navigate
+                await Future.delayed(const Duration(milliseconds: 100));
+
+                if (mounted) {
+                  // Navigate based on user type and if editing own profile
+                  if (userType == 'SR' &&
+                      currentUserId == widget.showroomuser.id) {
+                    // For SR users editing their own profile, go back to profile page
+
+                    context.go('/profile');
+                    print(
+                        '🔍 Navigation: SR user editing own profile, going to profile page');
+                  } else {
+                    // For all other cases (AD/SA editing any user, or SR editing other users), go to showrooms page
+                    print(
+                        '🔍 Navigation: Non-SR user or SR editing other user, going to showrooms page');
+                    context.go('/showrooms');
+                  }
+                }
               },
               child: const Text("OK"),
             ),
@@ -195,13 +250,23 @@ class _EditShowroomState extends State<EditShowroom> {
     return BlocListener<ShowroomBloc, ShowroomState>(
       listener: (context, state) {
         if (state is ShowroomUpdated) {
-          _showSuccessPopup(
-              context, "Showroom details have been updated successfully.");
-        }
+          // Update stored user data only if SR user is editing their own profile
+          if (state.updatedUser != null) {
+            _updateStoredUserDataFromServer(state.updatedUser!).then((_) {
+              _showSuccessPopup(
+                  context, "Showroom details have been updated successfully.");
+            });
+          } else {
+            _updateStoredUserDataIfOwnProfile().then((_) {
+              _showSuccessPopup(
+                  context, "Showroom details have been updated successfully.");
+            });
+          }
+        } else if (state is ShowroomError) {}
       },
       child: BlocBuilder<ShowroomBloc, ShowroomState>(
         builder: (context, state) {
-          return Padding(
+          return SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
@@ -232,7 +297,6 @@ class _EditShowroomState extends State<EditShowroom> {
                   color: AppColors.blackColor),
               onPressed: () {
                 context.pop();
-                context.read<ShowroomBloc>().add(FetchAllShowrooms());
               },
             ),
             const Padding(

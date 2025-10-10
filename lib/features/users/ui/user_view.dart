@@ -420,7 +420,7 @@ class _UserViewState extends State<UserView> {
                     ),
                     DataColumn(
                       label: Text(
-                        'Description',
+                        'Name',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -482,7 +482,7 @@ class _UserViewState extends State<UserView> {
           SizedBox(
             width: 100,
             child: Text(
-              ad.description,
+              _buildVehicleTitle(ad),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
@@ -652,6 +652,38 @@ class _UserViewState extends State<UserView> {
         ),
       ),
     );
+  }
+
+  /// Build title based on category with null safety
+  String _buildVehicleTitle(AdModel ad) {
+    // For property category, show description
+    if (ad.category == 'property') {
+      return ad.description.isNotEmpty
+          ? ad.description
+          : 'Property Description Not Available';
+    }
+
+    // For vehicle categories, show vehicle details
+    if (ad.category == 'two_wheeler' ||
+        ad.category == 'four_wheeler' ||
+        ad.category == 'commercial_vehicle' ||
+        ad.category == 'private_vehicle') {
+      if (ad.vehicleDetails == null) {
+        return 'Vehicle Details Not Available';
+      }
+
+      final manufacturer =
+          ad.vehicleDetails?.manufacturer.displayName ?? 'Unknown';
+      final model = ad.vehicleDetails?.model.displayName ?? 'Unknown';
+      final year = ad.vehicleDetails?.year.toString() ?? 'Unknown';
+
+      return '$manufacturer $model($year)';
+    }
+
+    // For other categories, show title or description
+    return ad.title.isNotEmpty
+        ? ad.title
+        : (ad.description.isNotEmpty ? ad.description : 'No Title Available');
   }
 
   /// Build ad image widget

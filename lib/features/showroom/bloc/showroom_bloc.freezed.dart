@@ -1492,7 +1492,7 @@ mixin _$ShowroomState {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1505,7 +1505,7 @@ mixin _$ShowroomState {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1518,7 +1518,7 @@ mixin _$ShowroomState {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1628,7 +1628,7 @@ class _$ShowroomInitialImpl implements ShowroomInitial {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) {
     return initial();
   }
@@ -1644,7 +1644,7 @@ class _$ShowroomInitialImpl implements ShowroomInitial {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) {
     return initial?.call();
   }
@@ -1660,7 +1660,7 @@ class _$ShowroomInitialImpl implements ShowroomInitial {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1769,7 +1769,7 @@ class _$ShowroomLoadingImpl implements ShowroomLoading {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) {
     return loading();
   }
@@ -1785,7 +1785,7 @@ class _$ShowroomLoadingImpl implements ShowroomLoading {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) {
     return loading?.call();
   }
@@ -1801,7 +1801,7 @@ class _$ShowroomLoadingImpl implements ShowroomLoading {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1971,7 +1971,7 @@ class _$ShowroomLoadedImpl implements ShowroomLoaded {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) {
     return loaded(showroomusers, totalPages, currentPage);
   }
@@ -1987,7 +1987,7 @@ class _$ShowroomLoadedImpl implements ShowroomLoaded {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) {
     return loaded?.call(showroomusers, totalPages, currentPage);
   }
@@ -2003,7 +2003,7 @@ class _$ShowroomLoadedImpl implements ShowroomLoaded {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -2152,7 +2152,7 @@ class _$ShowroomErrorImpl implements ShowroomError {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) {
     return error(message);
   }
@@ -2168,7 +2168,7 @@ class _$ShowroomErrorImpl implements ShowroomError {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) {
     return error?.call(message);
   }
@@ -2184,7 +2184,7 @@ class _$ShowroomErrorImpl implements ShowroomError {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -2301,7 +2301,7 @@ class _$AddingShowroomImpl implements AddingShowroom {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) {
     return addingShowroom();
   }
@@ -2317,7 +2317,7 @@ class _$AddingShowroomImpl implements AddingShowroom {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) {
     return addingShowroom?.call();
   }
@@ -2333,7 +2333,7 @@ class _$AddingShowroomImpl implements AddingShowroom {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) {
     if (addingShowroom != null) {
@@ -2471,7 +2471,7 @@ class _$ShowroomAddedSuccessImpl implements ShowroomAddedSuccess {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) {
     return showroomAddedSuccess(message);
   }
@@ -2487,7 +2487,7 @@ class _$ShowroomAddedSuccessImpl implements ShowroomAddedSuccess {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) {
     return showroomAddedSuccess?.call(message);
   }
@@ -2503,7 +2503,7 @@ class _$ShowroomAddedSuccessImpl implements ShowroomAddedSuccess {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) {
     if (showroomAddedSuccess != null) {
@@ -2577,6 +2577,8 @@ abstract class _$$ShowroomUpdatedImplCopyWith<$Res> {
   factory _$$ShowroomUpdatedImplCopyWith(_$ShowroomUpdatedImpl value,
           $Res Function(_$ShowroomUpdatedImpl) then) =
       __$$ShowroomUpdatedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({UserModel? updatedUser});
 }
 
 /// @nodoc
@@ -2589,26 +2591,53 @@ class __$$ShowroomUpdatedImplCopyWithImpl<$Res>
 
   /// Create a copy of ShowroomState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? updatedUser = freezed,
+  }) {
+    return _then(_$ShowroomUpdatedImpl(
+      updatedUser: freezed == updatedUser
+          ? _value.updatedUser
+          : updatedUser // ignore: cast_nullable_to_non_nullable
+              as UserModel?,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$ShowroomUpdatedImpl implements ShowroomUpdated {
-  const _$ShowroomUpdatedImpl();
+  const _$ShowroomUpdatedImpl({this.updatedUser});
+
+  @override
+  final UserModel? updatedUser;
 
   @override
   String toString() {
-    return 'ShowroomState.updated()';
+    return 'ShowroomState.updated(updatedUser: $updatedUser)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$ShowroomUpdatedImpl);
+        (other.runtimeType == runtimeType &&
+            other is _$ShowroomUpdatedImpl &&
+            (identical(other.updatedUser, updatedUser) ||
+                other.updatedUser == updatedUser));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(runtimeType, updatedUser);
+
+  /// Create a copy of ShowroomState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ShowroomUpdatedImplCopyWith<_$ShowroomUpdatedImpl> get copyWith =>
+      __$$ShowroomUpdatedImplCopyWithImpl<_$ShowroomUpdatedImpl>(
+          this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -2621,9 +2650,9 @@ class _$ShowroomUpdatedImpl implements ShowroomUpdated {
     required TResult Function(String message) error,
     required TResult Function() addingShowroom,
     required TResult Function(String message) showroomAddedSuccess,
-    required TResult Function() updated,
+    required TResult Function(UserModel? updatedUser) updated,
   }) {
-    return updated();
+    return updated(updatedUser);
   }
 
   @override
@@ -2637,9 +2666,9 @@ class _$ShowroomUpdatedImpl implements ShowroomUpdated {
     TResult? Function(String message)? error,
     TResult? Function()? addingShowroom,
     TResult? Function(String message)? showroomAddedSuccess,
-    TResult? Function()? updated,
+    TResult? Function(UserModel? updatedUser)? updated,
   }) {
-    return updated?.call();
+    return updated?.call(updatedUser);
   }
 
   @override
@@ -2653,11 +2682,11 @@ class _$ShowroomUpdatedImpl implements ShowroomUpdated {
     TResult Function(String message)? error,
     TResult Function()? addingShowroom,
     TResult Function(String message)? showroomAddedSuccess,
-    TResult Function()? updated,
+    TResult Function(UserModel? updatedUser)? updated,
     required TResult orElse(),
   }) {
     if (updated != null) {
-      return updated();
+      return updated(updatedUser);
     }
     return orElse();
   }
@@ -2710,5 +2739,14 @@ class _$ShowroomUpdatedImpl implements ShowroomUpdated {
 }
 
 abstract class ShowroomUpdated implements ShowroomState {
-  const factory ShowroomUpdated() = _$ShowroomUpdatedImpl;
+  const factory ShowroomUpdated({final UserModel? updatedUser}) =
+      _$ShowroomUpdatedImpl;
+
+  UserModel? get updatedUser;
+
+  /// Create a copy of ShowroomState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ShowroomUpdatedImplCopyWith<_$ShowroomUpdatedImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }

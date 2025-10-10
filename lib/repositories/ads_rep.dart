@@ -12,8 +12,12 @@ class AdsRepository {
     String? searchQuery,
   }) async {
     try {
-      print('🌐 API Call: POST /v2/ads/list');
-      final response = await _dio.post('/v2/ads/list', data: {
+      // final response = await _dio.post('/v2/ads/list', data: {
+      //   'page': page,
+      //   'limit': limit,
+      //   'search': searchQuery,
+      // });
+      final response = await _dio.get('/ads/admin/all', queryParameters: {
         'page': page,
         'limit': limit,
         'search': searchQuery,
@@ -88,6 +92,53 @@ class AdsRepository {
       throw Exception("Failed to load user ads: ${e.message}");
     } catch (e) {
       print('❌ Unexpected error in fetchUserAds: $e');
+      throw Exception("Unexpected error occurred");
+    }
+  }
+
+  /// Update ad approval status
+  Future<AdModel> updateAdApproval({
+    required String adId,
+    required bool isApproved,
+  }) async {
+    try {
+      print('🌐 API Call: PUT /ads/$adId/approval');
+      print('📄 Request data: {"isApproved": $isApproved}');
+      print('🔗 Full URL: ${_dio.options.baseUrl}/ads/$adId/approval');
+
+      final response = await _dio.put('/ads/$adId/approval', data: {
+        'isApproved': isApproved,
+      });
+
+      print('✅ API Response Status: ${response.statusCode}');
+      print('📄 API Response Data: ${response.data}');
+
+      if (response.statusCode == 200) {
+        try {
+          print('🔄 Attempting to parse AdModel...');
+          final result = AdModel.fromJson(response.data);
+          print('✅ Successfully parsed AdModel for ID: ${result.id}');
+          return result;
+        } catch (e, stackTrace) {
+          print('❌ Error parsing AdModel: $e');
+          print('❌ Error type: ${e.runtimeType}');
+          print('❌ Stack trace: $stackTrace');
+          print('📄 Raw response data: ${response.data}');
+          throw Exception("Error parsing ad data: $e");
+        }
+      } else {
+        throw Exception("Failed to update ad approval");
+      }
+    } on DioException catch (e) {
+      print('❌ DioException in updateAdApproval: $e');
+      print('❌ DioException type: ${e.type}');
+      print('❌ DioException response: ${e.response?.data}');
+      print('❌ DioException status code: ${e.response?.statusCode}');
+      print('❌ DioException message: ${e.message}');
+      print('❌ DioException request options: ${e.requestOptions.uri}');
+      throw Exception("Failed to update ad approval: ${e.message}");
+    } catch (e) {
+      print('❌ Unexpected error in updateAdApproval: $e');
       throw Exception("Unexpected error occurred");
     }
   }

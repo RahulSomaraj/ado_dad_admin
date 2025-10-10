@@ -1,7 +1,10 @@
+import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/models/login_model.dart';
+import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -10,7 +13,7 @@ class MyProfile extends StatefulWidget {
   State<MyProfile> createState() => _MyProfileState();
 }
 
-class _MyProfileState extends State<MyProfile> {
+class _MyProfileState extends State<MyProfile> with RouteAware {
   String? userName;
   String? userEmail;
   String? userPhone;
@@ -23,7 +26,27 @@ class _MyProfileState extends State<MyProfile> {
     _loadUserData();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Only refresh if we're actually on the profile route
+    final currentRoute = GoRouterState.of(context).uri.toString();
+    if (currentRoute == '/profile') {
+      _loadUserData();
+    }
+  }
+
+  @override
+  void didPopNext() {
+    // Called when returning to this route from another route
+    super.didPopNext();
+    if (mounted) {
+      _loadUserData();
+    }
+  }
+
   Future<void> _loadUserData() async {
+    print('🔍 Profile: _loadUserData called');
     final name = await getUserName();
     final type = await getUserType();
     final email = await getUserEmail();
@@ -37,13 +60,18 @@ class _MyProfileState extends State<MyProfile> {
     print('🔍 Profile: User Type: $type');
     print('🔍 Profile: Profile Pic: "$profilePic"');
 
-    setState(() {
-      userType = type;
-      userName = name;
-      userEmail = email;
-      userPhone = phone;
-      userProfilePic = profilePic;
-    });
+    if (mounted) {
+      setState(() {
+        userType = type;
+        userName = name;
+        userEmail = email;
+        userPhone = phone;
+        userProfilePic = profilePic;
+      });
+      print('🔍 Profile: setState called with updated data');
+    } else {
+      print('🔍 Profile: Widget not mounted, skipping setState');
+    }
   }
 
   @override
@@ -95,6 +123,34 @@ class _MyProfileState extends State<MyProfile> {
               ),
               child: Column(
                 children: [
+                  // Header row with title and edit icon
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const SizedBox(
+                          width: 1), // Spacer to balance the edit icon
+                      // Edit icon for SR users in top right corner
+                      if (userType == 'SR')
+                        GestureDetector(
+                          onTap: _navigateToEditProfile,
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Icon(
+                              Icons.edit,
+                              color: AppColors.blackColor,
+                              size: 20,
+                            ),
+                          ),
+                        )
+                      else
+                        const SizedBox(
+                            width: 36), // Maintain consistent spacing
+                    ],
+                  ),
                   // Profile Picture and Name Row
                   _buildProfilePictureAndNameRow(),
                   const SizedBox(height: 20),
@@ -202,5 +258,32 @@ class _MyProfileState extends State<MyProfile> {
         Text(value ?? "Loading...", style: AppTextStyle.valueTextstyle),
       ],
     );
+  }
+
+  void _navigateToEditProfile() async {
+    // Get user ID from storage
+    final userId = await getUserId();
+
+    if (userId != null && userName != null && userEmail != null && mounted) {
+      // Create a UserModel for the current user
+      final currentUser = UserModel(
+        id: userId,
+        name: userName!,
+        email: userEmail!,
+        phoneNumber: userPhone ?? '', // Use stored phone number or empty string
+        userType: userType ?? 'SR',
+        profilePic:
+            userProfilePic ?? '', // Use stored profile pic or empty string
+      );
+
+      // Navigate to edit page using GoRouter
+      if (mounted) {
+        final result = await context.push('/edit-showroom', extra: currentUser);
+        // Refresh data when returning from edit page
+        if (result != null && mounted) {
+          _loadUserData();
+        }
+      }
+    }
   }
 }

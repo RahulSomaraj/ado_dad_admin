@@ -2,6 +2,7 @@ import 'package:ado_dad_admin/common/app_routes.dart';
 import 'package:ado_dad_admin/common/app_theme.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/banner/bloc/banner_bloc.dart';
+import 'package:ado_dad_admin/features/dashboard/bloc/ads_bloc.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_ads_bloc.dart';
@@ -82,6 +83,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (context) => BannerBloc(repository: BannerRepository())
             ..add(FetchAllBanners()),
+        ),
+        BlocProvider(
+          create: (context) => AdsBloc(adsRepository: AdsRepository()),
         ),
       ],
       child: BlocListener<AuthBloc, AuthState>(
