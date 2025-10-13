@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/models/ad_model.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_bloc.dart';
@@ -5,6 +6,7 @@ import 'package:ado_dad_admin/features/dashboard/bloc/ads_event.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:ado_dad_admin/common/save_csv.dart';
 
 class AdminAdsDashboard extends StatefulWidget {
   const AdminAdsDashboard({super.key});
@@ -15,6 +17,7 @@ class AdminAdsDashboard extends StatefulWidget {
 
 class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   final ScrollController _horizontalScrollController = ScrollController();
+  final Set<String> _selectedAdIds = <String>{};
 
   @override
   void initState() {
@@ -61,6 +64,8 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           children: [
             _buildHeaderSection(),
             const SizedBox(height: 20),
+            _buildSelectAllToolbar(),
+            const SizedBox(height: 12),
             _buildAdsTable(),
           ],
         ),
@@ -230,6 +235,159 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
     );
   }
 
+  Widget _buildSelectAllToolbar() {
+    return BlocBuilder<AdsBloc, AdsState>(
+      builder: (context, state) {
+        final loadedState = state.whenOrNull(
+            loaded: (ads, total, currentPage, itemsPerPage) => ads);
+        if (loadedState == null || loadedState.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        final List<AdModel> currentAds = loadedState;
+        final bool allSelected = currentAds.isNotEmpty &&
+            currentAds.every((ad) => _selectedAdIds.contains(ad.id));
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Checkbox(
+              value: allSelected,
+              onChanged: (value) {
+                _toggleSelectAll(currentAds, value == true);
+              },
+            ),
+            TextButton(
+              onPressed: () {
+                _toggleSelectAll(currentAds, !allSelected);
+              },
+              child: const Text(
+                'Select All',
+                style: TextStyle(color: AppColors.blackColor),
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.blackColor),
+              onPressed: () async {
+                await _downloadSelectedAsCsv(currentAds);
+              },
+              icon: const Icon(
+                Icons.download,
+                color: AppColors.primaryColor,
+              ),
+              label: Text(
+                'Download',
+                style: TextStyle(color: AppColors.primaryColor),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _toggleSelectAll(List<AdModel> ads, bool select) {
+    setState(() {
+      if (select) {
+        for (final ad in ads) {
+          _selectedAdIds.add(ad.id);
+        }
+      } else {
+        for (final ad in ads) {
+          _selectedAdIds.remove(ad.id);
+        }
+      }
+    });
+  }
+
+  Future<void> _downloadSelectedAsCsv(List<AdModel> visibleAds) async {
+    final List<AdModel> selected =
+        visibleAds.where((ad) => _selectedAdIds.contains(ad.id)).toList();
+    if (selected.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No rows selected')),
+      );
+      return;
+    }
+
+    final StringBuffer buffer = StringBuffer();
+
+    // Add BOM for proper UTF-8 encoding
+    buffer.write('\uFEFF');
+
+    // Add CSV headers
+    buffer.writeln([
+      'ID',
+      'Name',
+      'Category',
+      'Posted On',
+      'Location',
+      'Price',
+      'Status',
+      'Approval',
+      'Image'
+    ].map(_csvEscape).join(','));
+
+    // Add data rows
+    for (final ad in selected) {
+      final row = [
+        ad.id,
+        _buildVehicleTitle(ad),
+        _formatCategory(ad.category),
+        _formatDate(ad.postedAt),
+        ad.location,
+        ad.price.toString(),
+        ad.soldOut ? 'SoldOut' : 'Active',
+        ad.isApproved ? 'Approved' : 'Pending/Rejected',
+        ad.images.isNotEmpty ? ad.images.first : '',
+      ].map(_csvEscape).join(',');
+      buffer.writeln(row);
+    }
+
+    // Convert to UTF-8 bytes properly
+    final csvContent = buffer.toString();
+    final bytes = utf8.encode(csvContent);
+    final String filename =
+        'ads_export_${DateTime.now().millisecondsSinceEpoch}.csv';
+
+    // Debug: Print CSV content to console
+    print('📄 CSV Content Preview:');
+    print(csvContent.substring(
+        0, csvContent.length > 500 ? 500 : csvContent.length));
+    print('📊 Total CSV length: ${csvContent.length} characters');
+    print('📊 Number of records: ${selected.length}');
+
+    try {
+      await saveCsv(bytes, filename);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Saved $filename with ${selected.length} records')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save CSV: $e')),
+      );
+    }
+  }
+
+  String _csvEscape(String value) {
+    // Handle null or empty values
+    if (value.isEmpty) return '';
+
+    final needsQuotes = value.contains(',') ||
+        value.contains('"') ||
+        value.contains('\n') ||
+        value.contains('\r') ||
+        value.startsWith(' ') ||
+        value.endsWith(' ');
+
+    // Escape double quotes by doubling them
+    String escaped = value.replaceAll('"', '""');
+    return needsQuotes ? '"$escaped"' : escaped;
+  }
+
   Widget _buildAdsDataTable(List<AdModel> ads) {
     return Card(
       elevation: 3,
@@ -250,10 +408,21 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
                 headingRowColor: WidgetStateColor.resolveWith(
                   (states) => const Color.fromARGB(66, 144, 140, 140),
                 ),
-                dataRowColor: WidgetStatePropertyAll(AppColors.primaryColor),
+                dataRowColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return AppColors.logoColor.withOpacity(0.2);
+                  }
+                  return AppColors.primaryColor;
+                }),
                 dataRowMinHeight: 60,
                 dataRowMaxHeight: 80,
                 columns: const [
+                  DataColumn(
+                    label: Text(
+                      'Select',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
                   DataColumn(
                     label: Text(
                       'Image',
@@ -313,8 +482,24 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   }
 
   DataRow _buildAdRow(AdModel ad) {
+    final bool isSelected = _selectedAdIds.contains(ad.id);
     return DataRow(
+      selected: isSelected,
       cells: [
+        DataCell(
+          Checkbox(
+            value: isSelected,
+            onChanged: (value) {
+              setState(() {
+                if (value == true) {
+                  _selectedAdIds.add(ad.id);
+                } else {
+                  _selectedAdIds.remove(ad.id);
+                }
+              });
+            },
+          ),
+        ),
         DataCell(
           SizedBox(
             width: 80,
@@ -479,6 +664,26 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   Widget _buildApprovalButtons(AdModel ad) {
     return BlocBuilder<AdsBloc, AdsState>(
       builder: (context, state) {
+        // For sold-out ads, show a message instead of buttons
+        if (ad.soldOut) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'Sold Out',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 10,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        }
+
         final isLoading = state.maybeWhen(
           approvalLoading: (adId) => adId == ad.id,
           orElse: () => false,
