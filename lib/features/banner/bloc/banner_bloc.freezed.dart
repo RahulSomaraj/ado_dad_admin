@@ -1010,6 +1010,7 @@ mixin _$BannerState {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function() deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1022,6 +1023,7 @@ mixin _$BannerState {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1034,6 +1036,7 @@ mixin _$BannerState {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1045,6 +1048,7 @@ mixin _$BannerState {
     required TResult Function(Failure value) failure,
     required TResult Function(BannerLoaded value) loaded,
     required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1055,6 +1059,7 @@ mixin _$BannerState {
     TResult? Function(Failure value)? failure,
     TResult? Function(BannerLoaded value)? loaded,
     TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1065,6 +1070,7 @@ mixin _$BannerState {
     TResult Function(Failure value)? failure,
     TResult Function(BannerLoaded value)? loaded,
     TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1140,6 +1146,7 @@ class _$InitialImpl implements _Initial {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return initial();
   }
@@ -1155,6 +1162,7 @@ class _$InitialImpl implements _Initial {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return initial?.call();
   }
@@ -1170,6 +1178,7 @@ class _$InitialImpl implements _Initial {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1187,6 +1196,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function(Failure value) failure,
     required TResult Function(BannerLoaded value) loaded,
     required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
   }) {
     return initial(this);
   }
@@ -1200,6 +1210,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(Failure value)? failure,
     TResult? Function(BannerLoaded value)? loaded,
     TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
   }) {
     return initial?.call(this);
   }
@@ -1213,6 +1224,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(Failure value)? failure,
     TResult Function(BannerLoaded value)? loaded,
     TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1275,6 +1287,7 @@ class _$LoadingImpl implements Loading {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return loading();
   }
@@ -1290,6 +1303,7 @@ class _$LoadingImpl implements Loading {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return loading?.call();
   }
@@ -1305,6 +1319,7 @@ class _$LoadingImpl implements Loading {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1322,6 +1337,7 @@ class _$LoadingImpl implements Loading {
     required TResult Function(Failure value) failure,
     required TResult Function(BannerLoaded value) loaded,
     required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
   }) {
     return loading(this);
   }
@@ -1335,6 +1351,7 @@ class _$LoadingImpl implements Loading {
     TResult? Function(Failure value)? failure,
     TResult? Function(BannerLoaded value)? loaded,
     TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
   }) {
     return loading?.call(this);
   }
@@ -1348,6 +1365,7 @@ class _$LoadingImpl implements Loading {
     TResult Function(Failure value)? failure,
     TResult Function(BannerLoaded value)? loaded,
     TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1443,6 +1461,7 @@ class _$SuccessImpl implements _Success {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return success(banners);
   }
@@ -1458,6 +1477,7 @@ class _$SuccessImpl implements _Success {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return success?.call(banners);
   }
@@ -1473,6 +1493,7 @@ class _$SuccessImpl implements _Success {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1490,6 +1511,7 @@ class _$SuccessImpl implements _Success {
     required TResult Function(Failure value) failure,
     required TResult Function(BannerLoaded value) loaded,
     required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
   }) {
     return success(this);
   }
@@ -1503,6 +1525,7 @@ class _$SuccessImpl implements _Success {
     TResult? Function(Failure value)? failure,
     TResult? Function(BannerLoaded value)? loaded,
     TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
   }) {
     return success?.call(this);
   }
@@ -1516,6 +1539,7 @@ class _$SuccessImpl implements _Success {
     TResult Function(Failure value)? failure,
     TResult Function(BannerLoaded value)? loaded,
     TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1613,6 +1637,7 @@ class _$FailureImpl implements Failure {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return failure(message);
   }
@@ -1628,6 +1653,7 @@ class _$FailureImpl implements Failure {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return failure?.call(message);
   }
@@ -1643,6 +1669,7 @@ class _$FailureImpl implements Failure {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -1660,6 +1687,7 @@ class _$FailureImpl implements Failure {
     required TResult Function(Failure value) failure,
     required TResult Function(BannerLoaded value) loaded,
     required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
   }) {
     return failure(this);
   }
@@ -1673,6 +1701,7 @@ class _$FailureImpl implements Failure {
     TResult? Function(Failure value)? failure,
     TResult? Function(BannerLoaded value)? loaded,
     TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
   }) {
     return failure?.call(this);
   }
@@ -1686,6 +1715,7 @@ class _$FailureImpl implements Failure {
     TResult Function(Failure value)? failure,
     TResult Function(BannerLoaded value)? loaded,
     TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -1813,6 +1843,7 @@ class _$BannerLoadedImpl implements BannerLoaded {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return loaded(banners, totalPages, currentPage);
   }
@@ -1828,6 +1859,7 @@ class _$BannerLoadedImpl implements BannerLoaded {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return loaded?.call(banners, totalPages, currentPage);
   }
@@ -1843,6 +1875,7 @@ class _$BannerLoadedImpl implements BannerLoaded {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1860,6 +1893,7 @@ class _$BannerLoadedImpl implements BannerLoaded {
     required TResult Function(Failure value) failure,
     required TResult Function(BannerLoaded value) loaded,
     required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
   }) {
     return loaded(this);
   }
@@ -1873,6 +1907,7 @@ class _$BannerLoadedImpl implements BannerLoaded {
     TResult? Function(Failure value)? failure,
     TResult? Function(BannerLoaded value)? loaded,
     TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
   }) {
     return loaded?.call(this);
   }
@@ -1886,6 +1921,7 @@ class _$BannerLoadedImpl implements BannerLoaded {
     TResult Function(Failure value)? failure,
     TResult Function(BannerLoaded value)? loaded,
     TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1961,6 +1997,7 @@ class _$BannerUpdatedImpl implements BannerUpdated {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)
         loaded,
     required TResult Function() updated,
+    required TResult Function() deleted,
   }) {
     return updated();
   }
@@ -1976,6 +2013,7 @@ class _$BannerUpdatedImpl implements BannerUpdated {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult? Function()? updated,
+    TResult? Function()? deleted,
   }) {
     return updated?.call();
   }
@@ -1991,6 +2029,7 @@ class _$BannerUpdatedImpl implements BannerUpdated {
             List<BannerUploadRequest> banners, int totalPages, int currentPage)?
         loaded,
     TResult Function()? updated,
+    TResult Function()? deleted,
     required TResult orElse(),
   }) {
     if (updated != null) {
@@ -2008,6 +2047,7 @@ class _$BannerUpdatedImpl implements BannerUpdated {
     required TResult Function(Failure value) failure,
     required TResult Function(BannerLoaded value) loaded,
     required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
   }) {
     return updated(this);
   }
@@ -2021,6 +2061,7 @@ class _$BannerUpdatedImpl implements BannerUpdated {
     TResult? Function(Failure value)? failure,
     TResult? Function(BannerLoaded value)? loaded,
     TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
   }) {
     return updated?.call(this);
   }
@@ -2034,6 +2075,7 @@ class _$BannerUpdatedImpl implements BannerUpdated {
     TResult Function(Failure value)? failure,
     TResult Function(BannerLoaded value)? loaded,
     TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
     required TResult orElse(),
   }) {
     if (updated != null) {
@@ -2045,4 +2087,145 @@ class _$BannerUpdatedImpl implements BannerUpdated {
 
 abstract class BannerUpdated implements BannerState {
   const factory BannerUpdated() = _$BannerUpdatedImpl;
+}
+
+/// @nodoc
+abstract class _$$BannerDeletedImplCopyWith<$Res> {
+  factory _$$BannerDeletedImplCopyWith(
+          _$BannerDeletedImpl value, $Res Function(_$BannerDeletedImpl) then) =
+      __$$BannerDeletedImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$BannerDeletedImplCopyWithImpl<$Res>
+    extends _$BannerStateCopyWithImpl<$Res, _$BannerDeletedImpl>
+    implements _$$BannerDeletedImplCopyWith<$Res> {
+  __$$BannerDeletedImplCopyWithImpl(
+      _$BannerDeletedImpl _value, $Res Function(_$BannerDeletedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of BannerState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$BannerDeletedImpl implements BannerDeleted {
+  const _$BannerDeletedImpl();
+
+  @override
+  String toString() {
+    return 'BannerState.deleted()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$BannerDeletedImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<BannerInfo> banners) success,
+    required TResult Function(String message) failure,
+    required TResult Function(
+            List<BannerUploadRequest> banners, int totalPages, int currentPage)
+        loaded,
+    required TResult Function() updated,
+    required TResult Function() deleted,
+  }) {
+    return deleted();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<BannerInfo> banners)? success,
+    TResult? Function(String message)? failure,
+    TResult? Function(
+            List<BannerUploadRequest> banners, int totalPages, int currentPage)?
+        loaded,
+    TResult? Function()? updated,
+    TResult? Function()? deleted,
+  }) {
+    return deleted?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<BannerInfo> banners)? success,
+    TResult Function(String message)? failure,
+    TResult Function(
+            List<BannerUploadRequest> banners, int totalPages, int currentPage)?
+        loaded,
+    TResult Function()? updated,
+    TResult Function()? deleted,
+    required TResult orElse(),
+  }) {
+    if (deleted != null) {
+      return deleted();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(Loading value) loading,
+    required TResult Function(_Success value) success,
+    required TResult Function(Failure value) failure,
+    required TResult Function(BannerLoaded value) loaded,
+    required TResult Function(BannerUpdated value) updated,
+    required TResult Function(BannerDeleted value) deleted,
+  }) {
+    return deleted(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(Loading value)? loading,
+    TResult? Function(_Success value)? success,
+    TResult? Function(Failure value)? failure,
+    TResult? Function(BannerLoaded value)? loaded,
+    TResult? Function(BannerUpdated value)? updated,
+    TResult? Function(BannerDeleted value)? deleted,
+  }) {
+    return deleted?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(Loading value)? loading,
+    TResult Function(_Success value)? success,
+    TResult Function(Failure value)? failure,
+    TResult Function(BannerLoaded value)? loaded,
+    TResult Function(BannerUpdated value)? updated,
+    TResult Function(BannerDeleted value)? deleted,
+    required TResult orElse(),
+  }) {
+    if (deleted != null) {
+      return deleted(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class BannerDeleted implements BannerState {
+  const factory BannerDeleted() = _$BannerDeletedImpl;
 }

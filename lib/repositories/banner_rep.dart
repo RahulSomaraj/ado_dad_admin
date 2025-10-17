@@ -56,13 +56,31 @@ class BannerRepository {
     }
   }
 
-  Future<void> saveBannerToDB(BannerUploadRequest request) async {
+  Future<BannerUploadRequest> saveBannerToDB(
+      BannerUploadRequest request) async {
     try {
-      await _dio.post('/banners', data: request.toJson());
+      print('🔄 Saving banner to database...');
+      print('📄 Banner data: ${request.toJson()}');
+
+      final response = await _dio.post('/banners', data: request.toJson());
+
+      print('✅ Banner saved successfully: ${response.statusCode}');
+      print('📄 Response data: ${response.data}');
+
+      // Parse the response to get the created banner with ID
+      final createdBanner = BannerUploadRequest.fromJson(response.data);
+      print('🆔 Created banner ID: ${createdBanner.id}');
+
+      return createdBanner;
     } on DioException catch (e) {
+      print('❌ DioException in saveBannerToDB: $e');
+      print('❌ DioException type: ${e.type}');
+      print('❌ DioException response: ${e.response}');
+      print('❌ DioException status code: ${e.response?.statusCode}');
+      print('❌ DioException message: ${e.message}');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ DB save failed: $e');
+      print('❌ Unexpected error in saveBannerToDB: $e');
       throw Exception('DB save failed: $e');
     }
   }
@@ -94,14 +112,33 @@ class BannerRepository {
 
   Future<void> updateBanner(BannerUploadRequest banner) async {
     try {
-      await _dio.put(
+      print('🔄 Updating banner with ID: ${banner.id}');
+      print('🔄 Banner ID type: ${banner.id.runtimeType}');
+      print('🔄 Banner ID value: "${banner.id}"');
+
+      // Use the banner's toUpdateJson method (excludes _id field)
+      final updateData = banner.toUpdateJson();
+
+      print('📄 Update data: $updateData');
+      print('🌐 Making PUT request to: /banners/${banner.id}');
+
+      final response = await _dio.put(
         '/banners/${banner.id}',
-        data: banner.toJson(),
+        data: updateData,
       );
+
+      print('✅ Banner update successful: ${response.statusCode}');
+      print('📄 Response data: ${response.data}');
     } on DioException catch (e) {
+      print('❌ DioException in updateBanner: $e');
+      print('❌ DioException type: ${e.type}');
+      print('❌ DioException response: ${e.response}');
+      print('❌ DioException status code: ${e.response?.statusCode}');
+      print('❌ DioException message: ${e.message}');
+      print('❌ DioException request options: ${e.requestOptions}');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Banner update failed: $e');
+      print('❌ Unexpected error in updateBanner: $e');
       throw Exception('Banner update failed: $e');
     }
   }

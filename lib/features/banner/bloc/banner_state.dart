@@ -13,6 +13,7 @@ class BannerState with _$BannerState {
     required int currentPage,
   }) = BannerLoaded;
   const factory BannerState.updated() = BannerUpdated;
+  const factory BannerState.deleted() = BannerDeleted;
 }
 
 class BannerInfo {

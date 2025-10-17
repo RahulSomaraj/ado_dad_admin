@@ -16,11 +16,13 @@ class BannerPage extends StatefulWidget {
 
 class _BannerPageState extends State<BannerPage> {
   final ScrollController _horizontalScrollController = ScrollController();
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   context.read<BannerBloc>().add(const FetchAllBanners(page: 1, limit: 10));
-  // }
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize banner data when page loads
+    context.read<BannerBloc>().add(const FetchAllBanners(page: 1, limit: 10));
+  }
 
   void _showDeleteDialog(BuildContext context, String bannerId) {
     showDialog(
@@ -98,69 +100,60 @@ class _BannerPageState extends State<BannerPage> {
     return BlocListener<BannerBloc, BannerState>(
       listener: (context, state) {
         state.maybeWhen(
-          updated: () {
+          deleted: () {
             _showSuccessPopup(context, "Banner deleted successfully!");
           },
           orElse: () {},
         );
       },
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(30),
-            child: Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Container(
-                height: 80,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-                decoration: BoxDecoration(
-                  color: Colors.white,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Banner Management",
-                      style: AppTextStyle.titleTextstyle,
-                    ),
-                    // Text(
-                    //   "",
-                    //   style: AppTextStyle.titleTextstyle,
-                    // ),
-
-                    ElevatedButton.icon(
-                      onPressed: () async {
-                        context.push('/upload-banners');
-                        // final result = await context.push('/upload-banners');
-                        // if (result == true) {
-                        //   context
-                        //       .read<BannerBloc>()
-                        //       .add(const FetchAllBanners(page: 1, limit: 10));
-                        // }
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blackColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12))),
-                      icon: const Icon(
-                        Icons.add,
-                        color: Colors.white,
+                child: Container(
+                  height: 80,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Banner Management",
+                        style: AppTextStyle.titleTextstyle,
                       ),
-                      label: const Text("Add Banner"),
-                    ),
-                  ],
+                      ElevatedButton.icon(
+                        onPressed: () async {
+                          context.push('/upload-banners');
+                        },
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.blackColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12))),
+                        icon: const Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
+                        label: const Text("Add Banner"),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          _buildBannerList(),
-        ],
+            _buildBannerList(),
+          ],
+        ),
       ),
     );
   }
@@ -190,12 +183,15 @@ class _BannerPageState extends State<BannerPage> {
           loaded: (banners, totalPages, currentPage) => Column(
             children: [
               _buildBannerTable(banners, currentPage),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               _buildPaginationBar(currentPage, totalPages),
             ],
           ),
           updated: () => const Center(
             child: Text('Banner Updated Successfully'),
+          ),
+          deleted: () => const Center(
+            child: Text('Banner Deleted Successfully'),
           ),
         );
       },
@@ -205,9 +201,10 @@ class _BannerPageState extends State<BannerPage> {
   Widget _buildBannerTable(List<BannerUploadRequest> banners, int currentPage) {
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600 && screenWidth <= 900;
+    final isMobile = screenWidth <= 600;
 
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: LayoutBuilder(
         builder: (context, constraints) {
           return Scrollbar(
@@ -229,47 +226,63 @@ class _BannerPageState extends State<BannerPage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: DataTable(
-                        columnSpacing: isTablet ? 20 : 40,
+                        columnSpacing: isMobile ? 8 : (isTablet ? 20 : 30),
                         headingRowColor: WidgetStateColor.resolveWith(
                           (states) => const Color.fromARGB(66, 144, 140, 140),
                         ),
                         dataRowColor:
                             WidgetStatePropertyAll(AppColors.primaryColor),
-                        dataRowMinHeight: isTablet ? 45 : 55,
-                        dataRowMaxHeight: isTablet ? 45 : 55,
-                        columns: const [
+                        dataRowMinHeight: isMobile ? 35 : (isTablet ? 40 : 45),
+                        dataRowMaxHeight: isMobile ? 35 : (isTablet ? 40 : 45),
+                        columns: [
                           DataColumn(
                             label: Padding(
-                              padding: EdgeInsets.only(left: 16),
+                              padding: EdgeInsets.only(left: isMobile ? 8 : 16),
                               child: Text('ID',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold)),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: isMobile ? 12 : 14,
+                                  )),
                             ),
                           ),
                           DataColumn(
                               label: Text('Title',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('Desktop Image',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('Phone Image',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
-                          DataColumn(
-                              label: Text('Tablet Image',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: isMobile ? 12 : 14,
+                                  ))),
+                          if (!isMobile) ...[
+                            DataColumn(
+                                label: Text('Desktop Image',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: isMobile ? 12 : 14,
+                                    ))),
+                            DataColumn(
+                                label: Text('Phone Image',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: isMobile ? 12 : 14,
+                                    ))),
+                            DataColumn(
+                                label: Text('Tablet Image',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: isMobile ? 12 : 14,
+                                    ))),
+                          ],
                           DataColumn(
                               label: Text('Date Uploaded',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: isMobile ? 12 : 14,
+                                  ))),
                           DataColumn(
                               label: Text('Actions',
-                                  style:
-                                      TextStyle(fontWeight: FontWeight.bold))),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: isMobile ? 12 : 14,
+                                  ))),
                         ],
                         rows: banners.asMap().entries.map((entry) {
                           return _buildBannerRow(
@@ -293,7 +306,7 @@ class _BannerPageState extends State<BannerPage> {
     return Align(
       alignment: Alignment.centerRight,
       child: Padding(
-        padding: const EdgeInsets.only(right: 20, bottom: 20),
+        padding: const EdgeInsets.only(right: 20, bottom: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -361,57 +374,88 @@ class _BannerPageState extends State<BannerPage> {
 
   DataRow _buildBannerRow(
       int index, BannerUploadRequest banner, int currentPage) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth <= 600;
+
     int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
     return DataRow(cells: [
       DataCell(Padding(
-        padding: const EdgeInsets.only(left: 30),
-        child: Text('$rowNumber'),
-      )),
-      DataCell(Text(banner.title)),
-      DataCell(SizedBox(
-        width: 150,
+        padding: EdgeInsets.only(left: isMobile ? 8 : 30),
         child: Text(
-          banner.desktopImage,
-          softWrap: true,
+          '$rowNumber',
+          style: TextStyle(fontSize: isMobile ? 12 : 14),
+        ),
+      )),
+      DataCell(SizedBox(
+        width: isMobile ? 120 : 200,
+        child: Text(
+          banner.title,
+          style: TextStyle(fontSize: isMobile ? 12 : 14),
           overflow: TextOverflow.ellipsis,
           maxLines: 2,
         ),
       )),
-      DataCell(SizedBox(
+      if (!isMobile) ...[
+        DataCell(SizedBox(
           width: 150,
           child: Text(
-            banner.phoneImage,
+            banner.desktopImage,
+            style: const TextStyle(fontSize: 12),
             softWrap: true,
             overflow: TextOverflow.ellipsis,
             maxLines: 2,
-          ))),
+          ),
+        )),
+        DataCell(SizedBox(
+            width: 150,
+            child: Text(
+              banner.phoneImage,
+              style: const TextStyle(fontSize: 12),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ))),
+        DataCell(SizedBox(
+            width: 150,
+            child: Text(
+              banner.tabletImage,
+              style: const TextStyle(fontSize: 12),
+              softWrap: true,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
+            ))),
+      ],
       DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            banner.tabletImage,
-            softWrap: true,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-          ))),
-      DataCell(Text(
-        banner.createdAt != null
-            ? DateFormat('dd/MM/yyyy hh:mm a').format(banner.createdAt!)
-            : 'N/A',
+        width: isMobile ? 100 : 120,
+        child: Text(
+          banner.createdAt != null
+              ? DateFormat('dd/MM/yyyy hh:mm a').format(banner.createdAt!)
+              : 'N/A',
+          style: TextStyle(fontSize: isMobile ? 10 : 12),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+        ),
       )),
       DataCell(
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             IconButton(
-              icon: const Icon(Icons.edit,
-                  color: Color.fromARGB(255, 59, 59, 59)),
+              icon: Icon(
+                Icons.edit,
+                color: const Color.fromARGB(255, 59, 59, 59),
+                size: isMobile ? 18 : 24,
+              ),
               onPressed: () {
                 context.push('/edit-banner', extra: banner);
               },
             ),
             IconButton(
-              icon: const Icon(Icons.delete,
-                  color: Color.fromARGB(255, 20, 20, 20)),
+              icon: Icon(
+                Icons.delete,
+                color: const Color.fromARGB(255, 20, 20, 20),
+                size: isMobile ? 18 : 24,
+              ),
               onPressed: () {
                 _showDeleteDialog(context, banner.id!);
               },

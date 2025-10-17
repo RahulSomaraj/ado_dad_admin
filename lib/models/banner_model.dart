@@ -32,6 +32,19 @@ class BannerUploadRequest {
     };
   }
 
+  // For update requests - excludes ID field since API doesn't want it in body
+  Map<String, dynamic> toUpdateJson() {
+    return {
+      "title": title,
+      "desktopImage": desktopImage,
+      "tabletImage": tabletImage,
+      "phoneImage": phoneImage,
+      "link": link,
+      if (createdAt != null) "createdAt": createdAt!.toIso8601String(),
+      if (updatedAt != null) "updatedAt": updatedAt!.toIso8601String(),
+    };
+  }
+
   // factory BannerUploadRequest.fromJson(Map<String, dynamic> json) {
   //   return BannerUploadRequest(
   //     title: json["title"] as String,

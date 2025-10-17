@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/models/ad_model.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_bloc.dart';
@@ -6,7 +5,8 @@ import 'package:ado_dad_admin/features/dashboard/bloc/ads_event.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ado_dad_admin/common/save_csv.dart';
+import 'package:ado_dad_admin/common/save_pdf.dart';
+import 'package:ado_dad_admin/common/pdf_generator.dart';
 
 class AdminAdsDashboard extends StatefulWidget {
   const AdminAdsDashboard({super.key});
@@ -271,14 +271,14 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
               style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.blackColor),
               onPressed: () async {
-                await _downloadSelectedAsCsv(currentAds);
+                await _downloadSelectedAsPdf(currentAds);
               },
               icon: const Icon(
-                Icons.download,
+                Icons.picture_as_pdf,
                 color: AppColors.primaryColor,
               ),
               label: Text(
-                'Download',
+                'Download PDF',
                 style: TextStyle(color: AppColors.primaryColor),
               ),
             ),
@@ -302,7 +302,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
     });
   }
 
-  Future<void> _downloadSelectedAsCsv(List<AdModel> visibleAds) async {
+  Future<void> _downloadSelectedAsPdf(List<AdModel> visibleAds) async {
     final List<AdModel> selected =
         visibleAds.where((ad) => _selectedAdIds.contains(ad.id)).toList();
     if (selected.isEmpty) {
@@ -312,80 +312,42 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
       return;
     }
 
-    final StringBuffer buffer = StringBuffer();
-
-    // Add BOM for proper UTF-8 encoding
-    buffer.write('\uFEFF');
-
-    // Add CSV headers
-    buffer.writeln([
-      'ID',
-      'Name',
-      'Category',
-      'Posted On',
-      'Location',
-      'Price',
-      'Status',
-      'Approval',
-      'Image'
-    ].map(_csvEscape).join(','));
-
-    // Add data rows
-    for (final ad in selected) {
-      final row = [
-        ad.id,
-        _buildVehicleTitle(ad),
-        _formatCategory(ad.category),
-        _formatDate(ad.postedAt),
-        ad.location,
-        ad.price.toString(),
-        ad.soldOut ? 'SoldOut' : 'Active',
-        ad.isApproved ? 'Approved' : 'Pending/Rejected',
-        ad.images.isNotEmpty ? ad.images.first : '',
-      ].map(_csvEscape).join(',');
-      buffer.writeln(row);
-    }
-
-    // Convert to UTF-8 bytes properly
-    final csvContent = buffer.toString();
-    final bytes = utf8.encode(csvContent);
-    final String filename =
-        'ads_export_${DateTime.now().millisecondsSinceEpoch}.csv';
-
-    // Debug: Print CSV content to console
-    print('📄 CSV Content Preview:');
-    print(csvContent.substring(
-        0, csvContent.length > 500 ? 500 : csvContent.length));
-    print('📊 Total CSV length: ${csvContent.length} characters');
-    print('📊 Number of records: ${selected.length}');
-
     try {
-      await saveCsv(bytes, filename);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Saved $filename with ${selected.length} records')),
-      );
+      // Generate PDF
+      final pdfBytes = await PdfGenerator.generateAdsReport(selected);
+      final String filename =
+          'ads_report_${DateTime.now().millisecondsSinceEpoch}.pdf';
+
+      // Save PDF
+      await savePdf(pdfBytes, filename);
+
+      if (mounted) {
+        // Clear all selections
+        setState(() {
+          _selectedAdIds.clear();
+        });
+
+        // Refresh the data
+        context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+                'PDF report saved: $filename with ${selected.length} records'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to save CSV: $e')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to generate PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
-  }
-
-  String _csvEscape(String value) {
-    // Handle null or empty values
-    if (value.isEmpty) return '';
-
-    final needsQuotes = value.contains(',') ||
-        value.contains('"') ||
-        value.contains('\n') ||
-        value.contains('\r') ||
-        value.startsWith(' ') ||
-        value.endsWith(' ');
-
-    // Escape double quotes by doubling them
-    String escaped = value.replaceAll('"', '""');
-    return needsQuotes ? '"$escaped"' : escaped;
   }
 
   Widget _buildAdsDataTable(List<AdModel> ads) {
@@ -689,12 +651,15 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           orElse: () => false,
         );
 
+        // Check if ad is already approved
+        final bool isApproved = ad.isApproved;
+
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             // Approve Button
             GestureDetector(
-              onTap: isLoading
+              onTap: (isLoading || isApproved)
                   ? null
                   : () {
                       context.read<AdsBloc>().add(AdsEvent.updateAdApproval(
@@ -706,11 +671,11 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
                 width: 60,
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
                 decoration: BoxDecoration(
-                  color: isLoading ? Colors.grey : Colors.green,
+                  color: (isLoading || isApproved) ? Colors.grey : Colors.green,
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  isLoading ? '...' : 'Approve',
+                  isLoading ? '...' : (isApproved ? 'Approved' : 'Approve'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 10,

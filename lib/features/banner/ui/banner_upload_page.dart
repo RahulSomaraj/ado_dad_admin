@@ -37,10 +37,6 @@ class _BannerUploadPageState extends State<BannerUploadPage> {
         _desktopImage != null &&
         _tabletImage != null &&
         _mobileImage != null) {
-      // final images = [_desktopImage!, _tabletImage!, _mobileImage!];
-      // context.read<BannerBloc>().add(BannerEvent.uploadBannerToS3(images));
-      // Navigator.pop(context);
-
       context.read<BannerBloc>().add(
             BannerEvent.uploadBannerToS3(
               title: _nameController.text.trim(),
@@ -50,8 +46,28 @@ class _BannerUploadPageState extends State<BannerUploadPage> {
               phoneImage: _mobileImage!,
             ),
           );
-      Navigator.pop(context, true);
     }
+  }
+
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Success"),
+          content: const Text("Banner has been added successfully."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                context.pop(); // Close dialog
+                context.go('/banners'); // Navigate to banner list
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _imageContainer({
@@ -107,16 +123,14 @@ class _BannerUploadPageState extends State<BannerUploadPage> {
                 listener: (context, state) {
                   state.whenOrNull(
                     success: (banners) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Upload successful")),
-                      );
-                      // WidgetsBinding.instance.addPostFrameCallback((_) {
-                      //   Navigator.pop(context);
-                      // });
+                      _showSuccessDialog(context);
                     },
                     failure: (message) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Upload failed: $message")),
+                        SnackBar(
+                          content: Text("Upload failed: $message"),
+                          backgroundColor: Colors.red,
+                        ),
                       );
                     },
                   );
@@ -178,7 +192,7 @@ class _BannerUploadPageState extends State<BannerUploadPage> {
                         ),
                         const SizedBox(height: 32),
                         ElevatedButton(
-                          onPressed: _upload,
+                          onPressed: state is Loading ? null : _upload,
                           style: ElevatedButton.styleFrom(
                               minimumSize: Size(
                                   isSmallScreen ? double.infinity : 200, 48),
@@ -187,7 +201,17 @@ class _BannerUploadPageState extends State<BannerUploadPage> {
                               ),
                               backgroundColor: AppColors.blackColor,
                               foregroundColor: Colors.white),
-                          child: const Text("OK"),
+                          child: state is Loading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  ),
+                                )
+                              : const Text("Upload Banner"),
                         ),
                       ],
                     ),

@@ -54,7 +54,10 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
         link: event.link,
       );
 
-      await repository.saveBannerToDB(bannerRequest);
+      final createdBanner = await repository.saveBannerToDB(bannerRequest);
+
+      print(
+          '🎉 BannerBloc: Banner created successfully with ID: ${createdBanner.id}');
 
       // emit(BannerState.success(List.from(_banners)));
 
@@ -94,11 +97,15 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
       UpdateBanner event, Emitter<BannerState> emit) async {
     emit(Loading());
     try {
+      print(
+          '🔍 BannerBloc: Starting banner update for ID: ${event.updatedBanner.id}');
       await repository.updateBanner(event.updatedBanner);
+      print('✅ BannerBloc: Banner update successful');
       emit(const BannerState.updated());
       add(FetchAllBanners(page: 1, limit: 10));
     } catch (e) {
-      emit(BannerState.failure("Failed to update banner"));
+      print('❌ BannerBloc: Error updating banner: $e');
+      emit(BannerState.failure("Failed to update banner: $e"));
     }
   }
 
@@ -106,6 +113,7 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
       DeleteBanner event, Emitter<BannerState> emit) async {
     try {
       await repository.deleteBanner(event.bannerId);
+      emit(const BannerState.deleted());
       add(FetchAllBanners(page: 1, limit: 10));
     } catch (e) {
       emit(Failure("Failed to delete banner"));
