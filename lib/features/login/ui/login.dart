@@ -58,9 +58,18 @@ class _LoginPageState extends State<LoginPage> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        "assets/images/ado-dad-logo.png",
-                        height: 100,
+                      Column(
+                        children: [
+                          Image.asset(
+                            "assets/images/splashVector.png",
+                            height: 60,
+                          ),
+                          const SizedBox(height: 10),
+                          Image.asset(
+                            "assets/images/Ado Dad11.png",
+                            height: 60,
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 20),
                       const Text(
@@ -206,7 +215,7 @@ class _LoginPageState extends State<LoginPage> {
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.logoColor,
+              backgroundColor: AppColors.primaryColor1,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),

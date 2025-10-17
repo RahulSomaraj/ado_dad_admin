@@ -123,10 +123,10 @@ class _UserViewState extends State<UserView> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.yellow.shade100,
+        color: AppColors.primaryColor1.withOpacity(0.1),
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(12), bottomLeft: Radius.circular(12)),
-        border: Border.all(color: Colors.yellow.shade300),
+        border: Border.all(color: AppColors.primaryColor1.withOpacity(0.3)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

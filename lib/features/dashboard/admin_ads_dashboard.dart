@@ -372,7 +372,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
                 ),
                 dataRowColor: WidgetStateProperty.resolveWith((states) {
                   if (states.contains(WidgetState.selected)) {
-                    return AppColors.logoColor.withOpacity(0.2);
+                    return AppColors.primaryColor1.withOpacity(0.2);
                   }
                   return AppColors.primaryColor;
                 }),

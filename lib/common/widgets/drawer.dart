@@ -119,9 +119,25 @@ class _AdminDrawerState extends State<AdminDrawer> {
       shape: const ContinuousRectangleBorder(),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-            child: Image.asset('assets/images/ado-dad-logo.png'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Flexible(
+                child: Image.asset(
+                  'assets/images/splashVector.png',
+                  height: 30,
+                  // fit: BoxFit.contain,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Image.asset(
+                  'assets/images/Ado Dad11.png',
+                  height: 50,
+                  // fit: BoxFit.contain,
+                ),
+              ),
+            ],
           ),
           const Divider(),
           _buildDrawerMenu(),
@@ -258,7 +274,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         ),
       ),
       tileColor:
-          selectedIndex == index ? AppColors.logoColor : Colors.transparent,
+          selectedIndex == index ? AppColors.primaryColor1 : Colors.transparent,
       onTap: () {
         setState(() {
           selectedIndex = index;

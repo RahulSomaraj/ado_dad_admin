@@ -8,4 +8,5 @@ class AppColors {
   static const Color greyColor2 = Colors.black26;
   static const Color logoColor = Color(0xFFFABA00);
   static const Color scaffoldColor = Color(0xFFFFFAEB);
+  static const Color primaryColor1 = Color(0xFF4F48EC);
 }
