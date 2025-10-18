@@ -14,6 +14,7 @@ import 'package:ado_dad_admin/features/users/ui/add_user.dart';
 import 'package:ado_dad_admin/features/users/ui/user_edit.dart';
 import 'package:ado_dad_admin/features/users/ui/user_list.dart';
 import 'package:ado_dad_admin/features/users/ui/user_view.dart';
+import 'package:ado_dad_admin/features/reports/ui/report_list.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_add.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_edit.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_list.dart';
@@ -59,8 +60,7 @@ class AppRoutes {
               '/add-vehiclemanufacturer', VehicleManufacturesAdd()),
           _noTransitionRoute('/showrooms', Showroom()),
           _noTransitionRoute('/add-showroom', ShowroomAdd()),
-          _noTransitionRoute(
-              '/reports', const Center(child: Text("Reports Management"))),
+          _noTransitionRoute('/reports', const ReportList()),
           _noTransitionRoute('/banners', const BannerPage()),
           _noTransitionRoute('/upload-banners', const BannerUploadPage()),
           _noTransitionRoute(

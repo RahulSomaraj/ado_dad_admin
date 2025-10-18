@@ -11,6 +11,7 @@ import 'package:ado_dad_admin/features/users/bloc/user_ads_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/bloc/bloc/vehicle_variant_bloc.dart';
+import 'package:ado_dad_admin/features/reports/bloc/reports_bloc.dart';
 import 'package:ado_dad_admin/repositories/ads_rep.dart';
 import 'package:ado_dad_admin/repositories/auth_rep.dart';
 import 'package:ado_dad_admin/repositories/banner_rep.dart';
@@ -19,6 +20,7 @@ import 'package:ado_dad_admin/repositories/user_rep.dart';
 import 'package:ado_dad_admin/repositories/vehicle_manufacturer_rep.dart';
 import 'package:ado_dad_admin/repositories/vehicle_model_rep.dart';
 import 'package:ado_dad_admin/repositories/vehicle_variant_rep.dart';
+import 'package:ado_dad_admin/repositories/reports_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -86,6 +88,10 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => AdsBloc(adsRepository: AdsRepository()),
+        ),
+        BlocProvider(
+          create: (context) =>
+              ReportsBloc(reportsRepository: ReportsRepository()),
         ),
       ],
       child: BlocListener<AuthBloc, AuthState>(
