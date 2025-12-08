@@ -12,28 +12,48 @@ class UserAdsBloc extends Bloc<UserAdsEvent, UserAdsState> {
         super(const UserAdsState.initial()) {
     on<UserAdsEvent>((event, emit) async {
       await event.when(
-        fetchUserAds: (userId) => _onFetchUserAds(userId, emit),
-        refreshUserAds: (userId) => _onRefreshUserAds(userId, emit),
+        fetchUserAds: (userId, page, limit) =>
+            _onFetchUserAds(userId, page, limit, emit),
+        refreshUserAds: (userId, page, limit) =>
+            _onRefreshUserAds(userId, page, limit, emit),
       );
     });
   }
 
   Future<void> _onFetchUserAds(
     String userId,
+    int? page,
+    int? limit,
     Emitter<UserAdsState> emit,
   ) async {
     emit(const UserAdsState.loading());
 
     try {
-      print('🔍 Fetching ads for user ID: $userId');
-      final response = await _userRepository.fetchUserAds(userId);
+      final currentPage = page ?? 1;
+      final pageLimit = limit ?? 10;
+
+      print(
+          '🔍 Fetching ads for user ID: $userId, page: $currentPage, limit: $pageLimit');
+      final response = await _userRepository.fetchUserAds(
+        userId: userId,
+        page: currentPage,
+        limit: pageLimit,
+      );
       print('📊 API Response: ${response.data.length} ads found');
       print(
           '📋 First ad user ID: ${response.data.isNotEmpty ? response.data.first.user.id : 'No ads'}');
 
+      // Calculate pagination info
+      final totalPages = (response.total / pageLimit).ceil();
+
       // The API endpoint /ads/user/{userId} already returns ads for the specific user
       // No need to filter further
-      emit(UserAdsState.loaded(ads: response.data, total: response.total));
+      emit(UserAdsState.loaded(
+        ads: response.data,
+        total: response.total,
+        currentPage: currentPage,
+        totalPages: totalPages,
+      ));
     } on DioException catch (e) {
       // Handle Dio exceptions with detailed error information
       String errorMessage = 'Error loading ads: ';
@@ -62,17 +82,34 @@ class UserAdsBloc extends Bloc<UserAdsEvent, UserAdsState> {
 
   Future<void> _onRefreshUserAds(
     String userId,
+    int? page,
+    int? limit,
     Emitter<UserAdsState> emit,
   ) async {
     // For refresh, we can emit loading state and then fetch
     emit(const UserAdsState.loading());
 
     try {
-      final response = await _userRepository.fetchUserAds(userId);
+      final currentPage = page ?? 1;
+      final pageLimit = limit ?? 10;
+
+      final response = await _userRepository.fetchUserAds(
+        userId: userId,
+        page: currentPage,
+        limit: pageLimit,
+      );
+
+      // Calculate pagination info
+      final totalPages = (response.total / pageLimit).ceil();
 
       // The API endpoint /ads/user/{userId} already returns ads for the specific user
       // No need to filter further
-      emit(UserAdsState.loaded(ads: response.data, total: response.total));
+      emit(UserAdsState.loaded(
+        ads: response.data,
+        total: response.total,
+        currentPage: currentPage,
+        totalPages: totalPages,
+      ));
     } on DioException catch (e) {
       // Handle Dio exceptions with detailed error information
       String errorMessage = 'Error loading ads: ';

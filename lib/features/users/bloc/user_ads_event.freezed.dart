@@ -17,22 +17,26 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$UserAdsEvent {
   String get userId => throw _privateConstructorUsedError;
+  int? get page => throw _privateConstructorUsedError;
+  int? get limit => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String userId) fetchUserAds,
-    required TResult Function(String userId) refreshUserAds,
+    required TResult Function(String userId, int? page, int? limit)
+        fetchUserAds,
+    required TResult Function(String userId, int? page, int? limit)
+        refreshUserAds,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String userId)? fetchUserAds,
-    TResult? Function(String userId)? refreshUserAds,
+    TResult? Function(String userId, int? page, int? limit)? fetchUserAds,
+    TResult? Function(String userId, int? page, int? limit)? refreshUserAds,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String userId)? fetchUserAds,
-    TResult Function(String userId)? refreshUserAds,
+    TResult Function(String userId, int? page, int? limit)? fetchUserAds,
+    TResult Function(String userId, int? page, int? limit)? refreshUserAds,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -69,7 +73,7 @@ abstract class $UserAdsEventCopyWith<$Res> {
           UserAdsEvent value, $Res Function(UserAdsEvent) then) =
       _$UserAdsEventCopyWithImpl<$Res, UserAdsEvent>;
   @useResult
-  $Res call({String userId});
+  $Res call({String userId, int? page, int? limit});
 }
 
 /// @nodoc
@@ -88,12 +92,22 @@ class _$UserAdsEventCopyWithImpl<$Res, $Val extends UserAdsEvent>
   @override
   $Res call({
     Object? userId = null,
+    Object? page = freezed,
+    Object? limit = freezed,
   }) {
     return _then(_value.copyWith(
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
+      page: freezed == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int?,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
     ) as $Val);
   }
 }
@@ -106,7 +120,7 @@ abstract class _$$FetchUserAdsImplCopyWith<$Res>
       __$$FetchUserAdsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String userId});
+  $Res call({String userId, int? page, int? limit});
 }
 
 /// @nodoc
@@ -123,12 +137,22 @@ class __$$FetchUserAdsImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? userId = null,
+    Object? page = freezed,
+    Object? limit = freezed,
   }) {
     return _then(_$FetchUserAdsImpl(
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
+      page: freezed == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int?,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -136,14 +160,21 @@ class __$$FetchUserAdsImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$FetchUserAdsImpl implements _FetchUserAds {
-  const _$FetchUserAdsImpl({required this.userId});
+  const _$FetchUserAdsImpl(
+      {required this.userId, this.page = 1, this.limit = 10});
 
   @override
   final String userId;
+  @override
+  @JsonKey()
+  final int? page;
+  @override
+  @JsonKey()
+  final int? limit;
 
   @override
   String toString() {
-    return 'UserAdsEvent.fetchUserAds(userId: $userId)';
+    return 'UserAdsEvent.fetchUserAds(userId: $userId, page: $page, limit: $limit)';
   }
 
   @override
@@ -151,11 +182,13 @@ class _$FetchUserAdsImpl implements _FetchUserAds {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$FetchUserAdsImpl &&
-            (identical(other.userId, userId) || other.userId == userId));
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.limit, limit) || other.limit == limit));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userId);
+  int get hashCode => Object.hash(runtimeType, userId, page, limit);
 
   /// Create a copy of UserAdsEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -168,30 +201,32 @@ class _$FetchUserAdsImpl implements _FetchUserAds {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String userId) fetchUserAds,
-    required TResult Function(String userId) refreshUserAds,
+    required TResult Function(String userId, int? page, int? limit)
+        fetchUserAds,
+    required TResult Function(String userId, int? page, int? limit)
+        refreshUserAds,
   }) {
-    return fetchUserAds(userId);
+    return fetchUserAds(userId, page, limit);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String userId)? fetchUserAds,
-    TResult? Function(String userId)? refreshUserAds,
+    TResult? Function(String userId, int? page, int? limit)? fetchUserAds,
+    TResult? Function(String userId, int? page, int? limit)? refreshUserAds,
   }) {
-    return fetchUserAds?.call(userId);
+    return fetchUserAds?.call(userId, page, limit);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String userId)? fetchUserAds,
-    TResult Function(String userId)? refreshUserAds,
+    TResult Function(String userId, int? page, int? limit)? fetchUserAds,
+    TResult Function(String userId, int? page, int? limit)? refreshUserAds,
     required TResult orElse(),
   }) {
     if (fetchUserAds != null) {
-      return fetchUserAds(userId);
+      return fetchUserAds(userId, page, limit);
     }
     return orElse();
   }
@@ -229,11 +264,17 @@ class _$FetchUserAdsImpl implements _FetchUserAds {
 }
 
 abstract class _FetchUserAds implements UserAdsEvent {
-  const factory _FetchUserAds({required final String userId}) =
-      _$FetchUserAdsImpl;
+  const factory _FetchUserAds(
+      {required final String userId,
+      final int? page,
+      final int? limit}) = _$FetchUserAdsImpl;
 
   @override
   String get userId;
+  @override
+  int? get page;
+  @override
+  int? get limit;
 
   /// Create a copy of UserAdsEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -251,7 +292,7 @@ abstract class _$$RefreshUserAdsImplCopyWith<$Res>
       __$$RefreshUserAdsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String userId});
+  $Res call({String userId, int? page, int? limit});
 }
 
 /// @nodoc
@@ -268,12 +309,22 @@ class __$$RefreshUserAdsImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? userId = null,
+    Object? page = freezed,
+    Object? limit = freezed,
   }) {
     return _then(_$RefreshUserAdsImpl(
       userId: null == userId
           ? _value.userId
           : userId // ignore: cast_nullable_to_non_nullable
               as String,
+      page: freezed == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int?,
+      limit: freezed == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int?,
     ));
   }
 }
@@ -281,14 +332,21 @@ class __$$RefreshUserAdsImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$RefreshUserAdsImpl implements _RefreshUserAds {
-  const _$RefreshUserAdsImpl({required this.userId});
+  const _$RefreshUserAdsImpl(
+      {required this.userId, this.page = 1, this.limit = 10});
 
   @override
   final String userId;
+  @override
+  @JsonKey()
+  final int? page;
+  @override
+  @JsonKey()
+  final int? limit;
 
   @override
   String toString() {
-    return 'UserAdsEvent.refreshUserAds(userId: $userId)';
+    return 'UserAdsEvent.refreshUserAds(userId: $userId, page: $page, limit: $limit)';
   }
 
   @override
@@ -296,11 +354,13 @@ class _$RefreshUserAdsImpl implements _RefreshUserAds {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$RefreshUserAdsImpl &&
-            (identical(other.userId, userId) || other.userId == userId));
+            (identical(other.userId, userId) || other.userId == userId) &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.limit, limit) || other.limit == limit));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, userId);
+  int get hashCode => Object.hash(runtimeType, userId, page, limit);
 
   /// Create a copy of UserAdsEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -314,30 +374,32 @@ class _$RefreshUserAdsImpl implements _RefreshUserAds {
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String userId) fetchUserAds,
-    required TResult Function(String userId) refreshUserAds,
+    required TResult Function(String userId, int? page, int? limit)
+        fetchUserAds,
+    required TResult Function(String userId, int? page, int? limit)
+        refreshUserAds,
   }) {
-    return refreshUserAds(userId);
+    return refreshUserAds(userId, page, limit);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String userId)? fetchUserAds,
-    TResult? Function(String userId)? refreshUserAds,
+    TResult? Function(String userId, int? page, int? limit)? fetchUserAds,
+    TResult? Function(String userId, int? page, int? limit)? refreshUserAds,
   }) {
-    return refreshUserAds?.call(userId);
+    return refreshUserAds?.call(userId, page, limit);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String userId)? fetchUserAds,
-    TResult Function(String userId)? refreshUserAds,
+    TResult Function(String userId, int? page, int? limit)? fetchUserAds,
+    TResult Function(String userId, int? page, int? limit)? refreshUserAds,
     required TResult orElse(),
   }) {
     if (refreshUserAds != null) {
-      return refreshUserAds(userId);
+      return refreshUserAds(userId, page, limit);
     }
     return orElse();
   }
@@ -375,11 +437,17 @@ class _$RefreshUserAdsImpl implements _RefreshUserAds {
 }
 
 abstract class _RefreshUserAds implements UserAdsEvent {
-  const factory _RefreshUserAds({required final String userId}) =
-      _$RefreshUserAdsImpl;
+  const factory _RefreshUserAds(
+      {required final String userId,
+      final int? page,
+      final int? limit}) = _$RefreshUserAdsImpl;
 
   @override
   String get userId;
+  @override
+  int? get page;
+  @override
+  int? get limit;
 
   /// Create a copy of UserAdsEvent
   /// with the given fields replaced by the non-null parameter values.

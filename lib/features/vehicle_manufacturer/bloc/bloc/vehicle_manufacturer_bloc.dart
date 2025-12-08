@@ -20,6 +20,7 @@ class VehicleManufacturerBloc
     on<FetchAllManufacturersForDropdown>(
       (event, emit) => _fetchAllForDropdown(emit),
     );
+    on<UploadCsv>(_onUploadCsv);
 
     // @override
     // Stream<VehicleManufacturerState> mapEventToState(
@@ -100,6 +101,27 @@ class VehicleManufacturerBloc
     } catch (e) {
       emit(VehicleManufacturerState.error(
           "Failed to load manufacturer dropdown list"));
+    }
+  }
+
+  Future<void> _onUploadCsv(
+    UploadCsv event,
+    Emitter<VehicleManufacturerState> emit,
+  ) async {
+    emit(const VehicleManufacturerState.loading());
+    try {
+      print('🔄 Bloc: Starting CSV upload for file: ${event.fileName}');
+      await repository.uploadCsv(event.fileBytes, event.fileName);
+      print('✅ Bloc: CSV upload successful, fetching manufacturers...');
+      final result = await repository.fetchAllManufacturers();
+      print('✅ Bloc: Manufacturers fetched successfully');
+      emit(VehicleManufacturerState.loaded(result));
+    } catch (e, stackTrace) {
+      print('❌ Bloc: Error during CSV upload:');
+      print('   Error: $e');
+      print('   Error Type: ${e.runtimeType}');
+      print('   Stack Trace: $stackTrace');
+      emit(VehicleManufacturerState.error(e.toString()));
     }
   }
 }

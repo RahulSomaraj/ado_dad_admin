@@ -2,6 +2,7 @@ import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/bloc/bloc/vehicle_variant_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart'
     as vehicle_model;
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -23,6 +24,7 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
   int currentPage = 1;
   int rowsPerPage = 10;
   final ScrollController _horizontalScrollController = ScrollController();
+  bool _isCsvUploadInProgress = false;
 
   void _fetchPage(String modelId, int page, int limit) {
     context.read<VehicleVariantBloc>().add(
@@ -50,129 +52,291 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
     _fetchPage(widget.modelId, currentPage, rowsPerPage);
   }
 
+  Future<void> _uploadCsvFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+        withData: true,
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        final fileBytes = result.files.single.bytes!;
+        final fileName = result.files.single.name;
+
+        // Print model ID when uploading CSV
+        print('📤 Uploading Variant CSV for Model ID: ${widget.modelId}');
+        print('📁 File name: $fileName');
+
+        if (mounted) {
+          setState(() {
+            _isCsvUploadInProgress = true;
+          });
+          // Upload CSV using the bloc
+          context.read<VehicleVariantBloc>().add(
+                VehicleVariantEvent.uploadVariantCsv(
+                  modelId: widget.modelId,
+                  fileBytes: fileBytes,
+                  fileName: fileName,
+                ),
+              );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isCsvUploadInProgress = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking file: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.modelId);
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600 && screenWidth <= 900;
-    return BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
-      builder: (context, state) {
-        return state.maybeWhen(
-          loading: () => const CircularProgressIndicator(),
-          error: (msg) => Text("Error: $msg"),
+    return BlocListener<VehicleVariantBloc, VehicleVariantState>(
+      listenWhen: (prev, curr) {
+        // Only listen when CSV upload is in progress and state changes to loaded or error
+        if (!_isCsvUploadInProgress) return false;
+        return curr.maybeWhen(
+          loaded: (_) => true,
+          error: (_) => true,
+          orElse: () => false,
+        );
+      },
+      listener: (context, state) {
+        state.maybeWhen(
           loaded: (response) {
-            final variants = response.data;
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(" Vehicle Variants",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
-                      _buildAddButton()
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-                LayoutBuilder(builder: (context, constraints) {
-                  return Card(
-                    elevation: 3,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+            // Only show success message if CSV upload was in progress
+            if (_isCsvUploadInProgress) {
+              setState(() {
+                _isCsvUploadInProgress = false;
+              });
+
+              // Print variant list in console
+              print('📋 UI: Variant List after CSV upload:');
+              print('   Total variants: ${response.data.length}');
+              print('   Total pages: ${response.totalPages}');
+              print('   Total count: ${response.total}');
+              for (int i = 0; i < response.data.length; i++) {
+                final variant = response.data[i];
+                print('   Variant ${i + 1}:');
+                print('      ID: ${variant.id}');
+                print('      Name: ${variant.name}');
+                print('      Display Name: ${variant.displayName}');
+                print(
+                    '      Fuel Type: ${variant.fuelType?.displayName ?? "N/A"}');
+                print(
+                    '      Transmission: ${variant.transmissionType?.displayName ?? "N/A"}');
+                print('      Price: ₹${variant.price ?? "N/A"}');
+                print('      Is Active: ${variant.isActive}');
+                print(
+                    '      Feature Package: ${variant.featurePackage ?? "N/A"}');
+                print(
+                    '      Seating Capacity: ${variant.seatingCapacity ?? "N/A"}');
+              }
+              print('📋 Full Variant List Summary:');
+              print(
+                  '   ${response.data.map((v) => '${v.displayName} (${v.name})').join(', ')}');
+
+              // Show success popup
+              showDialog(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: const Text("Success"),
+                  content: Text(
+                      "CSV uploaded successfully. ${response.data.length} variant(s) loaded. Variant list has been updated."),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text("OK"),
                     ),
-                    child: Scrollbar(
-                      thumbVisibility: true,
-                      controller: _horizontalScrollController,
-                      child: SingleChildScrollView(
+                  ],
+                ),
+              );
+            }
+          },
+          error: (msg) {
+            if (_isCsvUploadInProgress) {
+              setState(() {
+                _isCsvUploadInProgress = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('CSV upload failed: $msg'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          orElse: () {},
+        );
+      },
+      child: BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
+        builder: (context, state) {
+          return state.maybeWhen(
+            loading: () => const CircularProgressIndicator(),
+            error: (msg) => Text("Error: $msg"),
+            loaded: (response) {
+              final variants = response.data;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(" Vehicle Variants",
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Row(
+                          children: [
+                            _buildUploadCsvButton(),
+                            const SizedBox(width: 12),
+                            _buildAddButton(),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  LayoutBuilder(builder: (context, constraints) {
+                    return Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Scrollbar(
+                        thumbVisibility: true,
                         controller: _horizontalScrollController,
-                        scrollDirection: Axis.horizontal,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: DataTable(
-                            columnSpacing: isTablet ? 20 : 115,
-                            headingRowColor: WidgetStateColor.resolveWith(
-                              (states) =>
-                                  const Color.fromARGB(66, 144, 140, 140),
+                        child: SingleChildScrollView(
+                          controller: _horizontalScrollController,
+                          scrollDirection: Axis.horizontal,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: DataTable(
+                              columnSpacing: isTablet ? 20 : 115,
+                              headingRowColor: WidgetStateColor.resolveWith(
+                                (states) =>
+                                    const Color.fromARGB(66, 144, 140, 140),
+                              ),
+                              dataRowColor: WidgetStatePropertyAll(
+                                  AppColors.primaryColor),
+                              dataRowMinHeight: isTablet ? 45 : 55,
+                              dataRowMaxHeight: isTablet ? 45 : 55,
+                              columns: const [
+                                DataColumn(label: Text("Name")),
+                                DataColumn(label: Text("Display Name")),
+                                // DataColumn(label: Text("Vehicle Model")),
+                                DataColumn(label: Text("Fuel")),
+                                DataColumn(label: Text("Transmission")),
+                                DataColumn(label: Text("Price")),
+                                DataColumn(label: Text("Active")),
+                              ],
+                              rows: variants.map((v) {
+                                return DataRow(cells: [
+                                  DataCell(Text(v.name)),
+                                  DataCell(Text(v.displayName)),
+                                  // DataCell(Text(v.vehicleModel.displayName)),
+                                  DataCell(
+                                      Text(v.fuelType?.displayName ?? "-")),
+                                  DataCell(Text(
+                                      v.transmissionType?.displayName ?? "-")),
+                                  DataCell(Text("₹${v.price}")),
+                                  DataCell(Text(v.isActive ? "Yes" : "No")),
+                                ]);
+                              }).toList(),
                             ),
-                            dataRowColor:
-                                WidgetStatePropertyAll(AppColors.primaryColor),
-                            dataRowMinHeight: isTablet ? 45 : 55,
-                            dataRowMaxHeight: isTablet ? 45 : 55,
-                            columns: const [
-                              DataColumn(label: Text("Name")),
-                              DataColumn(label: Text("Display Name")),
-                              // DataColumn(label: Text("Vehicle Model")),
-                              DataColumn(label: Text("Fuel")),
-                              DataColumn(label: Text("Transmission")),
-                              DataColumn(label: Text("Price")),
-                              DataColumn(label: Text("Active")),
-                            ],
-                            rows: variants.map((v) {
-                              return DataRow(cells: [
-                                DataCell(Text(v.name)),
-                                DataCell(Text(v.displayName)),
-                                // DataCell(Text(v.vehicleModel.displayName)),
-                                DataCell(Text(v.fuelType?.displayName ?? "-")),
-                                DataCell(Text(
-                                    v.transmissionType?.displayName ?? "-")),
-                                DataCell(Text("₹${v.price}")),
-                                DataCell(Text(v.isActive ? "Yes" : "No")),
-                              ]);
-                            }).toList(),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                }),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    const Text("Rows per page: "),
-                    const SizedBox(width: 8),
-                    DropdownButton<int>(
-                      value: rowsPerPage,
-                      items: [10, 20]
-                          .map((e) => DropdownMenuItem(
-                                value: e,
-                                child: Text(e.toString()),
-                              ))
-                          .toList(),
-                      onChanged: (val) {
-                        if (mounted) return;
-                        if (val != null) {
-                          _fetchPage(widget.modelId, 1, val);
-                        }
-                      },
-                    ),
-                    IconButton(
-                      onPressed: currentPage > 1
-                          ? () => _fetchPage(
-                              widget.modelId, currentPage - 1, rowsPerPage)
-                          : null,
-                      icon: Icon(Icons.chevron_left),
-                    ),
-                    Text("Page $currentPage of ${response.totalPages}"),
-                    IconButton(
-                      onPressed: currentPage < response.totalPages
-                          ? () => _fetchPage(
-                              widget.modelId, currentPage + 1, rowsPerPage)
-                          : null,
-                      icon: Icon(Icons.chevron_right),
-                    ),
-                  ],
-                )
-              ],
-            );
-          },
-          orElse: () => const SizedBox.shrink(),
-        );
-      },
+                    );
+                  }),
+                  const SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      const Text("Rows per page: "),
+                      const SizedBox(width: 8),
+                      DropdownButton<int>(
+                        value: rowsPerPage,
+                        items: [10, 20]
+                            .map((e) => DropdownMenuItem(
+                                  value: e,
+                                  child: Text(e.toString()),
+                                ))
+                            .toList(),
+                        onChanged: (val) {
+                          if (mounted) return;
+                          if (val != null) {
+                            _fetchPage(widget.modelId, 1, val);
+                          }
+                        },
+                      ),
+                      IconButton(
+                        onPressed: currentPage > 1
+                            ? () => _fetchPage(
+                                widget.modelId, currentPage - 1, rowsPerPage)
+                            : null,
+                        icon: Icon(Icons.chevron_left),
+                      ),
+                      Text("Page $currentPage of ${response.totalPages}"),
+                      IconButton(
+                        onPressed: currentPage < response.totalPages
+                            ? () => _fetchPage(
+                                widget.modelId, currentPage + 1, rowsPerPage)
+                            : null,
+                        icon: Icon(Icons.chevron_right),
+                      ),
+                    ],
+                  )
+                ],
+              );
+            },
+            orElse: () => const SizedBox.shrink(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildUploadCsvButton() {
+    final isTablet = MediaQuery.of(context).size.width < 900 &&
+        MediaQuery.of(context).size.width >= 550;
+    return SizedBox(
+      width: isTablet ? double.infinity : 200,
+      height: 45,
+      child: ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.black,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+        icon: _isCsvUploadInProgress
+            ? const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              )
+            : const Icon(Icons.upload_file, color: Colors.white),
+        label: Text(
+          'Upload Variant CSV',
+          style: const TextStyle(color: Colors.white),
+        ),
+        onPressed: _isCsvUploadInProgress ? null : () => _uploadCsvFile(),
+      ),
     );
   }
 

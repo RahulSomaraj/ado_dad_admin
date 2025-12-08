@@ -19,6 +19,7 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
     on<FetchVehicleOptions>(_onFetchVehicleOptions);
     on<FetchOneVehicleModel>(_onFetchOne);
     on<UpdateVehicleModel>(_onUpdateVehicleModel);
+    on<UploadCsv>(_onUploadCsv);
   }
 
   Future<void> _onFetchAllVehicleModels(
@@ -72,6 +73,8 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
     try {
       final result = await repository.fetchModelsByManufacturer(
         event.manufacturerId,
+        page: event.page,
+        limit: event.limit,
       );
       emit(VehicleModelState.loaded(result));
     } catch (e) {
@@ -139,6 +142,41 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
       final refreshed = await repository.fetchAllModels();
       emit(VehicleModelState.loaded(refreshed));
     } catch (e) {
+      emit(VehicleModelState.error(e.toString()));
+    }
+  }
+
+  Future<void> _onUploadCsv(
+    UploadCsv event,
+    Emitter<VehicleModelState> emit,
+  ) async {
+    emit(const VehicleModelState.loading());
+    try {
+      print(
+          '🔄 Bloc: Starting CSV upload for manufacturer: ${event.manufacturerId}');
+      await repository.uploadCsv(
+          event.manufacturerId, event.fileBytes, event.fileName);
+      print('✅ Bloc: CSV upload successful, fetching models...');
+
+      // Fetch models by manufacturer first (for the manufacturer view page)
+      // Use default pagination (page 1, limit 10) for the initial fetch after CSV upload
+      final manufacturerModels = await repository.fetchModelsByManufacturer(
+        event.manufacturerId,
+        page: 1,
+        limit: 10,
+      );
+      print('✅ Bloc: Manufacturer models fetched successfully');
+
+      // Emit the manufacturer-specific models (this updates the manufacturer view page)
+      emit(VehicleModelState.loaded(manufacturerModels));
+
+      // Note: The main model list will be refreshed by the global bloc
+      // which is triggered from the UI layer after successful upload
+    } catch (e, stackTrace) {
+      print('❌ Bloc: Error during CSV upload:');
+      print('   Error: $e');
+      print('   Error Type: ${e.runtimeType}');
+      print('   Stack Trace: $stackTrace');
       emit(VehicleModelState.error(e.toString()));
     }
   }

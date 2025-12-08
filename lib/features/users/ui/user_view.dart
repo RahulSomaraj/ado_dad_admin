@@ -26,12 +26,16 @@ class _UserViewState extends State<UserView> {
   @override
   void initState() {
     super.initState();
-    // Trigger the bloc to fetch user ads
+    // Trigger the bloc to fetch user ads with pagination
     print(
         '👤 UserView: Fetching ads for user: ${widget.user.name} (ID: ${widget.user.id})');
-    context
-        .read<UserAdsBloc>()
-        .add(UserAdsEvent.fetchUserAds(userId: widget.user.id));
+    context.read<UserAdsBloc>().add(
+          UserAdsEvent.fetchUserAds(
+            userId: widget.user.id,
+            page: _currentPage,
+            limit: _itemsPerPage,
+          ),
+        );
   }
 
   @override
@@ -306,12 +310,13 @@ class _UserViewState extends State<UserView> {
                   child: CircularProgressIndicator(),
                 ),
               ),
-              loaded: (ads, total) {
-                // Update total ads count
+              loaded: (ads, total, currentPage, totalPages) {
+                // Update total ads count and current page
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted) {
                     setState(() {
                       _totalAds = total;
+                      _currentPage = currentPage;
                     });
                   }
                 });
@@ -343,7 +348,7 @@ class _UserViewState extends State<UserView> {
                     children: [
                       _buildAdsTable(ads),
                       const SizedBox(height: 20),
-                      _buildPagination(ads),
+                      _buildPagination(totalPages, currentPage),
                     ],
                   );
                 }
@@ -369,7 +374,10 @@ class _UserViewState extends State<UserView> {
                         onPressed: () {
                           context.read<UserAdsBloc>().add(
                                 UserAdsEvent.refreshUserAds(
-                                    userId: widget.user.id),
+                                  userId: widget.user.id,
+                                  page: _currentPage,
+                                  limit: _itemsPerPage,
+                                ),
                               );
                         },
                         child: const Text('Retry'),
@@ -455,9 +463,7 @@ class _UserViewState extends State<UserView> {
                       ),
                     ),
                   ],
-                  rows: _getPaginatedAds(ads)
-                      .map((ad) => _buildAdRow(ad))
-                      .toList(),
+                  rows: ads.map((ad) => _buildAdRow(ad)).toList(),
                 ),
               ),
             ),
@@ -567,25 +573,8 @@ class _UserViewState extends State<UserView> {
     return '${date.day}/${date.month}/${date.year}';
   }
 
-  /// Get paginated ads for current page
-  List<AdModel> _getPaginatedAds(List<AdModel> allAds) {
-    final startIndex = (_currentPage - 1) * _itemsPerPage;
-    final endIndex = startIndex + _itemsPerPage;
-    return allAds.sublist(
-      startIndex,
-      endIndex > allAds.length ? allAds.length : endIndex,
-    );
-  }
-
-  /// Get total pages for pagination
-  int _getTotalPages(List<AdModel> allAds) {
-    return (allAds.length / _itemsPerPage).ceil();
-  }
-
   /// Build pagination widget
-  Widget _buildPagination(List<AdModel> allAds) {
-    final totalPages = _getTotalPages(allAds);
-
+  Widget _buildPagination(int totalPages, int currentPage) {
     if (totalPages <= 1) return const SizedBox.shrink();
 
     return Align(
@@ -613,39 +602,60 @@ class _UserViewState extends State<UserView> {
                     _currentPage =
                         1; // Reset to first page when changing items per page
                   });
+                  context.read<UserAdsBloc>().add(
+                        UserAdsEvent.fetchUserAds(
+                          userId: widget.user.id,
+                          page: 1,
+                          limit: value,
+                        ),
+                      );
                 }
               },
             ),
             const SizedBox(width: 20),
             GestureDetector(
-              onTap: _currentPage > 1
+              onTap: currentPage > 1
                   ? () {
-                      setState(() => _currentPage--);
+                      final newPage = currentPage - 1;
+                      context.read<UserAdsBloc>().add(
+                            UserAdsEvent.fetchUserAds(
+                              userId: widget.user.id,
+                              page: newPage,
+                              limit: _itemsPerPage,
+                            ),
+                          );
                     }
                   : null,
               child: Icon(
                 Icons.chevron_left,
                 size: 28,
-                color: _currentPage > 1 ? Colors.black : Colors.grey[400],
+                color: currentPage > 1 ? Colors.black : Colors.grey[400],
               ),
             ),
             const SizedBox(width: 15),
             Text(
-              "Page $_currentPage of $totalPages",
+              "Page $currentPage of $totalPages",
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
             const SizedBox(width: 15),
             GestureDetector(
-              onTap: _currentPage < totalPages
+              onTap: currentPage < totalPages
                   ? () {
-                      setState(() => _currentPage++);
+                      final newPage = currentPage + 1;
+                      context.read<UserAdsBloc>().add(
+                            UserAdsEvent.fetchUserAds(
+                              userId: widget.user.id,
+                              page: newPage,
+                              limit: _itemsPerPage,
+                            ),
+                          );
                     }
                   : null,
               child: Icon(
                 Icons.chevron_right,
                 size: 28,
                 color:
-                    _currentPage < totalPages ? Colors.black : Colors.grey[400],
+                    currentPage < totalPages ? Colors.black : Colors.grey[400],
               ),
             ),
           ],

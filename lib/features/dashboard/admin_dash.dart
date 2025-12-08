@@ -53,8 +53,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  _buildNewAddButton(),
+                  // const SizedBox(height: 12),
+                  // _buildNewAddButton(),
                   const SizedBox(height: 12),
                   _buildNewShowroomAddButton(),
                 ],
@@ -78,8 +78,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
                     ),
                   ),
                   const Spacer(),
-                  _buildNewAddButton(),
-                  const SizedBox(width: 15),
+                  // _buildNewAddButton(),
+                  // const SizedBox(width: 15),
                   _buildNewShowroomAddButton(),
                 ],
               ),
@@ -87,47 +87,47 @@ class _AdminDashboardState extends State<AdminDashboard> {
     );
   }
 
-  Widget _buildNewAddButton() {
-    final width = MediaQuery.of(context).size.width;
-    final isNarrow = width <= 900;
-    return SizedBox(
-      width: isNarrow ? double.infinity : 150,
-      height: 50,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final buttonWidth = constraints.maxWidth;
+  // Widget _buildNewAddButton() {
+  //   final width = MediaQuery.of(context).size.width;
+  //   final isNarrow = width <= 900;
+  //   return SizedBox(
+  //     width: isNarrow ? double.infinity : 150,
+  //     height: 50,
+  //     child: LayoutBuilder(
+  //       builder: (context, constraints) {
+  //         final buttonWidth = constraints.maxWidth;
 
-          // Dynamically adjust content based on width
-          double iconSize = buttonWidth < 180 ? 18 : 20;
-          double fontSize = buttonWidth < 180 ? 14 : 16;
-          double spacing = buttonWidth < 180 ? 6 : 8;
+  //         // Dynamically adjust content based on width
+  //         double iconSize = buttonWidth < 180 ? 18 : 20;
+  //         double fontSize = buttonWidth < 180 ? 14 : 16;
+  //         double spacing = buttonWidth < 180 ? 6 : 8;
 
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blackColor,
-              foregroundColor: AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              textStyle:
-                  TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
-            ),
-            onPressed: () {},
-            child: Row(
-              mainAxisAlignment:
-                  isNarrow ? MainAxisAlignment.center : MainAxisAlignment.start,
-              children: [
-                Icon(Icons.add, color: Colors.white, size: iconSize),
-                SizedBox(width: spacing),
-                Text('Add New Ads', style: TextStyle(fontSize: fontSize)),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
+  //         return ElevatedButton(
+  //           style: ElevatedButton.styleFrom(
+  //             backgroundColor: AppColors.blackColor,
+  //             foregroundColor: AppColors.primaryColor,
+  //             shape: RoundedRectangleBorder(
+  //               borderRadius: BorderRadius.circular(8),
+  //             ),
+  //             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+  //             textStyle:
+  //                 TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold),
+  //           ),
+  //           onPressed: () {},
+  //           child: Row(
+  //             mainAxisAlignment:
+  //                 isNarrow ? MainAxisAlignment.center : MainAxisAlignment.start,
+  //             children: [
+  //               Icon(Icons.add, color: Colors.white, size: iconSize),
+  //               SizedBox(width: spacing),
+  //               Text('Add New Ads', style: TextStyle(fontSize: fontSize)),
+  //             ],
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget _buildNewShowroomAddButton() {
     final width = MediaQuery.of(context).size.width;

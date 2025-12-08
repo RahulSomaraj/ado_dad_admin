@@ -18,4 +18,12 @@ class VehicleVariantEvent with _$VehicleVariantEvent {
   const factory VehicleVariantEvent.createVariant({
     required VariantModel variant,
   }) = CreateVariant;
+
+  const factory VehicleVariantEvent.uploadVariantCsv({
+    required String modelId,
+    required List<int> fileBytes,
+    required String fileName,
+  }) = UploadVariantCsv;
+
+  const factory VehicleVariantEvent.fetchOptions() = FetchOptions;
 }

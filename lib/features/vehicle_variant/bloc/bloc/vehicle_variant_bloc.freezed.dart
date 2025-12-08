@@ -23,6 +23,10 @@ mixin _$VehicleVariantEvent {
         fetchAll,
     required TResult Function(String modelId, int page, int limit) fetchByModel,
     required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function() fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -31,6 +35,9 @@ mixin _$VehicleVariantEvent {
     TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult? Function(String modelId, int page, int limit)? fetchByModel,
     TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function()? fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -39,6 +46,9 @@ mixin _$VehicleVariantEvent {
     TResult Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult Function(String modelId, int page, int limit)? fetchByModel,
     TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function()? fetchOptions,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -48,6 +58,8 @@ mixin _$VehicleVariantEvent {
     required TResult Function(FetchAllVariants value) fetchAll,
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(FetchOptions value) fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -56,6 +68,8 @@ mixin _$VehicleVariantEvent {
     TResult? Function(FetchAllVariants value)? fetchAll,
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(FetchOptions value)? fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -64,6 +78,8 @@ mixin _$VehicleVariantEvent {
     TResult Function(FetchAllVariants value)? fetchAll,
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -136,6 +152,10 @@ class _$StartedImpl implements _Started {
         fetchAll,
     required TResult Function(String modelId, int page, int limit) fetchByModel,
     required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function() fetchOptions,
   }) {
     return started();
   }
@@ -147,6 +167,9 @@ class _$StartedImpl implements _Started {
     TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult? Function(String modelId, int page, int limit)? fetchByModel,
     TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function()? fetchOptions,
   }) {
     return started?.call();
   }
@@ -158,6 +181,9 @@ class _$StartedImpl implements _Started {
     TResult Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult Function(String modelId, int page, int limit)? fetchByModel,
     TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -173,6 +199,8 @@ class _$StartedImpl implements _Started {
     required TResult Function(FetchAllVariants value) fetchAll,
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return started(this);
   }
@@ -184,6 +212,8 @@ class _$StartedImpl implements _Started {
     TResult? Function(FetchAllVariants value)? fetchAll,
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return started?.call(this);
   }
@@ -195,6 +225,8 @@ class _$StartedImpl implements _Started {
     TResult Function(FetchAllVariants value)? fetchAll,
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -302,6 +334,10 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
         fetchAll,
     required TResult Function(String modelId, int page, int limit) fetchByModel,
     required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function() fetchOptions,
   }) {
     return fetchAll(page, limit, searchQuery);
   }
@@ -313,6 +349,9 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult? Function(String modelId, int page, int limit)? fetchByModel,
     TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function()? fetchOptions,
   }) {
     return fetchAll?.call(page, limit, searchQuery);
   }
@@ -324,6 +363,9 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult Function(String modelId, int page, int limit)? fetchByModel,
     TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
     if (fetchAll != null) {
@@ -339,6 +381,8 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     required TResult Function(FetchAllVariants value) fetchAll,
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return fetchAll(this);
   }
@@ -350,6 +394,8 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult? Function(FetchAllVariants value)? fetchAll,
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return fetchAll?.call(this);
   }
@@ -361,6 +407,8 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult Function(FetchAllVariants value)? fetchAll,
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
     if (fetchAll != null) {
@@ -481,6 +529,10 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
         fetchAll,
     required TResult Function(String modelId, int page, int limit) fetchByModel,
     required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function() fetchOptions,
   }) {
     return fetchByModel(modelId, page, limit);
   }
@@ -492,6 +544,9 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult? Function(String modelId, int page, int limit)? fetchByModel,
     TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function()? fetchOptions,
   }) {
     return fetchByModel?.call(modelId, page, limit);
   }
@@ -503,6 +558,9 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult Function(String modelId, int page, int limit)? fetchByModel,
     TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
     if (fetchByModel != null) {
@@ -518,6 +576,8 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     required TResult Function(FetchAllVariants value) fetchAll,
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return fetchByModel(this);
   }
@@ -529,6 +589,8 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult? Function(FetchAllVariants value)? fetchAll,
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return fetchByModel?.call(this);
   }
@@ -540,6 +602,8 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult Function(FetchAllVariants value)? fetchAll,
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
     if (fetchByModel != null) {
@@ -651,6 +715,10 @@ class _$CreateVariantImpl implements CreateVariant {
         fetchAll,
     required TResult Function(String modelId, int page, int limit) fetchByModel,
     required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function() fetchOptions,
   }) {
     return createVariant(variant);
   }
@@ -662,6 +730,9 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult? Function(String modelId, int page, int limit)? fetchByModel,
     TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function()? fetchOptions,
   }) {
     return createVariant?.call(variant);
   }
@@ -673,6 +744,9 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult Function(int page, int limit, String? searchQuery)? fetchAll,
     TResult Function(String modelId, int page, int limit)? fetchByModel,
     TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
     if (createVariant != null) {
@@ -688,6 +762,8 @@ class _$CreateVariantImpl implements CreateVariant {
     required TResult Function(FetchAllVariants value) fetchAll,
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return createVariant(this);
   }
@@ -699,6 +775,8 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult? Function(FetchAllVariants value)? fetchAll,
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return createVariant?.call(this);
   }
@@ -710,6 +788,8 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult Function(FetchAllVariants value)? fetchAll,
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
     if (createVariant != null) {
@@ -733,6 +813,344 @@ abstract class CreateVariant implements VehicleVariantEvent {
 }
 
 /// @nodoc
+abstract class _$$UploadVariantCsvImplCopyWith<$Res> {
+  factory _$$UploadVariantCsvImplCopyWith(_$UploadVariantCsvImpl value,
+          $Res Function(_$UploadVariantCsvImpl) then) =
+      __$$UploadVariantCsvImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String modelId, List<int> fileBytes, String fileName});
+}
+
+/// @nodoc
+class __$$UploadVariantCsvImplCopyWithImpl<$Res>
+    extends _$VehicleVariantEventCopyWithImpl<$Res, _$UploadVariantCsvImpl>
+    implements _$$UploadVariantCsvImplCopyWith<$Res> {
+  __$$UploadVariantCsvImplCopyWithImpl(_$UploadVariantCsvImpl _value,
+      $Res Function(_$UploadVariantCsvImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? modelId = null,
+    Object? fileBytes = null,
+    Object? fileName = null,
+  }) {
+    return _then(_$UploadVariantCsvImpl(
+      modelId: null == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
+              as String,
+      fileBytes: null == fileBytes
+          ? _value._fileBytes
+          : fileBytes // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      fileName: null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UploadVariantCsvImpl implements UploadVariantCsv {
+  const _$UploadVariantCsvImpl(
+      {required this.modelId,
+      required final List<int> fileBytes,
+      required this.fileName})
+      : _fileBytes = fileBytes;
+
+  @override
+  final String modelId;
+  final List<int> _fileBytes;
+  @override
+  List<int> get fileBytes {
+    if (_fileBytes is EqualUnmodifiableListView) return _fileBytes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_fileBytes);
+  }
+
+  @override
+  final String fileName;
+
+  @override
+  String toString() {
+    return 'VehicleVariantEvent.uploadVariantCsv(modelId: $modelId, fileBytes: $fileBytes, fileName: $fileName)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UploadVariantCsvImpl &&
+            (identical(other.modelId, modelId) || other.modelId == modelId) &&
+            const DeepCollectionEquality()
+                .equals(other._fileBytes, _fileBytes) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, modelId,
+      const DeepCollectionEquality().hash(_fileBytes), fileName);
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UploadVariantCsvImplCopyWith<_$UploadVariantCsvImpl> get copyWith =>
+      __$$UploadVariantCsvImplCopyWithImpl<_$UploadVariantCsvImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int page, int limit, String? searchQuery)
+        fetchAll,
+    required TResult Function(String modelId, int page, int limit) fetchByModel,
+    required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function() fetchOptions,
+  }) {
+    return uploadVariantCsv(modelId, fileBytes, fileName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(String modelId, int page, int limit)? fetchByModel,
+    TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function()? fetchOptions,
+  }) {
+    return uploadVariantCsv?.call(modelId, fileBytes, fileName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(String modelId, int page, int limit)? fetchByModel,
+    TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function()? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (uploadVariantCsv != null) {
+      return uploadVariantCsv(modelId, fileBytes, fileName);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVariants value) fetchAll,
+    required TResult Function(FetchVariantsByModel value) fetchByModel,
+    required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(FetchOptions value) fetchOptions,
+  }) {
+    return uploadVariantCsv(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVariants value)? fetchAll,
+    TResult? Function(FetchVariantsByModel value)? fetchByModel,
+    TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(FetchOptions value)? fetchOptions,
+  }) {
+    return uploadVariantCsv?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVariants value)? fetchAll,
+    TResult Function(FetchVariantsByModel value)? fetchByModel,
+    TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(FetchOptions value)? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (uploadVariantCsv != null) {
+      return uploadVariantCsv(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UploadVariantCsv implements VehicleVariantEvent {
+  const factory UploadVariantCsv(
+      {required final String modelId,
+      required final List<int> fileBytes,
+      required final String fileName}) = _$UploadVariantCsvImpl;
+
+  String get modelId;
+  List<int> get fileBytes;
+  String get fileName;
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UploadVariantCsvImplCopyWith<_$UploadVariantCsvImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$FetchOptionsImplCopyWith<$Res> {
+  factory _$$FetchOptionsImplCopyWith(
+          _$FetchOptionsImpl value, $Res Function(_$FetchOptionsImpl) then) =
+      __$$FetchOptionsImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$FetchOptionsImplCopyWithImpl<$Res>
+    extends _$VehicleVariantEventCopyWithImpl<$Res, _$FetchOptionsImpl>
+    implements _$$FetchOptionsImplCopyWith<$Res> {
+  __$$FetchOptionsImplCopyWithImpl(
+      _$FetchOptionsImpl _value, $Res Function(_$FetchOptionsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$FetchOptionsImpl implements FetchOptions {
+  const _$FetchOptionsImpl();
+
+  @override
+  String toString() {
+    return 'VehicleVariantEvent.fetchOptions()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$FetchOptionsImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int page, int limit, String? searchQuery)
+        fetchAll,
+    required TResult Function(String modelId, int page, int limit) fetchByModel,
+    required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function() fetchOptions,
+  }) {
+    return fetchOptions();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(String modelId, int page, int limit)? fetchByModel,
+    TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function()? fetchOptions,
+  }) {
+    return fetchOptions?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(String modelId, int page, int limit)? fetchByModel,
+    TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function()? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (fetchOptions != null) {
+      return fetchOptions();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVariants value) fetchAll,
+    required TResult Function(FetchVariantsByModel value) fetchByModel,
+    required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(FetchOptions value) fetchOptions,
+  }) {
+    return fetchOptions(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVariants value)? fetchAll,
+    TResult? Function(FetchVariantsByModel value)? fetchByModel,
+    TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(FetchOptions value)? fetchOptions,
+  }) {
+    return fetchOptions?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVariants value)? fetchAll,
+    TResult Function(FetchVariantsByModel value)? fetchByModel,
+    TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(FetchOptions value)? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (fetchOptions != null) {
+      return fetchOptions(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class FetchOptions implements VehicleVariantEvent {
+  const factory FetchOptions() = _$FetchOptionsImpl;
+}
+
+/// @nodoc
 mixin _$VehicleVariantState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
@@ -741,6 +1159,9 @@ mixin _$VehicleVariantState {
     required TResult Function(VehicleVariantPaginatedResponse response) loaded,
     required TResult Function(String message) success,
     required TResult Function(String message) error,
+    required TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)
+        optionsLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -750,6 +1171,9 @@ mixin _$VehicleVariantState {
     TResult? Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult? Function(String message)? success,
     TResult? Function(String message)? error,
+    TResult? Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -759,6 +1183,9 @@ mixin _$VehicleVariantState {
     TResult Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult Function(String message)? success,
     TResult Function(String message)? error,
+    TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -769,6 +1196,7 @@ mixin _$VehicleVariantState {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
+    required TResult Function(_OptionsLoaded value) optionsLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -778,6 +1206,7 @@ mixin _$VehicleVariantState {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
+    TResult? Function(_OptionsLoaded value)? optionsLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -787,6 +1216,7 @@ mixin _$VehicleVariantState {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
+    TResult Function(_OptionsLoaded value)? optionsLoaded,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -859,6 +1289,9 @@ class _$InitialImpl implements _Initial {
     required TResult Function(VehicleVariantPaginatedResponse response) loaded,
     required TResult Function(String message) success,
     required TResult Function(String message) error,
+    required TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)
+        optionsLoaded,
   }) {
     return initial();
   }
@@ -871,6 +1304,9 @@ class _$InitialImpl implements _Initial {
     TResult? Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult? Function(String message)? success,
     TResult? Function(String message)? error,
+    TResult? Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
   }) {
     return initial?.call();
   }
@@ -883,6 +1319,9 @@ class _$InitialImpl implements _Initial {
     TResult Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult Function(String message)? success,
     TResult Function(String message)? error,
+    TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -899,6 +1338,7 @@ class _$InitialImpl implements _Initial {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
+    required TResult Function(_OptionsLoaded value) optionsLoaded,
   }) {
     return initial(this);
   }
@@ -911,6 +1351,7 @@ class _$InitialImpl implements _Initial {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
+    TResult? Function(_OptionsLoaded value)? optionsLoaded,
   }) {
     return initial?.call(this);
   }
@@ -923,6 +1364,7 @@ class _$InitialImpl implements _Initial {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
+    TResult Function(_OptionsLoaded value)? optionsLoaded,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -982,6 +1424,9 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(VehicleVariantPaginatedResponse response) loaded,
     required TResult Function(String message) success,
     required TResult Function(String message) error,
+    required TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)
+        optionsLoaded,
   }) {
     return loading();
   }
@@ -994,6 +1439,9 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult? Function(String message)? success,
     TResult? Function(String message)? error,
+    TResult? Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
   }) {
     return loading?.call();
   }
@@ -1006,6 +1454,9 @@ class _$LoadingImpl implements _Loading {
     TResult Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult Function(String message)? success,
     TResult Function(String message)? error,
+    TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1022,6 +1473,7 @@ class _$LoadingImpl implements _Loading {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
+    required TResult Function(_OptionsLoaded value) optionsLoaded,
   }) {
     return loading(this);
   }
@@ -1034,6 +1486,7 @@ class _$LoadingImpl implements _Loading {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
+    TResult? Function(_OptionsLoaded value)? optionsLoaded,
   }) {
     return loading?.call(this);
   }
@@ -1046,6 +1499,7 @@ class _$LoadingImpl implements _Loading {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
+    TResult Function(_OptionsLoaded value)? optionsLoaded,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1133,6 +1587,9 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(VehicleVariantPaginatedResponse response) loaded,
     required TResult Function(String message) success,
     required TResult Function(String message) error,
+    required TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)
+        optionsLoaded,
   }) {
     return loaded(response);
   }
@@ -1145,6 +1602,9 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult? Function(String message)? success,
     TResult? Function(String message)? error,
+    TResult? Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
   }) {
     return loaded?.call(response);
   }
@@ -1157,6 +1617,9 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult Function(String message)? success,
     TResult Function(String message)? error,
+    TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1173,6 +1636,7 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
+    required TResult Function(_OptionsLoaded value) optionsLoaded,
   }) {
     return loaded(this);
   }
@@ -1185,6 +1649,7 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
+    TResult? Function(_OptionsLoaded value)? optionsLoaded,
   }) {
     return loaded?.call(this);
   }
@@ -1197,6 +1662,7 @@ class _$LoadedImpl implements _Loaded {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
+    TResult Function(_OptionsLoaded value)? optionsLoaded,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -1292,6 +1758,9 @@ class _$SuccessImpl implements _Success {
     required TResult Function(VehicleVariantPaginatedResponse response) loaded,
     required TResult Function(String message) success,
     required TResult Function(String message) error,
+    required TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)
+        optionsLoaded,
   }) {
     return success(message);
   }
@@ -1304,6 +1773,9 @@ class _$SuccessImpl implements _Success {
     TResult? Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult? Function(String message)? success,
     TResult? Function(String message)? error,
+    TResult? Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
   }) {
     return success?.call(message);
   }
@@ -1316,6 +1788,9 @@ class _$SuccessImpl implements _Success {
     TResult Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult Function(String message)? success,
     TResult Function(String message)? error,
+    TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1332,6 +1807,7 @@ class _$SuccessImpl implements _Success {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
+    required TResult Function(_OptionsLoaded value) optionsLoaded,
   }) {
     return success(this);
   }
@@ -1344,6 +1820,7 @@ class _$SuccessImpl implements _Success {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
+    TResult? Function(_OptionsLoaded value)? optionsLoaded,
   }) {
     return success?.call(this);
   }
@@ -1356,6 +1833,7 @@ class _$SuccessImpl implements _Success {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
+    TResult Function(_OptionsLoaded value)? optionsLoaded,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1450,6 +1928,9 @@ class _$ErrorImpl implements _Error {
     required TResult Function(VehicleVariantPaginatedResponse response) loaded,
     required TResult Function(String message) success,
     required TResult Function(String message) error,
+    required TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)
+        optionsLoaded,
   }) {
     return error(message);
   }
@@ -1462,6 +1943,9 @@ class _$ErrorImpl implements _Error {
     TResult? Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult? Function(String message)? success,
     TResult? Function(String message)? error,
+    TResult? Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
   }) {
     return error?.call(message);
   }
@@ -1474,6 +1958,9 @@ class _$ErrorImpl implements _Error {
     TResult Function(VehicleVariantPaginatedResponse response)? loaded,
     TResult Function(String message)? success,
     TResult Function(String message)? error,
+    TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1490,6 +1977,7 @@ class _$ErrorImpl implements _Error {
     required TResult Function(_Loaded value) loaded,
     required TResult Function(_Success value) success,
     required TResult Function(_Error value) error,
+    required TResult Function(_OptionsLoaded value) optionsLoaded,
   }) {
     return error(this);
   }
@@ -1502,6 +1990,7 @@ class _$ErrorImpl implements _Error {
     TResult? Function(_Loaded value)? loaded,
     TResult? Function(_Success value)? success,
     TResult? Function(_Error value)? error,
+    TResult? Function(_OptionsLoaded value)? optionsLoaded,
   }) {
     return error?.call(this);
   }
@@ -1514,6 +2003,7 @@ class _$ErrorImpl implements _Error {
     TResult Function(_Loaded value)? loaded,
     TResult Function(_Success value)? success,
     TResult Function(_Error value)? error,
+    TResult Function(_OptionsLoaded value)? optionsLoaded,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -1532,5 +2022,209 @@ abstract class _Error implements VehicleVariantState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$OptionsLoadedImplCopyWith<$Res> {
+  factory _$$OptionsLoadedImplCopyWith(
+          _$OptionsLoadedImpl value, $Res Function(_$OptionsLoadedImpl) then) =
+      __$$OptionsLoadedImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call(
+      {List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes});
+}
+
+/// @nodoc
+class __$$OptionsLoadedImplCopyWithImpl<$Res>
+    extends _$VehicleVariantStateCopyWithImpl<$Res, _$OptionsLoadedImpl>
+    implements _$$OptionsLoadedImplCopyWith<$Res> {
+  __$$OptionsLoadedImplCopyWithImpl(
+      _$OptionsLoadedImpl _value, $Res Function(_$OptionsLoadedImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleVariantState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? fuelTypes = null,
+    Object? transmissionTypes = null,
+  }) {
+    return _then(_$OptionsLoadedImpl(
+      fuelTypes: null == fuelTypes
+          ? _value._fuelTypes
+          : fuelTypes // ignore: cast_nullable_to_non_nullable
+              as List<FuelType>,
+      transmissionTypes: null == transmissionTypes
+          ? _value._transmissionTypes
+          : transmissionTypes // ignore: cast_nullable_to_non_nullable
+              as List<TransmissionType>,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$OptionsLoadedImpl implements _OptionsLoaded {
+  const _$OptionsLoadedImpl(
+      {required final List<FuelType> fuelTypes,
+      required final List<TransmissionType> transmissionTypes})
+      : _fuelTypes = fuelTypes,
+        _transmissionTypes = transmissionTypes;
+
+  final List<FuelType> _fuelTypes;
+  @override
+  List<FuelType> get fuelTypes {
+    if (_fuelTypes is EqualUnmodifiableListView) return _fuelTypes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_fuelTypes);
+  }
+
+  final List<TransmissionType> _transmissionTypes;
+  @override
+  List<TransmissionType> get transmissionTypes {
+    if (_transmissionTypes is EqualUnmodifiableListView)
+      return _transmissionTypes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_transmissionTypes);
+  }
+
+  @override
+  String toString() {
+    return 'VehicleVariantState.optionsLoaded(fuelTypes: $fuelTypes, transmissionTypes: $transmissionTypes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$OptionsLoadedImpl &&
+            const DeepCollectionEquality()
+                .equals(other._fuelTypes, _fuelTypes) &&
+            const DeepCollectionEquality()
+                .equals(other._transmissionTypes, _transmissionTypes));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(_fuelTypes),
+      const DeepCollectionEquality().hash(_transmissionTypes));
+
+  /// Create a copy of VehicleVariantState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$OptionsLoadedImplCopyWith<_$OptionsLoadedImpl> get copyWith =>
+      __$$OptionsLoadedImplCopyWithImpl<_$OptionsLoadedImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(VehicleVariantPaginatedResponse response) loaded,
+    required TResult Function(String message) success,
+    required TResult Function(String message) error,
+    required TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)
+        optionsLoaded,
+  }) {
+    return optionsLoaded(fuelTypes, transmissionTypes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(VehicleVariantPaginatedResponse response)? loaded,
+    TResult? Function(String message)? success,
+    TResult? Function(String message)? error,
+    TResult? Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
+  }) {
+    return optionsLoaded?.call(fuelTypes, transmissionTypes);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(VehicleVariantPaginatedResponse response)? loaded,
+    TResult Function(String message)? success,
+    TResult Function(String message)? error,
+    TResult Function(
+            List<FuelType> fuelTypes, List<TransmissionType> transmissionTypes)?
+        optionsLoaded,
+    required TResult orElse(),
+  }) {
+    if (optionsLoaded != null) {
+      return optionsLoaded(fuelTypes, transmissionTypes);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Initial value) initial,
+    required TResult Function(_Loading value) loading,
+    required TResult Function(_Loaded value) loaded,
+    required TResult Function(_Success value) success,
+    required TResult Function(_Error value) error,
+    required TResult Function(_OptionsLoaded value) optionsLoaded,
+  }) {
+    return optionsLoaded(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Initial value)? initial,
+    TResult? Function(_Loading value)? loading,
+    TResult? Function(_Loaded value)? loaded,
+    TResult? Function(_Success value)? success,
+    TResult? Function(_Error value)? error,
+    TResult? Function(_OptionsLoaded value)? optionsLoaded,
+  }) {
+    return optionsLoaded?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Initial value)? initial,
+    TResult Function(_Loading value)? loading,
+    TResult Function(_Loaded value)? loaded,
+    TResult Function(_Success value)? success,
+    TResult Function(_Error value)? error,
+    TResult Function(_OptionsLoaded value)? optionsLoaded,
+    required TResult orElse(),
+  }) {
+    if (optionsLoaded != null) {
+      return optionsLoaded(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class _OptionsLoaded implements VehicleVariantState {
+  const factory _OptionsLoaded(
+          {required final List<FuelType> fuelTypes,
+          required final List<TransmissionType> transmissionTypes}) =
+      _$OptionsLoadedImpl;
+
+  List<FuelType> get fuelTypes;
+  List<TransmissionType> get transmissionTypes;
+
+  /// Create a copy of VehicleVariantState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$OptionsLoadedImplCopyWith<_$OptionsLoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -18,4 +18,8 @@ class VehicleManufacturerEvent with _$VehicleManufacturerEvent {
       DeleteVehicleManufacturer;
   const factory VehicleManufacturerEvent.fetchAllForDropdown() =
       FetchAllManufacturersForDropdown;
+  const factory VehicleManufacturerEvent.uploadCsv(
+    List<int> fileBytes,
+    String fileName,
+  ) = UploadCsv;
 }

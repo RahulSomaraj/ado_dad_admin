@@ -10,6 +10,8 @@ class UserAdsState with _$UserAdsState {
   const factory UserAdsState.loaded({
     required List<AdModel> ads,
     required int total,
+    required int currentPage,
+    required int totalPages,
   }) = _Loaded;
   const factory UserAdsState.error({
     required String message,

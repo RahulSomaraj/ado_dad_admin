@@ -3,6 +3,7 @@ import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_ma
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:ado_dad_admin/repositories/vehicle_model_rep.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,15 @@ class VehicleManufacturerDetailView extends StatefulWidget {
 
 class _VehicleManufacturerDetailViewState
     extends State<VehicleManufacturerDetailView> {
+  bool _isCsvUploadInProgress = false;
+  void Function(List<int> fileBytes, String fileName)? _uploadCsvCallback;
+
+  @override
+  void initState() {
+    super.initState();
+    print('Manufacturer ID: ${widget.vehiclemanufacturer.id}');
+  }
+
   void _confirmDelete(BuildContext context, VehicleManufacturer m) {
     showDialog(
       context: context,
@@ -73,13 +83,86 @@ class _VehicleManufacturerDetailViewState
                 VehicleModelBloc(repository: VehicleModelRepository())
                   ..add(FetchVehicleModelsByManufacturer(
                       widget.vehiclemanufacturer.id)),
-            child: _VehicleModelListSection(),
+            child: Builder(
+              builder: (blocContext) {
+                // Store the upload callback to use the correct bloc instance
+                _uploadCsvCallback = (fileBytes, fileName) {
+                  blocContext.read<VehicleModelBloc>().add(
+                        VehicleModelEvent.uploadCsv(
+                          widget.vehiclemanufacturer.id,
+                          fileBytes,
+                          fileName,
+                        ),
+                      );
+                };
+                return _VehicleModelListSectionWithListener(
+                  manufacturerId: widget.vehiclemanufacturer.id,
+                  isCsvUploadInProgress: _isCsvUploadInProgress,
+                  onCsvUploadComplete: () {
+                    if (mounted) {
+                      setState(() {
+                        _isCsvUploadInProgress = false;
+                      });
+                    }
+                  },
+                );
+              },
+            ),
           ),
 
           // _buildModelTableSection(), // Placeholder
         ],
       ),
     );
+  }
+
+  Future<void> _uploadCsvFile(VehicleManufacturer manufacturer) async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+        withData: true,
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        final fileBytes = result.files.single.bytes!;
+        final fileName = result.files.single.name;
+
+        // Print manufacturer ID when uploading CSV
+        print('📤 Uploading CSV for Manufacturer ID: ${manufacturer.id}');
+        print('📁 File name: $fileName');
+
+        if (mounted) {
+          setState(() {
+            _isCsvUploadInProgress = true;
+          });
+          // Use the stored callback to upload CSV using the correct bloc
+          if (_uploadCsvCallback != null) {
+            _uploadCsvCallback!(fileBytes, fileName);
+          } else {
+            // Show error if callback is not available
+            setState(() {
+              _isCsvUploadInProgress = false;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Error: Unable to upload CSV. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isCsvUploadInProgress = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking file: $e')),
+        );
+      }
+    }
   }
 
   Widget _buildHeader(VehicleManufacturer m) {
@@ -101,6 +184,24 @@ class _VehicleManufacturerDetailViewState
         ),
         Row(
           children: [
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              icon: const Icon(Icons.upload_file, color: Colors.white),
+              label: const Text(
+                'Upload Models CSV',
+                style: TextStyle(color: Colors.white),
+              ),
+              onPressed: () => _uploadCsvFile(m),
+            ),
+            const SizedBox(width: 12),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.blackColor,
@@ -156,6 +257,92 @@ class _VehicleManufacturerDetailViewState
           Text(value, style: const TextStyle(fontSize: 14)),
         ],
       ),
+    );
+  }
+}
+
+class _VehicleModelListSectionWithListener extends StatelessWidget {
+  final String manufacturerId;
+  final bool isCsvUploadInProgress;
+  final VoidCallback onCsvUploadComplete;
+
+  const _VehicleModelListSectionWithListener({
+    required this.manufacturerId,
+    required this.isCsvUploadInProgress,
+    required this.onCsvUploadComplete,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocListener<VehicleModelBloc, VehicleModelState>(
+      listenWhen: (prev, curr) {
+        // Only listen when CSV upload is in progress and state changes to loaded or error
+        if (!isCsvUploadInProgress) return false;
+        return curr.maybeWhen(
+          loaded: (_) => true,
+          error: (_) => true,
+          orElse: () => false,
+        );
+      },
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (response) {
+            // Only show success message if CSV upload was in progress
+            if (isCsvUploadInProgress) {
+              onCsvUploadComplete();
+              // Show success popup when CSV upload completes
+              showDialog(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: const Text("Success"),
+                  content: Text(
+                      "CSV uploaded successfully. ${response.data.length} model(s) loaded. Model list has been updated."),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(dialogContext).pop(),
+                      child: const Text("OK"),
+                    ),
+                  ],
+                ),
+              );
+              // Refresh the main model list (global bloc) after a short delay
+              // This ensures the local bloc update is complete first
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                try {
+                  // Try to access the global bloc from the root navigator context
+                  final navigator = Navigator.of(context, rootNavigator: true);
+                  final rootContext = navigator.context;
+                  if (rootContext.mounted) {
+                    try {
+                      final globalBloc = rootContext.read<VehicleModelBloc>();
+                      // Trigger refresh of the main model list
+                      globalBloc.add(const VehicleModelEvent.fetchAllModels());
+                    } catch (e) {
+                      // If we can't access the global bloc from here, that's okay
+                      // The main list will refresh when the user navigates to it
+                    }
+                  }
+                } catch (e) {
+                  // Global bloc might not be available, that's okay
+                }
+              });
+            }
+          },
+          error: (msg) {
+            if (isCsvUploadInProgress) {
+              onCsvUploadComplete();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('CSV upload failed: $msg'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          orElse: () {},
+        );
+      },
+      child: _VehicleModelListSection(),
     );
   }
 }
@@ -265,7 +452,8 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
       builder: (context, state) {
         return state.maybeWhen(
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (message) => Text("Error loading models: $message"),
+          error: (message) =>
+              const Text("No models found for this manufacturer."),
           loaded: (response) {
             final models = response.data;
 

@@ -41,13 +41,16 @@ class _ShowroomState extends State<Showroom> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 20),
-        _buildHeaderSection(),
-        const SizedBox(height: 20),
-        _buildShowroomList(),
-      ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 20),
+          _buildHeaderSection(),
+          const SizedBox(height: 20),
+          _buildShowroomList(),
+          const SizedBox(height: 50), // Add bottom padding
+        ],
+      ),
     );
   }
 

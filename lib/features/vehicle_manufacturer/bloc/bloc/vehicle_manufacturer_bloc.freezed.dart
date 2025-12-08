@@ -27,6 +27,7 @@ mixin _$VehicleManufacturerEvent {
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
     required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -37,6 +38,7 @@ mixin _$VehicleManufacturerEvent {
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -47,6 +49,7 @@ mixin _$VehicleManufacturerEvent {
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
     TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -62,6 +65,7 @@ mixin _$VehicleManufacturerEvent {
         deleteManufacturer,
     required TResult Function(FetchAllManufacturersForDropdown value)
         fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -73,6 +77,7 @@ mixin _$VehicleManufacturerEvent {
     TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult? Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -84,6 +89,7 @@ mixin _$VehicleManufacturerEvent {
     TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -161,6 +167,7 @@ class _$StartedImpl implements _Started {
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
     required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return started();
   }
@@ -174,6 +181,7 @@ class _$StartedImpl implements _Started {
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return started?.call();
   }
@@ -187,6 +195,7 @@ class _$StartedImpl implements _Started {
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
     TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -208,6 +217,7 @@ class _$StartedImpl implements _Started {
         deleteManufacturer,
     required TResult Function(FetchAllManufacturersForDropdown value)
         fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return started(this);
   }
@@ -222,6 +232,7 @@ class _$StartedImpl implements _Started {
     TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult? Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return started?.call(this);
   }
@@ -236,6 +247,7 @@ class _$StartedImpl implements _Started {
     TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -353,6 +365,7 @@ class _$FetchAllVehicleManufacturersImpl
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
     required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return fetchAll(page, limit, searchQuery);
   }
@@ -366,6 +379,7 @@ class _$FetchAllVehicleManufacturersImpl
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return fetchAll?.call(page, limit, searchQuery);
   }
@@ -379,6 +393,7 @@ class _$FetchAllVehicleManufacturersImpl
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
     TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchAll != null) {
@@ -400,6 +415,7 @@ class _$FetchAllVehicleManufacturersImpl
         deleteManufacturer,
     required TResult Function(FetchAllManufacturersForDropdown value)
         fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return fetchAll(this);
   }
@@ -414,6 +430,7 @@ class _$FetchAllVehicleManufacturersImpl
     TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult? Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return fetchAll?.call(this);
   }
@@ -428,6 +445,7 @@ class _$FetchAllVehicleManufacturersImpl
     TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchAll != null) {
@@ -550,6 +568,7 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
     required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return createManufacturer(manufacturer);
   }
@@ -563,6 +582,7 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return createManufacturer?.call(manufacturer);
   }
@@ -576,6 +596,7 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
     TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
     if (createManufacturer != null) {
@@ -597,6 +618,7 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
         deleteManufacturer,
     required TResult Function(FetchAllManufacturersForDropdown value)
         fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return createManufacturer(this);
   }
@@ -611,6 +633,7 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
     TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult? Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return createManufacturer?.call(this);
   }
@@ -625,6 +648,7 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
     TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (createManufacturer != null) {
@@ -741,6 +765,7 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
     required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return updateManufacturer(manufacturer);
   }
@@ -754,6 +779,7 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return updateManufacturer?.call(manufacturer);
   }
@@ -767,6 +793,7 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
     TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
     if (updateManufacturer != null) {
@@ -788,6 +815,7 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
         deleteManufacturer,
     required TResult Function(FetchAllManufacturersForDropdown value)
         fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return updateManufacturer(this);
   }
@@ -802,6 +830,7 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
     TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult? Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return updateManufacturer?.call(this);
   }
@@ -816,6 +845,7 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
     TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (updateManufacturer != null) {
@@ -919,6 +949,7 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
     required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return deleteManufacturer(id);
   }
@@ -932,6 +963,7 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return deleteManufacturer?.call(id);
   }
@@ -945,6 +977,7 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
     TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
     if (deleteManufacturer != null) {
@@ -966,6 +999,7 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
         deleteManufacturer,
     required TResult Function(FetchAllManufacturersForDropdown value)
         fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return deleteManufacturer(this);
   }
@@ -980,6 +1014,7 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
     TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult? Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return deleteManufacturer?.call(this);
   }
@@ -994,6 +1029,7 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
     TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (deleteManufacturer != null) {
@@ -1071,6 +1107,7 @@ class _$FetchAllManufacturersForDropdownImpl
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
     required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return fetchAllForDropdown();
   }
@@ -1084,6 +1121,7 @@ class _$FetchAllManufacturersForDropdownImpl
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return fetchAllForDropdown?.call();
   }
@@ -1097,6 +1135,7 @@ class _$FetchAllManufacturersForDropdownImpl
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
     TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchAllForDropdown != null) {
@@ -1118,6 +1157,7 @@ class _$FetchAllManufacturersForDropdownImpl
         deleteManufacturer,
     required TResult Function(FetchAllManufacturersForDropdown value)
         fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return fetchAllForDropdown(this);
   }
@@ -1132,6 +1172,7 @@ class _$FetchAllManufacturersForDropdownImpl
     TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult? Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return fetchAllForDropdown?.call(this);
   }
@@ -1146,6 +1187,7 @@ class _$FetchAllManufacturersForDropdownImpl
     TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
     TResult Function(FetchAllManufacturersForDropdown value)?
         fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchAllForDropdown != null) {
@@ -1159,6 +1201,205 @@ abstract class FetchAllManufacturersForDropdown
     implements VehicleManufacturerEvent {
   const factory FetchAllManufacturersForDropdown() =
       _$FetchAllManufacturersForDropdownImpl;
+}
+
+/// @nodoc
+abstract class _$$UploadCsvImplCopyWith<$Res> {
+  factory _$$UploadCsvImplCopyWith(
+          _$UploadCsvImpl value, $Res Function(_$UploadCsvImpl) then) =
+      __$$UploadCsvImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({List<int> fileBytes, String fileName});
+}
+
+/// @nodoc
+class __$$UploadCsvImplCopyWithImpl<$Res>
+    extends _$VehicleManufacturerEventCopyWithImpl<$Res, _$UploadCsvImpl>
+    implements _$$UploadCsvImplCopyWith<$Res> {
+  __$$UploadCsvImplCopyWithImpl(
+      _$UploadCsvImpl _value, $Res Function(_$UploadCsvImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleManufacturerEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? fileBytes = null,
+    Object? fileName = null,
+  }) {
+    return _then(_$UploadCsvImpl(
+      null == fileBytes
+          ? _value._fileBytes
+          : fileBytes // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UploadCsvImpl implements UploadCsv {
+  const _$UploadCsvImpl(final List<int> fileBytes, this.fileName)
+      : _fileBytes = fileBytes;
+
+  final List<int> _fileBytes;
+  @override
+  List<int> get fileBytes {
+    if (_fileBytes is EqualUnmodifiableListView) return _fileBytes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_fileBytes);
+  }
+
+  @override
+  final String fileName;
+
+  @override
+  String toString() {
+    return 'VehicleManufacturerEvent.uploadCsv(fileBytes: $fileBytes, fileName: $fileName)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UploadCsvImpl &&
+            const DeepCollectionEquality()
+                .equals(other._fileBytes, _fileBytes) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_fileBytes), fileName);
+
+  /// Create a copy of VehicleManufacturerEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UploadCsvImplCopyWith<_$UploadCsvImpl> get copyWith =>
+      __$$UploadCsvImplCopyWithImpl<_$UploadCsvImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int page, int limit, String? searchQuery)
+        fetchAll,
+    required TResult Function(VehicleManufacturer manufacturer)
+        createManufacturer,
+    required TResult Function(VehicleManufacturer manufacturer)
+        updateManufacturer,
+    required TResult Function(String id) deleteManufacturer,
+    required TResult Function() fetchAllForDropdown,
+    required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
+  }) {
+    return uploadCsv(fileBytes, fileName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
+    TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
+    TResult? Function(String id)? deleteManufacturer,
+    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
+  }) {
+    return uploadCsv?.call(fileBytes, fileName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
+    TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
+    TResult Function(String id)? deleteManufacturer,
+    TResult Function()? fetchAllForDropdown,
+    TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
+    required TResult orElse(),
+  }) {
+    if (uploadCsv != null) {
+      return uploadCsv(fileBytes, fileName);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVehicleManufacturers value) fetchAll,
+    required TResult Function(CreateVehicleManufacturer value)
+        createManufacturer,
+    required TResult Function(UpdateVehicleManufacturer value)
+        updateManufacturer,
+    required TResult Function(DeleteVehicleManufacturer value)
+        deleteManufacturer,
+    required TResult Function(FetchAllManufacturersForDropdown value)
+        fetchAllForDropdown,
+    required TResult Function(UploadCsv value) uploadCsv,
+  }) {
+    return uploadCsv(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVehicleManufacturers value)? fetchAll,
+    TResult? Function(CreateVehicleManufacturer value)? createManufacturer,
+    TResult? Function(UpdateVehicleManufacturer value)? updateManufacturer,
+    TResult? Function(DeleteVehicleManufacturer value)? deleteManufacturer,
+    TResult? Function(FetchAllManufacturersForDropdown value)?
+        fetchAllForDropdown,
+    TResult? Function(UploadCsv value)? uploadCsv,
+  }) {
+    return uploadCsv?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVehicleManufacturers value)? fetchAll,
+    TResult Function(CreateVehicleManufacturer value)? createManufacturer,
+    TResult Function(UpdateVehicleManufacturer value)? updateManufacturer,
+    TResult Function(DeleteVehicleManufacturer value)? deleteManufacturer,
+    TResult Function(FetchAllManufacturersForDropdown value)?
+        fetchAllForDropdown,
+    TResult Function(UploadCsv value)? uploadCsv,
+    required TResult orElse(),
+  }) {
+    if (uploadCsv != null) {
+      return uploadCsv(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UploadCsv implements VehicleManufacturerEvent {
+  const factory UploadCsv(final List<int> fileBytes, final String fileName) =
+      _$UploadCsvImpl;
+
+  List<int> get fileBytes;
+  String get fileName;
+
+  /// Create a copy of VehicleManufacturerEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UploadCsvImplCopyWith<_$UploadCsvImpl> get copyWith =>
+      throw _privateConstructorUsedError;
 }
 
 /// @nodoc

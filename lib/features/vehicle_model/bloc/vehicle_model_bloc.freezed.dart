@@ -30,6 +30,9 @@ mixin _$VehicleModelEvent {
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -45,6 +48,9 @@ mixin _$VehicleModelEvent {
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -60,6 +66,9 @@ mixin _$VehicleModelEvent {
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -73,6 +82,7 @@ mixin _$VehicleModelEvent {
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -85,6 +95,7 @@ mixin _$VehicleModelEvent {
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -97,6 +108,7 @@ mixin _$VehicleModelEvent {
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -176,6 +188,9 @@ class _$StartedImpl implements _Started {
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) {
     return started();
   }
@@ -194,6 +209,9 @@ class _$StartedImpl implements _Started {
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) {
     return started?.call();
   }
@@ -212,6 +230,9 @@ class _$StartedImpl implements _Started {
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -231,6 +252,7 @@ class _$StartedImpl implements _Started {
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return started(this);
   }
@@ -246,6 +268,7 @@ class _$StartedImpl implements _Started {
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return started?.call(this);
   }
@@ -261,6 +284,7 @@ class _$StartedImpl implements _Started {
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (started != null) {
@@ -377,6 +401,9 @@ class _$FetchAllVehicleModelsImpl implements FetchAllVehicleModels {
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) {
     return fetchAllModels(page, limit, searchQuery);
   }
@@ -395,6 +422,9 @@ class _$FetchAllVehicleModelsImpl implements FetchAllVehicleModels {
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) {
     return fetchAllModels?.call(page, limit, searchQuery);
   }
@@ -413,6 +443,9 @@ class _$FetchAllVehicleModelsImpl implements FetchAllVehicleModels {
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchAllModels != null) {
@@ -432,6 +465,7 @@ class _$FetchAllVehicleModelsImpl implements FetchAllVehicleModels {
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return fetchAllModels(this);
   }
@@ -447,6 +481,7 @@ class _$FetchAllVehicleModelsImpl implements FetchAllVehicleModels {
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return fetchAllModels?.call(this);
   }
@@ -462,6 +497,7 @@ class _$FetchAllVehicleModelsImpl implements FetchAllVehicleModels {
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchAllModels != null) {
@@ -598,6 +634,9 @@ class _$CreateVehicleModelImpl implements CreateVehicleModel {
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) {
     return createVehicleModel(model, rawImages);
   }
@@ -616,6 +655,9 @@ class _$CreateVehicleModelImpl implements CreateVehicleModel {
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) {
     return createVehicleModel?.call(model, rawImages);
   }
@@ -634,6 +676,9 @@ class _$CreateVehicleModelImpl implements CreateVehicleModel {
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) {
     if (createVehicleModel != null) {
@@ -653,6 +698,7 @@ class _$CreateVehicleModelImpl implements CreateVehicleModel {
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return createVehicleModel(this);
   }
@@ -668,6 +714,7 @@ class _$CreateVehicleModelImpl implements CreateVehicleModel {
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return createVehicleModel?.call(this);
   }
@@ -683,6 +730,7 @@ class _$CreateVehicleModelImpl implements CreateVehicleModel {
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (createVehicleModel != null) {
@@ -813,6 +861,9 @@ class _$FetchVehicleModelsByManufacturerImpl
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) {
     return fetchByManufacturer(manufacturerId, page, limit);
   }
@@ -831,6 +882,9 @@ class _$FetchVehicleModelsByManufacturerImpl
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) {
     return fetchByManufacturer?.call(manufacturerId, page, limit);
   }
@@ -849,6 +903,9 @@ class _$FetchVehicleModelsByManufacturerImpl
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchByManufacturer != null) {
@@ -868,6 +925,7 @@ class _$FetchVehicleModelsByManufacturerImpl
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return fetchByManufacturer(this);
   }
@@ -883,6 +941,7 @@ class _$FetchVehicleModelsByManufacturerImpl
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return fetchByManufacturer?.call(this);
   }
@@ -898,6 +957,7 @@ class _$FetchVehicleModelsByManufacturerImpl
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchByManufacturer != null) {
@@ -978,6 +1038,9 @@ class _$FetchVehicleOptionsImpl implements FetchVehicleOptions {
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) {
     return fetchOptions();
   }
@@ -996,6 +1059,9 @@ class _$FetchVehicleOptionsImpl implements FetchVehicleOptions {
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) {
     return fetchOptions?.call();
   }
@@ -1014,6 +1080,9 @@ class _$FetchVehicleOptionsImpl implements FetchVehicleOptions {
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchOptions != null) {
@@ -1033,6 +1102,7 @@ class _$FetchVehicleOptionsImpl implements FetchVehicleOptions {
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return fetchOptions(this);
   }
@@ -1048,6 +1118,7 @@ class _$FetchVehicleOptionsImpl implements FetchVehicleOptions {
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return fetchOptions?.call(this);
   }
@@ -1063,6 +1134,7 @@ class _$FetchVehicleOptionsImpl implements FetchVehicleOptions {
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchOptions != null) {
@@ -1158,6 +1230,9 @@ class _$FetchOneVehicleModelImpl implements FetchOneVehicleModel {
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) {
     return fetchOne(id);
   }
@@ -1176,6 +1251,9 @@ class _$FetchOneVehicleModelImpl implements FetchOneVehicleModel {
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) {
     return fetchOne?.call(id);
   }
@@ -1194,6 +1272,9 @@ class _$FetchOneVehicleModelImpl implements FetchOneVehicleModel {
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchOne != null) {
@@ -1213,6 +1294,7 @@ class _$FetchOneVehicleModelImpl implements FetchOneVehicleModel {
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return fetchOne(this);
   }
@@ -1228,6 +1310,7 @@ class _$FetchOneVehicleModelImpl implements FetchOneVehicleModel {
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return fetchOne?.call(this);
   }
@@ -1243,6 +1326,7 @@ class _$FetchOneVehicleModelImpl implements FetchOneVehicleModel {
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchOne != null) {
@@ -1401,6 +1485,9 @@ class _$UpdateVehicleModelImpl implements UpdateVehicleModel {
     required TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)
         updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
   }) {
     return updateVehicleModel(model, keepImageUrls, newRawImages);
   }
@@ -1419,6 +1506,9 @@ class _$UpdateVehicleModelImpl implements UpdateVehicleModel {
     TResult? Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
   }) {
     return updateVehicleModel?.call(model, keepImageUrls, newRawImages);
   }
@@ -1437,6 +1527,9 @@ class _$UpdateVehicleModelImpl implements UpdateVehicleModel {
     TResult Function(VehicleModel model, List<String> keepImageUrls,
             List<PlatformFile> newRawImages)?
         updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
     required TResult orElse(),
   }) {
     if (updateVehicleModel != null) {
@@ -1456,6 +1549,7 @@ class _$UpdateVehicleModelImpl implements UpdateVehicleModel {
     required TResult Function(FetchVehicleOptions value) fetchOptions,
     required TResult Function(FetchOneVehicleModel value) fetchOne,
     required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
   }) {
     return updateVehicleModel(this);
   }
@@ -1471,6 +1565,7 @@ class _$UpdateVehicleModelImpl implements UpdateVehicleModel {
     TResult? Function(FetchVehicleOptions value)? fetchOptions,
     TResult? Function(FetchOneVehicleModel value)? fetchOne,
     TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
   }) {
     return updateVehicleModel?.call(this);
   }
@@ -1486,6 +1581,7 @@ class _$UpdateVehicleModelImpl implements UpdateVehicleModel {
     TResult Function(FetchVehicleOptions value)? fetchOptions,
     TResult Function(FetchOneVehicleModel value)? fetchOne,
     TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
     required TResult orElse(),
   }) {
     if (updateVehicleModel != null) {
@@ -1509,6 +1605,235 @@ abstract class UpdateVehicleModel implements VehicleModelEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UpdateVehicleModelImplCopyWith<_$UpdateVehicleModelImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UploadCsvImplCopyWith<$Res> {
+  factory _$$UploadCsvImplCopyWith(
+          _$UploadCsvImpl value, $Res Function(_$UploadCsvImpl) then) =
+      __$$UploadCsvImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String manufacturerId, List<int> fileBytes, String fileName});
+}
+
+/// @nodoc
+class __$$UploadCsvImplCopyWithImpl<$Res>
+    extends _$VehicleModelEventCopyWithImpl<$Res, _$UploadCsvImpl>
+    implements _$$UploadCsvImplCopyWith<$Res> {
+  __$$UploadCsvImplCopyWithImpl(
+      _$UploadCsvImpl _value, $Res Function(_$UploadCsvImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleModelEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? manufacturerId = null,
+    Object? fileBytes = null,
+    Object? fileName = null,
+  }) {
+    return _then(_$UploadCsvImpl(
+      null == manufacturerId
+          ? _value.manufacturerId
+          : manufacturerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      null == fileBytes
+          ? _value._fileBytes
+          : fileBytes // ignore: cast_nullable_to_non_nullable
+              as List<int>,
+      null == fileName
+          ? _value.fileName
+          : fileName // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UploadCsvImpl implements UploadCsv {
+  const _$UploadCsvImpl(
+      this.manufacturerId, final List<int> fileBytes, this.fileName)
+      : _fileBytes = fileBytes;
+
+  @override
+  final String manufacturerId;
+  final List<int> _fileBytes;
+  @override
+  List<int> get fileBytes {
+    if (_fileBytes is EqualUnmodifiableListView) return _fileBytes;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_fileBytes);
+  }
+
+  @override
+  final String fileName;
+
+  @override
+  String toString() {
+    return 'VehicleModelEvent.uploadCsv(manufacturerId: $manufacturerId, fileBytes: $fileBytes, fileName: $fileName)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UploadCsvImpl &&
+            (identical(other.manufacturerId, manufacturerId) ||
+                other.manufacturerId == manufacturerId) &&
+            const DeepCollectionEquality()
+                .equals(other._fileBytes, _fileBytes) &&
+            (identical(other.fileName, fileName) ||
+                other.fileName == fileName));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, manufacturerId,
+      const DeepCollectionEquality().hash(_fileBytes), fileName);
+
+  /// Create a copy of VehicleModelEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UploadCsvImplCopyWith<_$UploadCsvImpl> get copyWith =>
+      __$$UploadCsvImplCopyWithImpl<_$UploadCsvImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int page, int limit, String? searchQuery)
+        fetchAllModels,
+    required TResult Function(VehicleModel model, List<PlatformFile> rawImages)
+        createVehicleModel,
+    required TResult Function(String manufacturerId, int page, int limit)
+        fetchByManufacturer,
+    required TResult Function() fetchOptions,
+    required TResult Function(String id) fetchOne,
+    required TResult Function(VehicleModel model, List<String> keepImageUrls,
+            List<PlatformFile> newRawImages)
+        updateVehicleModel,
+    required TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)
+        uploadCsv,
+  }) {
+    return uploadCsv(manufacturerId, fileBytes, fileName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int page, int limit, String? searchQuery)? fetchAllModels,
+    TResult? Function(VehicleModel model, List<PlatformFile> rawImages)?
+        createVehicleModel,
+    TResult? Function(String manufacturerId, int page, int limit)?
+        fetchByManufacturer,
+    TResult? Function()? fetchOptions,
+    TResult? Function(String id)? fetchOne,
+    TResult? Function(VehicleModel model, List<String> keepImageUrls,
+            List<PlatformFile> newRawImages)?
+        updateVehicleModel,
+    TResult? Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
+  }) {
+    return uploadCsv?.call(manufacturerId, fileBytes, fileName);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int page, int limit, String? searchQuery)? fetchAllModels,
+    TResult Function(VehicleModel model, List<PlatformFile> rawImages)?
+        createVehicleModel,
+    TResult Function(String manufacturerId, int page, int limit)?
+        fetchByManufacturer,
+    TResult Function()? fetchOptions,
+    TResult Function(String id)? fetchOne,
+    TResult Function(VehicleModel model, List<String> keepImageUrls,
+            List<PlatformFile> newRawImages)?
+        updateVehicleModel,
+    TResult Function(
+            String manufacturerId, List<int> fileBytes, String fileName)?
+        uploadCsv,
+    required TResult orElse(),
+  }) {
+    if (uploadCsv != null) {
+      return uploadCsv(manufacturerId, fileBytes, fileName);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVehicleModels value) fetchAllModels,
+    required TResult Function(CreateVehicleModel value) createVehicleModel,
+    required TResult Function(FetchVehicleModelsByManufacturer value)
+        fetchByManufacturer,
+    required TResult Function(FetchVehicleOptions value) fetchOptions,
+    required TResult Function(FetchOneVehicleModel value) fetchOne,
+    required TResult Function(UpdateVehicleModel value) updateVehicleModel,
+    required TResult Function(UploadCsv value) uploadCsv,
+  }) {
+    return uploadCsv(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVehicleModels value)? fetchAllModels,
+    TResult? Function(CreateVehicleModel value)? createVehicleModel,
+    TResult? Function(FetchVehicleModelsByManufacturer value)?
+        fetchByManufacturer,
+    TResult? Function(FetchVehicleOptions value)? fetchOptions,
+    TResult? Function(FetchOneVehicleModel value)? fetchOne,
+    TResult? Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult? Function(UploadCsv value)? uploadCsv,
+  }) {
+    return uploadCsv?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVehicleModels value)? fetchAllModels,
+    TResult Function(CreateVehicleModel value)? createVehicleModel,
+    TResult Function(FetchVehicleModelsByManufacturer value)?
+        fetchByManufacturer,
+    TResult Function(FetchVehicleOptions value)? fetchOptions,
+    TResult Function(FetchOneVehicleModel value)? fetchOne,
+    TResult Function(UpdateVehicleModel value)? updateVehicleModel,
+    TResult Function(UploadCsv value)? uploadCsv,
+    required TResult orElse(),
+  }) {
+    if (uploadCsv != null) {
+      return uploadCsv(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UploadCsv implements VehicleModelEvent {
+  const factory UploadCsv(final String manufacturerId,
+      final List<int> fileBytes, final String fileName) = _$UploadCsvImpl;
+
+  String get manufacturerId;
+  List<int> get fileBytes;
+  String get fileName;
+
+  /// Create a copy of VehicleModelEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UploadCsvImplCopyWith<_$UploadCsvImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

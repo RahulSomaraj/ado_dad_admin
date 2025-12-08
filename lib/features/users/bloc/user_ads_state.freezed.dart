@@ -20,7 +20,9 @@ mixin _$UserAdsState {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<AdModel> ads, int total) loaded,
+    required TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)
+        loaded,
     required TResult Function(String message) error,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +30,9 @@ mixin _$UserAdsState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<AdModel> ads, int total)? loaded,
+    TResult? Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult? Function(String message)? error,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,7 +40,9 @@ mixin _$UserAdsState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<AdModel> ads, int total)? loaded,
+    TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) =>
@@ -132,7 +138,9 @@ class _$InitialImpl implements _Initial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<AdModel> ads, int total) loaded,
+    required TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return initial();
@@ -143,7 +151,9 @@ class _$InitialImpl implements _Initial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<AdModel> ads, int total)? loaded,
+    TResult? Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return initial?.call();
@@ -154,7 +164,9 @@ class _$InitialImpl implements _Initial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<AdModel> ads, int total)? loaded,
+    TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -249,7 +261,9 @@ class _$LoadingImpl implements _Loading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<AdModel> ads, int total) loaded,
+    required TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return loading();
@@ -260,7 +274,9 @@ class _$LoadingImpl implements _Loading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<AdModel> ads, int total)? loaded,
+    TResult? Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return loading?.call();
@@ -271,7 +287,9 @@ class _$LoadingImpl implements _Loading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<AdModel> ads, int total)? loaded,
+    TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
@@ -329,7 +347,7 @@ abstract class _$$LoadedImplCopyWith<$Res> {
           _$LoadedImpl value, $Res Function(_$LoadedImpl) then) =
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<AdModel> ads, int total});
+  $Res call({List<AdModel> ads, int total, int currentPage, int totalPages});
 }
 
 /// @nodoc
@@ -347,6 +365,8 @@ class __$$LoadedImplCopyWithImpl<$Res>
   $Res call({
     Object? ads = null,
     Object? total = null,
+    Object? currentPage = null,
+    Object? totalPages = null,
   }) {
     return _then(_$LoadedImpl(
       ads: null == ads
@@ -357,6 +377,14 @@ class __$$LoadedImplCopyWithImpl<$Res>
           ? _value.total
           : total // ignore: cast_nullable_to_non_nullable
               as int,
+      currentPage: null == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalPages: null == totalPages
+          ? _value.totalPages
+          : totalPages // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -364,7 +392,11 @@ class __$$LoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$LoadedImpl implements _Loaded {
-  const _$LoadedImpl({required final List<AdModel> ads, required this.total})
+  const _$LoadedImpl(
+      {required final List<AdModel> ads,
+      required this.total,
+      required this.currentPage,
+      required this.totalPages})
       : _ads = ads;
 
   final List<AdModel> _ads;
@@ -377,10 +409,14 @@ class _$LoadedImpl implements _Loaded {
 
   @override
   final int total;
+  @override
+  final int currentPage;
+  @override
+  final int totalPages;
 
   @override
   String toString() {
-    return 'UserAdsState.loaded(ads: $ads, total: $total)';
+    return 'UserAdsState.loaded(ads: $ads, total: $total, currentPage: $currentPage, totalPages: $totalPages)';
   }
 
   @override
@@ -389,12 +425,20 @@ class _$LoadedImpl implements _Loaded {
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
             const DeepCollectionEquality().equals(other._ads, _ads) &&
-            (identical(other.total, total) || other.total == total));
+            (identical(other.total, total) || other.total == total) &&
+            (identical(other.currentPage, currentPage) ||
+                other.currentPage == currentPage) &&
+            (identical(other.totalPages, totalPages) ||
+                other.totalPages == totalPages));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(_ads), total);
+      runtimeType,
+      const DeepCollectionEquality().hash(_ads),
+      total,
+      currentPage,
+      totalPages);
 
   /// Create a copy of UserAdsState
   /// with the given fields replaced by the non-null parameter values.
@@ -409,10 +453,12 @@ class _$LoadedImpl implements _Loaded {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<AdModel> ads, int total) loaded,
+    required TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)
+        loaded,
     required TResult Function(String message) error,
   }) {
-    return loaded(ads, total);
+    return loaded(ads, total, currentPage, totalPages);
   }
 
   @override
@@ -420,10 +466,12 @@ class _$LoadedImpl implements _Loaded {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<AdModel> ads, int total)? loaded,
+    TResult? Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
-    return loaded?.call(ads, total);
+    return loaded?.call(ads, total, currentPage, totalPages);
   }
 
   @override
@@ -431,12 +479,14 @@ class _$LoadedImpl implements _Loaded {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<AdModel> ads, int total)? loaded,
+    TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {
     if (loaded != null) {
-      return loaded(ads, total);
+      return loaded(ads, total, currentPage, totalPages);
     }
     return orElse();
   }
@@ -482,10 +532,14 @@ class _$LoadedImpl implements _Loaded {
 abstract class _Loaded implements UserAdsState {
   const factory _Loaded(
       {required final List<AdModel> ads,
-      required final int total}) = _$LoadedImpl;
+      required final int total,
+      required final int currentPage,
+      required final int totalPages}) = _$LoadedImpl;
 
   List<AdModel> get ads;
   int get total;
+  int get currentPage;
+  int get totalPages;
 
   /// Create a copy of UserAdsState
   /// with the given fields replaced by the non-null parameter values.
@@ -564,7 +618,9 @@ class _$ErrorImpl implements _Error {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<AdModel> ads, int total) loaded,
+    required TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)
+        loaded,
     required TResult Function(String message) error,
   }) {
     return error(message);
@@ -575,7 +631,9 @@ class _$ErrorImpl implements _Error {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<AdModel> ads, int total)? loaded,
+    TResult? Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult? Function(String message)? error,
   }) {
     return error?.call(message);
@@ -586,7 +644,9 @@ class _$ErrorImpl implements _Error {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<AdModel> ads, int total)? loaded,
+    TResult Function(
+            List<AdModel> ads, int total, int currentPage, int totalPages)?
+        loaded,
     TResult Function(String message)? error,
     required TResult orElse(),
   }) {

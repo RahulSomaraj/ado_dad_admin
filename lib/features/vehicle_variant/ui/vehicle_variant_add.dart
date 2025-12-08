@@ -7,6 +7,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+enum FeaturePackage {
+  base('Base'),
+  l('L'),
+  lx('LX'),
+  v('V'),
+  vx('VX'),
+  z('Z'),
+  zx('ZX'),
+  zxO('ZX(O)'),
+  zxPlus('ZX+'),
+  topEnd('Top End'),
+  premium('Premium'),
+  executive('Executive'),
+  royale('Royale');
+
+  const FeaturePackage(this.value);
+  final String value;
+}
+
 class VehicleVariantAdd extends StatefulWidget {
   final VehicleModel vehicleModel;
   const VehicleVariantAdd({super.key, required this.vehicleModel});
@@ -19,7 +38,7 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   String _displayName = '';
-  String _featurePackage = '';
+  FeaturePackage? _selectedFeaturePackage;
   int? _price;
   int? _seatingCapacity;
   int? _engineCapacity;
@@ -27,24 +46,8 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
   int? _maxTorque;
   double? _mileage;
 
-  // final List<String> fuelTypes = ['Petrol', 'Diesel', 'Electric'];
-  // final List<String> transmissionTypes = ['Manual', 'Automatic'];
-
-  final List<FuelType> fuelTypeOptions = [
-    FuelType(
-      id: "507f1f77bcf86cd799439012",
-      name: "Petrol",
-      displayName: "Petrol",
-    ),
-  ];
-
-  final List<TransmissionType> transmissionTypeOptions = [
-    TransmissionType(
-      id: "507f1f77bcf86cd799439013",
-      name: "Manual",
-      displayName: "Manual",
-    ),
-  ];
+  List<FuelType> fuelTypeOptions = [];
+  List<TransmissionType> transmissionTypeOptions = [];
 
   FuelType? _selectedFuelType;
   TransmissionType? _selectedTransmissionType;
@@ -59,7 +62,7 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
         vehicleModel: widget.vehicleModel, // ✅ Good now
         fuelType: _selectedFuelType,
         transmissionType: _selectedTransmissionType,
-        featurePackage: _featurePackage,
+        featurePackage: _selectedFeaturePackage?.value,
         engineSpecs: EngineSpecs(
           capacity: _engineCapacity ?? 0,
           maxPower: _maxPower ?? 0,
@@ -135,6 +138,15 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
         );
       },
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // Fetch fuel types and transmission types from API
+    context.read<VehicleVariantBloc>().add(
+          const VehicleVariantEvent.fetchOptions(),
+        );
   }
 
   @override
@@ -240,32 +252,121 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                   ]),
                   const SizedBox(height: 16),
                   _buildRow([
-                    _buildTextField(
-                        "Feature Package", (v) => _featurePackage = v!),
-                    _buildDropdownField<FuelType>(
-                      label: 'Fuel Type',
-                      value: _selectedFuelType,
-                      items: fuelTypeOptions,
+                    _buildDropdownField<FeaturePackage>(
+                      label: 'Feature Package',
+                      value: _selectedFeaturePackage,
+                      items: FeaturePackage.values,
                       onChanged: (val) {
                         if (mounted) {
-                          setState(() => _selectedFuelType = val);
+                          setState(() => _selectedFeaturePackage = val);
                         }
                       },
-                      getLabel: (f) => f.displayName,
+                      getLabel: (fp) => fp.value,
+                    ),
+                    BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
+                      buildWhen: (prev, curr) => curr.maybeWhen(
+                        loading: () => true,
+                        optionsLoaded: (_, __) => true,
+                        error: (_) => true,
+                        orElse: () => false,
+                      ),
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          loading: () => const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          optionsLoaded: (fuelOpts, transOpts) {
+                            // Update options when loaded
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              if (mounted) {
+                                setState(() {
+                                  fuelTypeOptions = fuelOpts;
+                                  transmissionTypeOptions = transOpts;
+                                });
+                              }
+                            });
+                            return _buildDropdownField<FuelType>(
+                              label: 'Fuel Type',
+                              value: _selectedFuelType,
+                              items: fuelOpts,
+                              onChanged: (val) {
+                                if (mounted) {
+                                  setState(() => _selectedFuelType = val);
+                                }
+                              },
+                              getLabel: (f) => f.displayName,
+                            );
+                          },
+                          error: (msg) => Text(
+                            'Error loading options',
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                          orElse: () => _buildDropdownField<FuelType>(
+                            label: 'Fuel Type',
+                            value: _selectedFuelType,
+                            items: fuelTypeOptions,
+                            onChanged: (val) {
+                              if (mounted) {
+                                setState(() => _selectedFuelType = val);
+                              }
+                            },
+                            getLabel: (f) => f.displayName,
+                          ),
+                        );
+                      },
                     ),
                   ]),
                   const SizedBox(height: 16),
                   _buildRow([
-                    _buildDropdownField<TransmissionType>(
-                      label: 'Transmission Type',
-                      value: _selectedTransmissionType,
-                      items: transmissionTypeOptions,
-                      onChanged: (val) {
-                        if (mounted) {
-                          setState(() => _selectedTransmissionType = val);
-                        }
+                    BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
+                      buildWhen: (prev, curr) => curr.maybeWhen(
+                        loading: () => true,
+                        optionsLoaded: (_, __) => true,
+                        error: (_) => true,
+                        orElse: () => false,
+                      ),
+                      builder: (context, state) {
+                        return state.maybeWhen(
+                          loading: () => const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          optionsLoaded: (fuelOpts, transOpts) {
+                            return _buildDropdownField<TransmissionType>(
+                              label: 'Transmission Type',
+                              value: _selectedTransmissionType,
+                              items: transOpts,
+                              onChanged: (val) {
+                                if (mounted) {
+                                  setState(
+                                      () => _selectedTransmissionType = val);
+                                }
+                              },
+                              getLabel: (t) => t.displayName,
+                            );
+                          },
+                          error: (msg) => Text(
+                            'Error loading options',
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                          orElse: () => _buildDropdownField<TransmissionType>(
+                            label: 'Transmission Type',
+                            value: _selectedTransmissionType,
+                            items: transmissionTypeOptions,
+                            onChanged: (val) {
+                              if (mounted) {
+                                setState(() => _selectedTransmissionType = val);
+                              }
+                            },
+                            getLabel: (t) => t.displayName,
+                          ),
+                        );
                       },
-                      getLabel: (t) => t.displayName,
                     ),
                     _buildTextField("Seating Capacity",
                         (v) => _seatingCapacity = int.tryParse(v!),

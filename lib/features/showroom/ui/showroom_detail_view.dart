@@ -26,12 +26,16 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
   @override
   void initState() {
     super.initState();
-    // Trigger the bloc to fetch showroom ads
+    // Trigger the bloc to fetch showroom ads with pagination
     print(
         '🏪 ShowroomDetailView: Fetching ads for showroom: ${widget.showroomuser.name} (ID: ${widget.showroomuser.id})');
-    context
-        .read<UserAdsBloc>()
-        .add(UserAdsEvent.fetchUserAds(userId: widget.showroomuser.id));
+    context.read<UserAdsBloc>().add(
+          UserAdsEvent.fetchUserAds(
+            userId: widget.showroomuser.id,
+            page: _currentPage,
+            limit: _itemsPerPage,
+          ),
+        );
   }
 
   @override
@@ -289,12 +293,13 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
               child: CircularProgressIndicator(),
             ),
           ),
-          loaded: (ads, total) {
-            // Update total ads count
+          loaded: (ads, total, currentPage, totalPages) {
+            // Update total ads count and current page
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
                 setState(() {
                   _totalAds = total;
+                  _currentPage = currentPage;
                 });
               }
             });
@@ -326,7 +331,7 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
                 children: [
                   _buildAdsTable(ads),
                   const SizedBox(height: 20),
-                  _buildPagination(ads),
+                  _buildPagination(totalPages, currentPage),
                 ],
               );
             }
@@ -350,8 +355,13 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<UserAdsBloc>().add(UserAdsEvent.fetchUserAds(
-                          userId: widget.showroomuser.id));
+                      context.read<UserAdsBloc>().add(
+                            UserAdsEvent.fetchUserAds(
+                              userId: widget.showroomuser.id,
+                              page: _currentPage,
+                              limit: _itemsPerPage,
+                            ),
+                          );
                     },
                     child: const Text('Retry'),
                   ),
@@ -437,9 +447,7 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
                         ),
                       ),
                     ],
-                    rows: _getPaginatedAds(ads)
-                        .map((ad) => _buildAdRow(ad))
-                        .toList(),
+                    rows: ads.map((ad) => _buildAdRow(ad)).toList(),
                   ),
                 ),
               ),
@@ -648,55 +656,94 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
     }
   }
 
-  /// Get paginated ads
-  List<AdModel> _getPaginatedAds(List<AdModel> allAds) {
-    final startIndex = (_currentPage - 1) * _itemsPerPage;
-    final endIndex = startIndex + _itemsPerPage;
-    return allAds.sublist(
-      startIndex,
-      endIndex > allAds.length ? allAds.length : endIndex,
-    );
-  }
-
-  /// Get total pages for pagination
-  int _getTotalPages(List<AdModel> allAds) {
-    return (allAds.length / _itemsPerPage).ceil();
-  }
-
   /// Build pagination widget
-  Widget _buildPagination(List<AdModel> allAds) {
-    final totalPages = _getTotalPages(allAds);
-
+  Widget _buildPagination(int totalPages, int currentPage) {
     if (totalPages <= 1) return const SizedBox.shrink();
 
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          onPressed: _currentPage > 1
-              ? () {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 20, bottom: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text("Rows per page: "),
+            const SizedBox(width: 8),
+            DropdownButton<int>(
+              value: _itemsPerPage,
+              dropdownColor: Colors.white,
+              items: [10, 20].map((int value) {
+                return DropdownMenuItem<int>(
+                  value: value,
+                  child: Text(value.toString()),
+                );
+              }).toList(),
+              onChanged: (value) {
+                if (value != null) {
                   setState(() {
-                    _currentPage--;
+                    _itemsPerPage = value;
+                    _currentPage =
+                        1; // Reset to first page when changing items per page
                   });
+                  context.read<UserAdsBloc>().add(
+                        UserAdsEvent.fetchUserAds(
+                          userId: widget.showroomuser.id,
+                          page: 1,
+                          limit: value,
+                        ),
+                      );
                 }
-              : null,
-          icon: const Icon(Icons.chevron_left),
+              },
+            ),
+            const SizedBox(width: 20),
+            GestureDetector(
+              onTap: currentPage > 1
+                  ? () {
+                      final newPage = currentPage - 1;
+                      context.read<UserAdsBloc>().add(
+                            UserAdsEvent.fetchUserAds(
+                              userId: widget.showroomuser.id,
+                              page: newPage,
+                              limit: _itemsPerPage,
+                            ),
+                          );
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_left,
+                size: 28,
+                color: currentPage > 1 ? Colors.black : Colors.grey[400],
+              ),
+            ),
+            const SizedBox(width: 15),
+            Text(
+              "Page $currentPage of $totalPages",
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(width: 15),
+            GestureDetector(
+              onTap: currentPage < totalPages
+                  ? () {
+                      final newPage = currentPage + 1;
+                      context.read<UserAdsBloc>().add(
+                            UserAdsEvent.fetchUserAds(
+                              userId: widget.showroomuser.id,
+                              page: newPage,
+                              limit: _itemsPerPage,
+                            ),
+                          );
+                    }
+                  : null,
+              child: Icon(
+                Icons.chevron_right,
+                size: 28,
+                color:
+                    currentPage < totalPages ? Colors.black : Colors.grey[400],
+              ),
+            ),
+          ],
         ),
-        Text(
-          'Page $_currentPage of $totalPages',
-          style: const TextStyle(fontSize: 14),
-        ),
-        IconButton(
-          onPressed: _currentPage < totalPages
-              ? () {
-                  setState(() {
-                    _currentPage++;
-                  });
-                }
-              : null,
-          icon: const Icon(Icons.chevron_right),
-        ),
-      ],
+      ),
     );
   }
 }

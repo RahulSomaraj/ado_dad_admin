@@ -160,4 +160,81 @@ class VehicleManufacturerRepository {
           'Failed to load manufacturers for dropdown: ${e.response?.data ?? e.message}');
     }
   }
+
+  Future<String> uploadCsv(List<int> fileBytes, String fileName) async {
+    try {
+      print('📤 Starting CSV upload...');
+      print('📁 File name: $fileName');
+      print('📊 File size: ${fileBytes.length} bytes');
+
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(
+          fileBytes,
+          filename: fileName,
+        ),
+      });
+
+      print('🌐 Uploading to: /vehicle-inventory/upload');
+
+      final response = await _dio.post(
+        '/vehicle-inventory/upload',
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+
+      print('✅ Response status: ${response.statusCode}');
+      print('📦 Response data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data['message'] ?? "CSV file uploaded successfully";
+      } else {
+        print('❌ Unexpected status code: ${response.statusCode}');
+        print('❌ Response message: ${response.statusMessage}');
+        print('❌ Response data: ${response.data}');
+        throw Exception("Failed to upload CSV file: ${response.statusMessage}");
+      }
+    } on DioException catch (e) {
+      print('❌ DioException occurred:');
+      print('   Type: ${e.type}');
+      print('   Message: ${e.message}');
+      print('   Error: ${e.error}');
+
+      if (e.response != null) {
+        print('   Status Code: ${e.response!.statusCode}');
+        print('   Status Message: ${e.response!.statusMessage}');
+        print('   Response Headers: ${e.response!.headers}');
+        print('   Response Data: ${e.response!.data}');
+        print('   Response Data Type: ${e.response!.data.runtimeType}');
+
+        // Try to extract error message from different possible formats
+        String? errorMessage;
+        if (e.response!.data is Map) {
+          errorMessage = e.response!.data['message'] ??
+              e.response!.data['error'] ??
+              e.response!.data['detail'] ??
+              e.response!.data.toString();
+        } else {
+          errorMessage = e.response!.data.toString();
+        }
+
+        print('   Extracted Error Message: $errorMessage');
+
+        throw Exception(errorMessage ?? "API error occurred");
+      } else {
+        print('   No response received');
+        print('   Request Options: ${e.requestOptions}');
+        throw Exception("Network error: ${e.message}");
+      }
+    } catch (e, stackTrace) {
+      print('❌ Unexpected error occurred:');
+      print('   Error: $e');
+      print('   Error Type: ${e.runtimeType}');
+      print('   Stack Trace: $stackTrace');
+      throw Exception("Unexpected error: $e");
+    }
+  }
 }

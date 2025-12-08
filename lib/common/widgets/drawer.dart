@@ -49,6 +49,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         case '/users':
         case '/add-user':
         case '/edit-user':
+        case '/view-user':
           return 2;
         case '/vehicle-manufactures':
         case '/add-vehiclemanufacturer':

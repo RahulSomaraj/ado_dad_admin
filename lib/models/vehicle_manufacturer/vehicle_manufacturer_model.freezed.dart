@@ -38,6 +38,7 @@ mixin _$VehicleManufacturer {
   bool get isDeleted => throw _privateConstructorUsedError;
   DateTime? get createdAt => throw _privateConstructorUsedError;
   DateTime? get updatedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: '__v')
   int get v => throw _privateConstructorUsedError;
 
   /// Serializes this VehicleManufacturer to a JSON map.
@@ -71,7 +72,7 @@ abstract class $VehicleManufacturerCopyWith<$Res> {
       bool isDeleted,
       DateTime? createdAt,
       DateTime? updatedAt,
-      int v});
+      @JsonKey(name: '__v') int v});
 }
 
 /// @nodoc
@@ -193,7 +194,7 @@ abstract class _$$VehicleManufacturerImplCopyWith<$Res>
       bool isDeleted,
       DateTime? createdAt,
       DateTime? updatedAt,
-      int v});
+      @JsonKey(name: '__v') int v});
 }
 
 /// @nodoc
@@ -309,7 +310,7 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
       this.isDeleted = false,
       this.createdAt,
       this.updatedAt,
-      this.v = 0});
+      @JsonKey(name: '__v') this.v = 0});
 
   factory _$VehicleManufacturerImpl.fromJson(Map<String, dynamic> json) =>
       _$$VehicleManufacturerImplFromJson(json);
@@ -349,7 +350,7 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
   @override
   final DateTime? updatedAt;
   @override
-  @JsonKey()
+  @JsonKey(name: '__v')
   final int v;
 
   @override
@@ -442,7 +443,7 @@ abstract class _VehicleManufacturer implements VehicleManufacturer {
       final bool isDeleted,
       final DateTime? createdAt,
       final DateTime? updatedAt,
-      final int v}) = _$VehicleManufacturerImpl;
+      @JsonKey(name: '__v') final int v}) = _$VehicleManufacturerImpl;
 
   factory _VehicleManufacturer.fromJson(Map<String, dynamic> json) =
       _$VehicleManufacturerImpl.fromJson;
@@ -479,6 +480,7 @@ abstract class _VehicleManufacturer implements VehicleManufacturer {
   @override
   DateTime? get updatedAt;
   @override
+  @JsonKey(name: '__v')
   int get v;
 
   /// Create a copy of VehicleManufacturer

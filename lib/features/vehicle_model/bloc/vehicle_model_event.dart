@@ -26,4 +26,9 @@ class VehicleModelEvent with _$VehicleModelEvent {
     @Default(<String>[]) List<String> keepImageUrls,
     @Default(<PlatformFile>[]) List<PlatformFile> newRawImages,
   }) = UpdateVehicleModel;
+  const factory VehicleModelEvent.uploadCsv(
+    String manufacturerId,
+    List<int> fileBytes,
+    String fileName,
+  ) = UploadCsv;
 }

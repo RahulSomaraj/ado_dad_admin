@@ -27,7 +27,7 @@ _$VehicleManufacturerImpl _$$VehicleManufacturerImplFromJson(
       updatedAt: json['updatedAt'] == null
           ? null
           : DateTime.parse(json['updatedAt'] as String),
-      v: (json['v'] as num?)?.toInt() ?? 0,
+      v: (json['__v'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$$VehicleManufacturerImplToJson(
@@ -47,7 +47,7 @@ Map<String, dynamic> _$$VehicleManufacturerImplToJson(
       'isDeleted': instance.isDeleted,
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
-      'v': instance.v,
+      '__v': instance.v,
     };
 
 _$VehicleManufacturerResponseImpl _$$VehicleManufacturerResponseImplFromJson(

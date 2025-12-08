@@ -6,6 +6,7 @@ import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_m
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:file_picker/file_picker.dart';
 
 class VehicleManufacturesAdd extends StatefulWidget {
   const VehicleManufacturesAdd({super.key});
@@ -97,14 +98,50 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
     );
   }
 
+  Future<void> _uploadCsvFile() async {
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv'],
+        withData: true,
+      );
+
+      if (result != null && result.files.single.bytes != null) {
+        final fileBytes = result.files.single.bytes!;
+        final fileName = result.files.single.name;
+
+        if (mounted) {
+          context.read<VehicleManufacturerBloc>().add(
+                VehicleManufacturerEvent.uploadCsv(fileBytes, fileName),
+              );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error picking file: $e')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<VehicleManufacturerBloc, VehicleManufacturerState>(
       listener: (context, state) {
         state.maybeWhen(
           loaded: (response) {
-            _showSuccessPopup(
-                context, "Manufacturer has been added successfully.");
+            _showSuccessPopup(context, "Operation completed successfully.");
+          },
+          error: (message) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           },
           orElse: () {},
         );
@@ -157,6 +194,24 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     color: AppColors.blackColor,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Spacer(),
+            ElevatedButton.icon(
+              onPressed: _uploadCsvFile,
+              icon: const Icon(Icons.upload_file, color: Colors.white),
+              label: const Text(
+                'Upload CSV',
+                style: TextStyle(color: Colors.white),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ],

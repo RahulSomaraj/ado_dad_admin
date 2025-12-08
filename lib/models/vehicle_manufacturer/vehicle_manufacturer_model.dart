@@ -24,7 +24,7 @@ class VehicleManufacturer with _$VehicleManufacturer {
     @Default(false) bool isDeleted,
     DateTime? createdAt,
     DateTime? updatedAt,
-    @Default(0) int v,
+    @JsonKey(name: '__v') @Default(0) int v,
   }) = _VehicleManufacturer;
 
   factory VehicleManufacturer.fromJson(Map<String, dynamic> json) =>

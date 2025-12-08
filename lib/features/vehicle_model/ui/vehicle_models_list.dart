@@ -493,7 +493,9 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       )),
       DataCell(Text(models.name)),
       DataCell(Text(models.displayName)),
-      DataCell(Text(models.manufacturer?.name ?? 'N/A')),
+      DataCell(Text(models.manufacturer?.displayName ??
+          models.manufacturer?.name ??
+          'N/A')),
       DataCell(Text(models.vehicleType)),
       DataCell(SizedBox(
           width: 150,

@@ -172,13 +172,17 @@ class UserRepository {
     }
   }
 
-  /// Fetch user ads by user ID
-  Future<UserAdsResponse> fetchUserAds(String userId) async {
+  /// Fetch user ads by user ID with pagination
+  Future<UserAdsResponse> fetchUserAds({
+    required String userId,
+    int page = 1,
+    int limit = 10,
+  }) async {
     try {
       print('🌐 API Call: GET /ads/user/$userId');
       final response = await _dio.get('/ads/user/$userId', queryParameters: {
-        'page': 1,
-        'limit': 1000, // Fetch a large number to get all ads
+        'page': page,
+        'limit': limit,
       });
       print('✅ API Response Status: ${response.statusCode}');
       print('📄 API Response Data: ${response.data}');

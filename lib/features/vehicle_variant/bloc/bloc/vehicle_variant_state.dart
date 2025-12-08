@@ -11,4 +11,8 @@ class VehicleVariantState with _$VehicleVariantState {
 
   const factory VehicleVariantState.success(String message) = _Success;
   const factory VehicleVariantState.error(String message) = _Error;
+  const factory VehicleVariantState.optionsLoaded({
+    required List<FuelType> fuelTypes,
+    required List<TransmissionType> transmissionTypes,
+  }) = _OptionsLoaded;
 }

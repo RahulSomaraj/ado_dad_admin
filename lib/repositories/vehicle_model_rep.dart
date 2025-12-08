@@ -212,12 +212,17 @@ class VehicleModelRepository {
   }
 
   Future<VehicleModelResponse> fetchModelsByManufacturer(
-      String manufacturerId) async {
+    String manufacturerId, {
+    int page = 1,
+    int limit = 10,
+  }) async {
     try {
       final response = await _dio.get(
         '/vehicle-inventory/models',
         queryParameters: {
           'manufacturerId': manufacturerId,
+          'page': page,
+          'limit': limit,
         },
       );
 
@@ -301,6 +306,54 @@ class VehicleModelRepository {
     } on DioException catch (e) {
       print("❌ DioException Response: ${e.response?.data}");
       throw Exception(DioErrorHandler.handleError(e));
+    }
+  }
+
+  Future<String> uploadCsv(
+      String manufacturerId, List<int> fileBytes, String fileName) async {
+    try {
+      print('📤 Starting CSV upload for manufacturer: $manufacturerId');
+      print('📁 File name: $fileName');
+      print('📊 File size: ${fileBytes.length} bytes');
+
+      final formData = FormData.fromMap({
+        'file': MultipartFile.fromBytes(
+          fileBytes,
+          filename: fileName,
+        ),
+      });
+
+      print('🌐 Uploading to: /vehicle-inventory/$manufacturerId/upload-csv');
+
+      final response = await _dio.post(
+        '/vehicle-inventory/$manufacturerId/upload-csv',
+        data: formData,
+        options: Options(
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
+
+      print('✅ Response status: ${response.statusCode}');
+      print('📦 Response data: ${response.data}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response.data['message'] ?? "CSV file uploaded successfully";
+      } else {
+        print('❌ Unexpected status code: ${response.statusCode}');
+        print('❌ Response message: ${response.statusMessage}');
+        print('❌ Response data: ${response.data}');
+        throw Exception("Failed to upload CSV file: ${response.statusMessage}");
+      }
+    } on DioException catch (e) {
+      print('❌ DioException during CSV upload:');
+      print('   Error: $e');
+      print('   Response: ${e.response?.data}');
+      throw Exception(DioErrorHandler.handleError(e));
+    } catch (e) {
+      print('❌ Unexpected error during CSV upload: $e');
+      throw Exception('Unexpected error: $e');
     }
   }
 }
