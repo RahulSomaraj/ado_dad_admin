@@ -21,6 +21,7 @@ class VehicleManufacturerDetailView extends StatefulWidget {
 class _VehicleManufacturerDetailViewState
     extends State<VehicleManufacturerDetailView> {
   bool _isCsvUploadInProgress = false;
+  bool _isDeletionInProgress = false;
   void Function(List<int> fileBytes, String fileName)? _uploadCsvCallback;
 
   @override
@@ -54,64 +55,116 @@ class _VehicleManufacturerDetailViewState
   }
 
   void _deleteManufacturer(BuildContext context, String id) {
+    setState(() {
+      _isDeletionInProgress = true;
+    });
     context.read<VehicleManufacturerBloc>().add(
           VehicleManufacturerEvent.deleteManufacturer(id),
         );
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Manufacturer deletion triggered")),
-    );
-
-    // Optionally navigate back or refresh list
-    // Navigator.of(context).pop(); // pop detail screen
   }
 
   @override
   Widget build(BuildContext context) {
     final m = widget.vehiclemanufacturer;
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildHeader(m),
-          const SizedBox(height: 15),
-          _buildInfoCard(m),
-          const SizedBox(height: 20),
-          BlocProvider(
-            create: (context) =>
-                VehicleModelBloc(repository: VehicleModelRepository())
-                  ..add(FetchVehicleModelsByManufacturer(
-                      widget.vehiclemanufacturer.id)),
-            child: Builder(
-              builder: (blocContext) {
-                // Store the upload callback to use the correct bloc instance
-                _uploadCsvCallback = (fileBytes, fileName) {
-                  blocContext.read<VehicleModelBloc>().add(
-                        VehicleModelEvent.uploadCsv(
-                          widget.vehiclemanufacturer.id,
-                          fileBytes,
-                          fileName,
-                        ),
-                      );
-                };
-                return _VehicleModelListSectionWithListener(
-                  manufacturerId: widget.vehiclemanufacturer.id,
-                  isCsvUploadInProgress: _isCsvUploadInProgress,
-                  onCsvUploadComplete: () {
-                    if (mounted) {
-                      setState(() {
-                        _isCsvUploadInProgress = false;
-                      });
-                    }
-                  },
-                );
-              },
+    return BlocListener<VehicleManufacturerBloc, VehicleManufacturerState>(
+      listenWhen: (prev, curr) {
+        // Only listen when deletion is in progress and state changes to loaded or error
+        if (!_isDeletionInProgress) return false;
+        return curr.maybeWhen(
+          loaded: (_) => true,
+          error: (_) => true,
+          orElse: () => false,
+        );
+      },
+      listener: (context, state) {
+        state.maybeWhen(
+          loaded: (response) {
+            // Only show success message if deletion was in progress
+            if (_isDeletionInProgress && mounted) {
+              setState(() {
+                _isDeletionInProgress = false;
+              });
+              // Show success popup
+              showDialog(
+                context: context,
+                builder: (dialogContext) => AlertDialog(
+                  title: const Text("Success"),
+                  content: const Text(
+                      "Manufacturer deleted successfully."),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(dialogContext).pop();
+                        // Navigate back to list page
+                        context.pop();
+                      },
+                      child: const Text("OK"),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+          error: (message) {
+            if (_isDeletionInProgress && mounted) {
+              setState(() {
+                _isDeletionInProgress = false;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Deletion failed: $message'),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          orElse: () {},
+        );
+      },
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildHeader(m),
+            const SizedBox(height: 15),
+            _buildInfoCard(m),
+            const SizedBox(height: 20),
+            BlocProvider(
+              create: (context) =>
+                  VehicleModelBloc(repository: VehicleModelRepository())
+                    ..add(FetchVehicleModelsByManufacturer(
+                        widget.vehiclemanufacturer.id)),
+              child: Builder(
+                builder: (blocContext) {
+                  // Store the upload callback to use the correct bloc instance
+                  _uploadCsvCallback = (fileBytes, fileName) {
+                    blocContext.read<VehicleModelBloc>().add(
+                          VehicleModelEvent.uploadCsv(
+                            widget.vehiclemanufacturer.id,
+                            fileBytes,
+                            fileName,
+                          ),
+                        );
+                  };
+                  return _VehicleModelListSectionWithListener(
+                    manufacturerId: widget.vehiclemanufacturer.id,
+                    isCsvUploadInProgress: _isCsvUploadInProgress,
+                    onCsvUploadComplete: () {
+                      if (mounted) {
+                        setState(() {
+                          _isCsvUploadInProgress = false;
+                        });
+                      }
+                    },
+                  );
+                },
+              ),
             ),
-          ),
 
-          // _buildModelTableSection(), // Placeholder
-        ],
+            // _buildModelTableSection(), // Placeholder
+          ],
+        ),
       ),
     );
   }
