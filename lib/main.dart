@@ -23,9 +23,11 @@ import 'package:ado_dad_admin/repositories/vehicle_variant_rep.dart';
 import 'package:ado_dad_admin/repositories/reports_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: ".env");
   await SharedPrefs().init();
 
   runApp(const MyApp());

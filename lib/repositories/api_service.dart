@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiService {
   static final ApiService _instance = ApiService._internal();
@@ -11,8 +12,7 @@ class ApiService {
 
   ApiService._internal() {
     _dio = Dio(BaseOptions(
-      // baseUrl: 'https://uat.ado-dad.com',
-      baseUrl: 'https://uatapi.ado-dad.com',
+      baseUrl: dotenv.env['API_BASE_URL'] ?? '',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
     ));
