@@ -11,7 +11,8 @@ class ApiService {
 
   ApiService._internal() {
     _dio = Dio(BaseOptions(
-      baseUrl: 'https://uat.ado-dad.com',
+      // baseUrl: 'https://uat.ado-dad.com',
+      baseUrl: 'https://uatapi.ado-dad.com',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
     ));
