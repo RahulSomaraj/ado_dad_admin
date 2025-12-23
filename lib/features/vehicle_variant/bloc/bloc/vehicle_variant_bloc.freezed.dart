@@ -26,6 +26,10 @@ mixin _$VehicleVariantEvent {
     required TResult Function(
             String modelId, List<int> fileBytes, String fileName)
         uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
     required TResult Function() fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
@@ -37,6 +41,10 @@ mixin _$VehicleVariantEvent {
     TResult? Function(VariantModel variant)? createVariant,
     TResult? Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
     TResult? Function()? fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
@@ -48,6 +56,10 @@ mixin _$VehicleVariantEvent {
     TResult Function(VariantModel variant)? createVariant,
     TResult Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
     TResult Function()? fetchOptions,
     required TResult orElse(),
   }) =>
@@ -59,6 +71,8 @@ mixin _$VehicleVariantEvent {
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
     required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
     required TResult Function(FetchOptions value) fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
@@ -69,6 +83,8 @@ mixin _$VehicleVariantEvent {
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
     TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
     TResult? Function(FetchOptions value)? fetchOptions,
   }) =>
       throw _privateConstructorUsedError;
@@ -79,6 +95,8 @@ mixin _$VehicleVariantEvent {
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
     TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
     TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) =>
@@ -155,6 +173,10 @@ class _$StartedImpl implements _Started {
     required TResult Function(
             String modelId, List<int> fileBytes, String fileName)
         uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
     required TResult Function() fetchOptions,
   }) {
     return started();
@@ -169,6 +191,10 @@ class _$StartedImpl implements _Started {
     TResult? Function(VariantModel variant)? createVariant,
     TResult? Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
     TResult? Function()? fetchOptions,
   }) {
     return started?.call();
@@ -183,6 +209,10 @@ class _$StartedImpl implements _Started {
     TResult Function(VariantModel variant)? createVariant,
     TResult Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
     TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
@@ -200,6 +230,8 @@ class _$StartedImpl implements _Started {
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
     required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
     required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return started(this);
@@ -213,6 +245,8 @@ class _$StartedImpl implements _Started {
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
     TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
     TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return started?.call(this);
@@ -226,6 +260,8 @@ class _$StartedImpl implements _Started {
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
     TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
     TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
@@ -337,6 +373,10 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     required TResult Function(
             String modelId, List<int> fileBytes, String fileName)
         uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
     required TResult Function() fetchOptions,
   }) {
     return fetchAll(page, limit, searchQuery);
@@ -351,6 +391,10 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult? Function(VariantModel variant)? createVariant,
     TResult? Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
     TResult? Function()? fetchOptions,
   }) {
     return fetchAll?.call(page, limit, searchQuery);
@@ -365,6 +409,10 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult Function(VariantModel variant)? createVariant,
     TResult Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
     TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
@@ -382,6 +430,8 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
     required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
     required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return fetchAll(this);
@@ -395,6 +445,8 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
     TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
     TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return fetchAll?.call(this);
@@ -408,6 +460,8 @@ class _$FetchAllVariantsImpl implements FetchAllVariants {
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
     TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
     TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
@@ -532,6 +586,10 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     required TResult Function(
             String modelId, List<int> fileBytes, String fileName)
         uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
     required TResult Function() fetchOptions,
   }) {
     return fetchByModel(modelId, page, limit);
@@ -546,6 +604,10 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult? Function(VariantModel variant)? createVariant,
     TResult? Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
     TResult? Function()? fetchOptions,
   }) {
     return fetchByModel?.call(modelId, page, limit);
@@ -560,6 +622,10 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult Function(VariantModel variant)? createVariant,
     TResult Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
     TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
@@ -577,6 +643,8 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
     required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
     required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return fetchByModel(this);
@@ -590,6 +658,8 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
     TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
     TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return fetchByModel?.call(this);
@@ -603,6 +673,8 @@ class _$FetchVariantsByModelImpl implements FetchVariantsByModel {
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
     TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
     TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
@@ -718,6 +790,10 @@ class _$CreateVariantImpl implements CreateVariant {
     required TResult Function(
             String modelId, List<int> fileBytes, String fileName)
         uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
     required TResult Function() fetchOptions,
   }) {
     return createVariant(variant);
@@ -732,6 +808,10 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult? Function(VariantModel variant)? createVariant,
     TResult? Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
     TResult? Function()? fetchOptions,
   }) {
     return createVariant?.call(variant);
@@ -746,6 +826,10 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult Function(VariantModel variant)? createVariant,
     TResult Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
     TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
@@ -763,6 +847,8 @@ class _$CreateVariantImpl implements CreateVariant {
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
     required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
     required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return createVariant(this);
@@ -776,6 +862,8 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
     TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
     TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return createVariant?.call(this);
@@ -789,6 +877,8 @@ class _$CreateVariantImpl implements CreateVariant {
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
     TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
     TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
@@ -918,6 +1008,10 @@ class _$UploadVariantCsvImpl implements UploadVariantCsv {
     required TResult Function(
             String modelId, List<int> fileBytes, String fileName)
         uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
     required TResult Function() fetchOptions,
   }) {
     return uploadVariantCsv(modelId, fileBytes, fileName);
@@ -932,6 +1026,10 @@ class _$UploadVariantCsvImpl implements UploadVariantCsv {
     TResult? Function(VariantModel variant)? createVariant,
     TResult? Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
     TResult? Function()? fetchOptions,
   }) {
     return uploadVariantCsv?.call(modelId, fileBytes, fileName);
@@ -946,6 +1044,10 @@ class _$UploadVariantCsvImpl implements UploadVariantCsv {
     TResult Function(VariantModel variant)? createVariant,
     TResult Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
     TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
@@ -963,6 +1065,8 @@ class _$UploadVariantCsvImpl implements UploadVariantCsv {
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
     required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
     required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return uploadVariantCsv(this);
@@ -976,6 +1080,8 @@ class _$UploadVariantCsvImpl implements UploadVariantCsv {
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
     TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
     TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return uploadVariantCsv?.call(this);
@@ -989,6 +1095,8 @@ class _$UploadVariantCsvImpl implements UploadVariantCsv {
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
     TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
     TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {
@@ -1013,6 +1121,425 @@ abstract class UploadVariantCsv implements VehicleVariantEvent {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UploadVariantCsvImplCopyWith<_$UploadVariantCsvImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$UpdateVariantImplCopyWith<$Res> {
+  factory _$$UpdateVariantImplCopyWith(
+          _$UpdateVariantImpl value, $Res Function(_$UpdateVariantImpl) then) =
+      __$$UpdateVariantImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String variantId, Map<String, dynamic> payload, String modelId});
+}
+
+/// @nodoc
+class __$$UpdateVariantImplCopyWithImpl<$Res>
+    extends _$VehicleVariantEventCopyWithImpl<$Res, _$UpdateVariantImpl>
+    implements _$$UpdateVariantImplCopyWith<$Res> {
+  __$$UpdateVariantImplCopyWithImpl(
+      _$UpdateVariantImpl _value, $Res Function(_$UpdateVariantImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? variantId = null,
+    Object? payload = null,
+    Object? modelId = null,
+  }) {
+    return _then(_$UpdateVariantImpl(
+      variantId: null == variantId
+          ? _value.variantId
+          : variantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      payload: null == payload
+          ? _value._payload
+          : payload // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>,
+      modelId: null == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$UpdateVariantImpl implements UpdateVariant {
+  const _$UpdateVariantImpl(
+      {required this.variantId,
+      required final Map<String, dynamic> payload,
+      required this.modelId})
+      : _payload = payload;
+
+  @override
+  final String variantId;
+  final Map<String, dynamic> _payload;
+  @override
+  Map<String, dynamic> get payload {
+    if (_payload is EqualUnmodifiableMapView) return _payload;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_payload);
+  }
+
+  @override
+  final String modelId;
+
+  @override
+  String toString() {
+    return 'VehicleVariantEvent.updateVariant(variantId: $variantId, payload: $payload, modelId: $modelId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$UpdateVariantImpl &&
+            (identical(other.variantId, variantId) ||
+                other.variantId == variantId) &&
+            const DeepCollectionEquality().equals(other._payload, _payload) &&
+            (identical(other.modelId, modelId) || other.modelId == modelId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, variantId,
+      const DeepCollectionEquality().hash(_payload), modelId);
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$UpdateVariantImplCopyWith<_$UpdateVariantImpl> get copyWith =>
+      __$$UpdateVariantImplCopyWithImpl<_$UpdateVariantImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int page, int limit, String? searchQuery)
+        fetchAll,
+    required TResult Function(String modelId, int page, int limit) fetchByModel,
+    required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
+    required TResult Function() fetchOptions,
+  }) {
+    return updateVariant(variantId, payload, modelId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(String modelId, int page, int limit)? fetchByModel,
+    TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
+    TResult? Function()? fetchOptions,
+  }) {
+    return updateVariant?.call(variantId, payload, modelId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(String modelId, int page, int limit)? fetchByModel,
+    TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
+    TResult Function()? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (updateVariant != null) {
+      return updateVariant(variantId, payload, modelId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVariants value) fetchAll,
+    required TResult Function(FetchVariantsByModel value) fetchByModel,
+    required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
+    required TResult Function(FetchOptions value) fetchOptions,
+  }) {
+    return updateVariant(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVariants value)? fetchAll,
+    TResult? Function(FetchVariantsByModel value)? fetchByModel,
+    TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
+    TResult? Function(FetchOptions value)? fetchOptions,
+  }) {
+    return updateVariant?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVariants value)? fetchAll,
+    TResult Function(FetchVariantsByModel value)? fetchByModel,
+    TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
+    TResult Function(FetchOptions value)? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (updateVariant != null) {
+      return updateVariant(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class UpdateVariant implements VehicleVariantEvent {
+  const factory UpdateVariant(
+      {required final String variantId,
+      required final Map<String, dynamic> payload,
+      required final String modelId}) = _$UpdateVariantImpl;
+
+  String get variantId;
+  Map<String, dynamic> get payload;
+  String get modelId;
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$UpdateVariantImplCopyWith<_$UpdateVariantImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$DeleteVariantImplCopyWith<$Res> {
+  factory _$$DeleteVariantImplCopyWith(
+          _$DeleteVariantImpl value, $Res Function(_$DeleteVariantImpl) then) =
+      __$$DeleteVariantImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String variantId, String modelId});
+}
+
+/// @nodoc
+class __$$DeleteVariantImplCopyWithImpl<$Res>
+    extends _$VehicleVariantEventCopyWithImpl<$Res, _$DeleteVariantImpl>
+    implements _$$DeleteVariantImplCopyWith<$Res> {
+  __$$DeleteVariantImplCopyWithImpl(
+      _$DeleteVariantImpl _value, $Res Function(_$DeleteVariantImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? variantId = null,
+    Object? modelId = null,
+  }) {
+    return _then(_$DeleteVariantImpl(
+      variantId: null == variantId
+          ? _value.variantId
+          : variantId // ignore: cast_nullable_to_non_nullable
+              as String,
+      modelId: null == modelId
+          ? _value.modelId
+          : modelId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$DeleteVariantImpl implements DeleteVariant {
+  const _$DeleteVariantImpl({required this.variantId, required this.modelId});
+
+  @override
+  final String variantId;
+  @override
+  final String modelId;
+
+  @override
+  String toString() {
+    return 'VehicleVariantEvent.deleteVariant(variantId: $variantId, modelId: $modelId)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$DeleteVariantImpl &&
+            (identical(other.variantId, variantId) ||
+                other.variantId == variantId) &&
+            (identical(other.modelId, modelId) || other.modelId == modelId));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, variantId, modelId);
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$DeleteVariantImplCopyWith<_$DeleteVariantImpl> get copyWith =>
+      __$$DeleteVariantImplCopyWithImpl<_$DeleteVariantImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() started,
+    required TResult Function(int page, int limit, String? searchQuery)
+        fetchAll,
+    required TResult Function(String modelId, int page, int limit) fetchByModel,
+    required TResult Function(VariantModel variant) createVariant,
+    required TResult Function(
+            String modelId, List<int> fileBytes, String fileName)
+        uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
+    required TResult Function() fetchOptions,
+  }) {
+    return deleteVariant(variantId, modelId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? started,
+    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(String modelId, int page, int limit)? fetchByModel,
+    TResult? Function(VariantModel variant)? createVariant,
+    TResult? Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
+    TResult? Function()? fetchOptions,
+  }) {
+    return deleteVariant?.call(variantId, modelId);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? started,
+    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(String modelId, int page, int limit)? fetchByModel,
+    TResult Function(VariantModel variant)? createVariant,
+    TResult Function(String modelId, List<int> fileBytes, String fileName)?
+        uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
+    TResult Function()? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (deleteVariant != null) {
+      return deleteVariant(variantId, modelId);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(_Started value) started,
+    required TResult Function(FetchAllVariants value) fetchAll,
+    required TResult Function(FetchVariantsByModel value) fetchByModel,
+    required TResult Function(CreateVariant value) createVariant,
+    required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
+    required TResult Function(FetchOptions value) fetchOptions,
+  }) {
+    return deleteVariant(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(_Started value)? started,
+    TResult? Function(FetchAllVariants value)? fetchAll,
+    TResult? Function(FetchVariantsByModel value)? fetchByModel,
+    TResult? Function(CreateVariant value)? createVariant,
+    TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
+    TResult? Function(FetchOptions value)? fetchOptions,
+  }) {
+    return deleteVariant?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(_Started value)? started,
+    TResult Function(FetchAllVariants value)? fetchAll,
+    TResult Function(FetchVariantsByModel value)? fetchByModel,
+    TResult Function(CreateVariant value)? createVariant,
+    TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
+    TResult Function(FetchOptions value)? fetchOptions,
+    required TResult orElse(),
+  }) {
+    if (deleteVariant != null) {
+      return deleteVariant(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class DeleteVariant implements VehicleVariantEvent {
+  const factory DeleteVariant(
+      {required final String variantId,
+      required final String modelId}) = _$DeleteVariantImpl;
+
+  String get variantId;
+  String get modelId;
+
+  /// Create a copy of VehicleVariantEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$DeleteVariantImplCopyWith<_$DeleteVariantImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -1065,6 +1592,10 @@ class _$FetchOptionsImpl implements FetchOptions {
     required TResult Function(
             String modelId, List<int> fileBytes, String fileName)
         uploadVariantCsv,
+    required TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)
+        updateVariant,
+    required TResult Function(String variantId, String modelId) deleteVariant,
     required TResult Function() fetchOptions,
   }) {
     return fetchOptions();
@@ -1079,6 +1610,10 @@ class _$FetchOptionsImpl implements FetchOptions {
     TResult? Function(VariantModel variant)? createVariant,
     TResult? Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult? Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult? Function(String variantId, String modelId)? deleteVariant,
     TResult? Function()? fetchOptions,
   }) {
     return fetchOptions?.call();
@@ -1093,6 +1628,10 @@ class _$FetchOptionsImpl implements FetchOptions {
     TResult Function(VariantModel variant)? createVariant,
     TResult Function(String modelId, List<int> fileBytes, String fileName)?
         uploadVariantCsv,
+    TResult Function(
+            String variantId, Map<String, dynamic> payload, String modelId)?
+        updateVariant,
+    TResult Function(String variantId, String modelId)? deleteVariant,
     TResult Function()? fetchOptions,
     required TResult orElse(),
   }) {
@@ -1110,6 +1649,8 @@ class _$FetchOptionsImpl implements FetchOptions {
     required TResult Function(FetchVariantsByModel value) fetchByModel,
     required TResult Function(CreateVariant value) createVariant,
     required TResult Function(UploadVariantCsv value) uploadVariantCsv,
+    required TResult Function(UpdateVariant value) updateVariant,
+    required TResult Function(DeleteVariant value) deleteVariant,
     required TResult Function(FetchOptions value) fetchOptions,
   }) {
     return fetchOptions(this);
@@ -1123,6 +1664,8 @@ class _$FetchOptionsImpl implements FetchOptions {
     TResult? Function(FetchVariantsByModel value)? fetchByModel,
     TResult? Function(CreateVariant value)? createVariant,
     TResult? Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult? Function(UpdateVariant value)? updateVariant,
+    TResult? Function(DeleteVariant value)? deleteVariant,
     TResult? Function(FetchOptions value)? fetchOptions,
   }) {
     return fetchOptions?.call(this);
@@ -1136,6 +1679,8 @@ class _$FetchOptionsImpl implements FetchOptions {
     TResult Function(FetchVariantsByModel value)? fetchByModel,
     TResult Function(CreateVariant value)? createVariant,
     TResult Function(UploadVariantCsv value)? uploadVariantCsv,
+    TResult Function(UpdateVariant value)? updateVariant,
+    TResult Function(DeleteVariant value)? deleteVariant,
     TResult Function(FetchOptions value)? fetchOptions,
     required TResult orElse(),
   }) {

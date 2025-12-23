@@ -84,6 +84,18 @@ class VehicleVariantRepository {
         },
       );
       print('✅ called: ${response.data}');
+
+      // Debug: Check if fuelType and transmissionType are in the response
+      if (response.data is Map && response.data['data'] is List) {
+        final dataList = response.data['data'] as List;
+        if (dataList.isNotEmpty) {
+          print('🔍 First variant keys: ${dataList[0].keys}');
+          print('🔍 First variant fuelType: ${dataList[0]['fuelType']}');
+          print(
+              '🔍 First variant transmissionType: ${dataList[0]['transmissionType']}');
+        }
+      }
+
       if (response.statusCode == 200) {
         return VehicleVariantPaginatedResponse.fromJson(response.data);
       } else {
@@ -115,6 +127,57 @@ class VehicleVariantRepository {
       } else {
         throw Exception(
           'Failed to create variant. Status code: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      print("❌ DioException Response: ${e.response?.data}");
+      throw Exception(DioErrorHandler.handleError(e));
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  /// Update an existing vehicle variant
+  Future<void> updateVariant(
+      String variantId, Map<String, dynamic> payload) async {
+    try {
+      print("🚀 Update Variant Payload: $payload");
+      print("🚀 Update Variant ID: $variantId");
+
+      final response = await _dio.put(
+        '/vehicle-inventory/variants/$variantId',
+        data: payload,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print("✅ Variant updated successfully");
+      } else {
+        throw Exception(
+          'Failed to update variant. Status code: ${response.statusCode}',
+        );
+      }
+    } on DioException catch (e) {
+      print("❌ DioException Response: ${e.response?.data}");
+      throw Exception(DioErrorHandler.handleError(e));
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  /// Delete a vehicle variant
+  Future<void> deleteVariant(String variantId) async {
+    try {
+      print("🚀 Delete Variant ID: $variantId");
+
+      final response = await _dio.delete(
+        '/vehicle-inventory/variants/$variantId',
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        print("✅ Variant deleted successfully");
+      } else {
+        throw Exception(
+          'Failed to delete variant. Status code: ${response.statusCode}',
         );
       }
     } on DioException catch (e) {

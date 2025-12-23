@@ -25,5 +25,16 @@ class VehicleVariantEvent with _$VehicleVariantEvent {
     required String fileName,
   }) = UploadVariantCsv;
 
+  const factory VehicleVariantEvent.updateVariant({
+    required String variantId,
+    required Map<String, dynamic> payload,
+    required String modelId,
+  }) = UpdateVariant;
+
+  const factory VehicleVariantEvent.deleteVariant({
+    required String variantId,
+    required String modelId,
+  }) = DeleteVariant;
+
   const factory VehicleVariantEvent.fetchOptions() = FetchOptions;
 }

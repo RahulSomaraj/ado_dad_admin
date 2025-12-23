@@ -41,41 +41,84 @@ class _AdminDrawerState extends State<AdminDrawer> {
 
   int _getIndexFromRoute(String route) {
     if (widget.userType == "AD" || widget.userType == "SA") {
-      switch (route) {
-        case '/dashboard':
-          return 0;
-        case '/profile':
-          return 1;
-        case '/users':
-        case '/add-user':
-        case '/edit-user':
-        case '/view-user':
-          return 2;
-        case '/vehicle-manufactures':
-        case '/add-vehiclemanufacturer':
-        case '/edit-vehicle_manufacturer':
-        case '/view-vehicle_manufacturer':
-          return 3;
-        case '/vehicle-models':
-        case '/add-vehiclemodel':
-        case '/edit-vehicle_model':
-        case '/view-vehicle_model':
-          return 4;
-        case '/showrooms':
-        case '/add-showroom':
-        case '/edit-showroom':
-        case '/view-showroom':
-          return 5;
-        case '/reports':
-          return 6;
-        case '/notifications':
-          return 7;
-        case '/banners':
-        case '/upload-banners':
-        case '/edit-banner':
-          return 8;
-        default:
-          return 0; // Default to dashboard
+      // For Super Admin (SA), add Advertisements menu item
+      if (widget.userType == "SA") {
+        switch (route) {
+          case '/dashboard':
+            return 0;
+          case '/profile':
+            return 1;
+          case '/users':
+          case '/add-user':
+          case '/edit-user':
+          case '/view-user':
+            return 2;
+          case '/advertisements':
+            return 3;
+          case '/vehicle-manufactures':
+          case '/add-vehiclemanufacturer':
+          case '/edit-vehicle_manufacturer':
+          case '/view-vehicle_manufacturer':
+            return 4;
+          case '/vehicle-models':
+          case '/add-vehiclemodel':
+          case '/edit-vehicle_model':
+          case '/view-vehicle_model':
+            return 5;
+          case '/showrooms':
+          case '/add-showroom':
+          case '/edit-showroom':
+          case '/view-showroom':
+            return 6;
+          case '/reports':
+            return 7;
+          case '/notifications':
+            return 8;
+          case '/banners':
+          case '/upload-banners':
+          case '/edit-banner':
+            return 9;
+          default:
+            return 0; // Default to dashboard
+        }
+      } else {
+        // For Admin (AD), no Advertisements menu
+        switch (route) {
+          case '/dashboard':
+            return 0;
+          case '/profile':
+            return 1;
+          case '/users':
+          case '/add-user':
+          case '/edit-user':
+          case '/view-user':
+            return 2;
+          case '/vehicle-manufactures':
+          case '/add-vehiclemanufacturer':
+          case '/edit-vehicle_manufacturer':
+          case '/view-vehicle_manufacturer':
+            return 3;
+          case '/vehicle-models':
+          case '/add-vehiclemodel':
+          case '/edit-vehicle_model':
+          case '/view-vehicle_model':
+            return 4;
+          case '/showrooms':
+          case '/add-showroom':
+          case '/edit-showroom':
+          case '/view-showroom':
+            return 5;
+          case '/reports':
+            return 6;
+          case '/notifications':
+            return 7;
+          case '/banners':
+          case '/upload-banners':
+          case '/edit-banner':
+            return 8;
+          default:
+            return 0; // Default to dashboard
+        }
       }
     } else if (widget.userType == "SR") {
       // Showroom users have limited access - only dashboard and profile
@@ -206,34 +249,46 @@ class _AdminDrawerState extends State<AdminDrawer> {
 
   Widget _buildDrawerMenu() {
     if (widget.userType == "AD" || widget.userType == "SA") {
-      return Column(
-        children: [
-          _buildDrawerItem(
-              0, '/dashboard', 'assets/images/dashboard-icon.png', "Dashboard"),
-          _buildDrawerItem(1, '/profile', 'assets/images/users.png', "Profile"),
-          _buildDrawerItem(2, '/users', 'assets/images/users.png', "Users"),
-          // _buildDrawerItem(
-          //     3, '/vehicles', 'assets/images/listing-icon.png', "Vehicles"),
-          _buildDrawerItem(3, '/vehicle-manufactures',
-              'assets/images/promotion-icon.png', "Vehicle Manufactures"),
-          _buildDrawerItem(4, '/vehicle-models',
-              'assets/images/listing-icon.png', "Vehicle Models"),
-          // _buildDrawerItem(5, '/vehicle-variants',
-          //     'assets/images/listing-icon.png', "Vehicle Variants"),
+      // Build menu items list
+      final menuItems = <Widget>[
+        _buildDrawerItem(
+            0, '/dashboard', 'assets/images/dashboard-icon.png', "Dashboard"),
+        _buildDrawerItem(1, '/profile', 'assets/images/users.png', "Profile"),
+        _buildDrawerItem(2, '/users', 'assets/images/users.png', "Users"),
+      ];
 
-          // _buildDrawerItem(4, '/vehicle-companies',
-          //     'assets/images/promotion-icon.png', "Vehicle Companies"),
+      // Add Advertisements menu item only for Super Admin (SA)
+      if (widget.userType == "SA") {
+        menuItems.add(_buildDrawerItem(3, '/advertisements',
+            'assets/images/listing-icon.png', "Advertisements"));
+      }
 
-          _buildDrawerItem(
-              5, '/showrooms', 'assets/images/showroom-icon.png', "Showrooms"),
-          _buildDrawerItem(6, '/reports', 'assets/images/report-icon.png',
-              "Reports Management"),
-          _buildDrawerItem(7, '/notifications',
-              'assets/images/notification-icon.png', "Notifications"),
-          _buildDrawerItem(8, '/banners', 'assets/images/report-icon.png',
-              "Banner Management"),
-        ],
-      );
+      // Add remaining menu items with adjusted indices
+      final baseIndex = widget.userType == "SA" ? 4 : 3;
+      menuItems.addAll([
+        // _buildDrawerItem(
+        //     3, '/vehicles', 'assets/images/listing-icon.png', "Vehicles"),
+        _buildDrawerItem(baseIndex, '/vehicle-manufactures',
+            'assets/images/promotion-icon.png', "Vehicle Manufactures"),
+        _buildDrawerItem(baseIndex + 1, '/vehicle-models',
+            'assets/images/listing-icon.png', "Vehicle Models"),
+        // _buildDrawerItem(5, '/vehicle-variants',
+        //     'assets/images/listing-icon.png', "Vehicle Variants"),
+
+        // _buildDrawerItem(4, '/vehicle-companies',
+        //     'assets/images/promotion-icon.png', "Vehicle Companies"),
+
+        _buildDrawerItem(baseIndex + 2, '/showrooms',
+            'assets/images/showroom-icon.png', "Showrooms"),
+        _buildDrawerItem(baseIndex + 3, '/reports',
+            'assets/images/report-icon.png', "Reports Management"),
+        _buildDrawerItem(baseIndex + 4, '/notifications',
+            'assets/images/notification-icon.png', "Notifications"),
+        _buildDrawerItem(baseIndex + 5, '/banners',
+            'assets/images/report-icon.png', "Banner Management"),
+      ]);
+
+      return Column(children: menuItems);
     } else if (widget.userType == "SR") {
       // Showroom users have limited access - only dashboard, profile, and logout
       return Column(

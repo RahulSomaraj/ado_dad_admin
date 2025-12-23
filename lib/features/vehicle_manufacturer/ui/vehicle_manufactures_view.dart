@@ -89,8 +89,7 @@ class _VehicleManufacturerDetailViewState
                 context: context,
                 builder: (dialogContext) => AlertDialog(
                   title: const Text("Success"),
-                  content: const Text(
-                      "Manufacturer deleted successfully."),
+                  content: const Text("Manufacturer deleted successfully."),
                   actions: [
                     TextButton(
                       onPressed: () {
@@ -541,7 +540,7 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: DataTable(
-                                columnSpacing: isTablet ? 20 : 40,
+                                columnSpacing: isTablet ? 20 : 50,
                                 headingRowColor: WidgetStateColor.resolveWith(
                                   (states) =>
                                       const Color.fromARGB(66, 144, 140, 140),
@@ -550,77 +549,124 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
                                     AppColors.primaryColor),
                                 dataRowMinHeight: isTablet ? 45 : 55,
                                 dataRowMaxHeight: isTablet ? 45 : 55,
-                                columns: const [
-                                  // DataColumn(label: Text("ID")),
-                                  DataColumn(label: Text("Display Name")),
-                                  DataColumn(label: Text("Manufacturer")),
-                                  DataColumn(label: Text("Vehicle Type")),
-                                  DataColumn(label: Text("Description")),
-                                  DataColumn(label: Text("Launch Year")),
-                                  DataColumn(label: Text("Segment")),
-                                  DataColumn(label: Text("Body Type")),
-                                  // DataColumn(label: Text("Images")),
-                                  DataColumn(label: Text("Brochur")),
-                                  DataColumn(label: Text("Is Active")),
-                                  DataColumn(label: Text("Fuel Types")),
-                                  DataColumn(label: Text("Transmission")),
+                                columns: [
+                                  const DataColumn(
+                                    label: Padding(
+                                      padding: EdgeInsets.only(left: 30),
+                                      child: Text(
+                                        'ID',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet ? 'Name' : 'Name',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet
+                                          ? 'Display Name'
+                                          : 'Display Name',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet
+                                          ? 'Manufacturer'
+                                          : 'Manufacturer',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet
+                                          ? 'Vehicle Type'
+                                          : 'Vehicle Type',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet ? 'Description' : 'Description',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet ? 'Segment' : 'Segment',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet ? 'Is Active' : 'Is Active',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                  DataColumn(
+                                    label: Text(
+                                      isTablet ? 'Variants' : 'Variant Count',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                                 ],
-                                rows: models.map((model) {
+                                rows: models.asMap().entries.map((entry) {
+                                  final index = entry.key;
+                                  final model = entry.value;
+                                  int rowNumber =
+                                      ((response.page - 1) * rowsPerPage) +
+                                          index +
+                                          1;
                                   return DataRow(
                                     cells: [
-                                      DataCell(Text(
-                                          (model.displayName).isNotEmpty
-                                              ? model.displayName
-                                              : '-')),
+                                      DataCell(Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 30),
+                                        child: Text('$rowNumber'),
+                                      )),
+                                      DataCell(Text(model.name)),
+                                      DataCell(Text(model.displayName)),
                                       DataCell(Text(
                                           model.manufacturer?.displayName ??
+                                              model.manufacturer?.name ??
                                               'N/A')),
-                                      DataCell(Text(
-                                          (model.vehicleType).isNotEmpty
-                                              ? model.vehicleType
-                                              : '-')),
+                                      DataCell(Text(model.vehicleType)),
                                       DataCell(SizedBox(
                                         width: 150,
                                         child: Text(
-                                          model.description ?? '-',
+                                          model.description ?? 'N/A',
+                                          softWrap: true,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      )),
+                                      DataCell(SizedBox(
+                                        width: 150,
+                                        child: Text(
+                                          model.segment ?? 'N/A',
                                           softWrap: true,
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       )),
                                       DataCell(Text(
-                                          model.launchYear?.toString() ?? '-')),
-                                      DataCell(Text(model.segment ?? '-')),
+                                          model.isActive?.toString() ?? 'N/A')),
                                       DataCell(Text(
-                                        model.bodyType ?? '-',
-                                      )),
-                                      DataCell(SizedBox(
-                                        width: 150,
-                                        child: Text(
-                                          model.brochureUrl ?? '-',
-                                          softWrap: true,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      )),
-                                      DataCell(Text(
-                                          model.isActive?.toString() ?? '-')),
-                                      DataCell(Text((model.availableFuelTypes !=
-                                                  null &&
-                                              model.availableFuelTypes!
-                                                  .isNotEmpty)
-                                          ? model.availableFuelTypes!.join(', ')
-                                          : '-')),
-                                      DataCell(Text(
-                                          (model.availableTransmissionTypes !=
-                                                      null &&
-                                                  model
-                                                      .availableTransmissionTypes!
-                                                      .isNotEmpty)
-                                              ? model
-                                                  .availableTransmissionTypes!
-                                                  .join(', ')
-                                              : '-')),
+                                          model.variantCount?.toString() ??
+                                              '-')),
                                     ],
                                   );
                                 }).toList(),

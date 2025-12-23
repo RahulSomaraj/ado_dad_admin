@@ -7,24 +7,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-enum FeaturePackage {
-  base('Base'),
-  l('L'),
-  lx('LX'),
-  v('V'),
-  vx('VX'),
-  z('Z'),
-  zx('ZX'),
-  zxO('ZX(O)'),
-  zxPlus('ZX+'),
-  topEnd('Top End'),
-  premium('Premium'),
-  executive('Executive'),
-  royale('Royale');
+// enum FeaturePackage {
+//   base('Base'),
+//   l('L'),
+//   lx('LX'),
+//   v('V'),
+//   vx('VX'),
+//   z('Z'),
+//   zx('ZX'),
+//   zxO('ZX(O)'),
+//   zxPlus('ZX+'),
+//   topEnd('Top End'),
+//   premium('Premium'),
+//   executive('Executive'),
+//   royale('Royale');
 
-  const FeaturePackage(this.value);
-  final String value;
-}
+//   const FeaturePackage(this.value);
+//   final String value;
+// }
 
 class VehicleVariantAdd extends StatefulWidget {
   final VehicleModel vehicleModel;
@@ -38,7 +38,7 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
   final _formKey = GlobalKey<FormState>();
   String _name = '';
   String _displayName = '';
-  FeaturePackage? _selectedFeaturePackage;
+  // FeaturePackage? _selectedFeaturePackage;
   int? _price;
   int? _seatingCapacity;
   int? _engineCapacity;
@@ -62,7 +62,7 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
         vehicleModel: widget.vehicleModel, // ✅ Good now
         fuelType: _selectedFuelType,
         transmissionType: _selectedTransmissionType,
-        featurePackage: _selectedFeaturePackage?.value,
+        // featurePackage: _selectedFeaturePackage?.value,
         engineSpecs: EngineSpecs(
           capacity: _engineCapacity ?? 0,
           maxPower: _maxPower ?? 0,
@@ -252,17 +252,17 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                   ]),
                   const SizedBox(height: 16),
                   _buildRow([
-                    _buildDropdownField<FeaturePackage>(
-                      label: 'Feature Package',
-                      value: _selectedFeaturePackage,
-                      items: FeaturePackage.values,
-                      onChanged: (val) {
-                        if (mounted) {
-                          setState(() => _selectedFeaturePackage = val);
-                        }
-                      },
-                      getLabel: (fp) => fp.value,
-                    ),
+                    // _buildDropdownField<FeaturePackage>(
+                    //   label: 'Feature Package',
+                    //   value: _selectedFeaturePackage,
+                    //   items: FeaturePackage.values,
+                    //   onChanged: (val) {
+                    //     if (mounted) {
+                    //       setState(() => _selectedFeaturePackage = val);
+                    //     }
+                    //   },
+                    //   getLabel: (fp) => fp.value,
+                    // ),
                     BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
                       buildWhen: (prev, curr) => curr.maybeWhen(
                         loading: () => true,
@@ -318,9 +318,6 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                         );
                       },
                     ),
-                  ]),
-                  const SizedBox(height: 16),
-                  _buildRow([
                     BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
                       buildWhen: (prev, curr) => curr.maybeWhen(
                         loading: () => true,
@@ -368,26 +365,32 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                         );
                       },
                     ),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildRow([
                     _buildTextField("Seating Capacity",
                         (v) => _seatingCapacity = int.tryParse(v!),
                         keyboardType: TextInputType.number),
-                  ]),
-                  const SizedBox(height: 16),
-                  _buildRow([
                     _buildTextField("Engine Capacity (cc)",
                         (v) => _engineCapacity = int.tryParse(v!),
                         keyboardType: TextInputType.number),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildRow([
                     _buildTextField(
                         "Max Power (hp)", (v) => _maxPower = int.tryParse(v!),
+                        keyboardType: TextInputType.number),
+                    _buildTextField(
+                        "Max Torque (Nm)", (v) => _maxTorque = int.tryParse(v!),
                         keyboardType: TextInputType.number),
                   ]),
                   const SizedBox(height: 16),
                   _buildRow([
                     _buildTextField(
-                        "Max Torque (Nm)", (v) => _maxTorque = int.tryParse(v!),
+                        "Mileage (kmpl)", (v) => _mileage = double.tryParse(v!),
                         keyboardType: TextInputType.number),
                     _buildTextField(
-                        "Mileage (kmpl)", (v) => _mileage = double.tryParse(v!),
+                        "Price (₹)", (v) => _price = int.tryParse(v!),
                         keyboardType: TextInputType.number),
                   ]),
                   const SizedBox(height: 16),
@@ -405,8 +408,6 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                   //     ),
                   //   )
                   // ]),
-                  _buildTextField(
-                      "Price (₹)", (v) => _price = int.tryParse(v!)),
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,

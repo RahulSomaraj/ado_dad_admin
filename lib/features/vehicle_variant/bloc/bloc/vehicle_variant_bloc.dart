@@ -20,6 +20,8 @@ class VehicleVariantBloc
     on<FetchVariantsByModel>(_onFetchByModel);
     on<CreateVariant>(_onCreateVariant);
     on<UploadVariantCsv>(_onUploadVariantCsv);
+    on<UpdateVariant>(_onUpdateVariant);
+    on<DeleteVariant>(_onDeleteVariant);
     on<FetchOptions>(_onFetchOptions);
   }
 
@@ -139,6 +141,52 @@ class VehicleVariantBloc
       print('   Error: $e');
       print('   Error Type: ${e.runtimeType}');
       print('   Stack Trace: $stackTrace');
+      emit(VehicleVariantState.error(e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateVariant(
+    UpdateVariant event,
+    Emitter<VehicleVariantState> emit,
+  ) async {
+    emit(const VehicleVariantState.loading());
+    try {
+      await repository.updateVariant(event.variantId, event.payload);
+      // Fetch updated variants list after successful update
+      final variants = await repository.fetchVariantsByModel(
+        modelId: event.modelId,
+        page: 1,
+        limit: 10,
+      );
+      // Emit loaded state first to update the list, then success
+      emit(VehicleVariantState.loaded(variants));
+      // Use a small delay to ensure UI updates before showing success
+      await Future.delayed(const Duration(milliseconds: 100));
+      emit(const VehicleVariantState.success("Variant updated successfully."));
+    } catch (e) {
+      emit(VehicleVariantState.error(e.toString()));
+    }
+  }
+
+  Future<void> _onDeleteVariant(
+    DeleteVariant event,
+    Emitter<VehicleVariantState> emit,
+  ) async {
+    emit(const VehicleVariantState.loading());
+    try {
+      await repository.deleteVariant(event.variantId);
+      // Fetch updated variants list after successful deletion
+      final variants = await repository.fetchVariantsByModel(
+        modelId: event.modelId,
+        page: 1,
+        limit: 10,
+      );
+      // Emit loaded state first to update the list, then success
+      emit(VehicleVariantState.loaded(variants));
+      // Use a small delay to ensure UI updates before showing success
+      await Future.delayed(const Duration(milliseconds: 100));
+      emit(const VehicleVariantState.success("Variant deleted successfully."));
+    } catch (e) {
       emit(VehicleVariantState.error(e.toString()));
     }
   }

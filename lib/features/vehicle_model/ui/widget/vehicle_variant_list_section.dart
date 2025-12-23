@@ -2,6 +2,7 @@ import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/bloc/bloc/vehicle_variant_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart'
     as vehicle_model;
+import 'package:ado_dad_admin/models/vehicle_variant/vehicle_variant_response_model.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,6 +26,7 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
   int rowsPerPage = 10;
   final ScrollController _horizontalScrollController = ScrollController();
   bool _isCsvUploadInProgress = false;
+  VehicleVariantPaginatedResponse? _lastLoadedResponse;
 
   void _fetchPage(String modelId, int page, int limit) {
     context.read<VehicleVariantBloc>().add(
@@ -50,6 +52,28 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
   void initState() {
     super.initState();
     _fetchPage(widget.modelId, currentPage, rowsPerPage);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Refresh the list when the page becomes visible again (e.g., after navigation back from edit)
+    // This ensures the list is updated after edit/delete operations
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        // Check if we have a loaded state, if not, fetch the current page
+        final state = context.read<VehicleVariantBloc>().state;
+        state.maybeWhen(
+          loaded: (_) {
+            // Already have data, no need to refetch
+          },
+          orElse: () {
+            // No data or in error state, fetch current page
+            _fetchPage(widget.modelId, currentPage, rowsPerPage);
+          },
+        );
+      }
+    });
   }
 
   Future<void> _uploadCsvFile() async {
@@ -178,131 +202,321 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
         );
       },
       child: BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
+        buildWhen: (prev, curr) {
+          // Rebuild when state changes to loaded, error, or loading
+          return curr.maybeWhen(
+            loaded: (_) => true,
+            error: (_) => true,
+            loading: () => true,
+            orElse: () => false,
+          );
+        },
         builder: (context, state) {
-          return state.maybeWhen(
-            loading: () => const CircularProgressIndicator(),
-            error: (msg) => Text("Error: $msg"),
+          // Store the last loaded response to show it even when success is emitted
+          state.maybeWhen(
             loaded: (response) {
-              final variants = response.data;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              _lastLoadedResponse = response;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() {
+                    currentPage = response.page;
+                    rowsPerPage = response.limit;
+                  });
+                }
+              });
+            },
+            orElse: () {},
+          );
+
+          // Use the last loaded response if available, even if current state is success
+          final responseToShow = state.maybeWhen(
+            loaded: (response) => response,
+            orElse: () => _lastLoadedResponse,
+          );
+
+          if (responseToShow == null) {
+            return state.maybeWhen(
+              loading: () => const CircularProgressIndicator(),
+              error: (msg) => Text("Error: $msg"),
+              orElse: () => const CircularProgressIndicator(),
+            );
+          }
+
+          final variants = responseToShow.data;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(" Vehicle Variants",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Row(
                       children: [
-                        const Text(" Vehicle Variants",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        Row(
-                          children: [
-                            _buildUploadCsvButton(),
-                            const SizedBox(width: 12),
-                            _buildAddButton(),
-                          ],
-                        ),
+                        _buildUploadCsvButton(),
+                        const SizedBox(width: 12),
+                        _buildAddButton(),
                       ],
                     ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              LayoutBuilder(builder: (context, constraints) {
+                return Card(
+                  elevation: 3,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  const SizedBox(height: 12),
-                  LayoutBuilder(builder: (context, constraints) {
-                    return Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
+                  child: Scrollbar(
+                    thumbVisibility: true,
+                    controller: _horizontalScrollController,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Scrollbar(
-                        thumbVisibility: true,
-                        controller: _horizontalScrollController,
-                        child: SingleChildScrollView(
-                          controller: _horizontalScrollController,
-                          scrollDirection: Axis.horizontal,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: DataTable(
-                              columnSpacing: isTablet ? 20 : 115,
-                              headingRowColor: WidgetStateColor.resolveWith(
-                                (states) =>
-                                    const Color.fromARGB(66, 144, 140, 140),
-                              ),
-                              dataRowColor: WidgetStatePropertyAll(
-                                  AppColors.primaryColor),
-                              dataRowMinHeight: isTablet ? 45 : 55,
-                              dataRowMaxHeight: isTablet ? 45 : 55,
-                              columns: const [
-                                DataColumn(label: Text("Name")),
-                                DataColumn(label: Text("Display Name")),
-                                // DataColumn(label: Text("Vehicle Model")),
-                                DataColumn(label: Text("Fuel")),
-                                DataColumn(label: Text("Transmission")),
-                                DataColumn(label: Text("Price")),
-                                DataColumn(label: Text("Active")),
-                              ],
-                              rows: variants.map((v) {
-                                return DataRow(cells: [
-                                  DataCell(Text(v.name)),
-                                  DataCell(Text(v.displayName)),
-                                  // DataCell(Text(v.vehicleModel.displayName)),
-                                  DataCell(
-                                      Text(v.fuelType?.displayName ?? "-")),
-                                  DataCell(Text(
-                                      v.transmissionType?.displayName ?? "-")),
-                                  DataCell(Text("₹${v.price}")),
-                                  DataCell(Text(v.isActive ? "Yes" : "No")),
-                                ]);
-                              }).toList(),
-                            ),
+                        child: DataTable(
+                          columnSpacing: isTablet ? 15 : 60,
+                          headingRowColor: WidgetStateColor.resolveWith(
+                            (states) => const Color.fromARGB(66, 144, 140, 140),
                           ),
+                          dataRowColor:
+                              WidgetStatePropertyAll(AppColors.primaryColor),
+                          dataRowMinHeight: isTablet ? 45 : 55,
+                          dataRowMaxHeight: isTablet ? 45 : 55,
+                          columns: const [
+                            DataColumn(label: Text("Name")),
+                            DataColumn(label: Text("Display Name")),
+                            // DataColumn(label: Text("Vehicle Model")),
+                            DataColumn(label: Text("Fuel")),
+                            DataColumn(label: Text("Transmission")),
+                            DataColumn(label: Text("Price")),
+                            DataColumn(label: Text("Active")),
+                            DataColumn(
+                              label: Text(
+                                'Actions',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ],
+                          rows: variants.map((v) {
+                            return DataRow(cells: [
+                              DataCell(Text(v.name)),
+                              DataCell(Text(v.displayName)),
+                              // DataCell(Text(v.vehicleModel.displayName)),
+                              DataCell(Text(v.fuelType?.displayName ?? "-")),
+                              DataCell(
+                                  Text(v.transmissionType?.displayName ?? "-")),
+                              DataCell(Text("₹${v.price}")),
+                              DataCell(Text(v.isActive ? "Yes" : "No")),
+                              DataCell(
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    IconButton(
+                                      icon: const Icon(Icons.edit,
+                                          color:
+                                              Color.fromARGB(255, 59, 59, 59)),
+                                      onPressed: () {
+                                        context.push(
+                                          '/edit-vehiclevariant',
+                                          extra: {
+                                            'variant': v,
+                                            'vehicleModel': widget.vehicleModel,
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete,
+                                          color:
+                                              Color.fromARGB(255, 20, 20, 20)),
+                                      onPressed: () {
+                                        _showDeleteDialog(context, v);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ]);
+                          }).toList(),
                         ),
                       ),
-                    );
-                  }),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      const Text("Rows per page: "),
-                      const SizedBox(width: 8),
-                      DropdownButton<int>(
-                        value: rowsPerPage,
-                        items: [10, 20]
-                            .map((e) => DropdownMenuItem(
-                                  value: e,
-                                  child: Text(e.toString()),
-                                ))
-                            .toList(),
-                        onChanged: (val) {
-                          if (mounted) return;
-                          if (val != null) {
-                            _fetchPage(widget.modelId, 1, val);
-                          }
-                        },
-                      ),
-                      IconButton(
-                        onPressed: currentPage > 1
-                            ? () => _fetchPage(
-                                widget.modelId, currentPage - 1, rowsPerPage)
-                            : null,
-                        icon: Icon(Icons.chevron_left),
-                      ),
-                      Text("Page $currentPage of ${response.totalPages}"),
-                      IconButton(
-                        onPressed: currentPage < response.totalPages
-                            ? () => _fetchPage(
-                                widget.modelId, currentPage + 1, rowsPerPage)
-                            : null,
-                        icon: Icon(Icons.chevron_right),
-                      ),
-                    ],
-                  )
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  const Text("Rows per page: "),
+                  const SizedBox(width: 8),
+                  DropdownButton<int>(
+                    value: rowsPerPage,
+                    items: [10, 20]
+                        .map((e) => DropdownMenuItem(
+                              value: e,
+                              child: Text(e.toString()),
+                            ))
+                        .toList(),
+                    onChanged: (val) {
+                      if (mounted) return;
+                      if (val != null) {
+                        _fetchPage(widget.modelId, 1, val);
+                      }
+                    },
+                  ),
+                  IconButton(
+                    onPressed: currentPage > 1
+                        ? () => _fetchPage(
+                            widget.modelId, currentPage - 1, rowsPerPage)
+                        : null,
+                    icon: Icon(Icons.chevron_left),
+                  ),
+                  Text("Page $currentPage of ${responseToShow.totalPages}"),
+                  IconButton(
+                    onPressed: currentPage < responseToShow.totalPages
+                        ? () => _fetchPage(
+                            widget.modelId, currentPage + 1, rowsPerPage)
+                        : null,
+                    icon: Icon(Icons.chevron_right),
+                  ),
                 ],
-              );
-            },
-            orElse: () => const SizedBox.shrink(),
+              )
+            ],
           );
         },
       ),
+    );
+  }
+
+  void _showDeleteDialog(
+      BuildContext context, VehicleVariantResponseModel variant) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return BlocListener<VehicleVariantBloc, VehicleVariantState>(
+          listenWhen: (prev, curr) {
+            // Only listen to success state after deletion
+            return curr.maybeWhen(
+              success: (_) => true,
+              orElse: () => false,
+            );
+          },
+          listener: (context, state) {
+            state.maybeWhen(
+              success: (message) {
+                // Close the delete confirmation dialog
+                Navigator.of(dialogContext).pop();
+                // Show success popup
+                if (mounted) {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (successContext) {
+                      return AlertDialog(
+                        title: const Text("Success"),
+                        content: Text(message),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(successContext).pop();
+                            },
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              error: (message) {
+                // Close the delete confirmation dialog
+                Navigator.of(dialogContext).pop();
+                // Show error message
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: $message'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              orElse: () {},
+            );
+          },
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.0),
+            ),
+            title: const Center(
+              child: Text(
+                "Confirm Delete",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            content: Text(
+              "Are you sure you want to delete variant '${variant.displayName}'?",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text(
+                  "Cancel",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
+                builder: (context, state) {
+                  final isLoading = state.maybeWhen(
+                    loading: () => true,
+                    orElse: () => false,
+                  );
+                  return ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                    ),
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            context.read<VehicleVariantBloc>().add(
+                                  VehicleVariantEvent.deleteVariant(
+                                    variantId: variant.id,
+                                    modelId: widget.modelId,
+                                  ),
+                                );
+                          },
+                    child: isLoading
+                        ? const SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            ),
+                          )
+                        : const Text(
+                            "Delete",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

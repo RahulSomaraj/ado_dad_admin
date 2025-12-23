@@ -380,31 +380,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       ),
       DataColumn(
         label: Text(
-          isTablet ? 'Launch Year' : 'Launch Year',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
           isTablet ? 'Segment' : 'Segment',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Body Type' : 'Body Type',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Images' : 'Images',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Brochur' : 'Brochur',
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
@@ -456,24 +432,6 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Price' : 'Price Range',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Fuel' : 'Fuel Types',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Transmission' : 'Transmission',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
       const DataColumn(
         label: Text(
           'Actions',
@@ -508,36 +466,9 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       DataCell(SizedBox(
           width: 150,
           child: Text(
-            models.launchYear?.toString() ?? 'N/A',
-            softWrap: true,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ))),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
             models.segment ?? 'N/A',
             softWrap: true,
             maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ))),
-      DataCell(Text(models.bodyType ?? 'N/A')),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            (models.images == null || models.images!.isEmpty)
-                ? 'N/A'
-                : models.images!.join(', '),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(fontSize: 12),
-          ))),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            models.brochureUrl ?? 'N/A',
-            maxLines: 2,
-            softWrap: true,
             overflow: TextOverflow.ellipsis,
           ))),
       DataCell(Text(models.isActive?.toString() ?? 'N/A')),
@@ -551,29 +482,6 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
       // DataCell(Text(models.defaultAxleCount?.toString() ?? '-')),
       // DataCell(Text(models.defaultSeatingCapacity?.toString() ?? '-')),
       DataCell(Text(models.variantCount?.toString() ?? '-')),
-      DataCell(Text(
-        (models.priceRange?.min != null && models.priceRange?.max != null)
-            ? '₹${models.priceRange!.min} - ₹${models.priceRange!.max}'
-            : '-',
-      )),
-      DataCell(SizedBox(
-        width: 120,
-        child: Text(
-          models.availableFuelTypes?.join(', ') ?? '-',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
-        ),
-      )),
-      DataCell(SizedBox(
-        width: 120,
-        child: Text(
-          models.availableTransmissionTypes?.join(', ') ?? '-',
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(fontSize: 12),
-        ),
-      )),
       DataCell(
         Row(
           mainAxisSize: MainAxisSize.min,

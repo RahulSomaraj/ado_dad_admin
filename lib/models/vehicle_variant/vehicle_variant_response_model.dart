@@ -130,16 +130,40 @@ class VehicleVariantResponseModel {
   });
 
   factory VehicleVariantResponseModel.fromJson(Map<String, dynamic> json) {
+    // Handle fuelType - could be an object (populated) or null (not populated)
+    FuelType? fuelType;
+    if (json['fuelType'] != null) {
+      if (json['fuelType'] is Map<String, dynamic>) {
+        // Populated object
+        fuelType = FuelType.fromJson(json['fuelType']);
+      } else if (json['fuelType'] is String) {
+        // Just an ID - would need to fetch separately, but for now set to null
+        // TODO: Backend should populate fuelType field
+        print('⚠️ fuelType is returned as ID only: ${json['fuelType']}');
+      }
+    }
+
+    // Handle transmissionType - could be an object (populated) or null (not populated)
+    TransmissionType? transmissionType;
+    if (json['transmissionType'] != null) {
+      if (json['transmissionType'] is Map<String, dynamic>) {
+        // Populated object
+        transmissionType = TransmissionType.fromJson(json['transmissionType']);
+      } else if (json['transmissionType'] is String) {
+        // Just an ID - would need to fetch separately, but for now set to null
+        // TODO: Backend should populate transmissionType field
+        print(
+            '⚠️ transmissionType is returned as ID only: ${json['transmissionType']}');
+      }
+    }
+
     return VehicleVariantResponseModel(
       id: json['_id'] ?? '',
       name: json['name'] ?? '',
       displayName: json['displayName'] ?? '',
       // vehicleModel: VehicleModel.fromJson(json['vehicleModel'] ?? {}),
-      fuelType:
-          json['fuelType'] != null ? FuelType.fromJson(json['fuelType']) : null,
-      transmissionType: json['transmissionType'] != null
-          ? TransmissionType.fromJson(json['transmissionType'])
-          : null,
+      fuelType: fuelType,
+      transmissionType: transmissionType,
       featurePackage: json['featurePackage'],
       engineSpecs: json['engineSpecs'] != null
           ? EngineSpecs.fromJson(json['engineSpecs'])

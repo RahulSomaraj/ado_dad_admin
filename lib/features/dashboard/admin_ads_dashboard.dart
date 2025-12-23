@@ -1,4 +1,5 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/models/ad_model.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_bloc.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_event.dart';
@@ -18,12 +19,23 @@ class AdminAdsDashboard extends StatefulWidget {
 class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   final ScrollController _horizontalScrollController = ScrollController();
   final Set<String> _selectedAdIds = <String>{};
+  String? userType;
 
   @override
   void initState() {
     super.initState();
+    _loadUserType();
     // Fetch ads when the widget initializes
     context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
+  }
+
+  Future<void> _loadUserType() async {
+    final type = await getUserType();
+    if (mounted) {
+      setState(() {
+        userType = type;
+      });
+    }
   }
 
   @override
@@ -94,7 +106,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             children: [
               const SizedBox(width: 16),
               Text(
-                "Admin Dashboard",
+                userType == "SA" ? "Advertisement List" : "Admin Dashboard",
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,

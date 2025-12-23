@@ -14,6 +14,12 @@ class VehicleModelView extends StatefulWidget {
 
 class _VehicleModelViewState extends State<VehicleModelView> {
   @override
+  void initState() {
+    super.initState();
+    print('📋 Vehicle Model Fields: ${widget.vehiclemodel.toJson()}');
+  }
+
+  @override
   Widget build(BuildContext context) {
     final m = widget.vehiclemodel;
     return SingleChildScrollView(

@@ -3,6 +3,7 @@ import 'package:ado_dad_admin/features/admin_layout/admin_layout.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner_edit.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner_upload_page.dart';
+import 'package:ado_dad_admin/features/dashboard/admin_ads_dashboard.dart';
 import 'package:ado_dad_admin/features/dashboard/role_based_dashboard.dart';
 import 'package:ado_dad_admin/features/login/ui/login.dart';
 import 'package:ado_dad_admin/features/profile/user_profile.dart';
@@ -24,11 +25,12 @@ import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_model_edit.dart'
 import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_model_view.dart';
 import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_models_list.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_add.dart';
-import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_list.dart';
+import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_edit.dart';
 import 'package:ado_dad_admin/models/banner_model.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart'; // ✅ consistent path
+import 'package:ado_dad_admin/models/vehicle_variant/vehicle_variant_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -48,12 +50,12 @@ class AppRoutes {
           _noTransitionRoute('/dashboard', const RoleBasedDashboard()),
           _noTransitionRoute('/profile', const MyProfile()),
           _noTransitionRoute('/users', Users()),
+          _noTransitionRoute('/advertisements', const AdminAdsDashboard()),
           _noTransitionRoute('/add-user', AddUser()),
           _noTransitionRoute(
               '/create-ad', const Center(child: Text("Listing Management"))),
           _noTransitionRoute('/vehicle-models', VehicleModelsList()),
           _noTransitionRoute('/add-vehiclemodel', VehicleModelAdd()),
-          _noTransitionRoute('/vehicle-variants', VehicleVariantList()),
           _noTransitionRoute(
               '/vehicle-manufactures', VehicleManufacturesList()),
           _noTransitionRoute(
@@ -147,6 +149,27 @@ class AppRoutes {
             builder: (context, state) {
               final vehicleModel = state.extra as VehicleModel;
               return VehicleVariantAdd(vehicleModel: vehicleModel);
+            },
+          ),
+          GoRoute(
+            path: '/edit-vehiclevariant',
+            pageBuilder: (context, state) {
+              final extra = state.extra;
+              if (extra is! Map<String, dynamic>) {
+                return const NoTransitionPage(
+                  child: Center(
+                    child: Text("⚠️ Variant data missing or invalid."),
+                  ),
+                );
+              }
+              final variant = extra['variant'] as VehicleVariantResponseModel;
+              final vehicleModel = extra['vehicleModel'] as VehicleModel;
+              return NoTransitionPage(
+                child: VehicleVariantEdit(
+                  variant: variant,
+                  vehicleModel: vehicleModel,
+                ),
+              );
             },
           ),
           GoRoute(
