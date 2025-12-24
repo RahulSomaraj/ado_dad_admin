@@ -133,7 +133,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     final width = MediaQuery.of(context).size.width;
     final isNarrow = width <= 900;
     return SizedBox(
-      width: isNarrow ? double.infinity : 200,
+      width: isNarrow ? double.infinity : 220,
       height: 50,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -141,8 +141,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
 
           // Dynamically adjust content based on width
           double iconSize = buttonWidth < 180 ? 18 : 20;
-          double fontSize = buttonWidth < 180 ? 14 : 16;
-          double spacing = buttonWidth < 180 ? 6 : 8;
+          double fontSize = buttonWidth < 180 ? 12 : 14;
+          double spacing = buttonWidth < 180 ? 4 : 6;
+
+          // Shorten text on very narrow screens
+          String buttonText =
+              buttonWidth < 180 ? 'Add Showroom' : 'Add New Showroom';
 
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
@@ -159,12 +163,19 @@ class _AdminDashboardState extends State<AdminDashboard> {
               context.push('/add-showroom');
             },
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment:
                   isNarrow ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
                 Icon(Icons.add, color: Colors.white, size: iconSize),
                 SizedBox(width: spacing),
-                Text('Add New Showroom', style: TextStyle(fontSize: fontSize)),
+                Flexible(
+                  child: Text(
+                    buttonText,
+                    style: TextStyle(fontSize: fontSize),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ],
             ),
           );

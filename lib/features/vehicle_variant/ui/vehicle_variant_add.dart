@@ -264,20 +264,46 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                     //   getLabel: (fp) => fp.value,
                     // ),
                     BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
-                      buildWhen: (prev, curr) => curr.maybeWhen(
-                        loading: () => true,
-                        optionsLoaded: (_, __) => true,
-                        error: (_) => true,
-                        orElse: () => false,
-                      ),
+                      buildWhen: (prev, curr) {
+                        // Only rebuild when options are being loaded or loaded, not during variant creation
+                        return curr.maybeWhen(
+                              optionsLoaded: (_, __) => true,
+                              orElse: () => false,
+                            ) ||
+                            (prev.maybeWhen(
+                                  optionsLoaded: (_, __) => false,
+                                  orElse: () => true,
+                                ) &&
+                                curr.maybeWhen(
+                                  loading: () => fuelTypeOptions.isEmpty,
+                                  orElse: () => false,
+                                ));
+                      },
                       builder: (context, state) {
                         return state.maybeWhen(
-                          loading: () => const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
+                          loading: () {
+                            // Only show loading if we don't have options yet
+                            if (fuelTypeOptions.isEmpty) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                            // If we have options, show them even during loading
+                            return _buildDropdownField<FuelType>(
+                              label: 'Fuel Type',
+                              value: _selectedFuelType,
+                              items: fuelTypeOptions,
+                              onChanged: (val) {
+                                if (mounted) {
+                                  setState(() => _selectedFuelType = val);
+                                }
+                              },
+                              getLabel: (f) => f.displayName,
+                            );
+                          },
                           optionsLoaded: (fuelOpts, transOpts) {
                             // Update options when loaded
                             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -300,10 +326,26 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                               getLabel: (f) => f.displayName,
                             );
                           },
-                          error: (msg) => Text(
-                            'Error loading options',
-                            style: TextStyle(color: Colors.red, fontSize: 12),
-                          ),
+                          error: (msg) {
+                            // If we have options, show them even on error
+                            if (fuelTypeOptions.isNotEmpty) {
+                              return _buildDropdownField<FuelType>(
+                                label: 'Fuel Type',
+                                value: _selectedFuelType,
+                                items: fuelTypeOptions,
+                                onChanged: (val) {
+                                  if (mounted) {
+                                    setState(() => _selectedFuelType = val);
+                                  }
+                                },
+                                getLabel: (f) => f.displayName,
+                              );
+                            }
+                            return Text(
+                              'Error loading options',
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            );
+                          },
                           orElse: () => _buildDropdownField<FuelType>(
                             label: 'Fuel Type',
                             value: _selectedFuelType,
@@ -319,20 +361,48 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                       },
                     ),
                     BlocBuilder<VehicleVariantBloc, VehicleVariantState>(
-                      buildWhen: (prev, curr) => curr.maybeWhen(
-                        loading: () => true,
-                        optionsLoaded: (_, __) => true,
-                        error: (_) => true,
-                        orElse: () => false,
-                      ),
+                      buildWhen: (prev, curr) {
+                        // Only rebuild when options are being loaded or loaded, not during variant creation
+                        return curr.maybeWhen(
+                              optionsLoaded: (_, __) => true,
+                              orElse: () => false,
+                            ) ||
+                            (prev.maybeWhen(
+                                  optionsLoaded: (_, __) => false,
+                                  orElse: () => true,
+                                ) &&
+                                curr.maybeWhen(
+                                  loading: () =>
+                                      transmissionTypeOptions.isEmpty,
+                                  orElse: () => false,
+                                ));
+                      },
                       builder: (context, state) {
                         return state.maybeWhen(
-                          loading: () => const Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: CircularProgressIndicator(),
-                            ),
-                          ),
+                          loading: () {
+                            // Only show loading if we don't have options yet
+                            if (transmissionTypeOptions.isEmpty) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                            // If we have options, show them even during loading
+                            return _buildDropdownField<TransmissionType>(
+                              label: 'Transmission Type',
+                              value: _selectedTransmissionType,
+                              items: transmissionTypeOptions,
+                              onChanged: (val) {
+                                if (mounted) {
+                                  setState(
+                                      () => _selectedTransmissionType = val);
+                                }
+                              },
+                              getLabel: (t) => t.displayName,
+                            );
+                          },
                           optionsLoaded: (fuelOpts, transOpts) {
                             return _buildDropdownField<TransmissionType>(
                               label: 'Transmission Type',
@@ -347,10 +417,27 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                               getLabel: (t) => t.displayName,
                             );
                           },
-                          error: (msg) => Text(
-                            'Error loading options',
-                            style: TextStyle(color: Colors.red, fontSize: 12),
-                          ),
+                          error: (msg) {
+                            // If we have options, show them even on error
+                            if (transmissionTypeOptions.isNotEmpty) {
+                              return _buildDropdownField<TransmissionType>(
+                                label: 'Transmission Type',
+                                value: _selectedTransmissionType,
+                                items: transmissionTypeOptions,
+                                onChanged: (val) {
+                                  if (mounted) {
+                                    setState(
+                                        () => _selectedTransmissionType = val);
+                                  }
+                                },
+                                getLabel: (t) => t.displayName,
+                              );
+                            }
+                            return Text(
+                              'Error loading options',
+                              style: TextStyle(color: Colors.red, fontSize: 12),
+                            );
+                          },
                           orElse: () => _buildDropdownField<TransmissionType>(
                             label: 'Transmission Type',
                             value: _selectedTransmissionType,
