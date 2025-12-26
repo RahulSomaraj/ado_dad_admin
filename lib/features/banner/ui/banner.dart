@@ -109,48 +109,7 @@ class _BannerPageState extends State<BannerPage> {
       child: SingleChildScrollView(
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Container(
-                  height: 80,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Banner Management",
-                        style: AppTextStyle.titleTextstyle,
-                      ),
-                      ElevatedButton.icon(
-                        onPressed: () async {
-                          context.push('/upload-banners');
-                        },
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.blackColor,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12))),
-                        icon: const Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                        label: const Text("Add Banner"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            _buildHeaderSection(),
             _buildBannerList(),
           ],
         ),
@@ -162,6 +121,117 @@ class _BannerPageState extends State<BannerPage> {
   void dispose() {
     _horizontalScrollController.dispose();
     super.dispose();
+  }
+
+  Widget _buildHeaderSection() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: isTablet
+          ? Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Banner Management",
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final buttonWidth = constraints.maxWidth;
+
+                        // Dynamically adjust content based on width
+                        double iconSize = buttonWidth < 180 ? 18 : 20;
+                        double fontSize = buttonWidth < 180 ? 12 : 14;
+                        double spacing = buttonWidth < 180 ? 4 : 6;
+
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.blackColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 10),
+                            textStyle: TextStyle(
+                                fontSize: fontSize,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          onPressed: () async {
+                            context.push('/upload-banners');
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add,
+                                  color: Colors.white, size: iconSize),
+                              SizedBox(width: spacing),
+                              Flexible(
+                                child: Text(
+                                  "Add Banner",
+                                  style: TextStyle(fontSize: fontSize),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Banner Management",
+                    style: AppTextStyle.titleTextstyle,
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      context.push('/upload-banners');
+                    },
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.blackColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12))),
+                    icon: const Icon(
+                      Icons.add,
+                      color: Colors.white,
+                    ),
+                    label: const Text("Add Banner"),
+                  ),
+                ],
+              ),
+            ),
+    );
   }
 
   Widget _buildBannerList() {

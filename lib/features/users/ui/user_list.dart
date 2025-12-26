@@ -158,8 +158,8 @@ class _UsersState extends State<Users> {
                 color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 250, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

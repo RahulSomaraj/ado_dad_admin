@@ -64,6 +64,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
           case '/add-vehiclemodel':
           case '/edit-vehicle_model':
           case '/view-vehicle_model':
+          case '/add-vehiclevariant':
+          case '/edit-vehiclevariant':
             return 5;
           case '/showrooms':
           case '/add-showroom':
@@ -102,6 +104,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
           case '/add-vehiclemodel':
           case '/edit-vehicle_model':
           case '/view-vehicle_model':
+          case '/add-vehiclevariant':
+          case '/edit-vehiclevariant':
             return 4;
           case '/showrooms':
           case '/add-showroom':

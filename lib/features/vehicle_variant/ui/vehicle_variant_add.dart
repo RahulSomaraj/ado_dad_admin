@@ -684,15 +684,30 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
       items: items
           .map((item) => DropdownMenuItem<T>(
                 value: item,
-                child: Text(getLabel(item)),
+                child: Text(
+                  getLabel(item),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ))
           .toList(),
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       ),
       validator: (val) => val == null ? '$label is required' : null,
+      isExpanded: true,
+      selectedItemBuilder: (BuildContext context) {
+        return items.map<Widget>((T item) {
+          return Text(
+            getLabel(item),
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.black),
+          );
+        }).toList();
+      },
     );
   }
 }

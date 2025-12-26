@@ -218,57 +218,137 @@ class _VehicleManufacturerDetailViewState
   }
 
   Widget _buildHeader(VehicleManufacturer m) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            IconButton(
-                onPressed: () {
-                  context.pop();
-                },
-                icon: Icon(Icons.arrow_back_ios)),
-            Text(
-              m.displayName,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+    return Padding(
+      padding: const EdgeInsets.all(15),
+      child: isTablet
+          ? Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: Icon(Icons.arrow_back_ios)),
+                      Expanded(
+                        child: Text(
+                          m.displayName,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                          textAlign: TextAlign.center,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    icon: const Icon(Icons.upload_file, color: Colors.white),
+                    label: const Text(
+                      'Upload Models CSV',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () => _uploadCsvFile(m),
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.blackColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.white,
+                    ),
+                    label: const Text("Delete Manufacturer"),
+                    onPressed: () => _confirmDelete(context, m),
+                  ),
+                ],
+              ),
+            )
+          : Container(
+              decoration: BoxDecoration(
+                color: AppColors.primaryColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            context.pop();
+                          },
+                          icon: Icon(Icons.arrow_back_ios)),
+                      Text(
+                        m.displayName,
+                        style: const TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        icon:
+                            const Icon(Icons.upload_file, color: Colors.white),
+                        label: const Text(
+                          'Upload Models CSV',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () => _uploadCsvFile(m),
+                      ),
+                      const SizedBox(width: 12),
+                      ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.blackColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                        label: const Text("Delete Manufacturer"),
+                        onPressed: () => _confirmDelete(context, m),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-        Row(
-          children: [
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              icon: const Icon(Icons.upload_file, color: Colors.white),
-              label: const Text(
-                'Upload Models CSV',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () => _uploadCsvFile(m),
-            ),
-            const SizedBox(width: 12),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.blackColor,
-                foregroundColor: Colors.white,
-              ),
-              icon: const Icon(
-                Icons.delete,
-                color: Colors.white,
-              ),
-              label: const Text("Delete Manufacturer"),
-              onPressed: () => _confirmDelete(context, m),
-            ),
-          ],
-        ),
-      ],
     );
   }
 

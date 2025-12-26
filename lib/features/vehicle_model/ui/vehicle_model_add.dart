@@ -616,16 +616,30 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
   }) {
     return DropdownButtonFormField<T>(
       value: value,
+      isExpanded: true,
       items: items
           .map((item) => DropdownMenuItem<T>(
                 value: item,
-                child: Text(getLabel(item)),
+                child: Text(
+                  getLabel(item),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ))
           .toList(),
+      selectedItemBuilder: (context) {
+        return items.map((item) {
+          return Text(
+            getLabel(item),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          );
+        }).toList();
+      },
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
       validator:
           isRequired && (value == null) ? (_) => '$label is required' : null,

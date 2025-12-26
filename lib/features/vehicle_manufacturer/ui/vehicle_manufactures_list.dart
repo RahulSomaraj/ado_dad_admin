@@ -61,8 +61,8 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
                 color: AppColors.primaryColor,
                 borderRadius: BorderRadius.circular(12),
               ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 250, vertical: 12),
+              padding: EdgeInsets.symmetric(
+                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -158,7 +158,7 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
     final isTablet = MediaQuery.of(context).size.width < 900 &&
         MediaQuery.of(context).size.width >= 550;
     return SizedBox(
-      width: isTablet ? double.infinity : 260,
+      width: isTablet ? double.infinity : 280,
       height: 50,
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -166,8 +166,14 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
 
           // Dynamically adjust content based on width
           double iconSize = buttonWidth < 180 ? 18 : 20;
-          double fontSize = buttonWidth < 180 ? 14 : 16;
-          double spacing = buttonWidth < 180 ? 6 : 8;
+          double fontSize = buttonWidth < 180 ? 12 : 14;
+          double spacing = buttonWidth < 180 ? 4 : 6;
+
+          // Shorten text on very narrow screens
+          String buttonText = buttonWidth < 180
+              ? 'Add Manufacturer'
+              : (isTablet ? 'Add Manufacturer' : 'Add Vehicle Manufacturer');
+
           return ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.blackColor,
@@ -188,6 +194,7 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
               });
             },
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment:
                   isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
               children: [
@@ -197,9 +204,12 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
                   size: iconSize,
                 ),
                 SizedBox(width: spacing),
-                Text(
-                  isTablet ? 'Add Manufacturer' : 'Add Vehicle Manufacturer',
-                  style: TextStyle(fontSize: fontSize),
+                Flexible(
+                  child: Text(
+                    buttonText,
+                    style: TextStyle(fontSize: fontSize),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),

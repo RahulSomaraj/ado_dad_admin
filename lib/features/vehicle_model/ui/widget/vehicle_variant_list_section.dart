@@ -248,21 +248,38 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
             children: [
               Padding(
                 padding: const EdgeInsets.only(right: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(" Vehicle Variants",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    Row(
-                      children: [
-                        _buildUploadCsvButton(),
-                        const SizedBox(width: 12),
-                        _buildAddButton(),
-                      ],
-                    ),
-                  ],
-                ),
+                child: isTablet
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(" Vehicle Variants",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(child: _buildUploadCsvButton()),
+                              const SizedBox(width: 12),
+                              Expanded(child: _buildAddButton()),
+                            ],
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(" Vehicle Variants",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          Row(
+                            children: [
+                              _buildUploadCsvButton(),
+                              const SizedBox(width: 12),
+                              _buildAddButton(),
+                            ],
+                          ),
+                        ],
+                      ),
               ),
               const SizedBox(height: 12),
               LayoutBuilder(builder: (context, constraints) {
@@ -277,10 +294,16 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                     child: SingleChildScrollView(
                       controller: _horizontalScrollController,
                       scrollDirection: Axis.horizontal,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: DataTable(
-                          columnSpacing: isTablet ? 15 : 60,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: constraints.maxWidth > 0
+                              ? constraints.maxWidth
+                              : 800,
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: DataTable(
+                            columnSpacing: isTablet ? 15 : 60,
                           headingRowColor: WidgetStateColor.resolveWith(
                             (states) => const Color.fromARGB(66, 144, 140, 140),
                           ),
@@ -344,6 +367,7 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                               ),
                             ]);
                           }).toList(),
+                          ),
                         ),
                       ),
                     ),

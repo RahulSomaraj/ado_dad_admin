@@ -169,14 +169,16 @@ class _ShowroomAddState extends State<ShowroomAdd> {
       },
       child: BlocBuilder<ShowroomBloc, ShowroomState>(
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildHeaderSection(),
-                const SizedBox(height: 30),
-                _buildShowroomForm(state),
-              ],
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 30),
+                  _buildShowroomForm(state),
+                ],
+              ),
             ),
           );
         },

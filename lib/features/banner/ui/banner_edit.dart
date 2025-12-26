@@ -118,186 +118,193 @@ class _EditBannerState extends State<EditBanner> {
           },
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            _buildHeaderSection(),
-            const SizedBox(height: 30),
-            BlocBuilder<BannerBloc, BannerState>(
-              builder: (context, state) {
-                final isLoading = state is Loading;
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              _buildHeaderSection(),
+              const SizedBox(height: 30),
+              BlocBuilder<BannerBloc, BannerState>(
+                builder: (context, state) {
+                  final isLoading = state is Loading;
 
-                return Center(
-                  child: SizedBox(
-                    width: 800,
-                    child: Card(
-                      elevation: 5,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(24),
-                        child: Form(
-                          key: _formKey,
-                          child: ListView(
-                            shrinkWrap: true,
-                            children: [
-                              TextFormField(
-                                controller: _titleController,
-                                decoration: const InputDecoration(
-                                    labelText: "Banner Title"),
-                                validator: (val) => val == null || val.isEmpty
-                                    ? "Required"
-                                    : null,
-                                enabled: !isLoading,
-                              ),
-                              const SizedBox(height: 20),
-                              TextFormField(
-                                controller: _linkController,
-                                decoration: const InputDecoration(
-                                    labelText: "Banner Link"),
-                                validator: (val) => val == null || val.isEmpty
-                                    ? "Required"
-                                    : null,
-                                enabled: !isLoading,
-                              ),
-                              const SizedBox(height: 24),
-                              Wrap(
-                                spacing: 12,
-                                runSpacing: 12,
-                                children: [
-                                  _imagePreview(
-                                    label: "Desktop",
-                                    url: widget.banner.desktopImage,
-                                    file: _desktopImage,
-                                    onTap: isLoading
-                                        ? null
-                                        : () => _pickImage((img) => setState(
-                                            () => _desktopImage = img)),
-                                  ),
-                                  _imagePreview(
-                                    label: "Tablet",
-                                    url: widget.banner.tabletImage,
-                                    file: _tabletImage,
-                                    onTap: isLoading
-                                        ? null
-                                        : () => _pickImage((img) =>
-                                            setState(() => _tabletImage = img)),
-                                  ),
-                                  _imagePreview(
-                                    label: "Phone",
-                                    url: widget.banner.phoneImage,
-                                    file: _phoneImage,
-                                    onTap: isLoading
-                                        ? null
-                                        : () => _pickImage((img) =>
-                                            setState(() => _phoneImage = img)),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 30),
-                              ElevatedButton(
-                                onPressed: isLoading
-                                    ? null
-                                    : () async {
-                                        if (_formKey.currentState?.validate() ??
-                                            false) {
-                                          final bloc =
-                                              context.read<BannerBloc>();
-                                          final scaffoldMessenger =
-                                              ScaffoldMessenger.of(context);
+                  return Center(
+                    child: SizedBox(
+                      width: 800,
+                      child: Card(
+                        elevation: 5,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Form(
+                            key: _formKey,
+                            child: ListView(
+                              shrinkWrap: true,
+                              children: [
+                                TextFormField(
+                                  controller: _titleController,
+                                  decoration: const InputDecoration(
+                                      labelText: "Banner Title"),
+                                  validator: (val) => val == null || val.isEmpty
+                                      ? "Required"
+                                      : null,
+                                  enabled: !isLoading,
+                                ),
+                                const SizedBox(height: 20),
+                                TextFormField(
+                                  controller: _linkController,
+                                  decoration: const InputDecoration(
+                                      labelText: "Banner Link"),
+                                  validator: (val) => val == null || val.isEmpty
+                                      ? "Required"
+                                      : null,
+                                  enabled: !isLoading,
+                                ),
+                                const SizedBox(height: 24),
+                                Wrap(
+                                  spacing: 12,
+                                  runSpacing: 12,
+                                  children: [
+                                    _imagePreview(
+                                      label: "Desktop",
+                                      url: widget.banner.desktopImage,
+                                      file: _desktopImage,
+                                      onTap: isLoading
+                                          ? null
+                                          : () => _pickImage((img) => setState(
+                                              () => _desktopImage = img)),
+                                    ),
+                                    _imagePreview(
+                                      label: "Tablet",
+                                      url: widget.banner.tabletImage,
+                                      file: _tabletImage,
+                                      onTap: isLoading
+                                          ? null
+                                          : () => _pickImage((img) => setState(
+                                              () => _tabletImage = img)),
+                                    ),
+                                    _imagePreview(
+                                      label: "Phone",
+                                      url: widget.banner.phoneImage,
+                                      file: _phoneImage,
+                                      onTap: isLoading
+                                          ? null
+                                          : () => _pickImage((img) => setState(
+                                              () => _phoneImage = img)),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 30),
+                                ElevatedButton(
+                                  onPressed: isLoading
+                                      ? null
+                                      : () async {
+                                          if (_formKey.currentState
+                                                  ?.validate() ??
+                                              false) {
+                                            final bloc =
+                                                context.read<BannerBloc>();
+                                            final scaffoldMessenger =
+                                                ScaffoldMessenger.of(context);
 
-                                          String desktopUrl =
-                                              widget.banner.desktopImage;
-                                          String tabletUrl =
-                                              widget.banner.tabletImage;
-                                          String phoneUrl =
-                                              widget.banner.phoneImage;
+                                            String desktopUrl =
+                                                widget.banner.desktopImage;
+                                            String tabletUrl =
+                                                widget.banner.tabletImage;
+                                            String phoneUrl =
+                                                widget.banner.phoneImage;
 
-                                          try {
-                                            if (_desktopImage != null) {
-                                              desktopUrl = await bloc.repository
-                                                      .uploadImageToS3(
-                                                          _desktopImage!,
-                                                          'desktopImage') ??
-                                                  desktopUrl;
-                                            }
-                                            if (_tabletImage != null) {
-                                              tabletUrl = await bloc.repository
-                                                      .uploadImageToS3(
-                                                          _tabletImage!,
-                                                          'tabletImage') ??
-                                                  tabletUrl;
-                                            }
-                                            if (_phoneImage != null) {
-                                              phoneUrl = await bloc.repository
-                                                      .uploadImageToS3(
-                                                          _phoneImage!,
-                                                          'phoneImage') ??
-                                                  phoneUrl;
-                                            }
+                                            try {
+                                              if (_desktopImage != null) {
+                                                desktopUrl = await bloc
+                                                        .repository
+                                                        .uploadImageToS3(
+                                                            _desktopImage!,
+                                                            'desktopImage') ??
+                                                    desktopUrl;
+                                              }
+                                              if (_tabletImage != null) {
+                                                tabletUrl = await bloc
+                                                        .repository
+                                                        .uploadImageToS3(
+                                                            _tabletImage!,
+                                                            'tabletImage') ??
+                                                    tabletUrl;
+                                              }
+                                              if (_phoneImage != null) {
+                                                phoneUrl = await bloc.repository
+                                                        .uploadImageToS3(
+                                                            _phoneImage!,
+                                                            'phoneImage') ??
+                                                    phoneUrl;
+                                              }
 
-                                            final updatedBanner =
-                                                BannerUploadRequest(
-                                              id: widget.banner.id,
-                                              title:
-                                                  _titleController.text.trim(),
-                                              link: _linkController.text.trim(),
-                                              desktopImage: desktopUrl,
-                                              tabletImage: tabletUrl,
-                                              phoneImage: phoneUrl,
-                                            );
-
-                                            print(
-                                                '🔍 EditBanner: Creating updated banner with ID: ${updatedBanner.id}');
-                                            print(
-                                                '🔍 EditBanner: Banner data: ${updatedBanner.toJson()}');
-
-                                            bloc.add(UpdateBanner(
-                                                updatedBanner: updatedBanner));
-                                          } catch (e) {
-                                            if (mounted) {
-                                              scaffoldMessenger.showSnackBar(
-                                                SnackBar(
-                                                  content:
-                                                      Text('Update failed: $e'),
-                                                  backgroundColor: Colors.red,
-                                                ),
+                                              final updatedBanner =
+                                                  BannerUploadRequest(
+                                                id: widget.banner.id,
+                                                title: _titleController.text
+                                                    .trim(),
+                                                link:
+                                                    _linkController.text.trim(),
+                                                desktopImage: desktopUrl,
+                                                tabletImage: tabletUrl,
+                                                phoneImage: phoneUrl,
                                               );
+
+                                              print(
+                                                  '🔍 EditBanner: Creating updated banner with ID: ${updatedBanner.id}');
+                                              print(
+                                                  '🔍 EditBanner: Banner data: ${updatedBanner.toJson()}');
+
+                                              bloc.add(UpdateBanner(
+                                                  updatedBanner:
+                                                      updatedBanner));
+                                            } catch (e) {
+                                              if (mounted) {
+                                                scaffoldMessenger.showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                        'Update failed: $e'),
+                                                    backgroundColor: Colors.red,
+                                                  ),
+                                                );
+                                              }
                                             }
                                           }
-                                        }
-                                      },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.blackColor,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 30, vertical: 14),
-                                ),
-                                child: isLoading
-                                    ? const SizedBox(
-                                        width: 20,
-                                        height: 20,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  Colors.white),
-                                        ),
-                                      )
-                                    : const Text("Update Banner"),
-                              )
-                            ],
+                                        },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.blackColor,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 30, vertical: 14),
+                                  ),
+                                  child: isLoading
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor:
+                                                AlwaysStoppedAnimation<Color>(
+                                                    Colors.white),
+                                          ),
+                                        )
+                                      : const Text("Update Banner"),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

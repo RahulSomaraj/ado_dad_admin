@@ -121,8 +121,12 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                   Navigator.of(context).pop(); // Close dialog
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     // Navigate back to vehicle model view page to see the updated variant list
-                    context.go('/view-vehicle_model',
-                        extra: widget.vehicleModel);
+                    if (context.canPop()) {
+                      context.pop(); // Go back to the previous page (model view)
+                    } else {
+                      context.go('/view-vehicle_model',
+                          extra: widget.vehicleModel);
+                    }
                   });
                 },
                 child: const Text("OK"),
@@ -572,15 +576,30 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
       items: items
           .map((item) => DropdownMenuItem<T>(
                 value: item,
-                child: Text(getLabel(item)),
+                child: Text(
+                  getLabel(item),
+                  overflow: TextOverflow.ellipsis,
+                ),
               ))
           .toList(),
       onChanged: onChanged,
       decoration: InputDecoration(
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
       ),
       validator: (val) => val == null ? '$label is required' : null,
+      isExpanded: true,
+      selectedItemBuilder: (BuildContext context) {
+        return items.map<Widget>((T item) {
+          return Text(
+            getLabel(item),
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Colors.black),
+          );
+        }).toList();
+      },
     );
   }
 }
