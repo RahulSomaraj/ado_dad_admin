@@ -1,11 +1,13 @@
 import 'dart:typed_data';
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:country_picker/country_picker.dart';
 
 class EditUser extends StatefulWidget {
   final UserModel user;
@@ -21,12 +23,15 @@ class _EditUserState extends State<EditUser> {
 
   late String _name;
   late String _email;
-  late String _phone;
   late String _userType;
 
   // Profile picture state
   Uint8List? _profilePicBytes;
   String? _currentProfilePicUrl;
+
+  // Country code state
+  Country? _selectedCountry;
+  final TextEditingController _phoneController = TextEditingController();
 
   // Password change state
   bool _showPasswordSection = false;
@@ -49,13 +54,78 @@ class _EditUserState extends State<EditUser> {
     super.initState();
     _name = widget.user.name;
     _email = widget.user.email;
-    _phone = widget.user.phoneNumber;
+    _phoneController.text = widget.user.phoneNumber;
     _userType = _userTypeMap[widget.user.userType] ?? "Normal User";
     _currentProfilePicUrl = widget.user.profilePic;
+
+    // Initialize country code from user's countryCode
+    // First try from UserModel (which profile page sets), then from storage as fallback
+    _initializeCountryCode();
+
+    // Also check storage as fallback for SA/AD users coming from profile
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeCountryCodeFromStorage();
+    });
+  }
+
+  /// Initialize country code from user's countryCode in UserModel
+  void _initializeCountryCode() {
+    String? countryCode = widget.user.countryCode;
+
+    // Initialize country picker with the country code
+    if (countryCode != null && countryCode.isNotEmpty) {
+      try {
+        // Try to find country by phone code (e.g., "+1" -> find country with phoneCode "1")
+        String phoneCode = countryCode.replaceFirst('+', '');
+        final allCountries = CountryService().getAll();
+        _selectedCountry = allCountries.firstWhere(
+          (country) => country.phoneCode == phoneCode,
+          orElse: () => Country.parse('US'),
+        );
+      } catch (e) {
+        _selectedCountry = Country.parse('US');
+      }
+    } else {
+      _selectedCountry = Country.parse('US');
+    }
+  }
+
+  /// Initialize country code from storage as fallback (for SA/AD users from profile)
+  Future<void> _initializeCountryCodeFromStorage() async {
+    // Only check storage if countryCode is not already set from UserModel
+    if (widget.user.countryCode == null || widget.user.countryCode!.isEmpty) {
+      final userType = await getUserType();
+      final currentUserId = await getUserId();
+
+      // Only fetch from storage if this is the logged-in SA/AD user editing their own profile
+      if ((userType == 'SA' || userType == 'AD') &&
+          currentUserId != null &&
+          currentUserId == widget.user.id) {
+        final countryCode = await getUserCountryCode();
+
+        if (countryCode != null && countryCode.isNotEmpty && mounted) {
+          try {
+            // Try to find country by phone code
+            String phoneCode = countryCode.replaceFirst('+', '');
+            final allCountries = CountryService().getAll();
+            _selectedCountry = allCountries.firstWhere(
+              (country) => country.phoneCode == phoneCode,
+              orElse: () => Country.parse('US'),
+            );
+
+            // Update UI
+            setState(() {});
+          } catch (e) {
+            // Keep default US if error
+          }
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -158,13 +228,16 @@ class _EditUserState extends State<EditUser> {
     if (_userEditFormKey.currentState!.validate()) {
       _userEditFormKey.currentState!.save();
 
+      final countryCode = '+${_selectedCountry?.phoneCode ?? '1'}';
+
       final updatedUser = UserModel(
         id: widget.user.id,
         name: _name,
         email: _email,
-        phoneNumber: _phone,
+        phoneNumber: _phoneController.text.trim(),
         userType: _getShortForm(_userType),
         profilePic: _currentProfilePicUrl,
+        countryCode: countryCode,
         password: _showPasswordSection && _passwordController.text.isNotEmpty
             ? _passwordController.text.trim()
             : null, // Only include password if it's being changed
@@ -190,23 +263,44 @@ class _EditUserState extends State<EditUser> {
     }
   }
 
-  void _showSuccessPopup(BuildContext context, String message) {
+  void _showSuccessPopup(BuildContext context, String message) async {
     print('🔍 UserEdit: Showing success popup with message: "$message"');
+    // Get current user type and ID to determine navigation
+    final userType = await getUserType();
+    final currentUserId = await getUserId();
+
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: const Text("Success"),
           content: Text(message),
           actions: [
             TextButton(
-              onPressed: () {
-                print(
-                    '🔍 UserEdit: Success popup OK clicked, refreshing users list');
-                // Explicitly refresh data before navigating
-                context.read<UserBloc>().add(const FetchAllUsers());
-                context.pop();
-                context.go('/users');
+              onPressed: () async {
+                Navigator.of(dialogContext).pop(); // Close the dialog
+
+                // Wait a moment for dialog to close, then navigate
+                await Future.delayed(const Duration(milliseconds: 100));
+
+                if (mounted) {
+                  // Navigate based on user type and if editing own profile
+                  if ((userType == 'AD' || userType == 'SA') &&
+                      currentUserId != null &&
+                      currentUserId == widget.user.id) {
+                    // For AD/SA users editing their own profile, go back to profile page
+                    context.read<UserBloc>().add(const FetchAllUsers());
+                    context.go('/profile');
+                    print(
+                        '🔍 Navigation: AD/SA user editing own profile, going to profile page');
+                  } else {
+                    // For all other cases (editing other users), go to users list
+                    context.read<UserBloc>().add(const FetchAllUsers());
+                    context.go('/users');
+                    print(
+                        '🔍 Navigation: Editing other user, going to users list');
+                  }
+                }
               },
               child: const Text("OK"),
             ),
@@ -216,6 +310,26 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
+  /// Update stored user data if the logged-in user (AD or SA) is editing their own profile
+  Future<void> _updateStoredUserDataIfOwnProfile() async {
+    final userType = await getUserType();
+    final currentUserId = await getUserId();
+
+    // Only update stored data if AD or SA user is editing their own profile
+    if ((userType == 'AD' || userType == 'SA') &&
+        currentUserId != null &&
+        currentUserId == widget.user.id) {
+      final countryCode = '+${_selectedCountry?.phoneCode ?? '1'}';
+      await updateUserName(_name);
+      await updateUserEmail(_email);
+      await updateUserPhoneNumber(_phoneController.text);
+      await updateUserCountryCode(countryCode);
+      if (_currentProfilePicUrl != null && _currentProfilePicUrl!.isNotEmpty) {
+        await updateUserProfilePicture(_currentProfilePicUrl!);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
@@ -223,9 +337,12 @@ class _EditUserState extends State<EditUser> {
         print('🔍 UserEdit: BlocListener received state: ${state.runtimeType}');
         if (state is UserUpdated) {
           print(
-              '🔍 UserEdit: UserUpdated state received, showing success popup');
-          _showSuccessPopup(
-              context, "User details have been updated successfully.");
+              '🔍 UserEdit: UserUpdated state received, updating stored data and showing success popup');
+          // Update stored data if AD user is editing their own profile
+          _updateStoredUserDataIfOwnProfile().then((_) {
+            _showSuccessPopup(
+                context, "User details have been updated successfully.");
+          });
         } else if (state is UserError) {
           print('🔍 UserEdit: UserError state received: ${state.message}');
         }
@@ -313,9 +430,7 @@ class _EditUserState extends State<EditUser> {
                   _buildFormField("Email", _email, (value) => _email = value!,
                       isEmail: true),
                   const SizedBox(height: 15),
-                  _buildFormField(
-                      "Phone Number", _phone, (value) => _phone = value!,
-                      isPhone: true),
+                  _buildPhoneField(),
                   const SizedBox(height: 15),
                   _buildDropdownField("User Type", _userType),
                   const SizedBox(height: 15),
@@ -376,8 +491,8 @@ class _EditUserState extends State<EditUser> {
                 .hasMatch(value)) {
           return "Enter a valid email address";
         }
-        if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value)) {
-          return "Enter a valid phone number (10+ digits)";
+        if (isPhone && value.isEmpty) {
+          return "Enter a valid phone number";
         }
         return null;
       },
@@ -572,6 +687,66 @@ class _EditUserState extends State<EditUser> {
         }
         return null;
       },
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return TextFormField(
+      controller: _phoneController,
+      keyboardType: TextInputType.phone,
+      decoration: InputDecoration(
+        labelText: "Phone Number",
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        prefixIcon: _buildCountryCodeSelector(),
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "Phone Number is required";
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildCountryCodeSelector() {
+    return GestureDetector(
+      onTap: () => _showCountryPicker(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_selectedCountry != null)
+              Text(
+                _selectedCountry!.flagEmoji,
+                style: const TextStyle(fontSize: 20),
+              ),
+            const SizedBox(width: 4),
+            Text(
+              '+${_selectedCountry?.phoneCode ?? '1'}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_drop_down, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCountryPicker() {
+    showCountryPicker(
+      context: context,
+      onSelect: (Country country) {
+        setState(() {
+          _selectedCountry = country;
+        });
+      },
+      favorite: ['US', 'IN', 'GB'],
+      showPhoneCode: true,
     );
   }
 }

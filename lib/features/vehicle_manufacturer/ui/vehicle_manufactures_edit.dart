@@ -35,11 +35,11 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     final m = widget.vehiclemanufacturer;
     _name = m.name;
     _displayname = m.displayName;
-    _description = m.description;
-    _logo = m.logo;
-    _website = m.website;
+    _description = m.description!;
+    _logo = m.logo!;
+    _website = m.website!;
     _foundedYear = m.foundedYear.toString();
-    _headquarters = m.headquarters;
+    _headquarters = m.headquarters!;
     _originCountry = m.originCountry;
     _isActive = m.isActive;
     _isPremium = m.isPremium;

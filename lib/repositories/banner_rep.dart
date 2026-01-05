@@ -96,17 +96,89 @@ class BannerRepository {
           'search': searchQuery,
         },
       );
-      print('banner response:..........$response');
-      print('banner response:..........${response.statusCode}');
+      print('📦 Banner API Response Status: ${response.statusCode}');
+      print('📦 Banner API Response Data: ${response.data}');
+      print('📦 Banner API Response Data Type: ${response.data.runtimeType}');
+
       if (response.statusCode == 200) {
-        return BannerResponse.fromJson(response.data);
+        try {
+          // Check if response has 'data' field (common API pattern)
+          final responseData = response.data;
+          Map<String, dynamic> jsonData;
+
+          if (responseData is Map<String, dynamic>) {
+            // Helper function to safely get value (preserves original type)
+            dynamic safeGet(Map<String, dynamic> map, List<String> keys,
+                dynamic defaultValue) {
+              for (var key in keys) {
+                if (map.containsKey(key)) {
+                  return map[key];
+                }
+              }
+              return defaultValue;
+            }
+
+            // If API returns { data: [...], totalPages: ..., currentPage: ... }
+            if (responseData.containsKey('data')) {
+              jsonData = {
+                'banners': responseData['data'],
+                'totalPages':
+                    safeGet(responseData, ['totalPages', 'totalpages'], 1),
+                'currentPage': safeGet(
+                    responseData, ['currentPage', 'currentpage', 'page'], 1),
+              };
+              print('📦 Using data field from response');
+            }
+            // If API returns { banners: [...], totalPages: ..., currentPage: ... }
+            else if (responseData.containsKey('banners')) {
+              jsonData = responseData;
+              print('📦 Using banners field from response');
+            }
+            // If API returns array directly
+            else if (responseData.containsKey('data') == false &&
+                responseData is! List) {
+              // Try to find any list field
+              final listKey = responseData.keys.firstWhere(
+                (key) => responseData[key] is List,
+                orElse: () => '',
+              );
+              if (listKey.isNotEmpty) {
+                jsonData = {
+                  'banners': responseData[listKey],
+                  'totalPages':
+                      safeGet(responseData, ['totalPages', 'totalpages'], 1),
+                  'currentPage': safeGet(
+                      responseData, ['currentPage', 'currentpage', 'page'], 1),
+                };
+                print('📦 Using $listKey field from response');
+              } else {
+                throw Exception('No banners array found in response');
+              }
+            } else {
+              jsonData = responseData;
+            }
+          } else {
+            throw Exception(
+                'Unexpected response format: ${responseData.runtimeType}');
+          }
+
+          print('📦 Parsed JSON Data: $jsonData');
+          return BannerResponse.fromJson(jsonData);
+        } catch (e) {
+          print('❌ Error parsing BannerResponse: $e');
+          print('❌ Response data was: ${response.data}');
+          rethrow;
+        }
       } else {
-        throw Exception("Failed to load banners");
+        throw Exception("Failed to load banners: ${response.statusCode}");
       }
     } on DioException catch (e) {
+      print('❌ DioException in fetchAllBanners: $e');
+      print('❌ DioException response: ${e.response?.data}');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      throw Exception("Unexpected error");
+      print('❌ Unexpected error in fetchAllBanners: $e');
+      throw Exception("Failed to fetch banners: $e");
     }
   }
 

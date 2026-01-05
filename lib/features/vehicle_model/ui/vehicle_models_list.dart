@@ -1,6 +1,8 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
+import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
+import 'package:ado_dad_admin/repositories/vehicle_manufacturer_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,22 +18,55 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
   final TextEditingController _searchController = TextEditingController();
   VehicleModelResponse? _lastListResponse;
   final ScrollController _horizontalScrollController = ScrollController();
+  final VehicleManufacturerRepository _manufacturerRepository =
+      VehicleManufacturerRepository();
+  List<VehicleManufacturer> _manufacturers = [];
+  String? _selectedManufacturerId;
+  bool _isLoadingManufacturers = false;
+  String _manufacturerSearchQuery = '';
+  final TextEditingController _manufacturerSearchController = TextEditingController();
+  final GlobalKey _dropdownKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    // Fetch vehicle models when the page is initialized
+    // Fetch manufacturers and vehicle models when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchManufacturers();
       context
           .read<VehicleModelBloc>()
           .add(const VehicleModelEvent.fetchAllModels());
     });
   }
 
+  Future<void> _fetchManufacturers() async {
+    setState(() {
+      _isLoadingManufacturers = true;
+    });
+    try {
+      final response =
+          await _manufacturerRepository.fetchDropDownManufacturers();
+      setState(() {
+        _manufacturers = response.data;
+        _isLoadingManufacturers = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingManufacturers = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to load manufacturers: $e')),
+        );
+      }
+    }
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
     _horizontalScrollController.dispose();
+    _manufacturerSearchController.dispose();
     super.dispose();
   }
 
@@ -42,6 +77,8 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
         children: [
           const SizedBox(height: 20),
           _buildHeaderSection(),
+          const SizedBox(height: 20),
+          _buildManufacturerFilter(),
           const SizedBox(height: 20),
           _buildVehicleModelsList(),
         ],
@@ -137,12 +174,22 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
               ),
               style: const TextStyle(fontSize: 14),
               onChanged: (query) {
-                if (query.isNotEmpty) {
-                  context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
-                      page: 1, limit: 10, searchQuery: query));
+                if (_selectedManufacturerId == null) {
+                  if (query.isNotEmpty) {
+                    context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
+                        page: 1, limit: rowsPerPage, searchQuery: query));
+                  } else {
+                    context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
+                        page: 1, limit: rowsPerPage, searchQuery: ''));
+                  }
                 } else {
-                  context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
-                      page: 1, limit: 10, searchQuery: ''));
+                  // When manufacturer is selected, search is handled by the API
+                  // We still need to fetch by manufacturer
+                  context.read<VehicleModelBloc>().add(
+                      VehicleModelEvent.fetchByManufacturer(
+                          _selectedManufacturerId!,
+                          page: 1,
+                          limit: rowsPerPage));
                 }
               },
             ),
@@ -203,6 +250,238 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
           );
         },
       ),
+    );
+  }
+
+  Widget _buildManufacturerFilter() {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Container(
+          width: isTablet ? double.infinity : 300,
+          height: 50,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: AppColors.blackColor),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Row(
+            children: [
+              const Icon(
+                Icons.filter_alt,
+                color: Colors.black,
+                size: 20,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _isLoadingManufacturers
+                    ? const Center(
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      )
+                    : _buildSearchableDropdown(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchableDropdown() {
+    VehicleManufacturer? selectedManufacturer;
+    if (_selectedManufacturerId != null && _manufacturers.isNotEmpty) {
+      try {
+        selectedManufacturer = _manufacturers.firstWhere(
+          (m) => m.id == _selectedManufacturerId,
+        );
+      } catch (e) {
+        // Manufacturer not found, keep as null
+        selectedManufacturer = null;
+      }
+    }
+
+    return GestureDetector(
+      onTap: () => _showManufacturerDropdown(),
+      child: Container(
+        key: _dropdownKey,
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                selectedManufacturer?.displayName ?? 'Filter by Manufacturer',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: selectedManufacturer != null
+                      ? Colors.black
+                      : Colors.grey[600],
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Icon(Icons.arrow_drop_down, color: Colors.black),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showManufacturerDropdown() {
+    _manufacturerSearchController.clear();
+    _manufacturerSearchQuery = '';
+
+    final RenderBox? renderBox = _dropdownKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+    final dropdownWidth = isTablet ? size.width : 300.0;
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx + size.width - dropdownWidth, // Right align
+        offset.dy + size.height + 5, // Below the dropdown
+        offset.dx + size.width,
+        offset.dy + size.height + 305, // Max height
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      items: [
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          child: StatefulBuilder(
+            builder: (context, setMenuState) {
+              // Filter manufacturers based on current search query
+              final filteredList = _manufacturerSearchQuery.isEmpty
+                  ? _manufacturers
+                  : _manufacturers.where((manufacturer) {
+                      return manufacturer.displayName
+                              .toLowerCase()
+                              .contains(_manufacturerSearchQuery.toLowerCase()) ||
+                          manufacturer.name
+                              .toLowerCase()
+                              .contains(_manufacturerSearchQuery.toLowerCase());
+                    }).toList();
+
+              return Container(
+                width: dropdownWidth - 2, // Account for border
+                padding: const EdgeInsets.all(8),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Search box
+                    TextField(
+                      controller: _manufacturerSearchController,
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        hintText: 'Search manufacturers...',
+                        prefixIcon: const Icon(Icons.search, size: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        isDense: true,
+                      ),
+                      style: const TextStyle(fontSize: 14),
+                      onChanged: (value) {
+                        setMenuState(() {
+                          _manufacturerSearchQuery = value;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 8),
+                    // Filtered list
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 250),
+                      child: filteredList.isEmpty && _manufacturerSearchQuery.isNotEmpty
+                          ? const Padding(
+                              padding: EdgeInsets.all(16.0),
+                              child: Text(
+                                'No manufacturers found',
+                                style: TextStyle(color: Colors.grey, fontSize: 14),
+                              ),
+                            )
+                          : ListView.builder(
+                              shrinkWrap: true,
+                              itemCount: filteredList.length + 1, // +1 for "All Manufacturers"
+                              itemBuilder: (context, index) {
+                                if (index == 0) {
+                                  // "All Manufacturers" option
+                                  final isSelected = _selectedManufacturerId == null;
+                                  return InkWell(
+                                    onTap: () {
+                                      Navigator.of(context).pop();
+                                      setState(() {
+                                        _selectedManufacturerId = null;
+                                      });
+                                      context.read<VehicleModelBloc>().add(
+                                          FetchAllVehicleModels(
+                                              page: 1, limit: rowsPerPage));
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                      color: isSelected ? Colors.grey[200] : null,
+                                      child: const Text(
+                                        'All Manufacturers',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                final manufacturer = filteredList[index - 1];
+                                final isSelected = _selectedManufacturerId == manufacturer.id;
+
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).pop();
+                                    setState(() {
+                                      _selectedManufacturerId = manufacturer.id;
+                                    });
+                                    context.read<VehicleModelBloc>().add(
+                                        VehicleModelEvent.fetchByManufacturer(
+                                            manufacturer.id,
+                                            page: 1,
+                                            limit: rowsPerPage));
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
+                                    color: isSelected ? Colors.grey[200] : null,
+                                    child: Text(
+                                      manufacturer.displayName,
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 
@@ -534,9 +813,16 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                   setState(() {
                     rowsPerPage = value;
                   });
-                  context
-                      .read<VehicleModelBloc>()
-                      .add(FetchAllVehicleModels(page: 1, limit: rowsPerPage));
+                  if (_selectedManufacturerId == null) {
+                    context.read<VehicleModelBloc>().add(
+                        FetchAllVehicleModels(page: 1, limit: rowsPerPage));
+                  } else {
+                    context.read<VehicleModelBloc>().add(
+                        VehicleModelEvent.fetchByManufacturer(
+                            _selectedManufacturerId!,
+                            page: 1,
+                            limit: rowsPerPage));
+                  }
                 }
               },
             ),
@@ -544,9 +830,17 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
             GestureDetector(
               onTap: currentPage > 1
                   ? () {
-                      context.read<VehicleModelBloc>().add(
-                          FetchAllVehicleModels(
-                              page: currentPage - 1, limit: rowsPerPage));
+                      if (_selectedManufacturerId == null) {
+                        context.read<VehicleModelBloc>().add(
+                            FetchAllVehicleModels(
+                                page: currentPage - 1, limit: rowsPerPage));
+                      } else {
+                        context.read<VehicleModelBloc>().add(
+                            VehicleModelEvent.fetchByManufacturer(
+                                _selectedManufacturerId!,
+                                page: currentPage - 1,
+                                limit: rowsPerPage));
+                      }
                     }
                   : null,
               child: Icon(
@@ -564,9 +858,17 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
             GestureDetector(
               onTap: currentPage < totalPages
                   ? () {
-                      context.read<VehicleModelBloc>().add(
-                          FetchAllVehicleModels(
-                              page: currentPage + 1, limit: rowsPerPage));
+                      if (_selectedManufacturerId == null) {
+                        context.read<VehicleModelBloc>().add(
+                            FetchAllVehicleModels(
+                                page: currentPage + 1, limit: rowsPerPage));
+                      } else {
+                        context.read<VehicleModelBloc>().add(
+                            VehicleModelEvent.fetchByManufacturer(
+                                _selectedManufacturerId!,
+                                page: currentPage + 1,
+                                limit: rowsPerPage));
+                      }
                     }
                   : null,
               child: Icon(

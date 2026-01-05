@@ -27,8 +27,9 @@ mixin _$VehicleModel {
   String get name => throw _privateConstructorUsedError;
   @JsonKey(defaultValue: '')
   String get displayName => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: _manufacturerFromJson)
   VehicleManufacturer? get manufacturer =>
-      throw _privateConstructorUsedError; // Make nullable to handle API null responses
+      throw _privateConstructorUsedError; // Make nullable to handle API null responses or string IDs
   @JsonKey(defaultValue: '')
   String get vehicleType => throw _privateConstructorUsedError;
   String? get description => throw _privateConstructorUsedError;
@@ -42,11 +43,18 @@ mixin _$VehicleModel {
   bool? get isActive => throw _privateConstructorUsedError;
   int? get variantCount => throw _privateConstructorUsedError;
   PriceRange? get priceRange => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-  List<String>? get availableFuelTypes => throw _privateConstructorUsedError;
-  @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-  List<String>? get availableTransmissionTypes =>
-      throw _privateConstructorUsedError;
+  @JsonKey(
+      name: 'fuelTypes',
+      fromJson: _stringList,
+      toJson: _stringListToJson,
+      defaultValue: null)
+  List<String>? get fuelTypes => throw _privateConstructorUsedError;
+  @JsonKey(
+      name: 'transmissionTypes',
+      fromJson: _stringList,
+      toJson: _stringListToJson,
+      defaultValue: null)
+  List<String>? get transmissionTypes => throw _privateConstructorUsedError;
   bool? get isCommercialVehicle => throw _privateConstructorUsedError;
   String? get commercialVehicleType => throw _privateConstructorUsedError;
   String? get commercialBodyType => throw _privateConstructorUsedError;
@@ -75,6 +83,7 @@ abstract class $VehicleModelCopyWith<$Res> {
       {@JsonKey(name: '_id') String? id,
       @JsonKey(defaultValue: '') String name,
       @JsonKey(defaultValue: '') String displayName,
+      @JsonKey(fromJson: _manufacturerFromJson)
       VehicleManufacturer? manufacturer,
       @JsonKey(defaultValue: '') String vehicleType,
       String? description,
@@ -87,10 +96,18 @@ abstract class $VehicleModelCopyWith<$Res> {
       bool? isActive,
       int? variantCount,
       PriceRange? priceRange,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      List<String>? availableFuelTypes,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      List<String>? availableTransmissionTypes,
+      @JsonKey(
+          name: 'fuelTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      List<String>? fuelTypes,
+      @JsonKey(
+          name: 'transmissionTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      List<String>? transmissionTypes,
       bool? isCommercialVehicle,
       String? commercialVehicleType,
       String? commercialBodyType,
@@ -132,8 +149,8 @@ class _$VehicleModelCopyWithImpl<$Res, $Val extends VehicleModel>
     Object? isActive = freezed,
     Object? variantCount = freezed,
     Object? priceRange = freezed,
-    Object? availableFuelTypes = freezed,
-    Object? availableTransmissionTypes = freezed,
+    Object? fuelTypes = freezed,
+    Object? transmissionTypes = freezed,
     Object? isCommercialVehicle = freezed,
     Object? commercialVehicleType = freezed,
     Object? commercialBodyType = freezed,
@@ -199,13 +216,13 @@ class _$VehicleModelCopyWithImpl<$Res, $Val extends VehicleModel>
           ? _value.priceRange
           : priceRange // ignore: cast_nullable_to_non_nullable
               as PriceRange?,
-      availableFuelTypes: freezed == availableFuelTypes
-          ? _value.availableFuelTypes
-          : availableFuelTypes // ignore: cast_nullable_to_non_nullable
+      fuelTypes: freezed == fuelTypes
+          ? _value.fuelTypes
+          : fuelTypes // ignore: cast_nullable_to_non_nullable
               as List<String>?,
-      availableTransmissionTypes: freezed == availableTransmissionTypes
-          ? _value.availableTransmissionTypes
-          : availableTransmissionTypes // ignore: cast_nullable_to_non_nullable
+      transmissionTypes: freezed == transmissionTypes
+          ? _value.transmissionTypes
+          : transmissionTypes // ignore: cast_nullable_to_non_nullable
               as List<String>?,
       isCommercialVehicle: freezed == isCommercialVehicle
           ? _value.isCommercialVehicle
@@ -279,6 +296,7 @@ abstract class _$$VehicleModelImplCopyWith<$Res>
       {@JsonKey(name: '_id') String? id,
       @JsonKey(defaultValue: '') String name,
       @JsonKey(defaultValue: '') String displayName,
+      @JsonKey(fromJson: _manufacturerFromJson)
       VehicleManufacturer? manufacturer,
       @JsonKey(defaultValue: '') String vehicleType,
       String? description,
@@ -291,10 +309,18 @@ abstract class _$$VehicleModelImplCopyWith<$Res>
       bool? isActive,
       int? variantCount,
       PriceRange? priceRange,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      List<String>? availableFuelTypes,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      List<String>? availableTransmissionTypes,
+      @JsonKey(
+          name: 'fuelTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      List<String>? fuelTypes,
+      @JsonKey(
+          name: 'transmissionTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      List<String>? transmissionTypes,
       bool? isCommercialVehicle,
       String? commercialVehicleType,
       String? commercialBodyType,
@@ -336,8 +362,8 @@ class __$$VehicleModelImplCopyWithImpl<$Res>
     Object? isActive = freezed,
     Object? variantCount = freezed,
     Object? priceRange = freezed,
-    Object? availableFuelTypes = freezed,
-    Object? availableTransmissionTypes = freezed,
+    Object? fuelTypes = freezed,
+    Object? transmissionTypes = freezed,
     Object? isCommercialVehicle = freezed,
     Object? commercialVehicleType = freezed,
     Object? commercialBodyType = freezed,
@@ -403,13 +429,13 @@ class __$$VehicleModelImplCopyWithImpl<$Res>
           ? _value.priceRange
           : priceRange // ignore: cast_nullable_to_non_nullable
               as PriceRange?,
-      availableFuelTypes: freezed == availableFuelTypes
-          ? _value._availableFuelTypes
-          : availableFuelTypes // ignore: cast_nullable_to_non_nullable
+      fuelTypes: freezed == fuelTypes
+          ? _value._fuelTypes
+          : fuelTypes // ignore: cast_nullable_to_non_nullable
               as List<String>?,
-      availableTransmissionTypes: freezed == availableTransmissionTypes
-          ? _value._availableTransmissionTypes
-          : availableTransmissionTypes // ignore: cast_nullable_to_non_nullable
+      transmissionTypes: freezed == transmissionTypes
+          ? _value._transmissionTypes
+          : transmissionTypes // ignore: cast_nullable_to_non_nullable
               as List<String>?,
       isCommercialVehicle: freezed == isCommercialVehicle
           ? _value.isCommercialVehicle
@@ -451,7 +477,7 @@ class _$VehicleModelImpl implements _VehicleModel {
       {@JsonKey(name: '_id') this.id,
       @JsonKey(defaultValue: '') required this.name,
       @JsonKey(defaultValue: '') required this.displayName,
-      this.manufacturer,
+      @JsonKey(fromJson: _manufacturerFromJson) this.manufacturer,
       @JsonKey(defaultValue: '') required this.vehicleType,
       this.description,
       this.launchYear,
@@ -463,10 +489,18 @@ class _$VehicleModelImpl implements _VehicleModel {
       this.isActive,
       this.variantCount,
       this.priceRange,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      final List<String>? availableFuelTypes,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      final List<String>? availableTransmissionTypes,
+      @JsonKey(
+          name: 'fuelTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      final List<String>? fuelTypes,
+      @JsonKey(
+          name: 'transmissionTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      final List<String>? transmissionTypes,
       this.isCommercialVehicle,
       this.commercialVehicleType,
       this.commercialBodyType,
@@ -475,8 +509,8 @@ class _$VehicleModelImpl implements _VehicleModel {
       this.defaultAxleCount,
       this.defaultSeatingCapacity})
       : _images = images,
-        _availableFuelTypes = availableFuelTypes,
-        _availableTransmissionTypes = availableTransmissionTypes;
+        _fuelTypes = fuelTypes,
+        _transmissionTypes = transmissionTypes;
 
   factory _$VehicleModelImpl.fromJson(Map<String, dynamic> json) =>
       _$$VehicleModelImplFromJson(json);
@@ -492,8 +526,9 @@ class _$VehicleModelImpl implements _VehicleModel {
   @JsonKey(defaultValue: '')
   final String displayName;
   @override
+  @JsonKey(fromJson: _manufacturerFromJson)
   final VehicleManufacturer? manufacturer;
-// Make nullable to handle API null responses
+// Make nullable to handle API null responses or string IDs
   @override
   @JsonKey(defaultValue: '')
   final String vehicleType;
@@ -526,26 +561,33 @@ class _$VehicleModelImpl implements _VehicleModel {
   final int? variantCount;
   @override
   final PriceRange? priceRange;
-  final List<String>? _availableFuelTypes;
+  final List<String>? _fuelTypes;
   @override
-  @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-  List<String>? get availableFuelTypes {
-    final value = _availableFuelTypes;
+  @JsonKey(
+      name: 'fuelTypes',
+      fromJson: _stringList,
+      toJson: _stringListToJson,
+      defaultValue: null)
+  List<String>? get fuelTypes {
+    final value = _fuelTypes;
     if (value == null) return null;
-    if (_availableFuelTypes is EqualUnmodifiableListView)
-      return _availableFuelTypes;
+    if (_fuelTypes is EqualUnmodifiableListView) return _fuelTypes;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
 
-  final List<String>? _availableTransmissionTypes;
+  final List<String>? _transmissionTypes;
   @override
-  @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-  List<String>? get availableTransmissionTypes {
-    final value = _availableTransmissionTypes;
+  @JsonKey(
+      name: 'transmissionTypes',
+      fromJson: _stringList,
+      toJson: _stringListToJson,
+      defaultValue: null)
+  List<String>? get transmissionTypes {
+    final value = _transmissionTypes;
     if (value == null) return null;
-    if (_availableTransmissionTypes is EqualUnmodifiableListView)
-      return _availableTransmissionTypes;
+    if (_transmissionTypes is EqualUnmodifiableListView)
+      return _transmissionTypes;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(value);
   }
@@ -567,7 +609,7 @@ class _$VehicleModelImpl implements _VehicleModel {
 
   @override
   String toString() {
-    return 'VehicleModel(id: $id, name: $name, displayName: $displayName, manufacturer: $manufacturer, vehicleType: $vehicleType, description: $description, launchYear: $launchYear, segment: $segment, bodyType: $bodyType, images: $images, brochureUrl: $brochureUrl, isActive: $isActive, variantCount: $variantCount, priceRange: $priceRange, availableFuelTypes: $availableFuelTypes, availableTransmissionTypes: $availableTransmissionTypes, isCommercialVehicle: $isCommercialVehicle, commercialVehicleType: $commercialVehicleType, commercialBodyType: $commercialBodyType, defaultPayloadCapacity: $defaultPayloadCapacity, defaultPayloadUnit: $defaultPayloadUnit, defaultAxleCount: $defaultAxleCount, defaultSeatingCapacity: $defaultSeatingCapacity)';
+    return 'VehicleModel(id: $id, name: $name, displayName: $displayName, manufacturer: $manufacturer, vehicleType: $vehicleType, description: $description, launchYear: $launchYear, segment: $segment, bodyType: $bodyType, images: $images, brochureUrl: $brochureUrl, isActive: $isActive, variantCount: $variantCount, priceRange: $priceRange, fuelTypes: $fuelTypes, transmissionTypes: $transmissionTypes, isCommercialVehicle: $isCommercialVehicle, commercialVehicleType: $commercialVehicleType, commercialBodyType: $commercialBodyType, defaultPayloadCapacity: $defaultPayloadCapacity, defaultPayloadUnit: $defaultPayloadUnit, defaultAxleCount: $defaultAxleCount, defaultSeatingCapacity: $defaultSeatingCapacity)';
   }
 
   @override
@@ -600,10 +642,9 @@ class _$VehicleModelImpl implements _VehicleModel {
             (identical(other.priceRange, priceRange) ||
                 other.priceRange == priceRange) &&
             const DeepCollectionEquality()
-                .equals(other._availableFuelTypes, _availableFuelTypes) &&
-            const DeepCollectionEquality().equals(
-                other._availableTransmissionTypes,
-                _availableTransmissionTypes) &&
+                .equals(other._fuelTypes, _fuelTypes) &&
+            const DeepCollectionEquality()
+                .equals(other._transmissionTypes, _transmissionTypes) &&
             (identical(other.isCommercialVehicle, isCommercialVehicle) ||
                 other.isCommercialVehicle == isCommercialVehicle) &&
             (identical(other.commercialVehicleType, commercialVehicleType) ||
@@ -638,8 +679,8 @@ class _$VehicleModelImpl implements _VehicleModel {
         isActive,
         variantCount,
         priceRange,
-        const DeepCollectionEquality().hash(_availableFuelTypes),
-        const DeepCollectionEquality().hash(_availableTransmissionTypes),
+        const DeepCollectionEquality().hash(_fuelTypes),
+        const DeepCollectionEquality().hash(_transmissionTypes),
         isCommercialVehicle,
         commercialVehicleType,
         commercialBodyType,
@@ -670,6 +711,7 @@ abstract class _VehicleModel implements VehicleModel {
       {@JsonKey(name: '_id') final String? id,
       @JsonKey(defaultValue: '') required final String name,
       @JsonKey(defaultValue: '') required final String displayName,
+      @JsonKey(fromJson: _manufacturerFromJson)
       final VehicleManufacturer? manufacturer,
       @JsonKey(defaultValue: '') required final String vehicleType,
       final String? description,
@@ -682,10 +724,18 @@ abstract class _VehicleModel implements VehicleModel {
       final bool? isActive,
       final int? variantCount,
       final PriceRange? priceRange,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      final List<String>? availableFuelTypes,
-      @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-      final List<String>? availableTransmissionTypes,
+      @JsonKey(
+          name: 'fuelTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      final List<String>? fuelTypes,
+      @JsonKey(
+          name: 'transmissionTypes',
+          fromJson: _stringList,
+          toJson: _stringListToJson,
+          defaultValue: null)
+      final List<String>? transmissionTypes,
       final bool? isCommercialVehicle,
       final String? commercialVehicleType,
       final String? commercialBodyType,
@@ -708,8 +758,9 @@ abstract class _VehicleModel implements VehicleModel {
   @JsonKey(defaultValue: '')
   String get displayName;
   @override
+  @JsonKey(fromJson: _manufacturerFromJson)
   VehicleManufacturer?
-      get manufacturer; // Make nullable to handle API null responses
+      get manufacturer; // Make nullable to handle API null responses or string IDs
   @override
   @JsonKey(defaultValue: '')
   String get vehicleType;
@@ -733,11 +784,19 @@ abstract class _VehicleModel implements VehicleModel {
   @override
   PriceRange? get priceRange;
   @override
-  @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-  List<String>? get availableFuelTypes;
+  @JsonKey(
+      name: 'fuelTypes',
+      fromJson: _stringList,
+      toJson: _stringListToJson,
+      defaultValue: null)
+  List<String>? get fuelTypes;
   @override
-  @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-  List<String>? get availableTransmissionTypes;
+  @JsonKey(
+      name: 'transmissionTypes',
+      fromJson: _stringList,
+      toJson: _stringListToJson,
+      defaultValue: null)
+  List<String>? get transmissionTypes;
   @override
   bool? get isCommercialVehicle;
   @override

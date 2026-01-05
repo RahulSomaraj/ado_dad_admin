@@ -5,6 +5,7 @@ import 'package:ado_dad_admin/features/widgets/input_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:country_picker/country_picker.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -19,6 +20,51 @@ class _LoginPageState extends State<LoginPage> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool _obscureText = true;
+  Country? _selectedCountry;
+  bool _showCountryCode = true; // Show by default
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCountry = Country.parse('US');
+    // Listen to username field changes to detect if it's email or phone
+    _usernameController.addListener(_detectInputType);
+  }
+
+  @override
+  void dispose() {
+    _usernameController.removeListener(_detectInputType);
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  /// Detect if user is typing email or phone number based on first character
+  void _detectInputType() {
+    final text = _usernameController.text.trim();
+    if (text.isEmpty) {
+      setState(() {
+        _showCountryCode = true; // Show by default when empty
+      });
+      return;
+    }
+
+    // Check first character - if it's a letter, likely email (hide country code)
+    // If it's a number, likely phone (show country code)
+    final firstChar = text[0];
+    final isLetter = RegExp(r'[a-zA-Z]').hasMatch(firstChar);
+
+    setState(() {
+      _showCountryCode =
+          !isLetter; // Hide if starts with letter, show if starts with number
+    });
+  }
+
+  /// Check if the input is an email address
+  bool _isEmail(String input) {
+    return input.contains('@') && input.contains('.');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -138,12 +184,64 @@ class _LoginPageState extends State<LoginPage> {
   //   );
   // }
 
-  TextFormField _buildUsername() {
+  Widget _buildUsername() {
     return TextFormField(
       controller: _usernameController,
-      decoration: textFieldDecoration('Username'),
+      keyboardType: TextInputType.text,
+      decoration: textFieldDecoration('Phone Number or Email').copyWith(
+        prefixIcon: _showCountryCode ? _buildCountryCodeSelector() : null,
+      ),
       style: AppTextStyle.texttstyle,
-      validator: (value) => value!.isEmpty ? "Enter Username" : null,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Enter Phone Number or Email";
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildCountryCodeSelector() {
+    return GestureDetector(
+      onTap: () => _showCountryPicker(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_selectedCountry != null)
+              Text(
+                _selectedCountry!.flagEmoji,
+                style: const TextStyle(fontSize: 20),
+              ),
+            const SizedBox(width: 4),
+            Text(
+              '+${_selectedCountry?.phoneCode ?? '1'}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_drop_down, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCountryPicker() {
+    showCountryPicker(
+      context: context,
+      onSelect: (Country country) {
+        setState(() {
+          _selectedCountry = country;
+        });
+      },
+      favorite: ['US', 'IN', 'GB'],
+      showPhoneCode: true,
     );
   }
 
@@ -208,8 +306,17 @@ class _LoginPageState extends State<LoginPage> {
           child: ElevatedButton(
             onPressed: () {
               if (_formKey.currentState!.validate()) {
+                String username = _usernameController.text.trim();
+
+                // If input is not an email, treat it as phone number and add country code
+                if (!_isEmail(username)) {
+                  final countryCode = '+${_selectedCountry?.phoneCode ?? '1'}';
+                  username = '$countryCode$username';
+                }
+                // If it's an email, use it as is (no country code)
+
                 context.read<AuthBloc>().add(AuthEvent.login(
-                      username: _usernameController.text.trim(),
+                      username: username,
                       password: _passwordController.text.trim(),
                     ));
               }

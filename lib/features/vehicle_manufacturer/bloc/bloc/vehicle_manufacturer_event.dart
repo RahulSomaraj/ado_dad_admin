@@ -6,7 +6,8 @@ class VehicleManufacturerEvent with _$VehicleManufacturerEvent {
   const factory VehicleManufacturerEvent.fetchAll({
     @Default(1) int page,
     @Default(10) int limit,
-    @Default('') String? searchQuery,
+    String? searchQuery,
+    String? category,
   }) = FetchAllVehicleManufacturers;
   const factory VehicleManufacturerEvent.createManufacturer(
     VehicleManufacturer manufacturer,

@@ -89,7 +89,8 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
         currentPage: bannerResponse.currentPage,
       ));
     } catch (e) {
-      emit(BannerState.failure("Failed to fetch banners"));
+      print('❌ BannerBloc: Error fetching banners: $e');
+      emit(BannerState.failure("Failed to fetch banners: $e"));
     }
   }
 

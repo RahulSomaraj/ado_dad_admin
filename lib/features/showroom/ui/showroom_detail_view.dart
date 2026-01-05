@@ -212,8 +212,7 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child:
-                    _buildDetailItem("Phone", widget.showroomuser.phoneNumber),
+                child: _buildDetailItem("Phone", _formatPhoneNumber()),
               ),
             ],
           ),
@@ -275,6 +274,21 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
       default:
         return 'Showroom';
     }
+  }
+
+  /// Format phone number with country code
+  String _formatPhoneNumber() {
+    String phoneNumber = widget.showroomuser.phoneNumber;
+    String? countryCode = widget.showroomuser.countryCode;
+
+    if (countryCode != null && countryCode.isNotEmpty) {
+      // If country code doesn't start with +, add it
+      String formattedCountryCode =
+          countryCode.startsWith('+') ? countryCode : '+$countryCode';
+      return '$formattedCountryCode $phoneNumber';
+    }
+
+    return phoneNumber;
   }
 
   Widget _buildAdsSection() {

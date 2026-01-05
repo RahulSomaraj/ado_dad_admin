@@ -38,7 +38,9 @@ class VehicleManufacturerBloc
       final result = await repository.fetchAllManufacturers(
         page: event.page,
         limit: event.limit,
-        searchQuery: event.searchQuery ?? '',
+        searchQuery:
+            event.searchQuery?.isNotEmpty == true ? event.searchQuery : null,
+        category: event.category?.isNotEmpty == true ? event.category : null,
       );
       emit(VehicleManufacturerState.loaded(result));
     } catch (e) {

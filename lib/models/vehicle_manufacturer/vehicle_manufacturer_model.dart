@@ -11,11 +11,11 @@ class VehicleManufacturer with _$VehicleManufacturer {
     required String name,
     required String displayName,
     required String originCountry,
-    required String description,
-    required String logo,
-    required String website,
-    required int foundedYear,
-    required String headquarters,
+    String? description,
+    String? logo,
+    String? website,
+    int? foundedYear,
+    String? headquarters,
     required bool isActive,
     @Default(false) bool isPremium,
     // required bool isDeleted,
@@ -25,6 +25,7 @@ class VehicleManufacturer with _$VehicleManufacturer {
     DateTime? createdAt,
     DateTime? updatedAt,
     @JsonKey(name: '__v') @Default(0) int v,
+    String? vehicleCategory,
   }) = _VehicleManufacturer;
 
   factory VehicleManufacturer.fromJson(Map<String, dynamic> json) =>

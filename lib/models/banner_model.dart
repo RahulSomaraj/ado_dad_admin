@@ -85,12 +85,47 @@ class BannerResponse {
   });
 
   factory BannerResponse.fromJson(Map<String, dynamic> json) {
+    // Handle different response formats
+    List<dynamic> bannersList;
+
+    if (json.containsKey('banners') && json['banners'] is List) {
+      bannersList = json['banners'] as List;
+    } else if (json.containsKey('data') && json['data'] is List) {
+      bannersList = json['data'] as List;
+    } else {
+      // Try to find any list field
+      bannersList = [];
+      for (var key in json.keys) {
+        if (json[key] is List) {
+          bannersList = json[key] as List;
+          break;
+        }
+      }
+    }
+
+    // Helper function to safely convert to int
+    int safeInt(dynamic value, int defaultValue) {
+      if (value == null) return defaultValue;
+      if (value is int) return value;
+      if (value is String) {
+        return int.tryParse(value) ?? defaultValue;
+      }
+      return defaultValue;
+    }
+
     return BannerResponse(
-      banners: (json['banners'] as List)
-          .map((banner) => BannerUploadRequest.fromJson(banner))
+      banners: bannersList
+          .map((banner) =>
+              BannerUploadRequest.fromJson(banner as Map<String, dynamic>))
           .toList(),
-      totalPages: json['totalPages'] ?? 1,
-      currentPage: json['currentPage'] ?? 1,
+      totalPages: safeInt(
+        json['totalPages'] ?? json['totalpages'] ?? json['totalPages'],
+        1,
+      ),
+      currentPage: safeInt(
+        json['currentPage'] ?? json['currentpage'] ?? json['page'],
+        1,
+      ),
     );
   }
 }

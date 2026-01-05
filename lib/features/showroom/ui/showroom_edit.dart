@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:country_picker/country_picker.dart';
 
 class EditShowroom extends StatefulWidget {
   final UserModel showroomuser;
@@ -23,11 +24,14 @@ class _EditShowroomState extends State<EditShowroom> {
 
   late String _name;
   late String _email;
-  late String _phone;
 
   // Profile picture state
   Uint8List? _profilePicBytes;
   String? _currentProfilePicUrl;
+
+  // Country code state
+  Country? _selectedCountry;
+  final TextEditingController _phoneController = TextEditingController();
 
   // Password change state
   bool _showPasswordSection = false;
@@ -42,12 +46,78 @@ class _EditShowroomState extends State<EditShowroom> {
     super.initState();
     _name = widget.showroomuser.name;
     _email = widget.showroomuser.email;
-    _phone = widget.showroomuser.phoneNumber;
+    _phoneController.text = widget.showroomuser.phoneNumber;
     _currentProfilePicUrl = widget.showroomuser.profilePic;
+
+    // Initialize country code from user's countryCode
+    // First try from UserModel (which profile page sets), then from storage as fallback
+    _initializeCountryCode();
+
+    // Also check storage as fallback for SR users coming from profile
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeCountryCodeFromStorage();
+    });
+  }
+
+  /// Initialize country code from user's countryCode in UserModel
+  void _initializeCountryCode() {
+    String? countryCode = widget.showroomuser.countryCode;
+
+    // Initialize country picker with the country code
+    if (countryCode != null && countryCode.isNotEmpty) {
+      try {
+        // Try to find country by phone code (e.g., "+1" -> find country with phoneCode "1")
+        String phoneCode = countryCode.replaceFirst('+', '');
+        final allCountries = CountryService().getAll();
+        _selectedCountry = allCountries.firstWhere(
+          (country) => country.phoneCode == phoneCode,
+          orElse: () => Country.parse('US'),
+        );
+      } catch (e) {
+        _selectedCountry = Country.parse('US');
+      }
+    } else {
+      _selectedCountry = Country.parse('US');
+    }
+  }
+
+  /// Initialize country code from storage as fallback (for SR users from profile)
+  Future<void> _initializeCountryCodeFromStorage() async {
+    // Only check storage if countryCode is not already set from UserModel
+    if (widget.showroomuser.countryCode == null ||
+        widget.showroomuser.countryCode!.isEmpty) {
+      final userType = await getUserType();
+      final currentUserId = await getUserId();
+
+      // Only fetch from storage if this is the logged-in SR user editing their own profile
+      if (userType == 'SR' &&
+          currentUserId != null &&
+          currentUserId == widget.showroomuser.id) {
+        final countryCode = await getUserCountryCode();
+
+        if (countryCode != null && countryCode.isNotEmpty && mounted) {
+          try {
+            // Try to find country by phone code
+            String phoneCode = countryCode.replaceFirst('+', '');
+            final allCountries = CountryService().getAll();
+            _selectedCountry = allCountries.firstWhere(
+              (country) => country.phoneCode == phoneCode,
+              orElse: () => Country.parse('US'),
+            );
+
+            // Update UI
+            setState(() {});
+          } catch (e) {
+            // Keep default US if error
+          }
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
+    _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
@@ -141,13 +211,16 @@ class _EditShowroomState extends State<EditShowroom> {
     if (_showroomEditFormKey.currentState!.validate()) {
       _showroomEditFormKey.currentState!.save();
 
+      final countryCode = '+${_selectedCountry?.phoneCode ?? '1'}';
+
       final updatedShowroom = UserModel(
         id: widget.showroomuser.id,
         name: _name,
         email: _email,
-        phoneNumber: _phone,
+        phoneNumber: _phoneController.text.trim(),
         userType: 'SR',
         profilePic: _currentProfilePicUrl,
+        countryCode: countryCode,
         password: _showPasswordSection && _passwordController.text.isNotEmpty
             ? _passwordController.text.trim()
             : null, // Only include password if it's being changed
@@ -170,34 +243,35 @@ class _EditShowroomState extends State<EditShowroom> {
     } else {}
   }
 
-  /// Update stored user data with current form values
-  Future<void> _updateStoredUserData() async {
-    await updateUserName(_name);
-    await updateUserEmail(_email);
-    await updateUserPhoneNumber(_phone);
-    if (_currentProfilePicUrl != null && _currentProfilePicUrl!.isNotEmpty) {
-      await updateUserProfilePicture(_currentProfilePicUrl!);
-    }
-  }
-
   /// Update stored user data with updated user from server
-  Future<void> _updateStoredUserDataFromServer(UserModel updatedUser) async {
-    await updateUserName(updatedUser.name);
-    await updateUserEmail(updatedUser.email);
-    await updateUserPhoneNumber(updatedUser.phoneNumber);
-    if (updatedUser.profilePic != null && updatedUser.profilePic!.isNotEmpty) {
-      await updateUserProfilePicture(updatedUser.profilePic!);
-    }
-  }
-
-  /// Update stored user data only if SR user is editing their own profile
-  Future<void> _updateStoredUserDataIfOwnProfile() async {
+  /// Only updates if the logged-in user (SR or AD) is editing their own profile
+  /// This prevents overwriting logged-in user's data when admin edits other users
+  Future<void> _updateStoredUserDataFromServer(UserModel? updatedUser) async {
     final userType = await getUserType();
     final currentUserId = await getUserId();
 
-    // Only update stored data if SR user is editing their own profile
-    if (userType == 'SR' && currentUserId == widget.showroomuser.id) {
-      await _updateStoredUserData();
+    // Only update stored data if:
+    // 1. Logged-in user is SR (showroom user) or AD (admin)
+    // 2. The user being edited is the logged-in user (same ID)
+    // 3. We have updated user data
+    if ((userType == 'SR' || userType == 'AD') &&
+        currentUserId != null &&
+        currentUserId == widget.showroomuser.id &&
+        updatedUser != null) {
+      // Double-check: verify the updated user ID matches logged-in user ID
+      if (updatedUser.id == currentUserId) {
+        await updateUserName(updatedUser.name);
+        await updateUserEmail(updatedUser.email);
+        await updateUserPhoneNumber(updatedUser.phoneNumber);
+        if (updatedUser.countryCode != null &&
+            updatedUser.countryCode!.isNotEmpty) {
+          await updateUserCountryCode(updatedUser.countryCode!);
+        }
+        if (updatedUser.profilePic != null &&
+            updatedUser.profilePic!.isNotEmpty) {
+          await updateUserProfilePicture(updatedUser.profilePic!);
+        }
+      }
     }
   }
 
@@ -251,17 +325,11 @@ class _EditShowroomState extends State<EditShowroom> {
       listener: (context, state) {
         if (state is ShowroomUpdated) {
           // Update stored user data only if SR user is editing their own profile
-          if (state.updatedUser != null) {
-            _updateStoredUserDataFromServer(state.updatedUser!).then((_) {
-              _showSuccessPopup(
-                  context, "Showroom details have been updated successfully.");
-            });
-          } else {
-            _updateStoredUserDataIfOwnProfile().then((_) {
-              _showSuccessPopup(
-                  context, "Showroom details have been updated successfully.");
-            });
-          }
+          // Always check before updating stored data to prevent overwriting logged-in user's data
+          _updateStoredUserDataFromServer(state.updatedUser).then((_) {
+            _showSuccessPopup(
+                context, "Showroom details have been updated successfully.");
+          });
         } else if (state is ShowroomError) {}
       },
       child: BlocBuilder<ShowroomBloc, ShowroomState>(
@@ -337,9 +405,7 @@ class _EditShowroomState extends State<EditShowroom> {
                   _buildFormField("Email", _email, (value) => _email = value!,
                       isEmail: true),
                   const SizedBox(height: 15),
-                  _buildFormField(
-                      "Phone Number", _phone, (value) => _phone = value!,
-                      isPhone: true),
+                  _buildPhoneField(),
                   const SizedBox(height: 15),
                   _buildProfilePictureSection(),
                   const SizedBox(height: 15),
@@ -399,8 +465,8 @@ class _EditShowroomState extends State<EditShowroom> {
                 .hasMatch(value)) {
           return "Enter a valid email address";
         }
-        if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value)) {
-          return "Enter a valid phone number (10+ digits)";
+        if (isPhone && value.isEmpty) {
+          return "Enter a valid phone number";
         }
         return null;
       },
@@ -579,6 +645,66 @@ class _EditShowroomState extends State<EditShowroom> {
         }
         return null;
       },
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return TextFormField(
+      controller: _phoneController,
+      keyboardType: TextInputType.phone,
+      decoration: InputDecoration(
+        labelText: "Phone Number",
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        prefixIcon: _buildCountryCodeSelector(),
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "Phone Number is required";
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildCountryCodeSelector() {
+    return GestureDetector(
+      onTap: () => _showCountryPicker(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_selectedCountry != null)
+              Text(
+                _selectedCountry!.flagEmoji,
+                style: const TextStyle(fontSize: 20),
+              ),
+            const SizedBox(width: 4),
+            Text(
+              '+${_selectedCountry?.phoneCode ?? '1'}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_drop_down, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCountryPicker() {
+    showCountryPicker(
+      context: context,
+      onSelect: (Country country) {
+        setState(() {
+          _selectedCountry = country;
+        });
+      },
+      favorite: ['US', 'IN', 'GB'],
+      showPhoneCode: true,
     );
   }
 }

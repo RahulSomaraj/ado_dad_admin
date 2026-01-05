@@ -27,7 +27,17 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
+
+  // Try to load .env file, but don't fail if it doesn't exist
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    // .env file not found or couldn't be loaded - this is okay for web builds
+    // The API_BASE_URL will fall back to empty string or can be set via environment
+    print('⚠️ Could not load .env file: $e');
+    print('⚠️ Using default/fallback configuration');
+  }
+
   await SharedPrefs().init();
 
   runApp(const MyApp());

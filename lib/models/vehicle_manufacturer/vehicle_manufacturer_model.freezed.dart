@@ -25,11 +25,11 @@ mixin _$VehicleManufacturer {
   String get name => throw _privateConstructorUsedError;
   String get displayName => throw _privateConstructorUsedError;
   String get originCountry => throw _privateConstructorUsedError;
-  String get description => throw _privateConstructorUsedError;
-  String get logo => throw _privateConstructorUsedError;
-  String get website => throw _privateConstructorUsedError;
-  int get foundedYear => throw _privateConstructorUsedError;
-  String get headquarters => throw _privateConstructorUsedError;
+  String? get description => throw _privateConstructorUsedError;
+  String? get logo => throw _privateConstructorUsedError;
+  String? get website => throw _privateConstructorUsedError;
+  int? get foundedYear => throw _privateConstructorUsedError;
+  String? get headquarters => throw _privateConstructorUsedError;
   bool get isActive => throw _privateConstructorUsedError;
   bool get isPremium =>
       throw _privateConstructorUsedError; // required bool isDeleted,
@@ -40,6 +40,7 @@ mixin _$VehicleManufacturer {
   DateTime? get updatedAt => throw _privateConstructorUsedError;
   @JsonKey(name: '__v')
   int get v => throw _privateConstructorUsedError;
+  String? get vehicleCategory => throw _privateConstructorUsedError;
 
   /// Serializes this VehicleManufacturer to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -62,17 +63,18 @@ abstract class $VehicleManufacturerCopyWith<$Res> {
       String name,
       String displayName,
       String originCountry,
-      String description,
-      String logo,
-      String website,
-      int foundedYear,
-      String headquarters,
+      String? description,
+      String? logo,
+      String? website,
+      int? foundedYear,
+      String? headquarters,
       bool isActive,
       bool isPremium,
       bool isDeleted,
       DateTime? createdAt,
       DateTime? updatedAt,
-      @JsonKey(name: '__v') int v});
+      @JsonKey(name: '__v') int v,
+      String? vehicleCategory});
 }
 
 /// @nodoc
@@ -94,17 +96,18 @@ class _$VehicleManufacturerCopyWithImpl<$Res, $Val extends VehicleManufacturer>
     Object? name = null,
     Object? displayName = null,
     Object? originCountry = null,
-    Object? description = null,
-    Object? logo = null,
-    Object? website = null,
-    Object? foundedYear = null,
-    Object? headquarters = null,
+    Object? description = freezed,
+    Object? logo = freezed,
+    Object? website = freezed,
+    Object? foundedYear = freezed,
+    Object? headquarters = freezed,
     Object? isActive = null,
     Object? isPremium = null,
     Object? isDeleted = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? v = null,
+    Object? vehicleCategory = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -123,26 +126,26 @@ class _$VehicleManufacturerCopyWithImpl<$Res, $Val extends VehicleManufacturer>
           ? _value.originCountry
           : originCountry // ignore: cast_nullable_to_non_nullable
               as String,
-      description: null == description
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      logo: null == logo
+              as String?,
+      logo: freezed == logo
           ? _value.logo
           : logo // ignore: cast_nullable_to_non_nullable
-              as String,
-      website: null == website
+              as String?,
+      website: freezed == website
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
-              as String,
-      foundedYear: null == foundedYear
+              as String?,
+      foundedYear: freezed == foundedYear
           ? _value.foundedYear
           : foundedYear // ignore: cast_nullable_to_non_nullable
-              as int,
-      headquarters: null == headquarters
+              as int?,
+      headquarters: freezed == headquarters
           ? _value.headquarters
           : headquarters // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       isActive: null == isActive
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
@@ -167,6 +170,10 @@ class _$VehicleManufacturerCopyWithImpl<$Res, $Val extends VehicleManufacturer>
           ? _value.v
           : v // ignore: cast_nullable_to_non_nullable
               as int,
+      vehicleCategory: freezed == vehicleCategory
+          ? _value.vehicleCategory
+          : vehicleCategory // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -184,17 +191,18 @@ abstract class _$$VehicleManufacturerImplCopyWith<$Res>
       String name,
       String displayName,
       String originCountry,
-      String description,
-      String logo,
-      String website,
-      int foundedYear,
-      String headquarters,
+      String? description,
+      String? logo,
+      String? website,
+      int? foundedYear,
+      String? headquarters,
       bool isActive,
       bool isPremium,
       bool isDeleted,
       DateTime? createdAt,
       DateTime? updatedAt,
-      @JsonKey(name: '__v') int v});
+      @JsonKey(name: '__v') int v,
+      String? vehicleCategory});
 }
 
 /// @nodoc
@@ -214,17 +222,18 @@ class __$$VehicleManufacturerImplCopyWithImpl<$Res>
     Object? name = null,
     Object? displayName = null,
     Object? originCountry = null,
-    Object? description = null,
-    Object? logo = null,
-    Object? website = null,
-    Object? foundedYear = null,
-    Object? headquarters = null,
+    Object? description = freezed,
+    Object? logo = freezed,
+    Object? website = freezed,
+    Object? foundedYear = freezed,
+    Object? headquarters = freezed,
     Object? isActive = null,
     Object? isPremium = null,
     Object? isDeleted = null,
     Object? createdAt = freezed,
     Object? updatedAt = freezed,
     Object? v = null,
+    Object? vehicleCategory = freezed,
   }) {
     return _then(_$VehicleManufacturerImpl(
       id: null == id
@@ -243,26 +252,26 @@ class __$$VehicleManufacturerImplCopyWithImpl<$Res>
           ? _value.originCountry
           : originCountry // ignore: cast_nullable_to_non_nullable
               as String,
-      description: null == description
+      description: freezed == description
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
-              as String,
-      logo: null == logo
+              as String?,
+      logo: freezed == logo
           ? _value.logo
           : logo // ignore: cast_nullable_to_non_nullable
-              as String,
-      website: null == website
+              as String?,
+      website: freezed == website
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
-              as String,
-      foundedYear: null == foundedYear
+              as String?,
+      foundedYear: freezed == foundedYear
           ? _value.foundedYear
           : foundedYear // ignore: cast_nullable_to_non_nullable
-              as int,
-      headquarters: null == headquarters
+              as int?,
+      headquarters: freezed == headquarters
           ? _value.headquarters
           : headquarters // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       isActive: null == isActive
           ? _value.isActive
           : isActive // ignore: cast_nullable_to_non_nullable
@@ -287,6 +296,10 @@ class __$$VehicleManufacturerImplCopyWithImpl<$Res>
           ? _value.v
           : v // ignore: cast_nullable_to_non_nullable
               as int,
+      vehicleCategory: freezed == vehicleCategory
+          ? _value.vehicleCategory
+          : vehicleCategory // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -300,17 +313,18 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
       required this.name,
       required this.displayName,
       required this.originCountry,
-      required this.description,
-      required this.logo,
-      required this.website,
-      required this.foundedYear,
-      required this.headquarters,
+      this.description,
+      this.logo,
+      this.website,
+      this.foundedYear,
+      this.headquarters,
       required this.isActive,
       this.isPremium = false,
       this.isDeleted = false,
       this.createdAt,
       this.updatedAt,
-      @JsonKey(name: '__v') this.v = 0});
+      @JsonKey(name: '__v') this.v = 0,
+      this.vehicleCategory});
 
   factory _$VehicleManufacturerImpl.fromJson(Map<String, dynamic> json) =>
       _$$VehicleManufacturerImplFromJson(json);
@@ -325,15 +339,15 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
   @override
   final String originCountry;
   @override
-  final String description;
+  final String? description;
   @override
-  final String logo;
+  final String? logo;
   @override
-  final String website;
+  final String? website;
   @override
-  final int foundedYear;
+  final int? foundedYear;
   @override
-  final String headquarters;
+  final String? headquarters;
   @override
   final bool isActive;
   @override
@@ -352,10 +366,12 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
   @override
   @JsonKey(name: '__v')
   final int v;
+  @override
+  final String? vehicleCategory;
 
   @override
   String toString() {
-    return 'VehicleManufacturer(id: $id, name: $name, displayName: $displayName, originCountry: $originCountry, description: $description, logo: $logo, website: $website, foundedYear: $foundedYear, headquarters: $headquarters, isActive: $isActive, isPremium: $isPremium, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, v: $v)';
+    return 'VehicleManufacturer(id: $id, name: $name, displayName: $displayName, originCountry: $originCountry, description: $description, logo: $logo, website: $website, foundedYear: $foundedYear, headquarters: $headquarters, isActive: $isActive, isPremium: $isPremium, isDeleted: $isDeleted, createdAt: $createdAt, updatedAt: $updatedAt, v: $v, vehicleCategory: $vehicleCategory)';
   }
 
   @override
@@ -387,7 +403,9 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
                 other.updatedAt == updatedAt) &&
-            (identical(other.v, v) || other.v == v));
+            (identical(other.v, v) || other.v == v) &&
+            (identical(other.vehicleCategory, vehicleCategory) ||
+                other.vehicleCategory == vehicleCategory));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -408,7 +426,8 @@ class _$VehicleManufacturerImpl implements _VehicleManufacturer {
       isDeleted,
       createdAt,
       updatedAt,
-      v);
+      v,
+      vehicleCategory);
 
   /// Create a copy of VehicleManufacturer
   /// with the given fields replaced by the non-null parameter values.
@@ -433,17 +452,18 @@ abstract class _VehicleManufacturer implements VehicleManufacturer {
       required final String name,
       required final String displayName,
       required final String originCountry,
-      required final String description,
-      required final String logo,
-      required final String website,
-      required final int foundedYear,
-      required final String headquarters,
+      final String? description,
+      final String? logo,
+      final String? website,
+      final int? foundedYear,
+      final String? headquarters,
       required final bool isActive,
       final bool isPremium,
       final bool isDeleted,
       final DateTime? createdAt,
       final DateTime? updatedAt,
-      @JsonKey(name: '__v') final int v}) = _$VehicleManufacturerImpl;
+      @JsonKey(name: '__v') final int v,
+      final String? vehicleCategory}) = _$VehicleManufacturerImpl;
 
   factory _VehicleManufacturer.fromJson(Map<String, dynamic> json) =
       _$VehicleManufacturerImpl.fromJson;
@@ -458,15 +478,15 @@ abstract class _VehicleManufacturer implements VehicleManufacturer {
   @override
   String get originCountry;
   @override
-  String get description;
+  String? get description;
   @override
-  String get logo;
+  String? get logo;
   @override
-  String get website;
+  String? get website;
   @override
-  int get foundedYear;
+  int? get foundedYear;
   @override
-  String get headquarters;
+  String? get headquarters;
   @override
   bool get isActive;
   @override
@@ -482,6 +502,8 @@ abstract class _VehicleManufacturer implements VehicleManufacturer {
   @override
   @JsonKey(name: '__v')
   int get v;
+  @override
+  String? get vehicleCategory;
 
   /// Create a copy of VehicleManufacturer
   /// with the given fields replaced by the non-null parameter values.

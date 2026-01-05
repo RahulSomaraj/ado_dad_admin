@@ -11,8 +11,12 @@ class ApiService {
   }
 
   ApiService._internal() {
+    // Try to get API_BASE_URL from .env, fallback to empty string or environment variable
+    final apiBaseUrl = dotenv.env['API_BASE_URL'] ??
+        const String.fromEnvironment('API_BASE_URL', defaultValue: '');
+
     _dio = Dio(BaseOptions(
-      baseUrl: dotenv.env['API_BASE_URL'] ?? '',
+      baseUrl: apiBaseUrl,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
     ));

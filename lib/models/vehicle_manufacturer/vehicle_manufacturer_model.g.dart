@@ -13,11 +13,11 @@ _$VehicleManufacturerImpl _$$VehicleManufacturerImplFromJson(
       name: json['name'] as String,
       displayName: json['displayName'] as String,
       originCountry: json['originCountry'] as String,
-      description: json['description'] as String,
-      logo: json['logo'] as String,
-      website: json['website'] as String,
-      foundedYear: (json['foundedYear'] as num).toInt(),
-      headquarters: json['headquarters'] as String,
+      description: json['description'] as String?,
+      logo: json['logo'] as String?,
+      website: json['website'] as String?,
+      foundedYear: (json['foundedYear'] as num?)?.toInt(),
+      headquarters: json['headquarters'] as String?,
       isActive: json['isActive'] as bool,
       isPremium: json['isPremium'] as bool? ?? false,
       isDeleted: json['isDeleted'] as bool? ?? false,
@@ -28,6 +28,7 @@ _$VehicleManufacturerImpl _$$VehicleManufacturerImplFromJson(
           ? null
           : DateTime.parse(json['updatedAt'] as String),
       v: (json['__v'] as num?)?.toInt() ?? 0,
+      vehicleCategory: json['vehicleCategory'] as String?,
     );
 
 Map<String, dynamic> _$$VehicleManufacturerImplToJson(
@@ -48,6 +49,7 @@ Map<String, dynamic> _$$VehicleManufacturerImplToJson(
       'createdAt': instance.createdAt?.toIso8601String(),
       'updatedAt': instance.updatedAt?.toIso8601String(),
       '__v': instance.v,
+      'vehicleCategory': instance.vehicleCategory,
     };
 
 _$VehicleManufacturerResponseImpl _$$VehicleManufacturerResponseImplFromJson(

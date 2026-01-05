@@ -11,10 +11,7 @@ _$VehicleModelImpl _$$VehicleModelImplFromJson(Map<String, dynamic> json) =>
       id: json['_id'] as String?,
       name: json['name'] as String? ?? '',
       displayName: json['displayName'] as String? ?? '',
-      manufacturer: json['manufacturer'] == null
-          ? null
-          : VehicleManufacturer.fromJson(
-              json['manufacturer'] as Map<String, dynamic>),
+      manufacturer: _manufacturerFromJson(json['manufacturer']),
       vehicleType: json['vehicleType'] as String? ?? '',
       description: json['description'] as String?,
       launchYear: (json['launchYear'] as num?)?.toInt(),
@@ -27,9 +24,8 @@ _$VehicleModelImpl _$$VehicleModelImplFromJson(Map<String, dynamic> json) =>
       priceRange: json['priceRange'] == null
           ? null
           : PriceRange.fromJson(json['priceRange'] as Map<String, dynamic>),
-      availableFuelTypes: _stringList(json['availableFuelTypes']),
-      availableTransmissionTypes:
-          _stringList(json['availableTransmissionTypes']),
+      fuelTypes: _stringList(json['fuelTypes']),
+      transmissionTypes: _stringList(json['transmissionTypes']),
       isCommercialVehicle: json['isCommercialVehicle'] as bool?,
       commercialVehicleType: json['commercialVehicleType'] as String?,
       commercialBodyType: json['commercialBodyType'] as String?,
@@ -55,9 +51,8 @@ Map<String, dynamic> _$$VehicleModelImplToJson(_$VehicleModelImpl instance) =>
       'isActive': instance.isActive,
       'variantCount': instance.variantCount,
       'priceRange': instance.priceRange?.toJson(),
-      'availableFuelTypes': _stringListToJson(instance.availableFuelTypes),
-      'availableTransmissionTypes':
-          _stringListToJson(instance.availableTransmissionTypes),
+      'fuelTypes': _stringListToJson(instance.fuelTypes),
+      'transmissionTypes': _stringListToJson(instance.transmissionTypes),
       'isCommercialVehicle': instance.isCommercialVehicle,
       'commercialVehicleType': instance.commercialVehicleType,
       'commercialBodyType': instance.commercialBodyType,

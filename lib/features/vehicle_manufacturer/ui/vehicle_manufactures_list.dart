@@ -16,6 +16,7 @@ class VehicleManufacturesList extends StatefulWidget {
 class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _horizontalScrollController = ScrollController();
+  String? _selectedCategory;
 
   @override
   void initState() {
@@ -24,8 +25,74 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context
           .read<VehicleManufacturerBloc>()
-          .add(const FetchAllVehicleManufacturers());
+          .add(const FetchAllVehicleManufacturers(
+            page: 1,
+            limit: 10,
+          ));
     });
+  }
+
+  /// Helper method to create FetchAllVehicleManufacturers event
+  FetchAllVehicleManufacturers _createFetchEvent({
+    required int page,
+    required int limit,
+    String? searchQuery,
+    String? category,
+  }) {
+    // Only include non-empty values
+    final finalSearchQuery =
+        (searchQuery != null && searchQuery.trim().isNotEmpty)
+            ? searchQuery.trim()
+            : null;
+    final finalCategory = (category != null && category.trim().isNotEmpty)
+        ? category.trim()
+        : null;
+
+    // Create event - freezed will handle null values correctly
+    if (finalCategory != null && finalSearchQuery != null) {
+      return FetchAllVehicleManufacturers(
+        page: page,
+        limit: limit,
+        searchQuery: finalSearchQuery,
+        category: finalCategory,
+      );
+    } else if (finalCategory != null) {
+      return FetchAllVehicleManufacturers(
+        page: page,
+        limit: limit,
+        category: finalCategory,
+      );
+    } else if (finalSearchQuery != null) {
+      return FetchAllVehicleManufacturers(
+        page: page,
+        limit: limit,
+        searchQuery: finalSearchQuery,
+      );
+    } else {
+      return FetchAllVehicleManufacturers(
+        page: page,
+        limit: limit,
+      );
+    }
+  }
+
+  void _onCategoryChanged(String? category) {
+    setState(() {
+      _selectedCategory = category;
+    });
+    // Reset to page 1 when category changes
+    final searchQuery = _searchController.text.trim().isEmpty
+        ? null
+        : _searchController.text.trim();
+
+    context.read<VehicleManufacturerBloc>().add(
+          _createFetchEvent(
+            page: 1,
+            limit: rowsPerPage,
+            searchQuery: searchQuery,
+            category: category,
+          ),
+        );
   }
 
   @override
@@ -42,6 +109,8 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
         children: [
           const SizedBox(height: 20),
           _buildHeaderSection(),
+          const SizedBox(height: 20),
+          _buildCategoryFilterSection(),
           const SizedBox(height: 20),
           _buildCompanyList(),
         ],
@@ -137,19 +206,79 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
               ),
               style: const TextStyle(fontSize: 14),
               onChanged: (query) {
-                if (query.isNotEmpty) {
-                  context.read<VehicleManufacturerBloc>().add(
-                      FetchAllVehicleManufacturers(
-                          page: 1, limit: 10, searchQuery: query));
-                } else {
-                  context.read<VehicleManufacturerBloc>().add(
-                      FetchAllVehicleManufacturers(
-                          page: 1, limit: 10, searchQuery: ''));
-                }
+                final searchQuery = query.trim().isEmpty ? null : query.trim();
+                context.read<VehicleManufacturerBloc>().add(
+                      _createFetchEvent(
+                        page: 1,
+                        limit: rowsPerPage,
+                        searchQuery: searchQuery,
+                        category: _selectedCategory,
+                      ),
+                    );
               },
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryFilterSection() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: _buildCategoryDropdown(),
+      ),
+    );
+  }
+
+  Widget _buildCategoryDropdown() {
+    return Container(
+      width: 200,
+      height: 50,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.blackColor),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: DropdownButton<String>(
+        value: _selectedCategory,
+        hint: const Text(
+          'Select Category',
+          style: TextStyle(fontSize: 14, color: Colors.grey),
+        ),
+        isExpanded: true,
+        underline: const SizedBox(),
+        icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
+        items: [
+          const DropdownMenuItem<String>(
+            value: null,
+            child: Text('All Categories', style: TextStyle(fontSize: 14)),
+          ),
+          const DropdownMenuItem<String>(
+            value: 'two_wheeler',
+            child: Text('Two Wheeler', style: TextStyle(fontSize: 14)),
+          ),
+          const DropdownMenuItem<String>(
+            value: 'passenger_car',
+            child: Text('Passenger Car', style: TextStyle(fontSize: 14)),
+          ),
+          const DropdownMenuItem<String>(
+            value: 'commercial_vehicle',
+            child: Text('Commercial Vehicle', style: TextStyle(fontSize: 14)),
+          ),
+          const DropdownMenuItem<String>(
+            value: 'luxury',
+            child: Text('Luxury', style: TextStyle(fontSize: 14)),
+          ),
+          const DropdownMenuItem<String>(
+            value: 'suv',
+            child: Text('SUV', style: TextStyle(fontSize: 14)),
+          ),
+        ],
+        onChanged: _onCategoryChanged,
       ),
     );
   }
@@ -429,9 +558,15 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
                   setState(() {
                     rowsPerPage = value;
                   });
-                  context.read<VehicleManufacturerBloc>().add(
-                      FetchAllVehicleManufacturers(
-                          page: 1, limit: rowsPerPage));
+                  final searchQuery = _searchController.text.trim().isEmpty
+                      ? null
+                      : _searchController.text.trim();
+                  context.read<VehicleManufacturerBloc>().add(_createFetchEvent(
+                        page: 1,
+                        limit: rowsPerPage,
+                        searchQuery: searchQuery,
+                        category: _selectedCategory,
+                      ));
                 }
               },
             ),
@@ -439,9 +574,17 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
             GestureDetector(
               onTap: currentPage > 1
                   ? () {
-                      context.read<VehicleManufacturerBloc>().add(
-                          FetchAllVehicleManufacturers(
-                              page: currentPage - 1, limit: rowsPerPage));
+                      final searchQuery = _searchController.text.trim().isEmpty
+                          ? null
+                          : _searchController.text.trim();
+                      context
+                          .read<VehicleManufacturerBloc>()
+                          .add(_createFetchEvent(
+                            page: currentPage - 1,
+                            limit: rowsPerPage,
+                            searchQuery: searchQuery,
+                            category: _selectedCategory,
+                          ));
                     }
                   : null,
               child: Icon(
@@ -459,9 +602,17 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
             GestureDetector(
               onTap: currentPage < totalPages
                   ? () {
-                      context.read<VehicleManufacturerBloc>().add(
-                          FetchAllVehicleManufacturers(
-                              page: currentPage + 1, limit: rowsPerPage));
+                      final searchQuery = _searchController.text.trim().isEmpty
+                          ? null
+                          : _searchController.text.trim();
+                      context
+                          .read<VehicleManufacturerBloc>()
+                          .add(_createFetchEvent(
+                            page: currentPage + 1,
+                            limit: rowsPerPage,
+                            searchQuery: searchQuery,
+                            category: _selectedCategory,
+                          ));
                     }
                   : null,
               child: Icon(

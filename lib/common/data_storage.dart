@@ -126,6 +126,17 @@ Future<void> updateUserProfilePicture(String profilePicture) async {
   await sharedPrefs.setString('profilePicture', profilePicture);
 }
 
+/// Update stored user country code
+Future<void> updateUserCountryCode(String countryCode) async {
+  final sharedPrefs = SharedPrefs();
+  await sharedPrefs.setString('countryCode', countryCode);
+}
+
+/// Retrieve stored user country code
+Future<String?> getUserCountryCode() async {
+  return SharedPrefs().getString('countryCode');
+}
+
 /// Clear user-specific stored data
 Future<void> clearUserData() async {
   final sharedPrefs = SharedPrefs();
@@ -137,4 +148,5 @@ Future<void> clearUserData() async {
   await sharedPrefs.remove('userId');
   await sharedPrefs.remove('phoneNumber');
   await sharedPrefs.remove('profilePicture');
+  await sharedPrefs.remove('countryCode');
 }

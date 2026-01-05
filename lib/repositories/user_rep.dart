@@ -61,6 +61,11 @@ class UserRepository {
         'type': user.userType,
       };
 
+      // Include countryCode if it's provided
+      if (user.countryCode != null && user.countryCode!.isNotEmpty) {
+        updateData['countryCode'] = user.countryCode;
+      }
+
       // Only include profilePic if it's not null, not empty, and not a default placeholder
       if (user.profilePic != null &&
           user.profilePic!.isNotEmpty &&
@@ -103,9 +108,10 @@ class UserRepository {
 
   Future<String> createUser(UserModel userData) async {
     try {
+      final data = userData.toJson();
       final response = await _dio.post(
         "/users",
-        data: userData.toJson(),
+        data: data,
       );
       print(response.data);
       if (response.statusCode == 201) {

@@ -39,6 +39,18 @@ class VehicleModelRepository {
           throw Exception("API returned invalid response format");
         }
 
+        // Debug: Print first model's manufacturer data if available
+        if (response.data['data'] is List &&
+            (response.data['data'] as List).isNotEmpty) {
+          final firstModel = (response.data['data'] as List)[0];
+          if (firstModel is Map && firstModel.containsKey('manufacturer')) {
+            print(
+                '🔵 API Response - First model manufacturer: ${firstModel['manufacturer']}');
+            print(
+                '🔵 API Response - Manufacturer type: ${firstModel['manufacturer'].runtimeType}');
+          }
+        }
+
         return VehicleModelResponse.fromJson(response.data);
       } else {
         throw Exception("Failed to load vehicle models");
@@ -181,15 +193,16 @@ class VehicleModelRepository {
           key == 'defaultAxleCount' ||
           key == 'defaultSeatingCapacity');
 
-      // Ensure arrays exist only if non-empty (optional)
-      if ((payload['availableFuelTypes'] as List?)?.isEmpty ?? true) {
-        payload.remove('availableFuelTypes');
-      }
-      if ((payload['availableTransmissionTypes'] as List?)?.isEmpty ?? true) {
-        payload.remove('availableTransmissionTypes');
-      }
+      // Remove fuelTypes and transmissionTypes if empty
+      if ((payload['fuelTypes'] as List?)?.isEmpty ?? true) {
+        payload.remove('fuelTypes');
+      } else {}
 
-      print("🚀 Final payload to send: $payload");
+      if ((payload['transmissionTypes'] as List?)?.isEmpty ?? true) {
+        payload.remove('transmissionTypes');
+      } else {}
+
+      print("🚀 CREATE - Final payload to send: $payload");
 
       final response =
           await _dio.post('/vehicle-inventory/models', data: payload);
@@ -261,6 +274,10 @@ class VehicleModelRepository {
     try {
       final payload = model.toJson();
 
+      print("📦 UPDATE - fuelTypes in payload: ${payload['fuelTypes']}");
+      print(
+          "📦 UPDATE - transmissionTypes in payload: ${payload['transmissionTypes']}");
+
       // Handle nullable manufacturer
       if (model.manufacturer != null) {
         payload['manufacturer'] = model.manufacturer!.id;
@@ -288,11 +305,22 @@ class VehicleModelRepository {
       if ((payload['images'] as List?)?.isEmpty ?? true) {
         payload.remove('images');
       }
-      if ((payload['availableFuelTypes'] as List?)?.isEmpty ?? true) {
-        payload.remove('availableFuelTypes');
+
+      // Remove fuelTypes and transmissionTypes if empty
+      if ((payload['fuelTypes'] as List?)?.isEmpty ?? true) {
+        payload.remove('fuelTypes');
+        print("📦 UPDATE - fuelTypes is null or empty, removed from payload");
+      } else {
+        print("📦 UPDATE - fuelTypes in payload: ${payload['fuelTypes']}");
       }
-      if ((payload['availableTransmissionTypes'] as List?)?.isEmpty ?? true) {
-        payload.remove('availableTransmissionTypes');
+
+      if ((payload['transmissionTypes'] as List?)?.isEmpty ?? true) {
+        payload.remove('transmissionTypes');
+        print(
+            "📦 UPDATE - transmissionTypes is null or empty, removed from payload");
+      } else {
+        print(
+            "📦 UPDATE - transmissionTypes in payload: ${payload['transmissionTypes']}");
       }
 
       final res = await _dio.put(

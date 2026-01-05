@@ -19,7 +19,8 @@ mixin _$VehicleManufacturerEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -33,7 +34,9 @@ mixin _$VehicleManufacturerEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
@@ -44,7 +47,9 @@ mixin _$VehicleManufacturerEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
@@ -159,7 +164,8 @@ class _$StartedImpl implements _Started {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -176,7 +182,9 @@ class _$StartedImpl implements _Started {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
@@ -190,7 +198,9 @@ class _$StartedImpl implements _Started {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
@@ -268,7 +278,7 @@ abstract class _$$FetchAllVehicleManufacturersImplCopyWith<$Res> {
           $Res Function(_$FetchAllVehicleManufacturersImpl) then) =
       __$$FetchAllVehicleManufacturersImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({int page, int limit, String? searchQuery});
+  $Res call({int page, int limit, String? searchQuery, String? category});
 }
 
 /// @nodoc
@@ -289,6 +299,7 @@ class __$$FetchAllVehicleManufacturersImplCopyWithImpl<$Res>
     Object? page = null,
     Object? limit = null,
     Object? searchQuery = freezed,
+    Object? category = freezed,
   }) {
     return _then(_$FetchAllVehicleManufacturersImpl(
       page: null == page
@@ -303,6 +314,10 @@ class __$$FetchAllVehicleManufacturersImplCopyWithImpl<$Res>
           ? _value.searchQuery
           : searchQuery // ignore: cast_nullable_to_non_nullable
               as String?,
+      category: freezed == category
+          ? _value.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -312,7 +327,7 @@ class __$$FetchAllVehicleManufacturersImplCopyWithImpl<$Res>
 class _$FetchAllVehicleManufacturersImpl
     implements FetchAllVehicleManufacturers {
   const _$FetchAllVehicleManufacturersImpl(
-      {this.page = 1, this.limit = 10, this.searchQuery = ''});
+      {this.page = 1, this.limit = 10, this.searchQuery, this.category});
 
   @override
   @JsonKey()
@@ -321,12 +336,13 @@ class _$FetchAllVehicleManufacturersImpl
   @JsonKey()
   final int limit;
   @override
-  @JsonKey()
   final String? searchQuery;
+  @override
+  final String? category;
 
   @override
   String toString() {
-    return 'VehicleManufacturerEvent.fetchAll(page: $page, limit: $limit, searchQuery: $searchQuery)';
+    return 'VehicleManufacturerEvent.fetchAll(page: $page, limit: $limit, searchQuery: $searchQuery, category: $category)';
   }
 
   @override
@@ -337,11 +353,14 @@ class _$FetchAllVehicleManufacturersImpl
             (identical(other.page, page) || other.page == page) &&
             (identical(other.limit, limit) || other.limit == limit) &&
             (identical(other.searchQuery, searchQuery) ||
-                other.searchQuery == searchQuery));
+                other.searchQuery == searchQuery) &&
+            (identical(other.category, category) ||
+                other.category == category));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, page, limit, searchQuery);
+  int get hashCode =>
+      Object.hash(runtimeType, page, limit, searchQuery, category);
 
   /// Create a copy of VehicleManufacturerEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -357,7 +376,8 @@ class _$FetchAllVehicleManufacturersImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -367,28 +387,32 @@ class _$FetchAllVehicleManufacturersImpl
     required TResult Function() fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
-    return fetchAll(page, limit, searchQuery);
+    return fetchAll(page, limit, searchQuery, category);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
     TResult? Function()? fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
-    return fetchAll?.call(page, limit, searchQuery);
+    return fetchAll?.call(page, limit, searchQuery, category);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
@@ -397,7 +421,7 @@ class _$FetchAllVehicleManufacturersImpl
     required TResult orElse(),
   }) {
     if (fetchAll != null) {
-      return fetchAll(page, limit, searchQuery);
+      return fetchAll(page, limit, searchQuery, category);
     }
     return orElse();
   }
@@ -460,11 +484,13 @@ abstract class FetchAllVehicleManufacturers
   const factory FetchAllVehicleManufacturers(
       {final int page,
       final int limit,
-      final String? searchQuery}) = _$FetchAllVehicleManufacturersImpl;
+      final String? searchQuery,
+      final String? category}) = _$FetchAllVehicleManufacturersImpl;
 
   int get page;
   int get limit;
   String? get searchQuery;
+  String? get category;
 
   /// Create a copy of VehicleManufacturerEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -560,7 +586,8 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -577,7 +604,9 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
@@ -591,7 +620,9 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
@@ -757,7 +788,8 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -774,7 +806,9 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
@@ -788,7 +822,9 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
@@ -941,7 +977,8 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -958,7 +995,9 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
@@ -972,7 +1011,9 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
@@ -1099,7 +1140,8 @@ class _$FetchAllManufacturersForDropdownImpl
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -1116,7 +1158,9 @@ class _$FetchAllManufacturersForDropdownImpl
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
@@ -1130,7 +1174,9 @@ class _$FetchAllManufacturersForDropdownImpl
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
@@ -1290,7 +1336,8 @@ class _$UploadCsvImpl implements UploadCsv {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() started,
-    required TResult Function(int page, int limit, String? searchQuery)
+    required TResult Function(
+            int page, int limit, String? searchQuery, String? category)
         fetchAll,
     required TResult Function(VehicleManufacturer manufacturer)
         createManufacturer,
@@ -1307,7 +1354,9 @@ class _$UploadCsvImpl implements UploadCsv {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? started,
-    TResult? Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult? Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
@@ -1321,7 +1370,9 @@ class _$UploadCsvImpl implements UploadCsv {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? started,
-    TResult Function(int page, int limit, String? searchQuery)? fetchAll,
+    TResult Function(
+            int page, int limit, String? searchQuery, String? category)?
+        fetchAll,
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,

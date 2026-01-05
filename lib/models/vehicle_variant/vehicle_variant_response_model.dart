@@ -262,12 +262,14 @@ class TransmissionType {
 class EngineSpecs {
   final String? engineType;
   final int? displacement;
+  final int? capacity; // API uses 'capacity' instead of 'displacement'
   final int? maxPower;
   final int? maxTorque;
 
   EngineSpecs({
     this.engineType,
     this.displacement,
+    this.capacity,
     this.maxPower,
     this.maxTorque,
   });
@@ -276,8 +278,12 @@ class EngineSpecs {
     return EngineSpecs(
       engineType: json['engineType'],
       displacement: json['displacement'],
-      maxPower: json['maxPower'],
-      maxTorque: json['maxTorque'],
+      capacity:
+          json['capacity'] != null ? (json['capacity'] as num).toInt() : null,
+      maxPower:
+          json['maxPower'] != null ? (json['maxPower'] as num).toInt() : null,
+      maxTorque:
+          json['maxTorque'] != null ? (json['maxTorque'] as num).toInt() : null,
     );
   }
 }
@@ -285,18 +291,23 @@ class EngineSpecs {
 class PerformanceSpecs {
   final int? topSpeed;
   final double? acceleration;
+  final double? mileage; // API uses 'mileage'
 
   PerformanceSpecs({
     this.topSpeed,
     this.acceleration,
+    this.mileage,
   });
 
   factory PerformanceSpecs.fromJson(Map<String, dynamic> json) {
     return PerformanceSpecs(
-      topSpeed: json['topSpeed'],
+      topSpeed:
+          json['topSpeed'] != null ? (json['topSpeed'] as num).toInt() : null,
       acceleration: (json['acceleration'] != null)
           ? (json['acceleration'] as num).toDouble()
           : null,
+      mileage:
+          json['mileage'] != null ? (json['mileage'] as num).toDouble() : null,
     );
   }
 }

@@ -28,6 +28,11 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
   late String _displayName;
   int? _price;
   bool _isActive = true;
+  int? _seatingCapacity;
+  int? _engineCapacity;
+  int? _maxPower;
+  int? _maxTorque;
+  double? _mileage;
 
   List<variant_model.FuelType> fuelTypeOptions = [];
   List<variant_model.TransmissionType> transmissionTypeOptions = [];
@@ -43,6 +48,22 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
     _displayName = widget.variant.displayName;
     _price = widget.variant.price;
     _isActive = widget.variant.isActive;
+    _seatingCapacity = widget.variant.seatingCapacity;
+
+    // Initialize engine specs
+    if (widget.variant.engineSpecs != null) {
+      // Use capacity if available, otherwise fallback to displacement
+      _engineCapacity = widget.variant.engineSpecs?.capacity ??
+          widget.variant.engineSpecs?.displacement;
+      _maxPower = widget.variant.engineSpecs?.maxPower;
+      _maxTorque = widget.variant.engineSpecs?.maxTorque;
+    }
+
+    // Initialize performance specs
+    if (widget.variant.performanceSpecs != null) {
+      _mileage = widget.variant.performanceSpecs?.mileage;
+    }
+
     // Convert response model types to variant model types for dropdowns
     if (widget.variant.fuelType != null) {
       _selectedFuelType = variant_model.FuelType(
@@ -78,6 +99,15 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
         'transmissionType': _selectedTransmissionType?.id,
         'price': _price,
         'isActive': _isActive,
+        'seatingCapacity': _seatingCapacity,
+        'engineSpecs': {
+          'capacity': _engineCapacity ?? 0,
+          'maxPower': _maxPower ?? 0,
+          'maxTorque': _maxTorque ?? 0,
+        },
+        'performanceSpecs': {
+          'mileage': _mileage ?? 0,
+        },
       };
 
       print("🚀 Variant Update Payload: $updatePayload");
@@ -122,7 +152,8 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     // Navigate back to vehicle model view page to see the updated variant list
                     if (context.canPop()) {
-                      context.pop(); // Go back to the previous page (model view)
+                      context
+                          .pop(); // Go back to the previous page (model view)
                     } else {
                       context.go('/view-vehicle_model',
                           extra: widget.vehicleModel);
@@ -478,13 +509,50 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                   const SizedBox(height: 16),
                   _buildRow([
                     _buildTextField(
+                      "Seating Capacity",
+                      (v) => _seatingCapacity = int.tryParse(v!),
+                      keyboardType: TextInputType.number,
+                      initialValue: _seatingCapacity?.toString() ?? '',
+                    ),
+                    _buildTextField(
+                      "Engine Capacity (cc)",
+                      (v) => _engineCapacity = int.tryParse(v!),
+                      keyboardType: TextInputType.number,
+                      initialValue: _engineCapacity?.toString() ?? '',
+                    ),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildRow([
+                    _buildTextField(
+                      "Max Power (hp)",
+                      (v) => _maxPower = int.tryParse(v!),
+                      keyboardType: TextInputType.number,
+                      initialValue: _maxPower?.toString() ?? '',
+                    ),
+                    _buildTextField(
+                      "Max Torque (Nm)",
+                      (v) => _maxTorque = int.tryParse(v!),
+                      keyboardType: TextInputType.number,
+                      initialValue: _maxTorque?.toString() ?? '',
+                    ),
+                  ]),
+                  const SizedBox(height: 16),
+                  _buildRow([
+                    _buildTextField(
+                      "Mileage (kmpl)",
+                      (v) => _mileage = double.tryParse(v!),
+                      keyboardType: TextInputType.number,
+                      initialValue: _mileage?.toString() ?? '',
+                    ),
+                    _buildTextField(
                       "Price (₹)",
                       (v) => _price = int.tryParse(v!),
                       keyboardType: TextInputType.number,
                       initialValue: _price?.toString() ?? '',
                     ),
-                    _buildActiveSwitch(),
                   ]),
+                  const SizedBox(height: 16),
+                  _buildActiveSwitch(),
                   const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,

@@ -89,6 +89,32 @@ List<String>? _stringList(dynamic v) {
 
 List<dynamic>? _stringListToJson(List<String>? v) => v;
 
+// Helper to handle manufacturer field that can be either a Map or String (ID)
+VehicleManufacturer? _manufacturerFromJson(dynamic json) {
+  if (json == null) return null;
+  if (json is String) {
+    // If it's just an ID string, return null (manufacturer not populated)
+    return null;
+  }
+  if (json is Map<String, dynamic>) {
+    try {
+      // Ensure required fields have defaults if missing from API response
+      final manufacturerJson = Map<String, dynamic>.from(json);
+
+      // Provide defaults for required fields that might be missing
+      manufacturerJson['originCountry'] ??= '';
+      manufacturerJson['isActive'] ??= true;
+
+      return VehicleManufacturer.fromJson(manufacturerJson);
+    } catch (e) {
+      print('⚠️ Error parsing manufacturer: $e');
+      print('⚠️ Manufacturer JSON was: $json');
+      return null;
+    }
+  }
+  return null;
+}
+
 @freezed
 class VehicleModel with _$VehicleModel {
   @JsonSerializable(explicitToJson: true)
@@ -98,8 +124,9 @@ class VehicleModel with _$VehicleModel {
     // These are required in your UI, but backend may send null on fresh create
     @JsonKey(defaultValue: '') required String name,
     @JsonKey(defaultValue: '') required String displayName,
+    @JsonKey(fromJson: _manufacturerFromJson)
     VehicleManufacturer?
-        manufacturer, // Make nullable to handle API null responses
+        manufacturer, // Make nullable to handle API null responses or string IDs
     @JsonKey(defaultValue: '') required String vehicleType,
     String? description,
     int? launchYear,
@@ -113,10 +140,18 @@ class VehicleModel with _$VehicleModel {
     bool? isActive,
     int? variantCount,
     PriceRange? priceRange,
-    @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-    List<String>? availableFuelTypes,
-    @JsonKey(fromJson: _stringList, toJson: _stringListToJson)
-    List<String>? availableTransmissionTypes,
+    @JsonKey(
+        name: 'fuelTypes',
+        fromJson: _stringList,
+        toJson: _stringListToJson,
+        defaultValue: null)
+    List<String>? fuelTypes,
+    @JsonKey(
+        name: 'transmissionTypes',
+        fromJson: _stringList,
+        toJson: _stringListToJson,
+        defaultValue: null)
+    List<String>? transmissionTypes,
     bool? isCommercialVehicle,
     String? commercialVehicleType,
     String? commercialBodyType,

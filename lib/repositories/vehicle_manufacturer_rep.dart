@@ -11,17 +11,26 @@ class VehicleManufacturerRepository {
     int page = 1,
     int limit = 10,
     String? searchQuery,
+    String? category,
   }) async {
     try {
       print('Fetching manufacturers with: '
-          'page=$page, limit=$limit, search="$searchQuery"');
+          'page=$page, limit=$limit, search="${searchQuery ?? 'null'}", category="${category ?? 'null'}"');
+      final queryParams = <String, dynamic>{
+        'page': page,
+        'limit': limit,
+      };
+
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        queryParams['search'] = searchQuery;
+      }
+
+      if (category != null && category.isNotEmpty) {
+        queryParams['category'] = category;
+      }
       final response = await _dio.get(
         '/vehicle-inventory/manufacturers', // ✅ Replace with your actual endpoint
-        queryParameters: {
-          'page': page,
-          'limit': limit,
-          'search': searchQuery,
-        },
+        queryParameters: queryParams,
       );
       // print('Manufactures Datas: ${response.data}');
 
@@ -47,11 +56,15 @@ class VehicleManufacturerRepository {
           "name": manufacturerData.name,
           "displayName": manufacturerData.displayName,
           "originCountry": manufacturerData.originCountry,
-          "description": manufacturerData.description,
-          "logo": manufacturerData.logo,
-          "website": manufacturerData.website,
-          "foundedYear": manufacturerData.foundedYear,
-          "headquarters": manufacturerData.headquarters,
+          if (manufacturerData.description != null)
+            "description": manufacturerData.description,
+          if (manufacturerData.logo != null) "logo": manufacturerData.logo,
+          if (manufacturerData.website != null)
+            "website": manufacturerData.website,
+          if (manufacturerData.foundedYear != null)
+            "foundedYear": manufacturerData.foundedYear,
+          if (manufacturerData.headquarters != null)
+            "headquarters": manufacturerData.headquarters,
           "isActive": manufacturerData.isActive,
           "isPremium": manufacturerData.isPremium,
         },
@@ -84,11 +97,15 @@ class VehicleManufacturerRepository {
           "name": manufacturerData.name,
           "displayName": manufacturerData.displayName,
           "originCountry": manufacturerData.originCountry,
-          "description": manufacturerData.description,
-          "logo": manufacturerData.logo,
-          "website": manufacturerData.website,
-          "foundedYear": manufacturerData.foundedYear,
-          "headquarters": manufacturerData.headquarters,
+          if (manufacturerData.description != null)
+            "description": manufacturerData.description,
+          if (manufacturerData.logo != null) "logo": manufacturerData.logo,
+          if (manufacturerData.website != null)
+            "website": manufacturerData.website,
+          if (manufacturerData.foundedYear != null)
+            "foundedYear": manufacturerData.foundedYear,
+          if (manufacturerData.headquarters != null)
+            "headquarters": manufacturerData.headquarters,
           "isActive": manufacturerData.isActive,
           "isPremium": manufacturerData.isPremium,
         },

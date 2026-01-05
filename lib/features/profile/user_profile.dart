@@ -3,6 +3,7 @@ import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/models/login_model.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
+import 'package:ado_dad_admin/repositories/user_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,25 +42,37 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
     // Called when returning to this route from another route
     super.didPopNext();
     if (mounted) {
+      // Always refresh data when returning to profile page
       _loadUserData();
     }
   }
 
   Future<void> _loadUserData() async {
     print('🔍 Profile: _loadUserData called');
+
+    // Always get the logged-in user's ID first to ensure we're loading the correct user's data
+    final loggedInUserId = await getUserId();
+    if (loggedInUserId == null) {
+      print('🔍 Profile: No logged-in user ID found');
+      return;
+    }
+
     final name = await getUserName();
     final type = await getUserType();
     final email = await getUserEmail();
     final phone = await getUserPhoneNumber();
     final profilePic = await getUserProfilePicture();
 
-    print('🔍 Profile: Loaded user data:');
+    print(
+        '🔍 Profile: Loaded user data for logged-in user ID: $loggedInUserId');
     print('🔍 Profile: Name: $name');
     print('🔍 Profile: Email: $email');
     print('🔍 Profile: Phone: $phone');
     print('🔍 Profile: User Type: $type');
     print('🔍 Profile: Profile Pic: "$profilePic"');
 
+    // Verify that we're loading the logged-in user's data
+    // This ensures that even if stored data was accidentally updated, we only show logged-in user's info
     if (mounted) {
       setState(() {
         userType = type;
@@ -129,8 +142,10 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
                     children: [
                       const SizedBox(
                           width: 1), // Spacer to balance the edit icon
-                      // Edit icon for SR users in top right corner
-                      if (userType == 'SR')
+                      // Edit icon for SR, AD, and SA users in top right corner
+                      if (userType == 'SR' ||
+                          userType == 'AD' ||
+                          userType == 'SA')
                         GestureDetector(
                           onTap: _navigateToEditProfile,
                           child: Container(
@@ -265,22 +280,49 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
     final userId = await getUserId();
 
     if (userId != null && userName != null && userEmail != null && mounted) {
-      // Create a UserModel for the current user
-      final currentUser = UserModel(
-        id: userId,
-        name: userName!,
-        email: userEmail!,
-        phoneNumber: userPhone ?? '', // Use stored phone number or empty string
-        userType: userType ?? 'SR',
-        profilePic:
-            userProfilePic ?? '', // Use stored profile pic or empty string
-      );
+      UserModel? currentUser;
+
+      // Try to fetch the latest user data from API to get countryCode
+      try {
+        final userRepository = UserRepository();
+        final userResponse =
+            await userRepository.fetchAllUsers(page: 1, limit: 1000);
+        final userFromApi = userResponse.users.firstWhere(
+          (user) => user.id == userId,
+          orElse: () => UserModel(
+            id: userId,
+            name: userName!,
+            email: userEmail!,
+            phoneNumber: userPhone ?? '',
+            userType: userType ?? 'SR',
+          ),
+        );
+        currentUser = userFromApi;
+      } catch (e) {
+        // If API call fails, use data from storage
+        print(
+            '🔍 Profile: Failed to fetch user from API, using storage data: $e');
+        final countryCode = await getUserCountryCode();
+        currentUser = UserModel(
+          id: userId,
+          name: userName!,
+          email: userEmail!,
+          phoneNumber:
+              userPhone ?? '', // Use stored phone number or empty string
+          userType: userType ?? 'SR',
+          profilePic:
+              userProfilePic ?? '', // Use stored profile pic or empty string
+          countryCode: countryCode, // Include country code from storage
+        );
+      }
 
       // Navigate to edit page using GoRouter
       if (mounted) {
-        final result = await context.push('/edit-showroom', extra: currentUser);
-        // Refresh data when returning from edit page
-        if (result != null && mounted) {
+        // Determine which edit route to use based on user type
+        final editRoute = userType == 'SR' ? '/edit-showroom' : '/edit-user';
+        await context.push(editRoute, extra: currentUser);
+        // Always refresh data when returning from edit page
+        if (mounted) {
           _loadUserData();
         }
       }

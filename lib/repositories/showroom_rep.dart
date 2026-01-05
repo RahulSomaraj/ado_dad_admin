@@ -85,9 +85,10 @@ class ShowroomRepository {
 
   Future<String> createShowroom(UserModel showroomData) async {
     try {
+      final data = showroomData.toJson();
       final response = await _dio.post(
         "/users",
-        data: showroomData.toJson(),
+        data: data,
       );
       if (response.statusCode == 201) {
         return response.data['message'] ?? "User added successfully";
@@ -113,6 +114,12 @@ class ShowroomRepository {
         'phoneNumber': showroomuser.phoneNumber,
         'type': showroomuser.userType,
       };
+
+      // Include countryCode if it's provided
+      if (showroomuser.countryCode != null &&
+          showroomuser.countryCode!.isNotEmpty) {
+        updateData['countryCode'] = showroomuser.countryCode;
+      }
 
       // Only include profilePic if it's not null, not empty, and not a default placeholder
       if (showroomuser.profilePic != null &&

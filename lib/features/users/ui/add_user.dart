@@ -6,6 +6,7 @@ import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:country_picker/country_picker.dart';
 
 class AddUser extends StatefulWidget {
   const AddUser({super.key});
@@ -22,6 +23,9 @@ class _AddUserState extends State<AddUser> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  // Country code state
+  Country? _selectedCountry;
 
   // Profile picture state
   Uint8List? _profilePicBytes;
@@ -126,6 +130,8 @@ class _AddUserState extends State<AddUser> {
 
     if (_userFormKey.currentState!.validate()) {
       // _userFormKey.currentState!.save();
+      final countryCode = '+${_selectedCountry?.phoneCode ?? '1'}';
+
       final newUser = UserModel(
         id: '',
         name: _nameController.text.trim(),
@@ -133,6 +139,7 @@ class _AddUserState extends State<AddUser> {
         phoneNumber: _phoneController.text.trim(),
         password: _passwordController.text.trim(),
         userType: _getShortForm(_userType),
+        countryCode: countryCode,
       );
 
       if (_profilePicBytes != null) {
@@ -145,11 +152,6 @@ class _AddUserState extends State<AddUser> {
         // Add user without profile picture
         context.read<UserBloc>().add(UserEvent.addUser(userData: newUser));
       }
-
-      // Show success popup safely after frame
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _showSuccessPopup(context, "User has been added successfully.");
-      });
     }
   }
 
@@ -194,23 +196,44 @@ class _AddUserState extends State<AddUser> {
   // }
 
   @override
+  void initState() {
+    super.initState();
+    // Initialize with US country code
+    _selectedCountry = Country.parse('US');
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      builder: (context, state) {
-        return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildHeaderSection(),
-                const SizedBox(height: 30),
-                _buildUserForm(state),
-                const SizedBox(height: 50), // Add bottom padding
-              ],
+    return BlocListener<UserBloc, UserState>(
+      listener: (context, state) {
+        if (state is UserError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
             ),
-          ),
-        );
+          );
+        } else if (state is UserAddedSuccess) {
+          _showSuccessPopup(context, state.message);
+        }
       },
+      child: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 30),
+                  _buildUserForm(state),
+                  const SizedBox(height: 50), // Add bottom padding
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -278,8 +301,7 @@ class _AddUserState extends State<AddUser> {
                   const SizedBox(height: 15),
                   _buildFormField("Email", _emailController, isEmail: true),
                   const SizedBox(height: 15),
-                  _buildFormField("Phone Number", _phoneController,
-                      isPhone: true),
+                  _buildPhoneField(),
                   const SizedBox(height: 15),
                   _buildFormField(
                     "Password",
@@ -373,8 +395,8 @@ class _AddUserState extends State<AddUser> {
                 .hasMatch(value.trim())) {
           return "Enter a valid email address";
         }
-        if (isPhone && !RegExp(r"^[0-9]{10,}$").hasMatch(value.trim())) {
-          return "Enter a valid phone number (10+ digits)";
+        if (isPhone && value.trim().isEmpty) {
+          return "Enter a valid phone number";
         }
 
         // For password field, validate password strength
@@ -388,6 +410,66 @@ class _AddUserState extends State<AddUser> {
         return null;
       },
       // onSaved: onSaved,
+    );
+  }
+
+  Widget _buildPhoneField() {
+    return TextFormField(
+      controller: _phoneController,
+      keyboardType: TextInputType.phone,
+      decoration: InputDecoration(
+        labelText: "Phone Number",
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+        prefixIcon: _buildCountryCodeSelector(),
+      ),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return "Phone Number is required";
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildCountryCodeSelector() {
+    return GestureDetector(
+      onTap: () => _showCountryPicker(),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (_selectedCountry != null)
+              Text(
+                _selectedCountry!.flagEmoji,
+                style: const TextStyle(fontSize: 20),
+              ),
+            const SizedBox(width: 4),
+            Text(
+              '+${_selectedCountry?.phoneCode ?? '1'}',
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_drop_down, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showCountryPicker() {
+    showCountryPicker(
+      context: context,
+      onSelect: (Country country) {
+        setState(() {
+          _selectedCountry = country;
+        });
+      },
+      favorite: ['US', 'IN', 'GB'],
+      showPhoneCode: true,
     );
   }
 

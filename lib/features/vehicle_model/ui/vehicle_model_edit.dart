@@ -70,10 +70,10 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
     _existingImageUrls = List<String>.from(m.images ?? const []);
     _selectedFuelTypeKeys
       ..clear()
-      ..addAll(m.availableFuelTypes ?? const []);
+      ..addAll(m.fuelTypes ?? const []);
     _selectedTransmissionKeys
       ..clear()
-      ..addAll(m.availableTransmissionTypes ?? const []);
+      ..addAll(m.transmissionTypes ?? const []);
 
     // dropdown data
     context
@@ -105,16 +105,127 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
 
   Future<void> _selectLaunchYear(BuildContext context) async {
     final now = DateTime.now();
-    final picked = await showDatePicker(
+    final int currentYear = now.year;
+    final int startYear = 1700;
+    final int endYear = currentYear + 1;
+    final int? initialYear = _launchYear?.isNotEmpty == true
+        ? int.tryParse(_launchYear!)
+        : currentYear;
+
+    final int? selectedYear = await showDialog<int>(
       context: context,
-      initialDate: DateTime(now.year),
-      firstDate: DateTime(1700),
-      lastDate: DateTime(now.year + 1),
-      initialDatePickerMode: DatePickerMode.year,
-      helpText: 'Select Launch Year',
+      builder: (BuildContext context) {
+        int? selectedYear = initialYear;
+        int displayStartYear = initialYear != null
+            ? ((initialYear ~/ 12) * 12)
+            : ((currentYear ~/ 12) * 12);
+        if (displayStartYear < startYear) displayStartYear = startYear;
+        if (displayStartYear + 11 > endYear) displayStartYear = endYear - 11;
+
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Select Launch Year'),
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.chevron_left),
+                        onPressed: displayStartYear - 12 >= startYear
+                            ? () {
+                                setDialogState(() {
+                                  displayStartYear -= 12;
+                                });
+                              }
+                            : null,
+                      ),
+                      Text(
+                        '$displayStartYear - ${displayStartYear + 11}',
+                        style: TextStyle(
+                            fontSize: 14, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.chevron_right),
+                        onPressed: displayStartYear + 12 <= endYear - 11
+                            ? () {
+                                setDialogState(() {
+                                  displayStartYear += 12;
+                                });
+                              }
+                            : null,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                width: 300,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 2.5,
+                  ),
+                  itemCount: 12,
+                  itemBuilder: (context, index) {
+                    final year = displayStartYear + index;
+                    if (year > endYear) return SizedBox.shrink();
+                    final isSelected = year == selectedYear;
+
+                    return InkWell(
+                      onTap: () {
+                        setDialogState(() {
+                          selectedYear = year;
+                        });
+                        Navigator.of(context).pop(year);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.blackColor
+                              : Colors.grey[200],
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: isSelected
+                                ? AppColors.blackColor
+                                : Colors.grey[300]!,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            year.toString(),
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                              fontWeight: isSelected
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Text('Cancel'),
+                ),
+              ],
+            );
+          },
+        );
+      },
     );
-    if (picked != null && mounted) {
-      setState(() => _launchYear = picked.year.toString());
+
+    if (selectedYear != null && mounted) {
+      setState(() => _launchYear = selectedYear.toString());
     }
   }
 
@@ -149,9 +260,9 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
       segment: _segment,
       isActive: _isActive,
       // images are set in bloc after merging (keep + newly uploaded)
-      availableFuelTypes:
+      fuelTypes:
           _selectedFuelTypeKeys.isNotEmpty ? _selectedFuelTypeKeys : null,
-      availableTransmissionTypes: _selectedTransmissionKeys.isNotEmpty
+      transmissionTypes: _selectedTransmissionKeys.isNotEmpty
           ? _selectedTransmissionKeys
           : null,
     );
@@ -354,22 +465,41 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
                       VehicleManufacturerState>(
                     builder: (context, st) {
                       return st.maybeWhen(
-                        dropdownLoaded: (mans) => _row(
-                          _dropdown<VehicleManufacturer>(
-                            label: 'Manufacturer',
-                            value: _manufacturer,
-                            items: mans,
-                            getLabel: (m) => m.name,
-                            onChanged: (v) => setState(() => _manufacturer = v),
-                          ),
-                          _dropdown<String>(
-                            label: 'Vehicle Type',
-                            value: _vehicleType,
-                            items: vehicleTypes,
-                            getLabel: (v) => v,
-                            onChanged: (v) => setState(() => _vehicleType = v),
-                          ),
-                        ),
+                        dropdownLoaded: (mans) {
+                          // Find matching manufacturer from the list by ID
+                          // This ensures we use the same object instance from the dropdown items
+                          VehicleManufacturer? selectedManufacturer;
+                          if (_manufacturer != null &&
+                              _manufacturer!.id.isNotEmpty) {
+                            try {
+                              selectedManufacturer = mans.firstWhere(
+                                (m) => m.id == _manufacturer!.id,
+                              );
+                            } catch (e) {
+                              // Manufacturer not found in list, use null
+                              selectedManufacturer = null;
+                            }
+                          }
+
+                          return _row(
+                            _dropdown<VehicleManufacturer>(
+                              label: 'Manufacturer',
+                              value: selectedManufacturer,
+                              items: mans,
+                              getLabel: (m) => m.displayName,
+                              onChanged: (v) =>
+                                  setState(() => _manufacturer = v),
+                            ),
+                            _dropdown<String>(
+                              label: 'Vehicle Type',
+                              value: _vehicleType,
+                              items: vehicleTypes,
+                              getLabel: (v) => v,
+                              onChanged: (v) =>
+                                  setState(() => _vehicleType = v),
+                            ),
+                          );
+                        },
                         loading: () =>
                             const Center(child: CircularProgressIndicator()),
                         orElse: () =>

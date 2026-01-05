@@ -214,7 +214,7 @@ class _UserViewState extends State<UserView> {
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildDetailItem("Phone", widget.user.phoneNumber),
+                child: _buildDetailItem("Phone", _formatPhoneNumber()),
               ),
             ],
           ),
@@ -276,6 +276,21 @@ class _UserViewState extends State<UserView> {
       default:
         return 'Normal User';
     }
+  }
+
+  /// Format phone number with country code
+  String _formatPhoneNumber() {
+    String phoneNumber = widget.user.phoneNumber;
+    String? countryCode = widget.user.countryCode;
+
+    if (countryCode != null && countryCode.isNotEmpty) {
+      // If country code doesn't start with +, add it
+      String formattedCountryCode =
+          countryCode.startsWith('+') ? countryCode : '+$countryCode';
+      return '$formattedCountryCode $phoneNumber';
+    }
+
+    return phoneNumber;
   }
 
   /// User Ads Section

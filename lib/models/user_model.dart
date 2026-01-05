@@ -7,6 +7,7 @@ class UserModel {
   final String email; // ✅ Ensure `email` is always non-null
   final String? password;
   final String? username;
+  final String? countryCode;
   final bool? isDeleted;
   final String? otp;
   final DateTime? otpExpires;
@@ -22,6 +23,7 @@ class UserModel {
     required this.email,
     this.password,
     this.username,
+    this.countryCode,
     this.isDeleted,
     this.otp,
     this.otpExpires,
@@ -40,6 +42,7 @@ class UserModel {
       email: json['email'] ?? '',
       password: json['password'],
       username: json['username'],
+      countryCode: json['countryCode'],
       isDeleted: json['isDeleted'],
       otp: json['otp'],
       otpExpires: json['otpExpires'] != null
@@ -66,6 +69,7 @@ class UserModel {
     data['email'] = email;
     if (password != null) data['password'] = password;
     if (username != null) data['username'] = username;
+    if (countryCode != null) data['countryCode'] = countryCode;
     if (isDeleted != null) data['isDeleted'] = isDeleted;
     if (otp != null) data['otp'] = otp;
     if (otpExpires != null) data['otpExpires'] = otpExpires!.toIso8601String();
@@ -83,6 +87,7 @@ class UserModel {
     String? email,
     String? password,
     String? username,
+    String? countryCode,
     bool? isDeleted,
     String? otp,
     DateTime? otpExpires,
@@ -98,6 +103,7 @@ class UserModel {
       email: email ?? this.email,
       password: password ?? this.password,
       username: username ?? this.username,
+      countryCode: countryCode ?? this.countryCode,
       isDeleted: isDeleted ?? this.isDeleted,
       otp: otp ?? this.otp,
       otpExpires: otpExpires ?? this.otpExpires,
