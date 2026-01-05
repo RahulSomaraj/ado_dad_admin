@@ -29,13 +29,17 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Try to load .env file, but don't fail if it doesn't exist
+  // For web builds, try both root and assets folder locations
   try {
-    await dotenv.load(fileName: ".env");
+    await dotenv.load(fileName: "assets/.env");
   } catch (e) {
-    // .env file not found or couldn't be loaded - this is okay for web builds
-    // The API_BASE_URL will fall back to empty string or can be set via environment
-    print('⚠️ Could not load .env file: $e');
-    print('⚠️ Using default/fallback configuration');
+    // Try root location as fallback
+    try {
+      await dotenv.load(fileName: ".env");
+    } catch (e2) {
+      // .env file not found or couldn't be loaded - this is okay
+      // The API_BASE_URL will fall back to empty string or can be set via environment
+    }
   }
 
   await SharedPrefs().init();

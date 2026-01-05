@@ -12,8 +12,20 @@ class ApiService {
 
   ApiService._internal() {
     // Try to get API_BASE_URL from .env, fallback to empty string or environment variable
-    final apiBaseUrl = dotenv.env['API_BASE_URL'] ??
-        const String.fromEnvironment('API_BASE_URL', defaultValue: '');
+    String apiBaseUrl = '';
+    try {
+      // Check if dotenv is initialized before accessing it
+      apiBaseUrl = dotenv.env['API_BASE_URL'] ?? '';
+    } catch (e) {
+      // dotenv not initialized, use fallback
+      // This is expected if .env file doesn't exist
+    }
+
+    // If still empty, try environment variable
+    if (apiBaseUrl.isEmpty) {
+      apiBaseUrl =
+          const String.fromEnvironment('API_BASE_URL', defaultValue: '');
+    }
 
     _dio = Dio(BaseOptions(
       baseUrl: apiBaseUrl,
