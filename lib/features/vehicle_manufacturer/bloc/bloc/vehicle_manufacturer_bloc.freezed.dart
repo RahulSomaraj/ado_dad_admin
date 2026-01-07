@@ -27,7 +27,9 @@ mixin _$VehicleManufacturerEvent {
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
@@ -40,7 +42,8 @@ mixin _$VehicleManufacturerEvent {
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) =>
       throw _privateConstructorUsedError;
@@ -53,7 +56,8 @@ mixin _$VehicleManufacturerEvent {
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) =>
@@ -172,7 +176,9 @@ class _$StartedImpl implements _Started {
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return started();
@@ -188,7 +194,8 @@ class _$StartedImpl implements _Started {
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return started?.call();
@@ -204,7 +211,8 @@ class _$StartedImpl implements _Started {
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
@@ -384,7 +392,9 @@ class _$FetchAllVehicleManufacturersImpl
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return fetchAll(page, limit, searchQuery, category);
@@ -400,7 +410,8 @@ class _$FetchAllVehicleManufacturersImpl
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return fetchAll?.call(page, limit, searchQuery, category);
@@ -416,7 +427,8 @@ class _$FetchAllVehicleManufacturersImpl
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
@@ -594,7 +606,9 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return createManufacturer(manufacturer);
@@ -610,7 +624,8 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return createManufacturer?.call(manufacturer);
@@ -626,7 +641,8 @@ class _$CreateVehicleManufacturerImpl implements CreateVehicleManufacturer {
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
@@ -796,7 +812,9 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return updateManufacturer(manufacturer);
@@ -812,7 +830,8 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return updateManufacturer?.call(manufacturer);
@@ -828,7 +847,8 @@ class _$UpdateVehicleManufacturerImpl implements UpdateVehicleManufacturer {
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
@@ -985,7 +1005,9 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return deleteManufacturer(id);
@@ -1001,7 +1023,8 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return deleteManufacturer?.call(id);
@@ -1017,7 +1040,8 @@ class _$DeleteVehicleManufacturerImpl implements DeleteVehicleManufacturer {
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
@@ -1099,6 +1123,8 @@ abstract class _$$FetchAllManufacturersForDropdownImplCopyWith<$Res> {
           _$FetchAllManufacturersForDropdownImpl value,
           $Res Function(_$FetchAllManufacturersForDropdownImpl) then) =
       __$$FetchAllManufacturersForDropdownImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({int page, int limit, bool loadMore, String? searchQuery});
 }
 
 /// @nodoc
@@ -1113,28 +1139,88 @@ class __$$FetchAllManufacturersForDropdownImplCopyWithImpl<$Res>
 
   /// Create a copy of VehicleManufacturerEvent
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? page = null,
+    Object? limit = null,
+    Object? loadMore = null,
+    Object? searchQuery = freezed,
+  }) {
+    return _then(_$FetchAllManufacturersForDropdownImpl(
+      page: null == page
+          ? _value.page
+          : page // ignore: cast_nullable_to_non_nullable
+              as int,
+      limit: null == limit
+          ? _value.limit
+          : limit // ignore: cast_nullable_to_non_nullable
+              as int,
+      loadMore: null == loadMore
+          ? _value.loadMore
+          : loadMore // ignore: cast_nullable_to_non_nullable
+              as bool,
+      searchQuery: freezed == searchQuery
+          ? _value.searchQuery
+          : searchQuery // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
 /// @nodoc
 
 class _$FetchAllManufacturersForDropdownImpl
     implements FetchAllManufacturersForDropdown {
-  const _$FetchAllManufacturersForDropdownImpl();
+  const _$FetchAllManufacturersForDropdownImpl(
+      {this.page = 1,
+      this.limit = 10,
+      this.loadMore = false,
+      this.searchQuery});
+
+  @override
+  @JsonKey()
+  final int page;
+  @override
+  @JsonKey()
+  final int limit;
+  @override
+  @JsonKey()
+  final bool loadMore;
+  @override
+  final String? searchQuery;
 
   @override
   String toString() {
-    return 'VehicleManufacturerEvent.fetchAllForDropdown()';
+    return 'VehicleManufacturerEvent.fetchAllForDropdown(page: $page, limit: $limit, loadMore: $loadMore, searchQuery: $searchQuery)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$FetchAllManufacturersForDropdownImpl);
+            other is _$FetchAllManufacturersForDropdownImpl &&
+            (identical(other.page, page) || other.page == page) &&
+            (identical(other.limit, limit) || other.limit == limit) &&
+            (identical(other.loadMore, loadMore) ||
+                other.loadMore == loadMore) &&
+            (identical(other.searchQuery, searchQuery) ||
+                other.searchQuery == searchQuery));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, page, limit, loadMore, searchQuery);
+
+  /// Create a copy of VehicleManufacturerEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$FetchAllManufacturersForDropdownImplCopyWith<
+          _$FetchAllManufacturersForDropdownImpl>
+      get copyWith => __$$FetchAllManufacturersForDropdownImplCopyWithImpl<
+          _$FetchAllManufacturersForDropdownImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
@@ -1148,10 +1234,12 @@ class _$FetchAllManufacturersForDropdownImpl
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
-    return fetchAllForDropdown();
+    return fetchAllForDropdown(page, limit, loadMore, searchQuery);
   }
 
   @override
@@ -1164,10 +1252,11 @@ class _$FetchAllManufacturersForDropdownImpl
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
-    return fetchAllForDropdown?.call();
+    return fetchAllForDropdown?.call(page, limit, loadMore, searchQuery);
   }
 
   @override
@@ -1180,12 +1269,13 @@ class _$FetchAllManufacturersForDropdownImpl
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
     if (fetchAllForDropdown != null) {
-      return fetchAllForDropdown();
+      return fetchAllForDropdown(page, limit, loadMore, searchQuery);
     }
     return orElse();
   }
@@ -1245,8 +1335,23 @@ class _$FetchAllManufacturersForDropdownImpl
 
 abstract class FetchAllManufacturersForDropdown
     implements VehicleManufacturerEvent {
-  const factory FetchAllManufacturersForDropdown() =
-      _$FetchAllManufacturersForDropdownImpl;
+  const factory FetchAllManufacturersForDropdown(
+      {final int page,
+      final int limit,
+      final bool loadMore,
+      final String? searchQuery}) = _$FetchAllManufacturersForDropdownImpl;
+
+  int get page;
+  int get limit;
+  bool get loadMore;
+  String? get searchQuery;
+
+  /// Create a copy of VehicleManufacturerEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$FetchAllManufacturersForDropdownImplCopyWith<
+          _$FetchAllManufacturersForDropdownImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1344,7 +1449,9 @@ class _$UploadCsvImpl implements UploadCsv {
     required TResult Function(VehicleManufacturer manufacturer)
         updateManufacturer,
     required TResult Function(String id) deleteManufacturer,
-    required TResult Function() fetchAllForDropdown,
+    required TResult Function(
+            int page, int limit, bool loadMore, String? searchQuery)
+        fetchAllForDropdown,
     required TResult Function(List<int> fileBytes, String fileName) uploadCsv,
   }) {
     return uploadCsv(fileBytes, fileName);
@@ -1360,7 +1467,8 @@ class _$UploadCsvImpl implements UploadCsv {
     TResult? Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult? Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult? Function(String id)? deleteManufacturer,
-    TResult? Function()? fetchAllForDropdown,
+    TResult? Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult? Function(List<int> fileBytes, String fileName)? uploadCsv,
   }) {
     return uploadCsv?.call(fileBytes, fileName);
@@ -1376,7 +1484,8 @@ class _$UploadCsvImpl implements UploadCsv {
     TResult Function(VehicleManufacturer manufacturer)? createManufacturer,
     TResult Function(VehicleManufacturer manufacturer)? updateManufacturer,
     TResult Function(String id)? deleteManufacturer,
-    TResult Function()? fetchAllForDropdown,
+    TResult Function(int page, int limit, bool loadMore, String? searchQuery)?
+        fetchAllForDropdown,
     TResult Function(List<int> fileBytes, String fileName)? uploadCsv,
     required TResult orElse(),
   }) {
@@ -1461,7 +1570,9 @@ mixin _$VehicleManufacturerState {
     required TResult Function() loading,
     required TResult Function(VehicleManufacturerResponse response) loaded,
     required TResult Function(String message) error,
-    required TResult Function(List<VehicleManufacturer> data) dropdownLoaded,
+    required TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)
+        dropdownLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1470,7 +1581,9 @@ mixin _$VehicleManufacturerState {
     TResult? Function()? loading,
     TResult? Function(VehicleManufacturerResponse response)? loaded,
     TResult? Function(String message)? error,
-    TResult? Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult? Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -1479,7 +1592,9 @@ mixin _$VehicleManufacturerState {
     TResult Function()? loading,
     TResult Function(VehicleManufacturerResponse response)? loaded,
     TResult Function(String message)? error,
-    TResult Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -1580,7 +1695,9 @@ class _$InitialImpl implements _Initial {
     required TResult Function() loading,
     required TResult Function(VehicleManufacturerResponse response) loaded,
     required TResult Function(String message) error,
-    required TResult Function(List<VehicleManufacturer> data) dropdownLoaded,
+    required TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)
+        dropdownLoaded,
   }) {
     return initial();
   }
@@ -1592,7 +1709,9 @@ class _$InitialImpl implements _Initial {
     TResult? Function()? loading,
     TResult? Function(VehicleManufacturerResponse response)? loaded,
     TResult? Function(String message)? error,
-    TResult? Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult? Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
   }) {
     return initial?.call();
   }
@@ -1604,7 +1723,9 @@ class _$InitialImpl implements _Initial {
     TResult Function()? loading,
     TResult Function(VehicleManufacturerResponse response)? loaded,
     TResult Function(String message)? error,
-    TResult Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -1703,7 +1824,9 @@ class _$LoadingImpl implements _Loading {
     required TResult Function() loading,
     required TResult Function(VehicleManufacturerResponse response) loaded,
     required TResult Function(String message) error,
-    required TResult Function(List<VehicleManufacturer> data) dropdownLoaded,
+    required TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)
+        dropdownLoaded,
   }) {
     return loading();
   }
@@ -1715,7 +1838,9 @@ class _$LoadingImpl implements _Loading {
     TResult? Function()? loading,
     TResult? Function(VehicleManufacturerResponse response)? loaded,
     TResult? Function(String message)? error,
-    TResult? Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult? Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
   }) {
     return loading?.call();
   }
@@ -1727,7 +1852,9 @@ class _$LoadingImpl implements _Loading {
     TResult Function()? loading,
     TResult Function(VehicleManufacturerResponse response)? loaded,
     TResult Function(String message)? error,
-    TResult Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1866,7 +1993,9 @@ class _$LoadedImpl implements _Loaded {
     required TResult Function() loading,
     required TResult Function(VehicleManufacturerResponse response) loaded,
     required TResult Function(String message) error,
-    required TResult Function(List<VehicleManufacturer> data) dropdownLoaded,
+    required TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)
+        dropdownLoaded,
   }) {
     return loaded(response);
   }
@@ -1878,7 +2007,9 @@ class _$LoadedImpl implements _Loaded {
     TResult? Function()? loading,
     TResult? Function(VehicleManufacturerResponse response)? loaded,
     TResult? Function(String message)? error,
-    TResult? Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult? Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
   }) {
     return loaded?.call(response);
   }
@@ -1890,7 +2021,9 @@ class _$LoadedImpl implements _Loaded {
     TResult Function()? loading,
     TResult Function(VehicleManufacturerResponse response)? loaded,
     TResult Function(String message)? error,
-    TResult Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -2025,7 +2158,9 @@ class _$ErrorImpl implements _Error {
     required TResult Function() loading,
     required TResult Function(VehicleManufacturerResponse response) loaded,
     required TResult Function(String message) error,
-    required TResult Function(List<VehicleManufacturer> data) dropdownLoaded,
+    required TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)
+        dropdownLoaded,
   }) {
     return error(message);
   }
@@ -2037,7 +2172,9 @@ class _$ErrorImpl implements _Error {
     TResult? Function()? loading,
     TResult? Function(VehicleManufacturerResponse response)? loaded,
     TResult? Function(String message)? error,
-    TResult? Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult? Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
   }) {
     return error?.call(message);
   }
@@ -2049,7 +2186,9 @@ class _$ErrorImpl implements _Error {
     TResult Function()? loading,
     TResult Function(VehicleManufacturerResponse response)? loaded,
     TResult Function(String message)? error,
-    TResult Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
     required TResult orElse(),
   }) {
     if (error != null) {
@@ -2117,7 +2256,7 @@ abstract class _$$DropdownLoadedImplCopyWith<$Res> {
           $Res Function(_$DropdownLoadedImpl) then) =
       __$$DropdownLoadedImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<VehicleManufacturer> data});
+  $Res call({List<VehicleManufacturer> data, int currentPage, bool hasNext});
 }
 
 /// @nodoc
@@ -2134,12 +2273,22 @@ class __$$DropdownLoadedImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? data = null,
+    Object? currentPage = null,
+    Object? hasNext = null,
   }) {
     return _then(_$DropdownLoadedImpl(
       null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
               as List<VehicleManufacturer>,
+      null == currentPage
+          ? _value.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int,
+      null == hasNext
+          ? _value.hasNext
+          : hasNext // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -2147,7 +2296,8 @@ class __$$DropdownLoadedImplCopyWithImpl<$Res>
 /// @nodoc
 
 class _$DropdownLoadedImpl implements _DropdownLoaded {
-  const _$DropdownLoadedImpl(final List<VehicleManufacturer> data)
+  const _$DropdownLoadedImpl(
+      final List<VehicleManufacturer> data, this.currentPage, this.hasNext)
       : _data = data;
 
   final List<VehicleManufacturer> _data;
@@ -2159,8 +2309,13 @@ class _$DropdownLoadedImpl implements _DropdownLoaded {
   }
 
   @override
+  final int currentPage;
+  @override
+  final bool hasNext;
+
+  @override
   String toString() {
-    return 'VehicleManufacturerState.dropdownLoaded(data: $data)';
+    return 'VehicleManufacturerState.dropdownLoaded(data: $data, currentPage: $currentPage, hasNext: $hasNext)';
   }
 
   @override
@@ -2168,12 +2323,15 @@ class _$DropdownLoadedImpl implements _DropdownLoaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$DropdownLoadedImpl &&
-            const DeepCollectionEquality().equals(other._data, _data));
+            const DeepCollectionEquality().equals(other._data, _data) &&
+            (identical(other.currentPage, currentPage) ||
+                other.currentPage == currentPage) &&
+            (identical(other.hasNext, hasNext) || other.hasNext == hasNext));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
+  int get hashCode => Object.hash(runtimeType,
+      const DeepCollectionEquality().hash(_data), currentPage, hasNext);
 
   /// Create a copy of VehicleManufacturerState
   /// with the given fields replaced by the non-null parameter values.
@@ -2191,9 +2349,11 @@ class _$DropdownLoadedImpl implements _DropdownLoaded {
     required TResult Function() loading,
     required TResult Function(VehicleManufacturerResponse response) loaded,
     required TResult Function(String message) error,
-    required TResult Function(List<VehicleManufacturer> data) dropdownLoaded,
+    required TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)
+        dropdownLoaded,
   }) {
-    return dropdownLoaded(data);
+    return dropdownLoaded(data, currentPage, hasNext);
   }
 
   @override
@@ -2203,9 +2363,11 @@ class _$DropdownLoadedImpl implements _DropdownLoaded {
     TResult? Function()? loading,
     TResult? Function(VehicleManufacturerResponse response)? loaded,
     TResult? Function(String message)? error,
-    TResult? Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult? Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
   }) {
-    return dropdownLoaded?.call(data);
+    return dropdownLoaded?.call(data, currentPage, hasNext);
   }
 
   @override
@@ -2215,11 +2377,13 @@ class _$DropdownLoadedImpl implements _DropdownLoaded {
     TResult Function()? loading,
     TResult Function(VehicleManufacturerResponse response)? loaded,
     TResult Function(String message)? error,
-    TResult Function(List<VehicleManufacturer> data)? dropdownLoaded,
+    TResult Function(
+            List<VehicleManufacturer> data, int currentPage, bool hasNext)?
+        dropdownLoaded,
     required TResult orElse(),
   }) {
     if (dropdownLoaded != null) {
-      return dropdownLoaded(data);
+      return dropdownLoaded(data, currentPage, hasNext);
     }
     return orElse();
   }
@@ -2266,10 +2430,12 @@ class _$DropdownLoadedImpl implements _DropdownLoaded {
 }
 
 abstract class _DropdownLoaded implements VehicleManufacturerState {
-  const factory _DropdownLoaded(final List<VehicleManufacturer> data) =
-      _$DropdownLoadedImpl;
+  const factory _DropdownLoaded(final List<VehicleManufacturer> data,
+      final int currentPage, final bool hasNext) = _$DropdownLoadedImpl;
 
   List<VehicleManufacturer> get data;
+  int get currentPage;
+  bool get hasNext;
 
   /// Create a copy of VehicleManufacturerState
   /// with the given fields replaced by the non-null parameter values.

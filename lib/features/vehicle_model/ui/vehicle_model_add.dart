@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
@@ -26,6 +28,14 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
   bool _isActive = false;
   VehicleManufacturer? _selectedManufacturer;
   String? _vehicleType;
+  int _manufacturerCurrentPage = 1;
+  bool _hasMoreManufacturers = true;
+  bool _isLoadingMoreManufacturers = false;
+  String _manufacturerSearchQuery = '';
+  final TextEditingController _manufacturerSearchController =
+      TextEditingController();
+  StateSetter? _menuSetState;
+  Timer? _searchDebounceTimer;
   // String? _bodyType;
   String? _segment;
   // bool _isCommercial = false;
@@ -320,6 +330,13 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
   }
 
   @override
+  void dispose() {
+    _manufacturerSearchController.dispose();
+    _searchDebounceTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocListener<VehicleModelBloc, VehicleModelState>(
       listenWhen: (prev, curr) => curr.maybeWhen(
@@ -472,15 +489,17 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
                       VehicleManufacturerState>(
                     builder: (context, state) {
                       return state.maybeWhen(
-                        dropdownLoaded: (manufacturers) {
+                        dropdownLoaded: (manufacturers, currentPage, hasNext) {
+                          // Update pagination state
+                          _manufacturerCurrentPage = currentPage;
+                          _hasMoreManufacturers = hasNext;
+                          _isLoadingMoreManufacturers = false;
+
                           return _buildFormRow([
-                            buildDropdownField<VehicleManufacturer>(
-                              label: 'Manufacturer',
-                              value: _selectedManufacturer,
-                              items: manufacturers,
-                              onChanged: (v) =>
-                                  setState(() => _selectedManufacturer = v),
-                              getLabel: (m) => m.name,
+                            _buildManufacturerDropdown(
+                              manufacturers: manufacturers,
+                              currentPage: currentPage,
+                              hasNext: hasNext,
                             ),
                             buildDropdownField<String>(
                               label: 'Vehicle Type',
@@ -714,6 +733,365 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
       },
       onSaved: onSaved,
     );
+  }
+
+  Widget _buildManufacturerDropdown({
+    required List<VehicleManufacturer> manufacturers,
+    required int currentPage,
+    required bool hasNext,
+  }) {
+    final GlobalKey dropdownKey = GlobalKey();
+
+    return FormField<VehicleManufacturer>(
+      initialValue: _selectedManufacturer,
+      validator: (value) => value == null ? 'Manufacturer is required' : null,
+      builder: (field) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () => _showManufacturerDropdown(
+                context,
+                dropdownKey,
+                manufacturers,
+                currentPage,
+                hasNext,
+                (value) {
+                  setState(() {
+                    _selectedManufacturer = value;
+                  });
+                  field.didChange(value);
+                },
+              ),
+              child: Container(
+                key: dropdownKey,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: field.hasError ? Colors.red : Colors.grey,
+                  ),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedManufacturer?.name ?? 'Select Manufacturer',
+                        style: TextStyle(
+                          color: _selectedManufacturer == null
+                              ? Colors.grey[600]
+                              : Colors.black,
+                        ),
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
+              ),
+            ),
+            if (field.hasError)
+              Padding(
+                padding: const EdgeInsets.only(top: 5, left: 12),
+                child: Text(
+                  field.errorText ?? '',
+                  style: const TextStyle(color: Colors.red, fontSize: 12),
+                ),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showManufacturerDropdown(
+    BuildContext context,
+    GlobalKey dropdownKey,
+    List<VehicleManufacturer> manufacturers,
+    int currentPage,
+    bool hasNext,
+    void Function(VehicleManufacturer?) onChanged,
+  ) {
+    _manufacturerSearchController.clear();
+    _manufacturerSearchQuery = '';
+    // Reset pagination if needed
+    if (manufacturers.length < 10) {
+      _manufacturerCurrentPage = 1;
+      _hasMoreManufacturers = true;
+    }
+
+    final RenderBox? renderBox =
+        dropdownKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isTablet = screenWidth > 600 && screenWidth <= 900;
+    final dropdownWidth = isTablet ? size.width : 300.0;
+
+    showMenu(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx + size.width - dropdownWidth, // Right align
+        offset.dy + size.height + 5, // Below the dropdown
+        offset.dx + size.width,
+        offset.dy + size.height + 305, // Max height
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      items: [
+        PopupMenuItem<String>(
+          enabled: false,
+          padding: EdgeInsets.zero,
+          child: StatefulBuilder(
+            builder: (context, setMenuState) {
+              // Store reference to setMenuState so we can update the menu when manufacturers change
+              _menuSetState = setMenuState;
+
+              return BlocBuilder<VehicleManufacturerBloc,
+                  VehicleManufacturerState>(
+                builder: (context, state) {
+                  List<VehicleManufacturer> currentManufacturers =
+                      manufacturers;
+                  bool isLoadingMore = _isLoadingMoreManufacturers;
+                  bool hasMore = _hasMoreManufacturers;
+                  int currentPageValue = _manufacturerCurrentPage;
+
+                  state.maybeWhen(
+                    dropdownLoaded: (data, page, next) {
+                      currentManufacturers = data;
+                      isLoadingMore = false;
+                      hasMore = next;
+                      currentPageValue = page;
+                      _isLoadingMoreManufacturers = false;
+                      _hasMoreManufacturers = next;
+                      _manufacturerCurrentPage = page;
+                      // Update the menu if it's open - defer to after build
+                      if (_menuSetState != null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (_menuSetState != null) {
+                            _menuSetState!(() {
+                              // Trigger rebuild of the menu
+                            });
+                          }
+                        });
+                      }
+                    },
+                    orElse: () {},
+                  );
+
+                  // When searching, use the API results directly (no local filtering needed)
+                  // When not searching, show all loaded manufacturers
+                  final filteredList = currentManufacturers;
+
+                  return Container(
+                    width: dropdownWidth - 2, // Account for border
+                    padding: const EdgeInsets.all(8),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Search box
+                        TextField(
+                          controller: _manufacturerSearchController,
+                          autofocus: true,
+                          decoration: InputDecoration(
+                            hintText: 'Search manufacturers...',
+                            prefixIcon: const Icon(Icons.search, size: 20),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
+                            isDense: true,
+                          ),
+                          style: const TextStyle(fontSize: 14),
+                          onChanged: (value) {
+                            setMenuState(() {
+                              _manufacturerSearchQuery = value;
+                            });
+
+                            // Cancel previous timer
+                            _searchDebounceTimer?.cancel();
+
+                            // If search query is not empty, make API call with debounce
+                            if (value.isNotEmpty) {
+                              _searchDebounceTimer =
+                                  Timer(const Duration(milliseconds: 500), () {
+                                // Reset pagination for search
+                                setState(() {
+                                  _manufacturerCurrentPage = 1;
+                                  _hasMoreManufacturers = true;
+                                  _isLoadingMoreManufacturers = false;
+                                });
+
+                                context.read<VehicleManufacturerBloc>().add(
+                                      FetchAllManufacturersForDropdown(
+                                        page: 1,
+                                        limit: 10,
+                                        loadMore: false,
+                                        searchQuery: value,
+                                      ),
+                                    );
+                              });
+                            } else {
+                              // If search is cleared, reload without search
+                              setState(() {
+                                _manufacturerCurrentPage = 1;
+                                _hasMoreManufacturers = true;
+                                _isLoadingMoreManufacturers = false;
+                              });
+
+                              context.read<VehicleManufacturerBloc>().add(
+                                    FetchAllManufacturersForDropdown(
+                                      page: 1,
+                                      limit: 10,
+                                      loadMore: false,
+                                      searchQuery: null,
+                                    ),
+                                  );
+                            }
+                          },
+                        ),
+                        const SizedBox(height: 8),
+                        // Filtered list
+                        Container(
+                          constraints: const BoxConstraints(maxHeight: 250),
+                          child: filteredList.isEmpty &&
+                                  _manufacturerSearchQuery.isNotEmpty
+                              ? const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Text(
+                                    'No manufacturers found',
+                                    style: TextStyle(
+                                        color: Colors.grey, fontSize: 14),
+                                  ),
+                                )
+                              : NotificationListener<ScrollNotification>(
+                                  onNotification: (notification) {
+                                    // Only load more if there's no active search query
+                                    if (_manufacturerSearchQuery.isEmpty &&
+                                        (notification
+                                                is ScrollUpdateNotification ||
+                                            notification
+                                                is ScrollEndNotification)) {
+                                      final metrics = notification.metrics;
+                                      // Check if list is scrollable and near the bottom
+                                      if (metrics.maxScrollExtent > 0 &&
+                                          metrics.pixels >=
+                                              metrics.maxScrollExtent - 100) {
+                                        // Get the latest state values to avoid stale data
+                                        final currentState = context
+                                            .read<VehicleManufacturerBloc>()
+                                            .state;
+                                        bool shouldLoadMore = false;
+                                        bool isCurrentlyLoading =
+                                            _isLoadingMoreManufacturers;
+
+                                        currentState.maybeWhen(
+                                          dropdownLoaded: (data, page, next) {
+                                            // Only load if hasNext is true and we're not already loading
+                                            shouldLoadMore =
+                                                next && !isCurrentlyLoading;
+                                          },
+                                          orElse: () {
+                                            shouldLoadMore = false;
+                                          },
+                                        );
+
+                                        // Only trigger if we have more to load and not already loading
+                                        if (shouldLoadMore) {
+                                          setState(() {
+                                            _isLoadingMoreManufacturers = true;
+                                            _manufacturerCurrentPage =
+                                                currentPageValue + 1;
+                                          });
+                                          context
+                                              .read<VehicleManufacturerBloc>()
+                                              .add(
+                                                FetchAllManufacturersForDropdown(
+                                                  page: currentPageValue + 1,
+                                                  limit: 10,
+                                                  loadMore: true,
+                                                ),
+                                              );
+                                        }
+                                      }
+                                    }
+                                    return false;
+                                  },
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    itemCount: filteredList.length +
+                                        (_manufacturerSearchQuery.isEmpty &&
+                                                hasMore &&
+                                                isLoadingMore
+                                            ? 1
+                                            : 0), // +1 for loading indicator
+                                    itemBuilder: (context, index) {
+                                      // Show loading indicator at the end if loading more and no search query
+                                      if (_manufacturerSearchQuery.isEmpty &&
+                                          hasMore &&
+                                          isLoadingMore &&
+                                          index == filteredList.length) {
+                                        return const Padding(
+                                          padding: EdgeInsets.all(16.0),
+                                          child: Center(
+                                            child: SizedBox(
+                                              width: 20,
+                                              height: 20,
+                                              child: CircularProgressIndicator(
+                                                  strokeWidth: 2),
+                                            ),
+                                          ),
+                                        );
+                                      }
+
+                                      final manufacturer = filteredList[index];
+                                      final isSelected =
+                                          _selectedManufacturer?.id ==
+                                              manufacturer.id;
+
+                                      return InkWell(
+                                        onTap: () {
+                                          Navigator.of(context).pop();
+                                          onChanged(manufacturer);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 12),
+                                          color: isSelected
+                                              ? Colors.grey[200]
+                                              : null,
+                                          child: Text(
+                                            manufacturer.name,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              );
+            },
+          ),
+        ),
+      ],
+    ).then((_) {
+      // Clear the menu state reference when menu is closed
+      _menuSetState = null;
+    });
   }
 
   Widget buildDropdownField<T>({

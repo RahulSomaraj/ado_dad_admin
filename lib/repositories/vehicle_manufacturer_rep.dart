@@ -154,17 +154,24 @@ class VehicleManufacturerRepository {
 
   Future<VehicleManufacturerResponse> fetchDropDownManufacturers({
     int page = 1,
-    int limit = 1000,
+    int limit = 10,
+    String? searchQuery,
   }) async {
     try {
       print(
-          '📦 Fetching manufacturers for dropdown with page=$page, limit=$limit');
+          '📦 Fetching manufacturers for dropdown with page=$page, limit=$limit, search="${searchQuery ?? 'null'}"');
+      final queryParams = <String, dynamic>{
+        'page': page,
+        'limit': limit,
+      };
+
+      if (searchQuery != null && searchQuery.isNotEmpty) {
+        queryParams['search'] = searchQuery;
+      }
+
       final response = await _dio.get(
         '/vehicle-inventory/manufacturers',
-        queryParameters: {
-          'page': page,
-          'limit': limit,
-        },
+        queryParameters: queryParams,
       );
 
       if (response.statusCode == 200) {

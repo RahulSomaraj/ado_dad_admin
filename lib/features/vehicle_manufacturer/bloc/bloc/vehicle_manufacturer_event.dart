@@ -17,8 +17,12 @@ class VehicleManufacturerEvent with _$VehicleManufacturerEvent {
   ) = UpdateVehicleManufacturer;
   const factory VehicleManufacturerEvent.deleteManufacturer(String id) =
       DeleteVehicleManufacturer;
-  const factory VehicleManufacturerEvent.fetchAllForDropdown() =
-      FetchAllManufacturersForDropdown;
+  const factory VehicleManufacturerEvent.fetchAllForDropdown({
+    @Default(1) int page,
+    @Default(10) int limit,
+    @Default(false) bool loadMore,
+    String? searchQuery,
+  }) = FetchAllManufacturersForDropdown;
   const factory VehicleManufacturerEvent.uploadCsv(
     List<int> fileBytes,
     String fileName,

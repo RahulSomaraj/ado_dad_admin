@@ -367,7 +367,7 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
           error: (message) => Center(
             child: Text(message, style: const TextStyle(color: Colors.red)),
           ),
-          dropdownLoaded: (_) => const SizedBox.shrink(),
+          dropdownLoaded: (_, __, ___) => const SizedBox.shrink(),
         );
       },
     );

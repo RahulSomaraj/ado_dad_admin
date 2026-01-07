@@ -17,9 +17,7 @@ class VehicleManufacturerBloc
     on<CreateVehicleManufacturer>(_onCreateManufacturer);
     on<UpdateVehicleManufacturer>(_onUpdateManufacturer);
     on<DeleteVehicleManufacturer>(_onDeleteManufacturer);
-    on<FetchAllManufacturersForDropdown>(
-      (event, emit) => _fetchAllForDropdown(emit),
-    );
+    on<FetchAllManufacturersForDropdown>(_fetchAllForDropdown);
     on<UploadCsv>(_onUploadCsv);
 
     // @override
@@ -93,16 +91,57 @@ class VehicleManufacturerBloc
   }
 
   Future<void> _fetchAllForDropdown(
+    FetchAllManufacturersForDropdown event,
     Emitter<VehicleManufacturerState> emit,
   ) async {
-    emit(const VehicleManufacturerState.loading());
+    // Don't show loading state if loading more (to avoid flickering)
+    if (!event.loadMore) {
+      emit(const VehicleManufacturerState.loading());
+    }
+
     try {
-      final result =
-          await repository.fetchDropDownManufacturers(page: 1, limit: 1000);
-      emit(VehicleManufacturerState.dropdownLoaded(result.data));
+      final result = await repository.fetchDropDownManufacturers(
+        page: event.page,
+        limit: event.limit,
+        searchQuery: event.searchQuery,
+      );
+
+      if (event.loadMore) {
+        // Get current state and append new data
+        final currentState = state;
+        if (currentState is _DropdownLoaded) {
+          final existingData =
+              List<VehicleManufacturer>.from(currentState.data);
+          // Get existing IDs to prevent duplicates
+          final existingIds = existingData.map((m) => m.id).toSet();
+          // Only add items that don't already exist
+          final newItems =
+              result.data.where((m) => !existingIds.contains(m.id)).toList();
+          existingData.addAll(newItems);
+          emit(VehicleManufacturerState.dropdownLoaded(
+            existingData,
+            result.page,
+            result.hasNext,
+          ));
+        } else {
+          // If state is not dropdownLoaded, just emit new data
+          emit(VehicleManufacturerState.dropdownLoaded(
+            List<VehicleManufacturer>.from(result.data),
+            result.page,
+            result.hasNext,
+          ));
+        }
+      } else {
+        // Initial load - create new mutable list
+        emit(VehicleManufacturerState.dropdownLoaded(
+          List<VehicleManufacturer>.from(result.data),
+          result.page,
+          result.hasNext,
+        ));
+      }
     } catch (e) {
       emit(VehicleManufacturerState.error(
-          "Failed to load manufacturer dropdown list"));
+          "Failed to load manufacturer dropdown list: ${e.toString()}"));
     }
   }
 

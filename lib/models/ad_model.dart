@@ -91,7 +91,9 @@ class AdModel {
             (json['propertyDetails'] is List) ? json['propertyDetails'] : [],
         year: (json['year'] is int)
             ? json['year']
-            : int.tryParse(json['year']?.toString() ?? ''),
+            : (json['year'] is double)
+                ? json['year'].toInt()
+                : int.tryParse(json['year']?.toString() ?? ''),
         isFavorite: json['isFavorite'] == true,
       );
       print('✅ Successfully parsed AdModel for ID: ${json['id']}');
@@ -214,7 +216,11 @@ class Manufacturer {
       description: json['description']?.toString() ?? '',
       logo: json['logo']?.toString() ?? '',
       website: json['website']?.toString() ?? '',
-      foundedYear: json['foundedYear'] ?? 0,
+      foundedYear: (json['foundedYear'] is int)
+          ? json['foundedYear']
+          : (json['foundedYear'] is double)
+              ? json['foundedYear'].toInt()
+              : int.tryParse(json['foundedYear']?.toString() ?? '0') ?? 0,
       headquarters: json['headquarters']?.toString() ?? '',
       isActive: json['isActive'] == true,
       isPremium: json['isPremium'] == true,
@@ -288,7 +294,11 @@ class VehicleModel {
       displayName: json['displayName']?.toString() ?? '',
       manufacturer: Manufacturer.fromJson(json['manufacturer'] ?? {}),
       vehicleType: json['vehicleType']?.toString() ?? '',
-      launchYear: json['launchYear'] ?? 0,
+      launchYear: (json['launchYear'] is int)
+          ? json['launchYear']
+          : (json['launchYear'] is double)
+              ? json['launchYear'].toInt()
+              : int.tryParse(json['launchYear']?.toString() ?? '0') ?? 0,
       segment: json['segment']?.toString() ?? '',
       bodyType: json['bodyType']?.toString() ?? '',
       images: (json['images'] is List) ? List<String>.from(json['images']) : [],
@@ -386,10 +396,26 @@ class VehicleVariant {
       engineSpecs: EngineSpecs.fromJson(json['engineSpecs'] ?? {}),
       performanceSpecs:
           PerformanceSpecs.fromJson(json['performanceSpecs'] ?? {}),
-      seatingCapacity: json['seatingCapacity'] ?? 0,
-      price: json['price'] ?? 0,
-      exShowroomPrice: json['exShowroomPrice'] ?? 0,
-      onRoadPrice: json['onRoadPrice'] ?? 0,
+      seatingCapacity: (json['seatingCapacity'] is int)
+          ? json['seatingCapacity']
+          : (json['seatingCapacity'] is double)
+              ? json['seatingCapacity'].toInt()
+              : int.tryParse(json['seatingCapacity']?.toString() ?? '0') ?? 0,
+      price: (json['price'] is int)
+          ? json['price']
+          : (json['price'] is double)
+              ? json['price'].toInt()
+              : int.tryParse(json['price']?.toString() ?? '0') ?? 0,
+      exShowroomPrice: (json['exShowroomPrice'] is int)
+          ? json['exShowroomPrice']
+          : (json['exShowroomPrice'] is double)
+              ? json['exShowroomPrice'].toInt()
+              : int.tryParse(json['exShowroomPrice']?.toString() ?? '0') ?? 0,
+      onRoadPrice: (json['onRoadPrice'] is int)
+          ? json['onRoadPrice']
+          : (json['onRoadPrice'] is double)
+              ? json['onRoadPrice'].toInt()
+              : int.tryParse(json['onRoadPrice']?.toString() ?? '0') ?? 0,
       colors: (json['colors'] is List) ? List<String>.from(json['colors']) : [],
       images: (json['images'] is List) ? List<String>.from(json['images']) : [],
       isActive: json['isActive'] == true,
@@ -589,10 +615,26 @@ class EngineSpecs {
 
   factory EngineSpecs.fromJson(Map<String, dynamic> json) {
     return EngineSpecs(
-      capacity: json['capacity'] ?? 0,
-      maxPower: json['maxPower'] ?? 0,
-      maxTorque: json['maxTorque'] ?? 0,
-      cylinders: json['cylinders'] ?? 0,
+      capacity: (json['capacity'] is int)
+          ? json['capacity']
+          : (json['capacity'] is double)
+              ? json['capacity'].toInt()
+              : int.tryParse(json['capacity']?.toString() ?? '0') ?? 0,
+      maxPower: (json['maxPower'] is int)
+          ? json['maxPower']
+          : (json['maxPower'] is double)
+              ? json['maxPower'].toInt()
+              : int.tryParse(json['maxPower']?.toString() ?? '0') ?? 0,
+      maxTorque: (json['maxTorque'] is int)
+          ? json['maxTorque']
+          : (json['maxTorque'] is double)
+              ? json['maxTorque'].toInt()
+              : int.tryParse(json['maxTorque']?.toString() ?? '0') ?? 0,
+      cylinders: (json['cylinders'] is int)
+          ? json['cylinders']
+          : (json['cylinders'] is double)
+              ? json['cylinders'].toInt()
+              : int.tryParse(json['cylinders']?.toString() ?? '0') ?? 0,
       turbocharged: json['turbocharged'] == true,
     );
   }
@@ -623,12 +665,24 @@ class PerformanceSpecs {
 
   factory PerformanceSpecs.fromJson(Map<String, dynamic> json) {
     return PerformanceSpecs(
-      mileage: json['mileage'] ?? 0,
+      mileage: (json['mileage'] is int)
+          ? json['mileage']
+          : (json['mileage'] is double)
+              ? json['mileage'].toInt()
+              : int.tryParse(json['mileage']?.toString() ?? '0') ?? 0,
       acceleration: (json['acceleration'] is double)
           ? json['acceleration']
           : (json['acceleration'] ?? 0).toDouble(),
-      topSpeed: json['topSpeed'] ?? 0,
-      fuelCapacity: json['fuelCapacity'] ?? 0,
+      topSpeed: (json['topSpeed'] is int)
+          ? json['topSpeed']
+          : (json['topSpeed'] is double)
+              ? json['topSpeed'].toInt()
+              : int.tryParse(json['topSpeed']?.toString() ?? '0') ?? 0,
+      fuelCapacity: (json['fuelCapacity'] is int)
+          ? json['fuelCapacity']
+          : (json['fuelCapacity'] is double)
+              ? json['fuelCapacity'].toInt()
+              : int.tryParse(json['fuelCapacity']?.toString() ?? '0') ?? 0,
     );
   }
 
@@ -702,10 +756,14 @@ class VehicleDetails {
         variantId: json['variantId']?.toString() ?? '',
         year: (json['year'] is int)
             ? json['year']
-            : int.tryParse(json['year']?.toString() ?? '0') ?? 0,
+            : (json['year'] is double)
+                ? json['year'].toInt()
+                : int.tryParse(json['year']?.toString() ?? '0') ?? 0,
         mileage: (json['mileage'] is int)
             ? json['mileage']
-            : int.tryParse(json['mileage']?.toString() ?? '0') ?? 0,
+            : (json['mileage'] is double)
+                ? json['mileage'].toInt()
+                : int.tryParse(json['mileage']?.toString() ?? '0') ?? 0,
         transmissionTypeId: json['transmissionTypeId']?.toString() ?? '',
         fuelTypeId: json['fuelTypeId']?.toString() ?? '',
         color: json['color']?.toString() ?? '',

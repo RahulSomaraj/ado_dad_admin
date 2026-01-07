@@ -36,6 +36,22 @@ class UserRepository {
     }
   }
 
+  Future<UserModel> fetchUserById(String userId) async {
+    try {
+      final response = await _dio.get('/users/$userId');
+
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data);
+      } else {
+        throw Exception("Failed to load user");
+      }
+    } on DioException catch (e) {
+      throw Exception(DioErrorHandler.handleError(e));
+    } catch (e) {
+      throw Exception("Unexpected error");
+    }
+  }
+
   Future<void> deleteUser(String userId) async {
     try {
       final response = await _dio.delete('/users/$userId');

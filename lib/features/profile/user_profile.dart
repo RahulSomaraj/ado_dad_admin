@@ -285,19 +285,7 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
       // Try to fetch the latest user data from API to get countryCode
       try {
         final userRepository = UserRepository();
-        final userResponse =
-            await userRepository.fetchAllUsers(page: 1, limit: 1000);
-        final userFromApi = userResponse.users.firstWhere(
-          (user) => user.id == userId,
-          orElse: () => UserModel(
-            id: userId,
-            name: userName!,
-            email: userEmail!,
-            phoneNumber: userPhone ?? '',
-            userType: userType ?? 'SR',
-          ),
-        );
-        currentUser = userFromApi;
+        currentUser = await userRepository.fetchUserById(userId);
       } catch (e) {
         // If API call fails, use data from storage
         print(

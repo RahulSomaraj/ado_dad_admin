@@ -9,5 +9,8 @@ class VehicleManufacturerState with _$VehicleManufacturerState {
   ) = _Loaded;
   const factory VehicleManufacturerState.error(String message) = _Error;
   const factory VehicleManufacturerState.dropdownLoaded(
-      List<VehicleManufacturer> data) = _DropdownLoaded;
+    List<VehicleManufacturer> data,
+    int currentPage,
+    bool hasNext,
+  ) = _DropdownLoaded;
 }

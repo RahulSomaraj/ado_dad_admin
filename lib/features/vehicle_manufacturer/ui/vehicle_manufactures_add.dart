@@ -1,8 +1,7 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
-import 'package:ado_dad_admin/common/countries.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
-
+import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -29,7 +28,22 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
   bool _isActive = false;
   bool _isPremium = false;
 
-  String? _country;
+  List<String> _countryList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCountries();
+  }
+
+  Future<void> _loadCountries() async {
+    List<String> countries =
+        CountryService().getAll().map((country) => country.name).toList();
+
+    setState(() {
+      _countryList = countries;
+    });
+  }
 
   @override
   void dispose() {
@@ -272,14 +286,14 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     //       : null,
                     // ),
                     DropdownButtonFormField<String>(
-                      value: _country,
+                      value: _origincountry,
                       decoration: InputDecoration(
                         labelText: 'Country',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
-                      items: countryList
+                      items: _countryList
                           .map((country) => DropdownMenuItem(
                                 value: country,
                                 child: Text(country),
