@@ -27,8 +27,16 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
   String _headquarters = '';
   bool _isActive = false;
   bool _isPremium = false;
+  String? _vehicleCategory;
 
   List<String> _countryList = [];
+  static const List<String> _vehicleCategoryList = [
+    'passenger_car',
+    'two_wheeler',
+    'commercial_vehicle',
+    'luxury',
+    'suv',
+  ];
 
   @override
   void initState() {
@@ -63,6 +71,13 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
         return;
       }
 
+      if (_vehicleCategory == null || _vehicleCategory!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select a vehicle category")),
+        );
+        return;
+      }
+
       final manufacturer = VehicleManufacturer(
         id: "", // Leave empty; server should generate it
         name: _name,
@@ -75,6 +90,7 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
         headquarters: _headquarters,
         isActive: _isActive,
         isPremium: _isPremium,
+        vehicleCategory: _vehicleCategory!,
         // isDeleted: false,
         // createdAt: DateTime.now(),
         // updatedAt: DateTime.now(),
@@ -321,6 +337,36 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     _buildFormField(
                         "Headquarters", "", (v) => _headquarters = v!),
                   ]),
+                  const SizedBox(height: 15),
+                  DropdownButtonFormField<String>(
+                    value: _vehicleCategory,
+                    decoration: InputDecoration(
+                      labelText: 'Vehicle Category',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    items: _vehicleCategoryList
+                        .map((category) => DropdownMenuItem(
+                              value: category,
+                              child: Text(category),
+                            ))
+                        .toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _vehicleCategory = value;
+                      });
+                    },
+                    onSaved: (value) {
+                      _vehicleCategory = value;
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Vehicle Category is required';
+                      }
+                      return null;
+                    },
+                  ),
                   const SizedBox(height: 15),
                   CheckboxListTile(
                     value: _isActive,

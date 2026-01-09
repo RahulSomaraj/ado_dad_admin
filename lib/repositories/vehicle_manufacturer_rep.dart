@@ -65,6 +65,8 @@ class VehicleManufacturerRepository {
             "foundedYear": manufacturerData.foundedYear,
           if (manufacturerData.headquarters != null)
             "headquarters": manufacturerData.headquarters,
+          if (manufacturerData.vehicleCategory != null)
+            "vehicleCategory": manufacturerData.vehicleCategory,
           "isActive": manufacturerData.isActive,
           "isPremium": manufacturerData.isPremium,
         },
@@ -106,6 +108,8 @@ class VehicleManufacturerRepository {
             "foundedYear": manufacturerData.foundedYear,
           if (manufacturerData.headquarters != null)
             "headquarters": manufacturerData.headquarters,
+          if (manufacturerData.vehicleCategory != null)
+            "vehicleCategory": manufacturerData.vehicleCategory,
           "isActive": manufacturerData.isActive,
           "isPremium": manufacturerData.isPremium,
         },

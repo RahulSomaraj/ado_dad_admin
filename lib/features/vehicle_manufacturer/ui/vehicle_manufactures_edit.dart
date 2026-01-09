@@ -28,7 +28,15 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
   late String _originCountry;
   late bool _isActive;
   late bool _isPremium;
+  String? _vehicleCategory;
   List<String> _countryList = [];
+  static const List<String> _vehicleCategoryList = [
+    'passenger_car',
+    'two_wheeler',
+    'commercial_vehicle',
+    'luxury',
+    'suv',
+  ];
 
   @override
   void initState() {
@@ -44,6 +52,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     _originCountry = m.originCountry;
     _isActive = m.isActive;
     _isPremium = m.isPremium;
+    _vehicleCategory = m.vehicleCategory;
     _loadCountries();
   }
 
@@ -60,6 +69,13 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
+      if (_vehicleCategory == null || _vehicleCategory!.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Please select a vehicle category")),
+        );
+        return;
+      }
+
       final updated = VehicleManufacturer(
         id: widget.vehiclemanufacturer.id,
         name: _name,
@@ -72,6 +88,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
         headquarters: _headquarters,
         isActive: _isActive,
         isPremium: _isPremium,
+        vehicleCategory: _vehicleCategory!,
       );
 
       context.read<VehicleManufacturerBloc>().add(
@@ -239,6 +256,36 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                     _buildFormField("Headquarters", _headquarters,
                         (v) => _headquarters = v!),
                   ]),
+                  const SizedBox(height: 15),
+                  DropdownButtonFormField<String>(
+                    value: _vehicleCategory,
+                    decoration: InputDecoration(
+                      labelText: 'Vehicle Category',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    items: _vehicleCategoryList
+                        .map((category) => DropdownMenuItem(
+                              value: category,
+                              child: Text(category),
+                            ))
+                        .toList(),
+                    onChanged: (v) {
+                      setState(() {
+                        _vehicleCategory = v;
+                      });
+                    },
+                    onSaved: (v) {
+                      _vehicleCategory = v;
+                    },
+                    validator: (v) {
+                      if (v == null || v.isEmpty) {
+                        return 'Vehicle Category is required';
+                      }
+                      return null;
+                    },
+                  ),
                   const SizedBox(height: 15),
                   CheckboxListTile(
                     value: _isActive,
