@@ -80,8 +80,23 @@ class VehicleManufacturerRepository {
             "Failed to add vehicle manufacturer: ${response.statusMessage}");
       }
     } on DioException catch (e) {
-      if (e.response != null) {
-        throw Exception(e.response!.data['message'] ?? "API error occurred");
+      if (e.response != null && e.response!.data != null) {
+        // Try to extract error message from different possible formats
+        String? errorMessage;
+        if (e.response!.data is Map) {
+          errorMessage = e.response!.data['message'] ??
+              e.response!.data['error'] ??
+              e.response!.data['detail'] ??
+              e.response!.data.toString();
+        } else if (e.response!.data is String) {
+          errorMessage = e.response!.data;
+        } else {
+          errorMessage = e.response!.data.toString();
+        }
+        throw Exception(errorMessage ?? "API error occurred");
+      } else if (e.response != null) {
+        throw Exception(
+            "API error: ${e.response!.statusCode} ${e.response!.statusMessage ?? 'Unknown error'}");
       } else {
         throw Exception("Network error: ${e.message}");
       }
@@ -122,8 +137,23 @@ class VehicleManufacturerRepository {
             "Failed to update vehicle manufacturer: ${response.statusMessage}");
       }
     } on DioException catch (e) {
-      if (e.response != null) {
-        throw Exception(e.response!.data['message'] ?? "API error occurred");
+      if (e.response != null && e.response!.data != null) {
+        // Try to extract error message from different possible formats
+        String? errorMessage;
+        if (e.response!.data is Map) {
+          errorMessage = e.response!.data['message'] ??
+              e.response!.data['error'] ??
+              e.response!.data['detail'] ??
+              e.response!.data.toString();
+        } else if (e.response!.data is String) {
+          errorMessage = e.response!.data;
+        } else {
+          errorMessage = e.response!.data.toString();
+        }
+        throw Exception(errorMessage ?? "API error occurred");
+      } else if (e.response != null) {
+        throw Exception(
+            "API error: ${e.response!.statusCode} ${e.response!.statusMessage ?? 'Unknown error'}");
       } else {
         throw Exception("Network error: ${e.message}");
       }

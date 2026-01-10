@@ -127,19 +127,31 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
           loaded: (response) {
             _showSuccessPopup(context, "Manufacturer updated successfully.");
           },
+          error: (message) {
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(message),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
           orElse: () {},
         );
       },
       child: BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildHeaderSection(),
-                const SizedBox(height: 30),
-                _buildUpdateForm(state),
-              ],
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 30),
+                  _buildUpdateForm(state),
+                ],
+              ),
             ),
           );
         },
@@ -224,6 +236,7 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                   _buildFormRow([
                     DropdownButtonFormField<String>(
                       value: _originCountry,
+                      isExpanded: true,
                       decoration: InputDecoration(
                         labelText: 'Country',
                         border: OutlineInputBorder(
@@ -232,7 +245,10 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                       items: _countryList
                           .map((country) => DropdownMenuItem(
                                 value: country,
-                                child: Text(country),
+                                child: Text(
+                                  country,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ))
                           .toList(),
                       onChanged: (v) =>

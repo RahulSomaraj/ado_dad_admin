@@ -178,14 +178,16 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
       },
       child: BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
         builder: (context, state) {
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                _buildHeaderSection(),
-                const SizedBox(height: 30),
-                _buildVehicleManufactureForm(state),
-              ],
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 30),
+                  _buildVehicleManufactureForm(state),
+                ],
+              ),
             ),
           );
         },
@@ -303,6 +305,7 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     // ),
                     DropdownButtonFormField<String>(
                       value: _origincountry,
+                      isExpanded: true,
                       decoration: InputDecoration(
                         labelText: 'Country',
                         border: OutlineInputBorder(
@@ -312,7 +315,10 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                       items: _countryList
                           .map((country) => DropdownMenuItem(
                                 value: country,
-                                child: Text(country),
+                                child: Text(
+                                  country,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ))
                           .toList(),
                       onChanged: (value) =>
