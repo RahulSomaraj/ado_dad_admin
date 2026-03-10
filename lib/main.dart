@@ -4,6 +4,7 @@ import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/features/banner/bloc/banner_bloc.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_bloc.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
+import 'package:ado_dad_admin/features/notification/bloc/bloc/notification_bloc.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_bloc.dart';
 import 'package:ado_dad_admin/features/showroom/bloc/showroom_ads_bloc.dart';
 import 'package:ado_dad_admin/features/users/bloc/user_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:ado_dad_admin/features/reports/bloc/reports_bloc.dart';
 import 'package:ado_dad_admin/repositories/ads_rep.dart';
 import 'package:ado_dad_admin/repositories/auth_rep.dart';
 import 'package:ado_dad_admin/repositories/banner_rep.dart';
+import 'package:ado_dad_admin/repositories/notification_repo.dart';
 import 'package:ado_dad_admin/repositories/showroom_rep.dart';
 import 'package:ado_dad_admin/repositories/user_rep.dart';
 import 'package:ado_dad_admin/repositories/vehicle_manufacturer_rep.dart';
@@ -109,6 +111,10 @@ class MyApp extends StatelessWidget {
           create: (context) =>
               ReportsBloc(reportsRepository: ReportsRepository()),
         ),
+        BlocProvider(
+          create: (context) => NotificationBloc(
+              notificationRepository: NotificationRepository()),
+        )
       ],
       child: BlocListener<AuthBloc, AuthState>(
           listener: (context, state) {

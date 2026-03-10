@@ -6,6 +6,7 @@ import 'package:ado_dad_admin/features/banner/ui/banner_upload_page.dart';
 import 'package:ado_dad_admin/features/dashboard/admin_ads_dashboard.dart';
 import 'package:ado_dad_admin/features/dashboard/role_based_dashboard.dart';
 import 'package:ado_dad_admin/features/login/ui/login.dart';
+import 'package:ado_dad_admin/features/notification/ui/notification.dart';
 import 'package:ado_dad_admin/features/profile/user_profile.dart';
 import 'package:ado_dad_admin/features/showroom/ui/showroom_add.dart';
 import 'package:ado_dad_admin/features/showroom/ui/showroom_detail_view.dart';
@@ -31,7 +32,7 @@ import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart'; // ✅ consistent path
 import 'package:ado_dad_admin/models/vehicle_variant/vehicle_variant_response_model.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Notification;
 import 'package:go_router/go_router.dart';
 
 class AppRoutes {
@@ -65,8 +66,7 @@ class AppRoutes {
           _noTransitionRoute('/reports', const ReportList()),
           _noTransitionRoute('/banners', const BannerPage()),
           _noTransitionRoute('/upload-banners', const BannerUploadPage()),
-          _noTransitionRoute(
-              '/notifications', const Center(child: Text("Noti Management"))),
+          _noTransitionRoute('/notifications', Notification()),
           GoRoute(
             path: '/edit-user',
             pageBuilder: (context, state) {
