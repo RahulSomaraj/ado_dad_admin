@@ -12,6 +12,12 @@ part 'vehicle_manufacturer_bloc.freezed.dart';
 class VehicleManufacturerBloc
     extends Bloc<VehicleManufacturerEvent, VehicleManufacturerState> {
   final VehicleManufacturerRepository repository;
+
+  /// Optional active/inactive filter, set by the list page before dispatching
+  /// [FetchAllVehicleManufacturers]. Kept as a settable field (not an event
+  /// param) to avoid regenerating the freezed event. null = all statuses.
+  bool? statusFilter;
+
   VehicleManufacturerBloc({required this.repository}) : super(_Initial()) {
     on<FetchAllVehicleManufacturers>(_onFetchAllVehicleManufacturers);
     on<CreateVehicleManufacturer>(_onCreateManufacturer);
@@ -33,6 +39,7 @@ class VehicleManufacturerBloc
         searchQuery:
             event.searchQuery?.isNotEmpty == true ? event.searchQuery : null,
         category: event.category?.isNotEmpty == true ? event.category : null,
+        isActive: statusFilter,
       );
       emit(VehicleManufacturerState.loaded(result));
     } catch (e) {

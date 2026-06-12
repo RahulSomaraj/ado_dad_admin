@@ -1,6 +1,7 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/vehicle_categories.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/inventory_filter_bar.dart';
 import 'package:ado_dad_admin/features/widgets/list_page.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _horizontalScrollController = ScrollController();
   String? _selectedCategory;
+  String? _status; // 'true' | 'false' | null
   int rowsPerPage = 10;
 
   @override
@@ -71,19 +73,22 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
     }
   }
 
-  void _onCategoryChanged(String? category) {
-    setState(() => _selectedCategory = category);
+  /// Single entry point: pushes current search + category + status into the
+  /// bloc (status via the bloc's settable field) and refetches from page 1.
+  void _dispatch({int page = 1}) {
+    final bloc = context.read<VehicleManufacturerBloc>();
+    bloc.statusFilter = _status == null ? null : _status == 'true';
     final searchQuery = _searchController.text.trim().isEmpty
         ? null
         : _searchController.text.trim();
-    context.read<VehicleManufacturerBloc>().add(
-          _createFetchEvent(
-            page: 1,
-            limit: rowsPerPage,
-            searchQuery: searchQuery,
-            category: category,
-          ),
-        );
+    bloc.add(
+      _createFetchEvent(
+        page: page,
+        limit: rowsPerPage,
+        searchQuery: searchQuery,
+        category: _selectedCategory,
+      ),
+    );
   }
 
   @override
@@ -97,22 +102,47 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
             breadcrumb: "Home / Vehicle Manufacturers",
             title: "Vehicle Manufacturers",
             subtitle: "Manage manufacturer catalog",
-            searchHint: "Search manufacturers…",
-            searchController: _searchController,
-            onSearch: (query) {
-              final searchQuery = query.trim().isEmpty ? null : query.trim();
-              context.read<VehicleManufacturerBloc>().add(
-                    _createFetchEvent(
-                      page: 1,
-                      limit: rowsPerPage,
-                      searchQuery: searchQuery,
-                      category: _selectedCategory,
-                    ),
-                  );
-            },
-            trailing: _buildCategoryDropdown(),
             addLabel: "Add manufacturer",
             onAdd: () => context.push('/add-vehiclemanufacturer'),
+          ),
+          const SizedBox(height: 14),
+          InventoryFilterBar(
+            searchController: _searchController,
+            searchHint: "Search manufacturers…",
+            onSearch: (_) => _dispatch(),
+            searchActive: _searchController.text.trim().isNotEmpty,
+            dropdowns: [
+              InventoryDropdownFilter(
+                label: "Category",
+                allLabel: "All categories",
+                value: _selectedCategory,
+                options: kVehicleCategories
+                    .map((c) => InventoryFilterOption(c.value, c.label))
+                    .toList(),
+                onChanged: (v) {
+                  setState(() => _selectedCategory = v);
+                  _dispatch();
+                },
+              ),
+              InventoryDropdownFilter(
+                label: "Status",
+                allLabel: "All statuses",
+                value: _status,
+                options: kStatusFilterOptions,
+                onChanged: (v) {
+                  setState(() => _status = v);
+                  _dispatch();
+                },
+              ),
+            ],
+            onReset: () {
+              _searchController.clear();
+              setState(() {
+                _selectedCategory = null;
+                _status = null;
+              });
+              _dispatch();
+            },
           ),
           const SizedBox(height: 16),
           Container(
@@ -121,37 +151,6 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
             child: _buildCompanyList(),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryDropdown() {
-    return Container(
-      height: 40,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: DropdownButton<String>(
-        value: _selectedCategory,
-        hint: Text('All categories',
-            style:
-                GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
-        isDense: true,
-        underline: const SizedBox.shrink(),
-        icon: const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
-        style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
-        items: [
-          const DropdownMenuItem<String>(
-              value: null, child: Text('All categories')),
-          ...kVehicleCategories.map((c) => DropdownMenuItem<String>(
-                value: c.value,
-                child: Text(c.label),
-              )),
-        ],
-        onChanged: _onCategoryChanged,
       ),
     );
   }
@@ -208,17 +207,7 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
     );
   }
 
-  void _fetchPage(int page) {
-    final searchQuery = _searchController.text.trim().isEmpty
-        ? null
-        : _searchController.text.trim();
-    context.read<VehicleManufacturerBloc>().add(_createFetchEvent(
-          page: page,
-          limit: rowsPerPage,
-          searchQuery: searchQuery,
-          category: _selectedCategory,
-        ));
-  }
+  void _fetchPage(int page) => _dispatch(page: page);
 
   Widget _statusBox(Widget child) => Padding(
         padding: const EdgeInsets.all(48),

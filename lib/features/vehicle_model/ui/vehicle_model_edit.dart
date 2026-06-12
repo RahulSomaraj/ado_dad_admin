@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/form_kit.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:ado_dad_admin/models/vehicle_model/fuel_transmission_models.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
@@ -364,22 +365,26 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
             state.maybeWhen(loading: () => true, orElse: () => false);
 
         return SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 30),
-                _buildForm(isLoading, state),
-                const SizedBox(height: 50), // Add bottom padding
-              ],
-            ),
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormHeaderBar(
+                breadcrumb: "Vehicle Models / Edit",
+                title: "Edit Model",
+                onBack: () => context.pop(),
+              ),
+              const SizedBox(height: 16),
+              _buildForm(isLoading, state),
+              const SizedBox(height: 50),
+            ],
           ),
         );
       },
     );
   }
 
+  // ignore: unused_element
   Widget _buildHeader() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -420,25 +425,33 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
         constraints: BoxConstraints(
           maxWidth: isTablet ? screenWidth - 32 : 900,
         ),
-        child: Card(
-          elevation: 5,
-          color: AppColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: EdgeInsets.all(isTablet ? 16.0 : 20.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  _row(
-                    _text('Model Name',
-                        initial: _name, onSaved: (v) => _name = v ?? ''),
-                    _text('Display Name',
-                        initial: _displayName,
-                        onSaved: (v) => _displayName = v ?? ''),
-                  ),
-                  const SizedBox(height: 15),
+        child: Container(
+          decoration: formCardDecoration(),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormHeaderStrip(
+                icon: Icons.directions_car_outlined,
+                title: _displayName.isNotEmpty ? _displayName : "Model",
+                subtitle: "Edit model details",
+              ),
+              Padding(
+                padding: EdgeInsets.all(isTablet ? 16.0 : 20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FormSectionTitle("Basics"),
+                      _row(
+                        _text('Model Name',
+                            initial: _name, onSaved: (v) => _name = v ?? ''),
+                        _text('Display Name',
+                            initial: _displayName,
+                            onSaved: (v) => _displayName = v ?? ''),
+                      ),
+                      const SizedBox(height: 15),
                   _row(
                     _text('Description',
                         initial: _description,
@@ -578,8 +591,8 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
                     child: ElevatedButton(
                       onPressed: isLoading ? null : _save,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8)),
@@ -596,9 +609,11 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -607,41 +622,22 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
 
   // ————— helpers —————
 
-  Widget _row(Widget left, Widget right) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
-
-    if (isTablet) {
-      return Column(
-        children: [
-          left,
-          const SizedBox(height: 15),
-          right,
-        ],
-      );
-    }
-
-    return Row(
-      children: [
-        Expanded(child: left),
-        const SizedBox(width: 16),
-        Expanded(child: right)
-      ],
-    );
-  }
+  Widget _row(Widget left, Widget right) => TwoColGrid([left, right]);
 
   Widget _text(String label,
       {String? initial,
       FormFieldSetter<String?>? onSaved,
       bool required = true}) {
-    return TextFormField(
-      initialValue: initial ?? '',
-      decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
-      validator: (v) =>
-          (required && (v == null || v.isEmpty)) ? '$label is required' : null,
-      onSaved: onSaved,
+    return LabeledField(
+      label: label,
+      child: TextFormField(
+        initialValue: initial ?? '',
+        decoration: formInputDecoration("Enter ${label.toLowerCase()}"),
+        validator: (v) => (required && (v == null || v.isEmpty))
+            ? '$label is required'
+            : null,
+        onSaved: onSaved,
+      ),
     );
   }
 

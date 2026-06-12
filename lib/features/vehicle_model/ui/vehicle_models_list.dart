@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/inventory_filter_bar.dart';
 import 'package:ado_dad_admin/features/widgets/list_page.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
@@ -37,6 +38,39 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
   StateSetter? _menuSetState;
   Timer? _searchDebounceTimer;
   int rowsPerPage = 10;
+  String? _status; // 'true' | 'false' | null
+  String? _vehicleType;
+
+  static const List<String> _vehicleTypeOptions = [
+    'SUV',
+    'Sedan',
+    'Truck',
+    'Coupe',
+    'Hatchback',
+    'Convertible',
+    'two-wheeler',
+    'MUV',
+    'Compact SUV',
+    'Sub-Compact SUV',
+  ];
+
+  /// Single dispatch path: pushes search + status + vehicleType into the bloc
+  /// (via settable fields) and fetches either all models or the selected
+  /// manufacturer's models, from the given [page].
+  void _dispatch({int page = 1}) {
+    final bloc = context.read<VehicleModelBloc>();
+    final search = _searchController.text.trim();
+    bloc.statusFilter = _status == null ? null : _status == 'true';
+    bloc.vehicleTypeFilter = _vehicleType;
+    bloc.searchFilter = search.isEmpty ? null : search;
+    if (_selectedManufacturerId == null) {
+      bloc.add(FetchAllVehicleModels(
+          page: page, limit: rowsPerPage, searchQuery: search));
+    } else {
+      bloc.add(VehicleModelEvent.fetchByManufacturer(_selectedManufacturerId!,
+          page: page, limit: rowsPerPage));
+    }
+  }
 
   @override
   void initState() {
@@ -155,25 +189,49 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
             breadcrumb: "Home / Vehicle Models",
             title: "Vehicle Models",
             subtitle: "Manage model catalog",
-            searchHint: "Search models…",
-            searchController: _searchController,
-            onSearch: (query) {
-              if (_selectedManufacturerId == null) {
-                context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
-                    page: 1,
-                    limit: rowsPerPage,
-                    searchQuery: query.isNotEmpty ? query : ''));
-              } else {
-                context.read<VehicleModelBloc>().add(
-                    VehicleModelEvent.fetchByManufacturer(
-                        _selectedManufacturerId!,
-                        page: 1,
-                        limit: rowsPerPage));
-              }
-            },
-            trailing: _buildManufacturerFilterTrigger(),
             addLabel: "Add model",
             onAdd: () => context.push('/add-vehiclemodel'),
+          ),
+          const SizedBox(height: 14),
+          InventoryFilterBar(
+            searchController: _searchController,
+            searchHint: "Search models…",
+            onSearch: (_) => _dispatch(),
+            searchActive: _searchController.text.trim().isNotEmpty,
+            trailing: _buildManufacturerFilterTrigger(),
+            dropdowns: [
+              InventoryDropdownFilter(
+                label: "Vehicle type",
+                allLabel: "All types",
+                value: _vehicleType,
+                options: _vehicleTypeOptions
+                    .map((t) => InventoryFilterOption(t, t))
+                    .toList(),
+                onChanged: (v) {
+                  setState(() => _vehicleType = v);
+                  _dispatch();
+                },
+              ),
+              InventoryDropdownFilter(
+                label: "Status",
+                allLabel: "All statuses",
+                value: _status,
+                options: kStatusFilterOptions,
+                onChanged: (v) {
+                  setState(() => _status = v);
+                  _dispatch();
+                },
+              ),
+            ],
+            onReset: () {
+              _searchController.clear();
+              setState(() {
+                _status = null;
+                _vehicleType = null;
+                _selectedManufacturerId = null;
+              });
+              _dispatch();
+            },
           ),
           const SizedBox(height: 16),
           Container(
@@ -350,9 +408,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                                         setState(() {
                                           _selectedManufacturerId = null;
                                         });
-                                        context.read<VehicleModelBloc>().add(
-                                            FetchAllVehicleModels(
-                                                page: 1, limit: rowsPerPage));
+                                        _dispatch();
                                       },
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
@@ -393,11 +449,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                                         _selectedManufacturerId =
                                             manufacturer.id;
                                       });
-                                      context.read<VehicleModelBloc>().add(
-                                          VehicleModelEvent.fetchByManufacturer(
-                                              manufacturer.id,
-                                              page: 1,
-                                              limit: rowsPerPage));
+                                      _dispatch();
                                     },
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
@@ -495,17 +547,7 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
     );
   }
 
-  void _fetchModelsPage(int page) {
-    if (_selectedManufacturerId == null) {
-      context
-          .read<VehicleModelBloc>()
-          .add(FetchAllVehicleModels(page: page, limit: rowsPerPage));
-    } else {
-      context.read<VehicleModelBloc>().add(
-          VehicleModelEvent.fetchByManufacturer(_selectedManufacturerId!,
-              page: page, limit: rowsPerPage));
-    }
-  }
+  void _fetchModelsPage(int page) => _dispatch(page: page);
 
   Widget _statusBox(Widget child) => Padding(
         padding: const EdgeInsets.all(48),

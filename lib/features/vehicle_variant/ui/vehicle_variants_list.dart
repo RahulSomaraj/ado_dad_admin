@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/features/widgets/inventory_filter_bar.dart';
 import 'package:ado_dad_admin/features/widgets/list_page.dart';
 import 'package:ado_dad_admin/models/vehicle_variant/variant_list_item.dart';
 import 'package:ado_dad_admin/repositories/vehicle_variant_rep.dart';
@@ -29,6 +30,7 @@ class _VehicleVariantsListState extends State<VehicleVariantsList> {
   bool _loading = true;
   String? _error;
   String _search = '';
+  String? _status; // 'true' | 'false' | null
   int _page = 1;
   int _limit = 10;
   int _totalPages = 1;
@@ -59,6 +61,7 @@ class _VehicleVariantsListState extends State<VehicleVariantsList> {
         page: _page,
         limit: _limit,
         searchQuery: _search,
+        isActive: _status == null ? null : _status == 'true',
       );
       if (!mounted) return;
       setState(() {
@@ -102,9 +105,35 @@ class _VehicleVariantsListState extends State<VehicleVariantsList> {
             subtitle: _loading
                 ? "Loading…"
                 : "$_total variant${_total == 1 ? '' : 's'} across all models",
-            searchHint: "Search variants…",
+          ),
+          const SizedBox(height: 14),
+          InventoryFilterBar(
             searchController: _searchController,
+            searchHint: "Search variants…",
             onSearch: _onSearch,
+            searchActive: _search.isNotEmpty,
+            dropdowns: [
+              InventoryDropdownFilter(
+                label: "Status",
+                allLabel: "All statuses",
+                value: _status,
+                options: kStatusFilterOptions,
+                onChanged: (v) {
+                  setState(() => _status = v);
+                  _page = 1;
+                  _fetch();
+                },
+              ),
+            ],
+            onReset: () {
+              _searchController.clear();
+              setState(() {
+                _search = '';
+                _status = null;
+                _page = 1;
+              });
+              _fetch();
+            },
           ),
           const SizedBox(height: 16),
           Container(

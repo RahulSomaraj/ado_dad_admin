@@ -12,6 +12,7 @@ class VehicleManufacturerRepository {
     int limit = 10,
     String? searchQuery,
     String? category,
+    bool? isActive,
   }) async {
     try {
       final queryParams = <String, dynamic>{
@@ -25,6 +26,10 @@ class VehicleManufacturerRepository {
 
       if (category != null && category.isNotEmpty) {
         queryParams['category'] = category;
+      }
+
+      if (isActive != null) {
+        queryParams['isActive'] = isActive;
       }
       final response = await _dio.get(
         '/vehicle-inventory/manufacturers',

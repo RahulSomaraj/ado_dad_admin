@@ -1,6 +1,7 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/vehicle_categories.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/form_kit.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -137,22 +138,31 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
       child: BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
         builder: (context, state) {
           return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _buildHeaderSection(),
-                  const SizedBox(height: 30),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                  FormHeaderBar(
+                    breadcrumb: "Manufacturers / Edit",
+                    title: "Edit Manufacturer",
+                    onBack: () {
+                      context.pop();
+                      context
+                          .read<VehicleManufacturerBloc>()
+                          .add(FetchAllVehicleManufacturers());
+                    },
+                  ),
+                  const SizedBox(height: 16),
                   _buildUpdateForm(state),
                 ],
               ),
-            ),
           );
         },
       ),
     );
   }
 
+  // ignore: unused_element
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -190,16 +200,6 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     );
   }
 
-  Widget _buildFormRow(List<Widget> children) {
-    return Row(
-      children: [
-        Expanded(child: children[0]),
-        const SizedBox(width: 16),
-        Expanded(child: children[1]),
-      ],
-    );
-  }
-
   Widget _buildUpdateForm(VehicleManufacturerState state) {
     final isLoading = state.maybeWhen(
       loading: () => true,
@@ -209,47 +209,61 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Card(
-          elevation: 5,
-          color: AppColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
+        child: Container(
+          decoration: formCardDecoration(),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormHeaderStrip(
+                icon: Icons.factory_outlined,
+                initials: _displayname.isNotEmpty
+                    ? _displayname.characters.first.toUpperCase()
+                    : null,
+                image: (_logo.isNotEmpty &&
+                        (_logo.startsWith('http')))
+                    ? NetworkImage(_logo)
+                    : null,
+                title: _displayname.isNotEmpty ? _displayname : "Manufacturer",
+                subtitle: "Edit brand details",
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FormSectionTitle("Brand details"),
+                      _buildFormRow([
+                        _buildFormField(
+                            "Manufacturer Name", _name, (v) => _name = v!),
+                        _buildFormField("Display Name", _displayname,
+                            (v) => _displayname = v!),
+                      ]),
+                      const SizedBox(height: 15),
                   _buildFormRow([
-                    _buildFormField(
-                        "Manufacturer Name", _name, (v) => _name = v!),
-                    _buildFormField(
-                        "Display Name", _displayname, (v) => _displayname = v!),
-                  ]),
-                  const SizedBox(height: 15),
-                  _buildFormRow([
-                    DropdownButtonFormField<String>(
-                      value: _originCountry,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: 'Country',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                    LabeledField(
+                      label: "Origin country",
+                      child: DropdownButtonFormField<String>(
+                        value: _originCountry,
+                        isExpanded: true,
+                        decoration: formInputDecoration("Select country"),
+                        items: _countryList
+                            .map((country) => DropdownMenuItem(
+                                  value: country,
+                                  child: Text(
+                                    country,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (v) =>
+                            setState(() => _originCountry = v ?? ''),
+                        validator: (v) => (v == null || v.isEmpty)
+                            ? 'Country is required'
+                            : null,
                       ),
-                      items: _countryList
-                          .map((country) => DropdownMenuItem(
-                                value: country,
-                                child: Text(
-                                  country,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ))
-                          .toList(),
-                      onChanged: (v) =>
-                          setState(() => _originCountry = v ?? ''),
-                      validator: (v) => (v == null || v.isEmpty)
-                          ? 'Country is required'
-                          : null,
                     ),
                     _buildFormField(
                         "Description", _description, (v) => _description = v!),
@@ -266,103 +280,104 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                     _buildFormField("Headquarters", _headquarters,
                         (v) => _headquarters = v!),
                   ]),
-                  const SizedBox(height: 15),
-                  DropdownButtonFormField<String>(
-                    value: _vehicleCategory,
-                    decoration: InputDecoration(
-                      labelText: 'Vehicle Category',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    items: kVehicleCategories
-                        .map((category) => DropdownMenuItem(
-                              value: category.value,
-                              child: Text(category.label),
-                            ))
-                        .toList(),
-                    onChanged: (v) {
-                      setState(() {
-                        _vehicleCategory = v;
-                      });
-                    },
-                    onSaved: (v) {
-                      _vehicleCategory = v;
-                    },
-                    validator: (v) {
-                      if (v == null || v.isEmpty) {
-                        return 'Vehicle Category is required';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  CheckboxListTile(
-                    value: _isActive,
-                    onChanged: (v) => setState(() => _isActive = v ?? true),
-                    title: const Text("Is Active"),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  const SizedBox(height: 15),
-                  CheckboxListTile(
-                    value: _isPremium,
-                    onChanged: (v) => setState(() => _isPremium = v ?? false),
-                    title: const Text("Is Premium"),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                  ),
                   const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
-                      onPressed: isLoading ? null : _updateVehicleManufacturer,
-                      child: isLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : const Text("Update Manufacturer",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                  const FormSectionTitle("Classification & status"),
+                  LabeledField(
+                    label: "Vehicle category",
+                    child: DropdownButtonFormField<String>(
+                      value: _vehicleCategory,
+                      isExpanded: true,
+                      decoration: formInputDecoration("Select category"),
+                      items: kVehicleCategories
+                          .map((category) => DropdownMenuItem(
+                                value: category.value,
+                                child: Text(category.label),
+                              ))
+                          .toList(),
+                      onChanged: (v) {
+                        setState(() {
+                          _vehicleCategory = v;
+                        });
+                      },
+                      onSaved: (v) {
+                        _vehicleCategory = v;
+                      },
+                      validator: (v) {
+                        if (v == null || v.isEmpty) {
+                          return 'Vehicle Category is required';
+                        }
+                        return null;
+                      },
                     ),
                   ),
-                ],
+                  const SizedBox(height: 14),
+                  _toggleRow(),
+                  const SizedBox(height: 22),
+                  PrimaryFormButton(
+                    label: "Update Manufacturer",
+                    loading: isLoading,
+                    onPressed: _updateVehicleManufacturer,
+                  ),
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
 
+  Widget _toggleRow() {
+    return Wrap(
+      spacing: 24,
+      runSpacing: 8,
+      children: [
+        _switchTile("Active", _isActive, (v) => setState(() => _isActive = v)),
+        _switchTile(
+            "Premium", _isPremium, (v) => setState(() => _isPremium = v)),
+      ],
+    );
+  }
+
+  Widget _switchTile(String label, bool value, ValueChanged<bool> onChanged) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Switch(
+          value: value,
+          activeColor: AppColors.accent,
+          onChanged: onChanged,
+        ),
+        const SizedBox(width: 4),
+        Text(label,
+            style:
+                const TextStyle(fontSize: 14, color: AppColors.textPrimary)),
+      ],
+    );
+  }
+
+  Widget _buildFormRow(List<Widget> children) => TwoColGrid(children);
+
   Widget _buildFormField(
     String label,
     String initialValue,
     Function(String?) onSaved,
   ) {
-    return TextFormField(
-      initialValue: initialValue,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    return LabeledField(
+      label: label,
+      child: TextFormField(
+        initialValue: initialValue,
+        decoration: formInputDecoration("Enter ${label.toLowerCase()}"),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return "$label is required";
+          }
+          return null;
+        },
+        onSaved: onSaved,
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "$label is required";
-        }
-        return null;
-      },
-      onSaved: onSaved,
     );
   }
 }

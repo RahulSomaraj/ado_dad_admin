@@ -11,6 +11,14 @@ part 'vehicle_model_bloc.freezed.dart';
 
 class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
   final VehicleModelRepository repository;
+
+  /// Optional list filters set by the list page before dispatching a fetch.
+  /// Kept as settable fields (not event params) to avoid regenerating the
+  /// freezed events. null = no filter.
+  bool? statusFilter;
+  String? vehicleTypeFilter;
+  String? searchFilter;
+
   VehicleModelBloc({required this.repository})
       : super(const VehicleModelState.initial()) {
     on<FetchAllVehicleModels>(_onFetchAllVehicleModels);
@@ -32,6 +40,8 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
         page: event.page,
         limit: event.limit,
         searchQuery: event.searchQuery ?? '',
+        isActive: statusFilter,
+        vehicleType: vehicleTypeFilter,
       );
       emit(VehicleModelState.loaded(result));
     } catch (e) {
@@ -66,6 +76,9 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
         event.manufacturerId,
         page: event.page,
         limit: event.limit,
+        searchQuery: searchFilter,
+        isActive: statusFilter,
+        vehicleType: vehicleTypeFilter,
       );
       emit(VehicleModelState.loaded(result));
     } catch (e) {

@@ -16,6 +16,8 @@ class VehicleModelRepository {
     int page = 1,
     int limit = 10,
     String? searchQuery,
+    bool? isActive,
+    String? vehicleType,
   }) async {
     try {
       final response = await _dio.get(
@@ -24,6 +26,9 @@ class VehicleModelRepository {
           'page': page,
           'limit': limit,
           'search': searchQuery,
+          if (isActive != null) 'isActive': isActive,
+          if (vehicleType != null && vehicleType.isNotEmpty)
+            'vehicleType': vehicleType,
         },
       );
 
@@ -180,6 +185,9 @@ class VehicleModelRepository {
     String manufacturerId, {
     int page = 1,
     int limit = 10,
+    String? searchQuery,
+    bool? isActive,
+    String? vehicleType,
   }) async {
     try {
       final response = await _dio.get(
@@ -188,6 +196,11 @@ class VehicleModelRepository {
           'manufacturerId': manufacturerId,
           'page': page,
           'limit': limit,
+          if (searchQuery != null && searchQuery.isNotEmpty)
+            'search': searchQuery,
+          if (isActive != null) 'isActive': isActive,
+          if (vehicleType != null && vehicleType.isNotEmpty)
+            'vehicleType': vehicleType,
         },
       );
 

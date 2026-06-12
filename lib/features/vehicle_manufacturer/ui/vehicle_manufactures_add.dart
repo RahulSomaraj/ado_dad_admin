@@ -1,6 +1,7 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/vehicle_categories.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/form_kit.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
@@ -173,15 +174,38 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
       child: BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
         builder: (context, state) {
           return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _buildHeaderSection(),
-                  const SizedBox(height: 30),
-                  _buildVehicleManufactureForm(state),
-                ],
-              ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FormHeaderBar(
+                  breadcrumb: "Manufacturers / Add",
+                  title: "Add Manufacturer",
+                  onBack: () {
+                    if (mounted) {
+                      context.pop();
+                      context
+                          .read<VehicleManufacturerBloc>()
+                          .add(FetchAllVehicleManufacturers());
+                    }
+                  },
+                  actions: [
+                    OutlinedButton.icon(
+                      onPressed: _uploadCsvFile,
+                      icon: const Icon(Icons.upload_file, size: 16),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.textSecondary,
+                        side: const BorderSide(color: AppColors.border),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 12),
+                      ),
+                      label: const Text("Upload CSV"),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                _buildVehicleManufactureForm(state),
+              ],
             ),
           );
         },
@@ -189,6 +213,7 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -255,24 +280,32 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Card(
-          elevation: 5,
-          color: AppColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _manufactureFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildFormRow([
-                    _buildFormField("Manufacturer Name", "", (v) => _name = v!),
-                    _buildFormField(
-                        "Display Name", "", (v) => _displayname = v!),
-                  ]),
-                  const SizedBox(height: 15),
+        child: Container(
+          decoration: formCardDecoration(),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const FormHeaderStrip(
+                icon: Icons.factory_outlined,
+                title: "New manufacturer",
+                subtitle: "Add a brand to the vehicle catalog",
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _manufactureFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const FormSectionTitle("Brand details"),
+                      _buildFormRow([
+                        _buildFormField(
+                            "Manufacturer Name", "", (v) => _name = v!),
+                        _buildFormField(
+                            "Display Name", "", (v) => _displayname = v!),
+                      ]),
+                      const SizedBox(height: 15),
                   _buildFormRow([
                     // _buildDropdownField(
                     //     "Origin Country", _origincountry, _countryList, (v) {
@@ -297,31 +330,28 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     //       ? 'Country is required'
                     //       : null,
                     // ),
-                    DropdownButtonFormField<String>(
-                      value: _origincountry,
-                      isExpanded: true,
-                      decoration: InputDecoration(
-                        labelText: 'Country',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                    LabeledField(
+                      label: "Origin country",
+                      child: DropdownButtonFormField<String>(
+                        value: _origincountry,
+                        isExpanded: true,
+                        decoration: formInputDecoration("Select country"),
+                        items: _countryList
+                            .map((country) => DropdownMenuItem(
+                                  value: country,
+                                  child: Text(
+                                    country,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ))
+                            .toList(),
+                        onChanged: (value) =>
+                            setState(() => _origincountry = value),
+                        validator: (value) => (value == null || value.isEmpty)
+                            ? 'Country is required'
+                            : null,
                       ),
-                      items: _countryList
-                          .map((country) => DropdownMenuItem(
-                                value: country,
-                                child: Text(
-                                  country,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ))
-                          .toList(),
-                      onChanged: (value) =>
-                          setState(() => _origincountry = value),
-                      validator: (value) => (value == null || value.isEmpty)
-                          ? 'Country is required'
-                          : null,
                     ),
-
                     _buildFormField(
                         "Description", "", (v) => _description = v!),
                   ]),
@@ -337,67 +367,50 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     _buildFormField(
                         "Headquarters", "", (v) => _headquarters = v!),
                   ]),
-                  const SizedBox(height: 15),
-                  DropdownButtonFormField<String>(
-                    value: _vehicleCategory,
-                    decoration: InputDecoration(
-                      labelText: 'Vehicle Category',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    items: kVehicleCategories
-                        .map((category) => DropdownMenuItem(
-                              value: category.value,
-                              child: Text(category.label),
-                            ))
-                        .toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _vehicleCategory = value;
-                      });
-                    },
-                    onSaved: (value) {
-                      _vehicleCategory = value;
-                    },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Vehicle Category is required';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 15),
-                  CheckboxListTile(
-                    value: _isActive,
-                    onChanged: (value) {
-                      if (mounted) {
-                        setState(() => _isActive = value ?? true);
-                      }
-                    },
-                    title: const Text("Is Active"),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                  ),
-                  const SizedBox(height: 15),
-                  CheckboxListTile(
-                    value: _isPremium,
-                    onChanged: (value) {
-                      if (mounted) {
-                        setState(() => _isPremium = value ?? false);
-                      }
-                    },
-                    title: const Text("Is Premium"),
-                    controlAffinity: ListTileControlAffinity.leading,
-                    contentPadding: EdgeInsets.zero,
-                  ),
                   const SizedBox(height: 20),
+                  const FormSectionTitle("Classification & status"),
+                  LabeledField(
+                    label: "Vehicle category",
+                    child: DropdownButtonFormField<String>(
+                      value: _vehicleCategory,
+                      isExpanded: true,
+                      decoration: formInputDecoration("Select category"),
+                      items: kVehicleCategories
+                          .map((category) => DropdownMenuItem(
+                                value: category.value,
+                                child: Text(category.label),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _vehicleCategory = value;
+                        });
+                      },
+                      onSaved: (value) {
+                        _vehicleCategory = value;
+                      },
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Vehicle Category is required';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(height: 14),
+                  _toggleRow(
+                    activeValue: _isActive,
+                    onActive: (v) => setState(() => _isActive = v),
+                    premiumValue: _isPremium,
+                    onPremium: (v) => setState(() => _isPremium = v),
+                  ),
+                  const SizedBox(height: 22),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -422,21 +435,50 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                             ),
                     ),
                   ),
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFormRow(List<Widget> children) {
-    return Row(
+  Widget _buildFormRow(List<Widget> children) => TwoColGrid(children);
+
+  Widget _toggleRow({
+    required bool activeValue,
+    required ValueChanged<bool> onActive,
+    required bool premiumValue,
+    required ValueChanged<bool> onPremium,
+  }) {
+    return Wrap(
+      spacing: 24,
+      runSpacing: 8,
       children: [
-        Expanded(child: children[0]),
-        const SizedBox(width: 16),
-        Expanded(child: children[1]),
+        _switchTile("Active", activeValue, onActive),
+        _switchTile("Premium", premiumValue, onPremium),
+      ],
+    );
+  }
+
+  Widget _switchTile(String label, bool value, ValueChanged<bool> onChanged) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Switch(
+          value: value,
+          activeColor: AppColors.accent,
+          onChanged: (v) {
+            if (mounted) onChanged(v);
+          },
+        ),
+        const SizedBox(width: 4),
+        Text(label,
+            style: const TextStyle(
+                fontSize: 14, color: AppColors.textPrimary)),
       ],
     );
   }
@@ -444,20 +486,23 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
   Widget _buildFormField(
     String label,
     String initialValue,
-    Function(String?) onSaved,
-  ) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    Function(String?) onSaved, {
+    bool required = true,
+  }) {
+    return LabeledField(
+      label: label,
+      child: TextFormField(
+        decoration: formInputDecoration("Enter ${label.toLowerCase()}"),
+        validator: required
+            ? (value) {
+                if (value == null || value.isEmpty) {
+                  return "$label is required";
+                }
+                return null;
+              }
+            : null,
+        onSaved: onSaved,
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "$label is required";
-        }
-        return null;
-      },
-      onSaved: onSaved,
     );
   }
 

@@ -47,6 +47,7 @@ class VehicleVariantRepository {
     int limit = 10,
     String? searchQuery,
     String? modelId,
+    bool? isActive,
   }) async {
     try {
       final response = await _dio.get(
@@ -57,6 +58,7 @@ class VehicleVariantRepository {
           if (searchQuery != null && searchQuery.trim().isNotEmpty)
             'search': searchQuery.trim(),
           if (modelId != null && modelId.isNotEmpty) 'modelId': modelId,
+          if (isActive != null) 'isActive': isActive,
         },
       );
 

@@ -1,5 +1,6 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/bloc/bloc/vehicle_variant_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/form_kit.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
 import 'package:ado_dad_admin/models/vehicle_variant/variant_model.dart'
     as variant_model;
@@ -192,12 +193,18 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
           orElse: () {},
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeaderSection(),
-            const SizedBox(height: 24),
+            FormHeaderBar(
+              breadcrumb:
+                  "Variants / ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
+              title: "Edit Variant",
+              onBack: () => context.pop(),
+            ),
+            const SizedBox(height: 16),
             _buildForm(),
           ],
         ),
@@ -205,6 +212,7 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -257,19 +265,28 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
-        child: Card(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          color: AppColors.primaryColor,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+        child: Container(
+          decoration: formCardDecoration(),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormHeaderStrip(
+                icon: Icons.tune,
+                title: widget.variant.displayName.isNotEmpty
+                    ? widget.variant.displayName
+                    : widget.variant.name,
+                subtitle:
+                    "For ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _sectionLabel("Basics"),
                   _buildRow([
                     _buildTextField(
                       "Name",
@@ -519,7 +536,8 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                       },
                     ),
                   ]),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
+                  _sectionLabel("Engine & performance"),
                   _buildRow([
                     _buildTextField(
                       "Seating Capacity",
@@ -549,7 +567,8 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                       initialValue: _maxTorque?.toString() ?? '',
                     ),
                   ]),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
+                  _sectionLabel("Pricing"),
                   _buildRow([
                     _buildTextField(
                       "Mileage (kmpl)",
@@ -572,8 +591,8 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                     child: ElevatedButton(
                       onPressed: _submitForm,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -582,30 +601,26 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                       child: const Text(
                         "Update Variant",
                         style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
                   )
-                ],
+                    ],
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _buildRow(List<Widget> children) {
-    return Row(
-      children: [
-        Expanded(child: children[0]),
-        const SizedBox(width: 16),
-        Expanded(child: children[1]),
-      ],
-    );
-  }
+  Widget _sectionLabel(String text) => FormSectionTitle(text);
+
+  Widget _buildRow(List<Widget> children) => TwoColGrid(children);
 
   Widget _buildTextField(
     String label,
@@ -613,16 +628,16 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
     TextInputType? keyboardType,
     String? initialValue,
   }) {
-    return TextFormField(
-      initialValue: initialValue,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    return LabeledField(
+      label: label,
+      child: TextFormField(
+        initialValue: initialValue,
+        decoration: formInputDecoration("Enter ${label.toLowerCase()}"),
+        keyboardType: keyboardType,
+        validator: (value) =>
+            value == null || value.isEmpty ? '$label is required' : null,
+        onSaved: onSaved,
       ),
-      keyboardType: keyboardType,
-      validator: (value) =>
-          value == null || value.isEmpty ? '$label is required' : null,
-      onSaved: onSaved,
     );
   }
 
@@ -631,6 +646,7 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
       children: [
         Checkbox(
           value: _isActive,
+          activeColor: AppColors.accent,
           onChanged: (value) {
             setState(() {
               _isActive = value ?? false;
@@ -639,7 +655,7 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
         ),
         const Text(
           'Active',
-          style: TextStyle(fontSize: 16),
+          style: TextStyle(fontSize: 14),
         ),
       ],
     );
@@ -652,35 +668,33 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
     required ValueChanged<T?> onChanged,
     required String Function(T) getLabel,
   }) {
-    return DropdownButtonFormField<T>(
-      value: value,
-      items: items
-          .map((item) => DropdownMenuItem<T>(
-                value: item,
-                child: Text(
-                  getLabel(item),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ))
-          .toList(),
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    return LabeledField(
+      label: label,
+      child: DropdownButtonFormField<T>(
+        value: value,
+        items: items
+            .map((item) => DropdownMenuItem<T>(
+                  value: item,
+                  child: Text(
+                    getLabel(item),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ))
+            .toList(),
+        onChanged: onChanged,
+        decoration: formInputDecoration("Select ${label.toLowerCase()}"),
+        validator: (val) => val == null ? '$label is required' : null,
+        isExpanded: true,
+        selectedItemBuilder: (BuildContext context) {
+          return items.map<Widget>((T item) {
+            return Text(
+              getLabel(item),
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.black),
+            );
+          }).toList();
+        },
       ),
-      validator: (val) => val == null ? '$label is required' : null,
-      isExpanded: true,
-      selectedItemBuilder: (BuildContext context) {
-        return items.map<Widget>((T item) {
-          return Text(
-            getLabel(item),
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.black),
-          );
-        }).toList();
-      },
     );
   }
 }
