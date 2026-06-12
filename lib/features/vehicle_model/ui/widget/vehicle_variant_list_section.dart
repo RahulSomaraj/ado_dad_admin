@@ -212,6 +212,7 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
           }
 
           final variants = responseToShow.data;
+          final isEmpty = variants.isEmpty;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -251,6 +252,9 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                       ),
               ),
               const SizedBox(height: 12),
+              if (isEmpty)
+                _buildEmptyState()
+              else ...[
               LayoutBuilder(builder: (context, constraints) {
                 return Card(
                   elevation: 3,
@@ -286,6 +290,8 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                             // DataColumn(label: Text("Vehicle Model")),
                             DataColumn(label: Text("Fuel")),
                             DataColumn(label: Text("Transmission")),
+                            DataColumn(label: Text("Engine")),
+                            DataColumn(label: Text("Mileage")),
                             DataColumn(label: Text("Price")),
                             DataColumn(label: Text("Active")),
                             DataColumn(
@@ -296,6 +302,10 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                             ),
                           ],
                           rows: variants.map((v) {
+                            final cc =
+                                v.engineSpecs?.capacity ??
+                                    v.engineSpecs?.displacement;
+                            final mileage = v.performanceSpecs?.mileage;
                             return DataRow(cells: [
                               DataCell(Text(v.name)),
                               DataCell(Text(v.displayName)),
@@ -303,6 +313,9 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                               DataCell(Text(v.fuelType?.displayName ?? "-")),
                               DataCell(
                                   Text(v.transmissionType?.displayName ?? "-")),
+                              DataCell(Text(cc != null ? "$cc cc" : "-")),
+                              DataCell(Text(
+                                  mileage != null ? "$mileage kmpl" : "-")),
                               DataCell(Text("₹${v.price}")),
                               DataCell(Text(v.isActive ? "Yes" : "No")),
                               DataCell(
@@ -310,6 +323,22 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     IconButton(
+                                      tooltip: 'View',
+                                      icon: const Icon(Icons.visibility_outlined,
+                                          color:
+                                              Color.fromARGB(255, 59, 59, 59)),
+                                      onPressed: () {
+                                        context.push(
+                                          '/view-vehiclevariant',
+                                          extra: {
+                                            'variant': v,
+                                            'vehicleModel': widget.vehicleModel,
+                                          },
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      tooltip: 'Edit',
                                       icon: const Icon(Icons.edit,
                                           color:
                                               Color.fromARGB(255, 59, 59, 59)),
@@ -324,6 +353,7 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                                       },
                                     ),
                                     IconButton(
+                                      tooltip: 'Delete',
                                       icon: const Icon(Icons.delete,
                                           color:
                                               Color.fromARGB(255, 20, 20, 20)),
@@ -358,7 +388,7 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                             ))
                         .toList(),
                     onChanged: (val) {
-                      if (mounted) return;
+                      if (!mounted) return;
                       if (val != null) {
                         _fetchPage(widget.modelId, 1, val);
                       }
@@ -381,9 +411,63 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
                   ),
                 ],
               )
+              ],
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(vertical: 48, horizontal: 20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.surfaceAlt,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.tune, color: AppColors.textMuted),
+          ),
+          const SizedBox(height: 14),
+          const Text(
+            "No variants yet",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 4),
+          const Text(
+            "Add a variant or upload a CSV to get started.",
+            style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.accent,
+              foregroundColor: Colors.white,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            onPressed: () => context.push(
+              '/add-vehiclevariant',
+              extra: widget.vehicleModel,
+            ),
+            icon: const Icon(Icons.add, size: 18),
+            label: const Text("Add Variant"),
+          ),
+        ],
       ),
     );
   }

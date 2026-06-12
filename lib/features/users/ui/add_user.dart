@@ -7,6 +7,7 @@ import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddUser extends StatefulWidget {
   const AddUser({super.key});
@@ -220,16 +221,15 @@ class _AddUserState extends State<AddUser> {
       child: BlocBuilder<UserBloc, UserState>(
         builder: (context, state) {
           return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _buildHeaderSection(),
-                  const SizedBox(height: 30),
-                  _buildUserForm(state),
-                  const SizedBox(height: 50), // Add bottom padding
-                ],
-              ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderSection(),
+                const SizedBox(height: 16),
+                _buildUserForm(state),
+                const SizedBox(height: 30),
+              ],
             ),
           );
         },
@@ -238,111 +238,212 @@ class _AddUserState extends State<AddUser> {
   }
 
   Widget _buildHeaderSection() {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(12),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () {
+            context.pop();
+            context.read<UserBloc>().add(FetchAllUsers());
+          },
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
+        const SizedBox(width: 4),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new,
-                  color: AppColors.blackColor),
-              onPressed: () {
-                context.pop();
-                context.read<UserBloc>().add(FetchAllUsers());
-              },
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Add User",
-                style: TextStyle(
-                    color: AppColors.blackColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
+            Text("Users / Add",
+                style: GoogleFonts.inter(
+                    fontSize: 12, color: AppColors.textMuted)),
+            const SizedBox(height: 2),
+            Text("Add user",
+                style: GoogleFonts.inter(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
           ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserForm(UserState state) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 640),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _photoBlock(),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _userFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _twoCol([
+                        _labeled("Name",
+                            _buildFormField("Name", _nameController)),
+                        _labeled(
+                            "Email",
+                            _buildFormField("Email", _emailController,
+                                isEmail: true)),
+                        _labeled("Phone number", _buildPhoneField()),
+                        _labeled(
+                            "Password",
+                            _buildFormField("Password", _passwordController,
+                                isPassword: true)),
+                        _labeled("User type",
+                            _buildDropdownField("User Type", _userType)),
+                      ]),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: state is UserLoading ? null : _addUser,
+                          child: state is UserLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text("Add user",
+                                  style: GoogleFonts.inter(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Center _buildUserForm(UserState state) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width > 600
-              ? 600
-              : MediaQuery.of(context).size.width - 32,
-        ),
-        child: Card(
-          elevation: 5,
-          color: AppColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: EdgeInsets.all(
-                MediaQuery.of(context).size.width > 600 ? 20 : 16),
-            child: Form(
-              key: _userFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildFormField(
-                    "Name",
-                    _nameController,
+  Widget _photoBlock() {
+    final img = _photoImage();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceAlt,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: _pickProfilePicture,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.accentSoft,
+                    image: img,
                   ),
-                  const SizedBox(height: 15),
-                  _buildFormField("Email", _emailController, isEmail: true),
-                  const SizedBox(height: 15),
-                  _buildPhoneField(),
-                  const SizedBox(height: 15),
-                  _buildFormField(
-                    "Password",
-                    _passwordController,
-                    isPassword: true,
+                  child: img == null
+                      ? const Icon(Icons.person_outline,
+                          color: AppColors.accent, size: 28)
+                      : null,
+                ),
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        shape: BoxShape.circle,
+                        border:
+                            Border.all(color: AppColors.surface, width: 2)),
+                    child: const Icon(Icons.camera_alt,
+                        color: Colors.white, size: 11),
                   ),
-                  const SizedBox(height: 15),
-                  _buildDropdownField("User Type", _userType),
-                  const SizedBox(height: 15),
-                  _buildProfilePictureSection(),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
-                      onPressed: state is UserLoading ? null : _addUser,
-                      child: state is UserLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : const Text("Add User",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-        ),
+          const SizedBox(width: 14),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Profile photo",
+                  style: GoogleFonts.inter(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 2),
+              Text("Optional · PNG or JPG, tap to add",
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textSecondary)),
+            ],
+          ),
+        ],
       ),
     );
+  }
+
+  DecorationImage? _photoImage() {
+    if (_profilePicBytes != null) {
+      return DecorationImage(
+          image: MemoryImage(_profilePicBytes!), fit: BoxFit.cover);
+    }
+    return null;
+  }
+
+  Widget _labeled(String label, Widget field) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text(label,
+                style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary)),
+          ),
+          field,
+        ],
+      );
+
+  Widget _twoCol(List<Widget> items) {
+    return LayoutBuilder(builder: (context, c) {
+      if (c.maxWidth < 480) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int i = 0; i < items.length; i++) ...[
+              items[i],
+              if (i != items.length - 1) const SizedBox(height: 16),
+            ],
+          ],
+        );
+      }
+      const gap = 16.0;
+      final w = (c.maxWidth - gap) / 2;
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        children: items.map((it) => SizedBox(width: w, child: it)).toList(),
+      );
+    });
   }
 
 //   Widget _buildFormField(
@@ -365,7 +466,7 @@ class _AddUserState extends State<AddUser> {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: label,
+        hintText: "Enter $label",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         suffixIcon: isPassword
             ? IconButton(
@@ -418,7 +519,7 @@ class _AddUserState extends State<AddUser> {
       controller: _phoneController,
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
-        labelText: "Phone Number",
+        hintText: "Phone number",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         prefixIcon: _buildCountryCodeSelector(),
       ),
@@ -477,7 +578,6 @@ class _AddUserState extends State<AddUser> {
     return DropdownButtonFormField<String>(
       value: selectedValue,
       decoration: InputDecoration(
-        labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       items: _userTypeMap.values

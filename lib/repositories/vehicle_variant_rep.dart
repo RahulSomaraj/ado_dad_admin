@@ -1,3 +1,4 @@
+import 'package:ado_dad_admin/models/vehicle_variant/variant_list_item.dart';
 import 'package:ado_dad_admin/models/vehicle_variant/variant_model.dart'
     as variant_model;
 import 'package:ado_dad_admin/models/vehicle_variant/vehicle_variant_response_model.dart';
@@ -32,6 +33,41 @@ class VehicleVariantRepository {
       }
     } on DioException catch (e) {
       throw Exception('Dio error: ${e.message}');
+    } catch (e) {
+      throw Exception('Unexpected error: $e');
+    }
+  }
+
+  /// Cross-model variant listing for the standalone Variants page.
+  ///
+  /// Defensively parses each row (model name + specs) so a single orphaned
+  /// variant can't break the whole list. Reuses the same backend endpoint.
+  Future<VariantListPage> fetchAllVariantsDetailed({
+    int page = 1,
+    int limit = 10,
+    String? searchQuery,
+    String? modelId,
+  }) async {
+    try {
+      final response = await _dio.get(
+        '/vehicle-inventory/variants',
+        queryParameters: {
+          'page': page,
+          'limit': limit,
+          if (searchQuery != null && searchQuery.trim().isNotEmpty)
+            'search': searchQuery.trim(),
+          if (modelId != null && modelId.isNotEmpty) 'modelId': modelId,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return VariantListPage.fromJson(
+            response.data as Map<String, dynamic>);
+      }
+      throw Exception(
+          'Failed to fetch variants. Status code: ${response.statusCode}');
+    } on DioException catch (e) {
+      throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
       throw Exception('Unexpected error: $e');
     }

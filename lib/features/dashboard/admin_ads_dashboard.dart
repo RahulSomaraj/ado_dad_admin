@@ -31,11 +31,14 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   void initState() {
     super.initState();
     _loadUserType();
-    // Apply (or clear) the owner filter on the shared bloc, then fetch.
-    final bloc = context.read<AdsBloc>();
-    bloc.userFilter = widget.userId;
-    _filterUserName = widget.userName;
-    bloc.add(const AdsEvent.fetchAllAds());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final bloc = context.read<AdsBloc>();
+        bloc.userFilter = widget.userId;
+        _filterUserName = widget.userName;
+        bloc.add(const AdsEvent.fetchAllAds());
+      }
+    });
   }
 
   void _clearUserFilter() {

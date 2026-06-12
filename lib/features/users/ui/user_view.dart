@@ -32,10 +32,14 @@ class _UserViewState extends State<UserView> {
   @override
   void initState() {
     super.initState();
-    context.read<UserAdsBloc>().add(
-          UserAdsEvent.fetchUserAds(
-              userId: _user.id, page: 1, limit: _itemsPerPage),
-        );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<UserAdsBloc>().add(
+              UserAdsEvent.fetchUserAds(
+                  userId: _user.id, page: 1, limit: _itemsPerPage),
+            );
+      }
+    });
     _loadProfile();
   }
 

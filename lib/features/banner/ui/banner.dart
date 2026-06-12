@@ -22,7 +22,11 @@ class _BannerPageState extends State<BannerPage> {
   @override
   void initState() {
     super.initState();
-    context.read<BannerBloc>().add(const FetchAllBanners(page: 1, limit: 10));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<BannerBloc>().add(const FetchAllBanners(page: 1, limit: 10));
+      }
+    });
   }
 
   @override

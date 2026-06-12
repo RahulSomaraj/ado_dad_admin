@@ -33,6 +33,8 @@ import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_model_view.dart'
 import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_models_list.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_add.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_edit.dart';
+import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_view.dart';
+import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variants_list.dart';
 import 'package:ado_dad_admin/models/banner_model.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
@@ -74,6 +76,7 @@ class AppRoutes {
               '/create-ad', const Center(child: Text("Listing Management"))),
           _noTransitionRoute('/vehicle-models', VehicleModelsList()),
           _noTransitionRoute('/add-vehiclemodel', VehicleModelAdd()),
+          _noTransitionRoute('/vehicle-variants', const VehicleVariantsList()),
           _noTransitionRoute(
               '/vehicle-manufactures', VehicleManufacturesList()),
           _noTransitionRoute(
@@ -207,6 +210,27 @@ class AppRoutes {
               final vehicleModel = extra['vehicleModel'] as VehicleModel;
               return NoTransitionPage(
                 child: VehicleVariantEdit(
+                  variant: variant,
+                  vehicleModel: vehicleModel,
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/view-vehiclevariant',
+            pageBuilder: (context, state) {
+              final extra = state.extra;
+              if (extra is! Map<String, dynamic>) {
+                return const NoTransitionPage(
+                  child: Center(
+                    child: Text("⚠️ Variant data missing or invalid."),
+                  ),
+                );
+              }
+              final variant = extra['variant'] as VehicleVariantResponseModel;
+              final vehicleModel = extra['vehicleModel'] as VehicleModel;
+              return NoTransitionPage(
+                child: VehicleVariantView(
                   variant: variant,
                   vehicleModel: vehicleModel,
                 ),

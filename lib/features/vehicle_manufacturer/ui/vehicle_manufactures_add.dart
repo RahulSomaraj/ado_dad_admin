@@ -1,4 +1,5 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/common/vehicle_categories.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:country_picker/country_picker.dart';
@@ -30,13 +31,6 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
   String? _vehicleCategory;
 
   List<String> _countryList = [];
-  static const List<String> _vehicleCategoryList = [
-    'passenger_car',
-    'two_wheeler',
-    'commercial_vehicle',
-    'luxury',
-    'suv',
-  ];
 
   @override
   void initState() {
@@ -352,10 +346,10 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    items: _vehicleCategoryList
+                    items: kVehicleCategories
                         .map((category) => DropdownMenuItem(
-                              value: category,
-                              child: Text(category),
+                              value: category.value,
+                              child: Text(category.label),
                             ))
                         .toList(),
                     onChanged: (value) {

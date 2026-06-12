@@ -22,8 +22,12 @@ class _ReportListState extends State<ReportList> {
   @override
   void initState() {
     super.initState();
-    context.read<ReportsBloc>().add(const FetchReportStats());
-    context.read<ReportsBloc>().add(const FetchReports());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<ReportsBloc>().add(const FetchReportStats());
+        context.read<ReportsBloc>().add(const FetchReports());
+      }
+    });
   }
 
   @override

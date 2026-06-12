@@ -1,4 +1,5 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/common/vehicle_categories.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/widgets/list_page.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
@@ -142,16 +143,13 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
         underline: const SizedBox.shrink(),
         icon: const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
         style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
-        items: const [
-          DropdownMenuItem<String>(value: null, child: Text('All categories')),
-          DropdownMenuItem<String>(
-              value: 'two_wheeler', child: Text('Two Wheeler')),
-          DropdownMenuItem<String>(
-              value: 'passenger_car', child: Text('Passenger Car')),
-          DropdownMenuItem<String>(
-              value: 'commercial_vehicle', child: Text('Commercial Vehicle')),
-          DropdownMenuItem<String>(value: 'luxury', child: Text('Luxury')),
-          DropdownMenuItem<String>(value: 'suv', child: Text('SUV')),
+        items: [
+          const DropdownMenuItem<String>(
+              value: null, child: Text('All categories')),
+          ...kVehicleCategories.map((c) => DropdownMenuItem<String>(
+                value: c.value,
+                child: Text(c.label),
+              )),
         ],
         onChanged: _onCategoryChanged,
       ),

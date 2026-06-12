@@ -142,10 +142,13 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
   @override
   void initState() {
     super.initState();
-    // Fetch fuel types and transmission types from API
-    context.read<VehicleVariantBloc>().add(
-          const VehicleVariantEvent.fetchOptions(),
-        );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<VehicleVariantBloc>().add(
+              const VehicleVariantEvent.fetchOptions(),
+            );
+      }
+    });
   }
 
   @override
@@ -205,23 +208,29 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
             const SizedBox(width: 8),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: const Text(
-                "Add Vehicle Variant",
-                style: TextStyle(
-                  color: AppColors.blackColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Add Vehicle Variant",
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "Model: ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12.5,
+                    ),
+                  ),
+                ],
               ),
             ),
-            // const Spacer(),
-            // Text(
-            //   "Model: ${widget.vehicleModel.displayName}",
-            //   style: const TextStyle(
-            //     color: AppColors.blackColor,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
           ],
         ),
       ),

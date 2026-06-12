@@ -27,8 +27,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
   @override
   void initState() {
     super.initState();
-    // Ensure ads data is available for the recent-listings table.
-    context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
+      }
+    });
     _loadStats();
   }
 

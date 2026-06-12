@@ -1,127 +1,9 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
-import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/common/widgets/drawer.dart';
 import 'package:flutter/material.dart';
-
-// class AdminLayout extends StatefulWidget {
-//   final Widget child;
-
-//   const AdminLayout({super.key, required this.child});
-
-//   @override
-//   State<AdminLayout> createState() => _AdminLayoutState();
-// }
-
-// class _AdminLayoutState extends State<AdminLayout> {
-//   String? userType;
-//   String? userName;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _loadUserData();
-//   }
-
-//   Future<void> _loadUserData() async {
-//     final name = await getUserName();
-//     final type = await getUserType();
-//     setState(() {
-//       userType = type;
-//       userName = name;
-//     });
-//   }
-
-//   String getInitials(String name) {
-//     List<String> words = name.trim().split(RegExp(r'\s+'));
-//     if (words.length > 1) {
-//       return "${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}";
-//     }
-//     return words[0][0].toUpperCase();
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     if (userType == null) {
-//       return const Scaffold(
-//         body: Center(child: CircularProgressIndicator()),
-//       );
-//     }
-
-//     return Scaffold(
-//       backgroundColor: AppColors.scaffoldColor,
-//       body: Row(
-//         children: [
-//           SizedBox(
-//             width: 250,
-//             child: AdminDrawer(userType: userType),
-//           ),
-//           Expanded(
-//             child: LayoutBuilder(
-//               builder: (context, constraints) {
-//                 return SingleChildScrollView(
-//                   child: ConstrainedBox(
-//                     constraints:
-//                         BoxConstraints(minHeight: constraints.maxHeight),
-//                     child: Column(
-//                       crossAxisAlignment: CrossAxisAlignment.stretch,
-//                       mainAxisAlignment: MainAxisAlignment.start,
-//                       children: [
-//                         _buildProfileBar(),
-//                         widget.child,
-//                       ],
-//                     ),
-//                   ),
-//                 );
-//               },
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _buildProfileBar() {
-//     return Container(
-//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-//       decoration: BoxDecoration(
-//         color: Colors.white,
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.1),
-//             blurRadius: 6,
-//             spreadRadius: 2,
-//             offset: const Offset(0, 2),
-//           ),
-//         ],
-//       ),
-//       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.end,
-//         children: [
-//           Text(
-//             userName ?? "Guest",
-//             style: AppTextStyle.title2Textstyle.copyWith(
-//               color: Colors.black,
-//             ),
-//           ),
-//           const SizedBox(width: 10),
-//           CircleAvatar(
-//             radius: 22,
-//             backgroundColor: Colors.black,
-//             child: Text(
-//               getInitials(userName ?? "Guest"),
-//               style: const TextStyle(
-//                 fontSize: 20,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.white,
-//               ),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-// }
+import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AdminLayout extends StatefulWidget {
   final Widget child;
@@ -153,11 +35,44 @@ class _AdminLayoutState extends State<AdminLayout> {
     }
   }
 
-  String getInitials(String name) {
+  String _initials(String name) {
     final words = name.trim().split(RegExp(r'\s+'));
     return words.length > 1
-        ? "${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}"
+        ? '${words[0][0]}${words[1][0]}'.toUpperCase()
         : words[0][0].toUpperCase();
+  }
+
+  String _titleFromRoute(String route) {
+    if (route == '/dashboard') return 'Dashboard';
+    if (route == '/profile') return 'My Profile';
+    if (['/users', '/add-user', '/edit-user', '/view-user']
+        .contains(route)) return 'Users';
+    if (route == '/advertisements') return 'Advertisements';
+    if ([
+      '/vehicle-manufactures',
+      '/add-vehiclemanufacturer',
+      '/edit-vehicle_manufacturer',
+      '/view-vehicle_manufacturer',
+    ].contains(route)) return 'Manufacturers';
+    if ([
+      '/vehicle-models',
+      '/add-vehiclemodel',
+      '/edit-vehicle_model',
+      '/view-vehicle_model',
+      '/add-vehiclevariant',
+      '/edit-vehiclevariant',
+    ].contains(route)) return 'Vehicle Models';
+    if (['/showrooms', '/add-showroom', '/edit-showroom', '/view-showroom']
+        .contains(route)) return 'Showrooms';
+    if (['/reports', '/report-detail', '/user-moderation-history']
+        .contains(route)) return 'Reports';
+    if (route == '/notifications') return 'Notifications';
+    if (['/banners', '/upload-banners', '/edit-banner']
+        .contains(route)) return 'Banners';
+    if (route == '/suspension-management') return 'Suspensions';
+    if (route == '/appeals') return 'Appeals';
+    if (route == '/moderation-settings') return 'Moderation Settings';
+    return 'Dashboard';
   }
 
   @override
@@ -169,44 +84,61 @@ class _AdminLayoutState extends State<AdminLayout> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isTablet = constraints.maxWidth < 900;
+        final route = GoRouterState.of(context).uri.toString();
+        final pageTitle = _titleFromRoute(route);
 
         return Scaffold(
-          backgroundColor: AppColors.scaffoldColor,
-          drawer: isTablet ? AdminDrawer(userType: userType) : null,
+          backgroundColor: AppColors.background,
+          drawer: isTablet
+              ? AdminDrawer(userType: userType, userName: userName)
+              : null,
           appBar: isTablet
               ? AppBar(
-                  backgroundColor: AppColors.scaffoldColor,
-                  // title: Text(userName ?? "Dashboard"),
-                  // actions: [
-                  // Text(
-                  //   userName ?? "Dashboard",
-                  //   style: AppTextStyle.title2Textstyle
-                  //       .copyWith(color: Colors.black),
-                  // ),
-                  // SizedBox(width: 20),
-                  // CircleAvatar(
-                  //   backgroundColor: Colors.black,
-                  //   radius: 20,
-                  //   child: Text(
-                  //     getInitials(userName ?? ""),
-                  //     style: const TextStyle(color: Colors.white),
-                  //   ),
-                  // ),
-                  // const SizedBox(width: 16),
-                  // ],
+                  backgroundColor: AppColors.surface,
+                  surfaceTintColor: Colors.transparent,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
+                  bottom: PreferredSize(
+                    preferredSize: const Size.fromHeight(1),
+                    child: Container(height: 1, color: AppColors.border),
+                  ),
+                  title: Text(
+                    pageTitle,
+                    style: GoogleFonts.inter(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  actions: [
+                    if (userName != null)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: CircleAvatar(
+                          radius: 16,
+                          backgroundColor: AppColors.accent,
+                          child: Text(
+                            _initials(userName!),
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 )
               : null,
           body: Row(
             children: [
               if (!isTablet)
-                SizedBox(width: 250, child: AdminDrawer(userType: userType)),
+                AdminDrawer(userType: userType, userName: userName),
               Expanded(
                 child: Column(
                   children: [
-                    // if (!isTablet) _buildProfileBar(),
-                    Expanded(
-                      child: widget.child,
-                    ),
+                    if (!isTablet) _buildTopBar(pageTitle),
+                    Expanded(child: widget.child),
                   ],
                 ),
               ),
@@ -217,29 +149,38 @@ class _AdminLayoutState extends State<AdminLayout> {
     );
   }
 
-  Widget _buildProfileBar() {
+  Widget _buildTopBar(String title) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+      height: 56,
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
-            userName ?? "Guest",
-            style: AppTextStyle.title2Textstyle.copyWith(color: Colors.black),
-          ),
-          const SizedBox(width: 10),
-          CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.black,
-            child: Text(
-              getInitials(userName ?? "Guest"),
-              style: const TextStyle(fontSize: 20, color: Colors.white),
+            title,
+            style: GoogleFonts.inter(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
             ),
           ),
+          const Spacer(),
+          if (userName != null)
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: AppColors.accent,
+              child: Text(
+                _initials(userName!),
+                style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
         ],
       ),
     );

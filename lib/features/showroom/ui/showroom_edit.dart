@@ -375,7 +375,7 @@ class _EditShowroomState extends State<EditShowroom> {
     );
   }
 
-  Center _buildUpdateForm(ShowroomState state) {
+  Widget _buildUpdateForm(ShowroomState state) {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 640),
@@ -385,53 +385,167 @@ class _EditShowroomState extends State<EditShowroom> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.border),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _showroomEditFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _fieldLabel("Showroom name"),
-                  _buildFormField(
-                      "Showroom Name", _name, (value) => _name = value!),
-                  const SizedBox(height: 16),
-                  _fieldLabel("Email"),
-                  _buildFormField("Email", _email, (value) => _email = value!,
-                      isEmail: true),
-                  const SizedBox(height: 16),
-                  _fieldLabel("Phone number"),
-                  _buildPhoneField(),
-                  const SizedBox(height: 20),
-                  _buildProfilePictureSection(),
-                  const SizedBox(height: 16),
-                  _buildChangePasswordSection(),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed:
-                          state is ShowroomLoading ? null : _updateShowroom,
-                      child: state is ShowroomLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text("Save changes",
-                              style: GoogleFonts.inter(
-                                  fontSize: 15, fontWeight: FontWeight.w600)),
-                    ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _photoBlock(),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _showroomEditFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _twoCol([
+                        _labeled(
+                            "Showroom name",
+                            _buildFormField("Showroom Name", _name,
+                                (v) => _name = v!)),
+                        _labeled(
+                            "Email",
+                            _buildFormField("Email", _email, (v) => _email = v!,
+                                isEmail: true)),
+                        _labeled("Phone number", _buildPhoneField()),
+                      ]),
+                      const SizedBox(height: 16),
+                      _buildChangePasswordSection(),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: state is ShowroomLoading
+                              ? null
+                              : _updateShowroom,
+                          child: state is ShowroomLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text("Save changes",
+                                  style: GoogleFonts.inter(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600)),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _photoBlock() {
+    final img = _photoImage();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceAlt,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: _pickProfilePicture,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.accentSoft,
+                    image: img,
+                  ),
+                  child: img == null
+                      ? const Icon(Icons.storefront_outlined,
+                          color: AppColors.accent, size: 26)
+                      : null,
+                ),
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        shape: BoxShape.circle,
+                        border:
+                            Border.all(color: AppColors.surface, width: 2)),
+                    child: const Icon(Icons.camera_alt,
+                        color: Colors.white, size: 11),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Showroom photo",
+                  style: GoogleFonts.inter(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 2),
+              Text("PNG or JPG, tap to change",
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textSecondary)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  DecorationImage? _photoImage() {
+    if (_profilePicBytes != null) {
+      return DecorationImage(
+          image: MemoryImage(_profilePicBytes!), fit: BoxFit.cover);
+    }
+    if (_currentProfilePicUrl != null &&
+        _currentProfilePicUrl!.isNotEmpty &&
+        _currentProfilePicUrl != 'default-profile-pic-url') {
+      return DecorationImage(
+          image: NetworkImage(_currentProfilePicUrl!), fit: BoxFit.cover);
+    }
+    return null;
+  }
+
+  Widget _labeled(String label, Widget field) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [_fieldLabel(label), field],
+      );
+
+  Widget _twoCol(List<Widget> items) {
+    return LayoutBuilder(builder: (context, c) {
+      if (c.maxWidth < 480) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int i = 0; i < items.length; i++) ...[
+              items[i],
+              if (i != items.length - 1) const SizedBox(height: 16),
+            ],
+          ],
+        );
+      }
+      const gap = 16.0;
+      final w = (c.maxWidth - gap) / 2;
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        children: items.map((it) => SizedBox(width: w, child: it)).toList(),
+      );
+    });
   }
 
   Widget _fieldLabel(String text) => Padding(

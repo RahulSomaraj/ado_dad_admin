@@ -383,7 +383,7 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  Center _buildUpdateForm(UserState state) {
+  Widget _buildUpdateForm(UserState state) {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 640),
@@ -393,55 +393,181 @@ class _EditUserState extends State<EditUser> {
             borderRadius: BorderRadius.circular(16),
             border: Border.all(color: AppColors.border),
           ),
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _userEditFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _fieldLabel("Name"),
-                  _buildFormField("Name", _name, (value) => _name = value!),
-                  const SizedBox(height: 16),
-                  _fieldLabel("Email"),
-                  _buildFormField("Email", _email, (value) => _email = value!,
-                      isEmail: true),
-                  const SizedBox(height: 16),
-                  _fieldLabel("Phone number"),
-                  _buildPhoneField(),
-                  const SizedBox(height: 16),
-                  _fieldLabel("User type"),
-                  _buildDropdownField("User Type", _userType),
-                  const SizedBox(height: 20),
-                  _buildProfilePictureSection(),
-                  const SizedBox(height: 16),
-                  _buildChangePasswordSection(),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: state is UserLoading ? null : _updateUser,
-                      child: state is UserLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : Text("Save changes",
-                              style: GoogleFonts.inter(
-                                  fontSize: 15, fontWeight: FontWeight.w600)),
-                    ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _photoBlock(),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _userEditFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _twoCol([
+                        _labeled("Name",
+                            _buildFormField("Name", _name, (v) => _name = v!)),
+                        _labeled(
+                            "Email",
+                            _buildFormField("Email", _email, (v) => _email = v!,
+                                isEmail: true)),
+                        _labeled("Phone number", _buildPhoneField()),
+                        _labeled("User type",
+                            _buildDropdownField("User Type", _userType)),
+                      ]),
+                      const SizedBox(height: 16),
+                      _buildChangePasswordSection(),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: state is UserLoading ? null : _updateUser,
+                          child: state is UserLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text("Save changes",
+                                  style: GoogleFonts.inter(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600)),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
+  }
+
+  Widget _photoBlock() {
+    final img = _photoImage();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceAlt,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: _pickProfilePicture,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.accentSoft,
+                    image: img,
+                  ),
+                  child: img == null
+                      ? Center(
+                          child: Text(_initials(_name),
+                              style: GoogleFonts.inter(
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20)))
+                      : null,
+                ),
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        shape: BoxShape.circle,
+                        border:
+                            Border.all(color: AppColors.surface, width: 2)),
+                    child: const Icon(Icons.camera_alt,
+                        color: Colors.white, size: 11),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Profile photo",
+                  style: GoogleFonts.inter(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 2),
+              Text("PNG or JPG, tap to change",
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textSecondary)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  DecorationImage? _photoImage() {
+    if (_profilePicBytes != null) {
+      return DecorationImage(
+          image: MemoryImage(_profilePicBytes!), fit: BoxFit.cover);
+    }
+    if (_currentProfilePicUrl != null &&
+        _currentProfilePicUrl!.isNotEmpty &&
+        _currentProfilePicUrl != 'default-profile-pic-url') {
+      return DecorationImage(
+          image: NetworkImage(_currentProfilePicUrl!), fit: BoxFit.cover);
+    }
+    return null;
+  }
+
+  Widget _labeled(String label, Widget field) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [_fieldLabel(label), field],
+      );
+
+  Widget _twoCol(List<Widget> items) {
+    return LayoutBuilder(builder: (context, c) {
+      if (c.maxWidth < 480) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int i = 0; i < items.length; i++) ...[
+              items[i],
+              if (i != items.length - 1) const SizedBox(height: 16),
+            ],
+          ],
+        );
+      }
+      const gap = 16.0;
+      final w = (c.maxWidth - gap) / 2;
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        children: items.map((it) => SizedBox(width: w, child: it)).toList(),
+      );
+    });
+  }
+
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.length > 1 && parts[0].isNotEmpty && parts[1].isNotEmpty) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts.isNotEmpty && parts[0].isNotEmpty
+        ? parts[0][0].toUpperCase()
+        : 'U';
   }
 
   Widget _fieldLabel(String text) => Padding(

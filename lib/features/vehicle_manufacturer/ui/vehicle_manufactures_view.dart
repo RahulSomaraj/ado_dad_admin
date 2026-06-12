@@ -1,4 +1,5 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
+import 'package:ado_dad_admin/common/vehicle_categories.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
@@ -264,6 +265,8 @@ class _VehicleManufacturerDetailViewState
                     onPressed: () => _uploadCsvFile(m),
                   ),
                   const SizedBox(height: 12),
+                  SizedBox(width: double.infinity, child: _editButton(m)),
+                  const SizedBox(height: 12),
                   ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.blackColor,
@@ -324,6 +327,8 @@ class _VehicleManufacturerDetailViewState
                         onPressed: () => _uploadCsvFile(m),
                       ),
                       const SizedBox(width: 12),
+                      _editButton(m),
+                      const SizedBox(width: 12),
                       ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.blackColor,
@@ -359,14 +364,15 @@ class _VehicleManufacturerDetailViewState
           spacing: 40,
           children: [
             _infoTile("Name", m.name),
+            _infoTile("Category", prettyVehicleCategory(m.vehicleCategory)),
             _infoTile("Country", m.originCountry),
-            _infoTile("Founded", m.foundedYear.toString()),
-            _infoTile("Website", m.website!),
-            _infoTile("Headquarters", m.headquarters!),
+            _infoTile("Founded", m.foundedYear?.toString() ?? '—'),
+            _infoTile("Website", _orDash(m.website)),
+            _infoTile("Headquarters", _orDash(m.headquarters)),
             _infoTile("Active", m.isActive ? "Yes" : "No"),
             _infoTile("Premium", m.isPremium ? "Yes" : "No"),
-            _infoTile("Description", m.description!),
-            _infoTile("Logo", m.logo!),
+            _infoTile("Description", _orDash(m.description)),
+            _infoTile("Logo", _orDash(m.logo)),
           ],
         ),
       ),
@@ -384,6 +390,24 @@ class _VehicleManufacturerDetailViewState
           Text(value, style: const TextStyle(fontSize: 14)),
         ],
       ),
+    );
+  }
+
+  static String _orDash(String? value) =>
+      (value == null || value.trim().isEmpty) ? '—' : value;
+
+  Widget _editButton(VehicleManufacturer m) {
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: AppColors.accent,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      icon: const Icon(Icons.edit, color: Colors.white),
+      label: const Text("Edit"),
+      onPressed: () => context.push('/edit-vehicle_manufacturer', extra: m),
     );
   }
 }
@@ -585,15 +609,42 @@ class _VehicleModelListSectionState extends State<_VehicleModelListSection> {
             final models = response.data;
 
             if (models.isEmpty) {
-              return const Text("No models found for this manufacturer.");
+              return Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    vertical: 40, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: const Column(
+                  children: [
+                    Icon(Icons.directions_car_outlined,
+                        size: 40, color: AppColors.textMuted),
+                    SizedBox(height: 12),
+                    Text("No models for this manufacturer",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w600)),
+                    SizedBox(height: 4),
+                    Text(
+                      "Add models from the Vehicle Models page, or upload a CSV above.",
+                      style: TextStyle(
+                          fontSize: 13, color: AppColors.textSecondary),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              );
             }
 
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Vehicle Models",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Text(
+                  "Vehicle Models (${response.total})",
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 12),
                 LayoutBuilder(
