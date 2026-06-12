@@ -24,7 +24,6 @@ class VehicleRepository {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print("Vehicle API Response: ${response.data}");
         if (data is List) {
           return data
               .map((vehicle) => VehicleRequest.fromJson(vehicle))
@@ -43,11 +42,8 @@ class VehicleRepository {
             "Failed to load vehicles, Status Code: ${response.statusCode}");
       }
     } on DioException catch (e) {
-      print("Dio Error: ${e.message}");
       throw Exception(DioErrorHandler.handleError(e));
-    } catch (e, stacktrace) {
-      print("Unexpected Error: $e");
-      print(stacktrace);
+    } catch (e) {
       throw Exception("Unexpected error occurred");
     }
   }
@@ -104,13 +100,11 @@ class VehicleRepository {
   Future<void> deleteVehicle(String vehicleId) async {
     try {
       final response = await _dio.delete('/vehicles/$vehicleId');
-      print('repo called:..........$vehicleId');
       if (response.statusCode == 200) {
       } else {
         throw Exception("Failed to delete Vehicle");
       }
     } on DioException catch (e) {
-      print('??????$e????????');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
       throw Exception("Unexpected error");

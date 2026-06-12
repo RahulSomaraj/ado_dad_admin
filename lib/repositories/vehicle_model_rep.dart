@@ -26,29 +26,14 @@ class VehicleModelRepository {
           'search': searchQuery,
         },
       );
-      // print('Model Datas: ${response.data}');
 
       if (response.statusCode == 200) {
-        // Add null safety check for response data
         if (response.data == null) {
           throw Exception("API returned null response");
         }
 
-        // Handle case where API returns empty data or malformed response
         if (response.data is! Map<String, dynamic>) {
           throw Exception("API returned invalid response format");
-        }
-
-        // Debug: Print first model's manufacturer data if available
-        if (response.data['data'] is List &&
-            (response.data['data'] as List).isNotEmpty) {
-          final firstModel = (response.data['data'] as List)[0];
-          if (firstModel is Map && firstModel.containsKey('manufacturer')) {
-            print(
-                '🔵 API Response - First model manufacturer: ${firstModel['manufacturer']}');
-            print(
-                '🔵 API Response - Manufacturer type: ${firstModel['manufacturer'].runtimeType}');
-          }
         }
 
         return VehicleModelResponse.fromJson(response.data);
@@ -56,11 +41,9 @@ class VehicleModelRepository {
         throw Exception("Failed to load vehicle models");
       }
     } on DioException catch (e) {
-      print("Exception on fetch of vehicle models: $e");
       throw Exception(
           'Failed to load vehicle models: ${e.response?.data ?? e.message}');
     } catch (e) {
-      print("Unexpected error in fetchAllModels: $e");
       throw Exception("Unexpected error while loading vehicle models: $e");
     }
   }
@@ -69,11 +52,8 @@ class VehicleModelRepository {
     try {
       final mimeType = lookupMimeType('image.jpg', headerBytes: fileBytes);
       final fileExtension = mimeType?.split('/').last ?? 'jpg';
-      // final fileName =
-      //     'image_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
       final fileName = '$label.$fileExtension';
 
-      // Step 1: Get presigned URL
       final signedUrlResponse = await _dio.get(
         '/upload/presigned-url',
         queryParameters: {
@@ -81,12 +61,9 @@ class VehicleModelRepository {
           'fileType': mimeType,
         },
       );
-      // print('??????????????$signedUrlResponse?????????????????');
       final signedUrl = signedUrlResponse.data['url'];
-      // print('??????????????$signedUrl?????????????????');
       if (signedUrl == null) throw Exception('No signed URL received');
 
-      // Step 2: Upload to S3
       final uploadResponse = await Dio().put(
         signedUrl,
         data: fileBytes,
@@ -95,19 +72,15 @@ class VehicleModelRepository {
           'Content-Length': fileBytes.length.toString(),
         }),
       );
-      // print('##############${uploadResponse.statusCode}##############');
       if (uploadResponse.statusCode == 200 ||
           uploadResponse.statusCode == 204) {
-        return signedUrl
-            .split('?')
-            .first; // ✅ Public URL (without query params)
+        return signedUrl.split('?').first;
       } else {
         throw Exception('Upload failed: ${uploadResponse.statusCode}');
       }
     } on DioException catch (e) {
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Unexpected error in uploadImageToS3: $e');
       throw Exception('Unexpected error: $e');
     }
   }
@@ -127,15 +100,12 @@ class VehicleModelRepository {
         uploadedUrls.add(url);
       }
     }
-    print('uploadedUrls: $uploadedUrls');
     return uploadedUrls;
   }
 
-// ✅ New: get fuel types
   Future<List<FuelType>> fetchFuelTypes() async {
     try {
       final res = await _dio.get('/vehicle-inventory/fuel-types');
-      // Expecting: { data: [ {...}, {...} ] } or directly a list
       final list = (res.data is Map && res.data['data'] is List)
           ? (res.data['data'] as List)
           : (res.data as List);
@@ -143,13 +113,11 @@ class VehicleModelRepository {
           .map((e) => FuelType.fromJson(e as Map<String, dynamic>))
           .toList();
     } on DioException catch (e) {
-      print('transmission:>>>>>>>>>>>>>>>>>>>>>>>>$e');
       throw Exception(
           'Failed to load fuel types: ${e.response?.data ?? e.message}');
     }
   }
 
-  // ✅ New: get transmission types
   Future<List<TransmissionType>> fetchTransmissionTypes() async {
     try {
       final res = await _dio.get('/vehicle-inventory/transmission-types');
@@ -160,7 +128,6 @@ class VehicleModelRepository {
           .map((e) => TransmissionType.fromJson(e as Map<String, dynamic>))
           .toList();
     } on DioException catch (e) {
-      print('transmission:>>>>>>>>>>>>>>>>>>>>>>>>$e');
       throw Exception(
           'Failed to load transmission types: ${e.response?.data ?? e.message}');
     }
@@ -170,15 +137,12 @@ class VehicleModelRepository {
     try {
       final payload = model.toJson();
 
-      // Handle nullable manufacturer
       if (model.manufacturer != null) {
         payload['manufacturer'] = model.manufacturer!.id;
       } else {
-        // Remove manufacturer field if it's null
         payload.remove('manufacturer');
       }
 
-      // Remove all null, empty string, or disallowed fields
       payload.removeWhere((key, value) =>
           value == null ||
           value == '' ||
@@ -193,33 +157,21 @@ class VehicleModelRepository {
           key == 'defaultAxleCount' ||
           key == 'defaultSeatingCapacity');
 
-      // Remove fuelTypes and transmissionTypes if empty
       if ((payload['fuelTypes'] as List?)?.isEmpty ?? true) {
         payload.remove('fuelTypes');
-      } else {}
+      }
 
       if ((payload['transmissionTypes'] as List?)?.isEmpty ?? true) {
         payload.remove('transmissionTypes');
-      } else {}
-
-      print("🚀 CREATE - Final payload to send: $payload");
+      }
 
       final response =
           await _dio.post('/vehicle-inventory/models', data: payload);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final newId = response.data['_id'] ?? response.data['id'];
-        print("✅ Vehicle Model created with ID: $newId");
-      } else {
+      if (response.statusCode != 200 && response.statusCode != 201) {
         throw Exception("Failed to post vehicle: ${response.statusCode}");
       }
-    }
-    // catch (e) {
-    //   print("❌ Error posting vehicle: $e");
-    //   rethrow;
-    // }
-    on DioException catch (e) {
-      print("❌ DioException Response>>>>>>>>>>>>>>>>>>>>>: $e");
+    } on DioException catch (e) {
       throw Exception(DioErrorHandler.handleError(e));
     }
   }
@@ -254,7 +206,6 @@ class VehicleModelRepository {
     try {
       final res = await _dio.get('/vehicle-inventory/models/$id');
       if (res.statusCode == 200) {
-        // API may return {data: {...}} or the object directly
         final data = (res.data is Map && res.data['data'] != null)
             ? res.data['data'] as Map<String, dynamic>
             : res.data as Map<String, dynamic>;
@@ -274,19 +225,12 @@ class VehicleModelRepository {
     try {
       final payload = model.toJson();
 
-      print("📦 UPDATE - fuelTypes in payload: ${payload['fuelTypes']}");
-      print(
-          "📦 UPDATE - transmissionTypes in payload: ${payload['transmissionTypes']}");
-
-      // Handle nullable manufacturer
       if (model.manufacturer != null) {
         payload['manufacturer'] = model.manufacturer!.id;
       } else {
-        // Remove manufacturer field if it's null
         payload.remove('manufacturer');
       }
 
-      // Strip disallowed/empty fields (same idea as create)
       payload.removeWhere((key, value) =>
           value == null ||
           value == '' ||
@@ -301,26 +245,16 @@ class VehicleModelRepository {
           key == 'defaultAxleCount' ||
           key == 'defaultSeatingCapacity');
 
-      // Keep arrays only if non-empty
       if ((payload['images'] as List?)?.isEmpty ?? true) {
         payload.remove('images');
       }
 
-      // Remove fuelTypes and transmissionTypes if empty
       if ((payload['fuelTypes'] as List?)?.isEmpty ?? true) {
         payload.remove('fuelTypes');
-        print("📦 UPDATE - fuelTypes is null or empty, removed from payload");
-      } else {
-        print("📦 UPDATE - fuelTypes in payload: ${payload['fuelTypes']}");
       }
 
       if ((payload['transmissionTypes'] as List?)?.isEmpty ?? true) {
         payload.remove('transmissionTypes');
-        print(
-            "📦 UPDATE - transmissionTypes is null or empty, removed from payload");
-      } else {
-        print(
-            "📦 UPDATE - transmissionTypes in payload: ${payload['transmissionTypes']}");
       }
 
       final res = await _dio.put(
@@ -332,7 +266,6 @@ class VehicleModelRepository {
         throw Exception('Update failed: ${res.statusCode}');
       }
     } on DioException catch (e) {
-      print("❌ DioException Response: ${e.response?.data}");
       throw Exception(DioErrorHandler.handleError(e));
     }
   }
@@ -340,18 +273,12 @@ class VehicleModelRepository {
   Future<String> uploadCsv(
       String manufacturerId, List<int> fileBytes, String fileName) async {
     try {
-      print('📤 Starting CSV upload for manufacturer: $manufacturerId');
-      print('📁 File name: $fileName');
-      print('📊 File size: ${fileBytes.length} bytes');
-
       final formData = FormData.fromMap({
         'file': MultipartFile.fromBytes(
           fileBytes,
           filename: fileName,
         ),
       });
-
-      print('🌐 Uploading to: /vehicle-inventory/$manufacturerId/upload-csv');
 
       final response = await _dio.post(
         '/vehicle-inventory/$manufacturerId/upload-csv',
@@ -363,24 +290,14 @@ class VehicleModelRepository {
         ),
       );
 
-      print('✅ Response status: ${response.statusCode}');
-      print('📦 Response data: ${response.data}');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data['message'] ?? "CSV file uploaded successfully";
       } else {
-        print('❌ Unexpected status code: ${response.statusCode}');
-        print('❌ Response message: ${response.statusMessage}');
-        print('❌ Response data: ${response.data}');
         throw Exception("Failed to upload CSV file: ${response.statusMessage}");
       }
     } on DioException catch (e) {
-      print('❌ DioException during CSV upload:');
-      print('   Error: $e');
-      print('   Response: ${e.response?.data}');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Unexpected error during CSV upload: $e');
       throw Exception('Unexpected error: $e');
     }
   }

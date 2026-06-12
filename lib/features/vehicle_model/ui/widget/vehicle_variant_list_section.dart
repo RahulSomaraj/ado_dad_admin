@@ -88,10 +88,6 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
         final fileBytes = result.files.single.bytes!;
         final fileName = result.files.single.name;
 
-        // Print model ID when uploading CSV
-        print('📤 Uploading Variant CSV for Model ID: ${widget.modelId}');
-        print('📁 File name: $fileName');
-
         if (mounted) {
           setState(() {
             _isCsvUploadInProgress = true;
@@ -120,7 +116,6 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.modelId);
     final screenWidth = MediaQuery.of(context).size.width;
     final isTablet = screenWidth > 600 && screenWidth <= 900;
     return BlocListener<VehicleVariantBloc, VehicleVariantState>(
@@ -141,32 +136,6 @@ class _VehicleVariantListSectionState extends State<VehicleVariantListSection> {
               setState(() {
                 _isCsvUploadInProgress = false;
               });
-
-              // Print variant list in console
-              print('📋 UI: Variant List after CSV upload:');
-              print('   Total variants: ${response.data.length}');
-              print('   Total pages: ${response.totalPages}');
-              print('   Total count: ${response.total}');
-              for (int i = 0; i < response.data.length; i++) {
-                final variant = response.data[i];
-                print('   Variant ${i + 1}:');
-                print('      ID: ${variant.id}');
-                print('      Name: ${variant.name}');
-                print('      Display Name: ${variant.displayName}');
-                print(
-                    '      Fuel Type: ${variant.fuelType?.displayName ?? "N/A"}');
-                print(
-                    '      Transmission: ${variant.transmissionType?.displayName ?? "N/A"}');
-                print('      Price: ₹${variant.price ?? "N/A"}');
-                print('      Is Active: ${variant.isActive}');
-                print(
-                    '      Feature Package: ${variant.featurePackage ?? "N/A"}');
-                print(
-                    '      Seating Capacity: ${variant.seatingCapacity ?? "N/A"}');
-              }
-              print('📋 Full Variant List Summary:');
-              print(
-                  '   ${response.data.map((v) => '${v.displayName} (${v.name})').join(', ')}');
 
               // Show success popup
               showDialog(

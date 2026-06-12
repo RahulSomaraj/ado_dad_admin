@@ -57,7 +57,18 @@ class AppRoutes {
           _noTransitionRoute('/dashboard', const RoleBasedDashboard()),
           _noTransitionRoute('/profile', const MyProfile()),
           _noTransitionRoute('/users', Users()),
-          _noTransitionRoute('/advertisements', const AdminAdsDashboard()),
+          GoRoute(
+            path: '/advertisements',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return NoTransitionPage(
+                child: AdminAdsDashboard(
+                  userId: extra?['userId']?.toString(),
+                  userName: extra?['userName']?.toString(),
+                ),
+              );
+            },
+          ),
           _noTransitionRoute('/add-user', AddUser()),
           _noTransitionRoute(
               '/create-ad', const Center(child: Text("Listing Management"))),

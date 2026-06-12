@@ -73,8 +73,6 @@ class _VehicleCompanyDetailViewState extends State<VehicleCompanyDetailView> {
         .stream
         .firstWhere((state) => state is VehicleCompanyDeleted)
         .then((_) {
-      print("✅ Vehicle Company Deleted Successfully!");
-
       // Delay popup to prevent UI conflict
       // Future.delayed(const Duration(milliseconds: 300), () {
       //   _showSuccessPopup(context, "Vehicle Company deleted successfully!");

@@ -84,7 +84,6 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
       //     .read<VehicleVariantBloc>()
       //     .add(VehicleVariantEvent.createVariant(variant: addedvariant));
 
-      print("🚀 Variant to Submit: ${addedvariant.toPostJson()}");
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;

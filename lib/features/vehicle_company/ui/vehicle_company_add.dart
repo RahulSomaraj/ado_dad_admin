@@ -50,7 +50,6 @@ class _VehicleCompanyAddState extends State<VehicleCompanyAdd> {
         originCountry: _origincountry!,
         vehicleType: _vehicletype!,
       );
-      print('newVehicleCompany:...... $newVehicleCompany');
       context.read<VehicleCompanyBloc>().add(
           VehicleCompanyEvent.addVehicleCompany(
               vehicleCompanyData: newVehicleCompany));

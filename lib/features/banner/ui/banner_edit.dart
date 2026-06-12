@@ -254,11 +254,6 @@ class _EditBannerState extends State<EditBanner> {
                                                 phoneImage: phoneUrl,
                                               );
 
-                                              print(
-                                                  '🔍 EditBanner: Creating updated banner with ID: ${updatedBanner.id}');
-                                              print(
-                                                  '🔍 EditBanner: Banner data: ${updatedBanner.toJson()}');
-
                                               bloc.add(UpdateBanner(
                                                   updatedBanner:
                                                       updatedBanner));

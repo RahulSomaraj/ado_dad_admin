@@ -139,7 +139,6 @@ class VehicleVariantResponseModel {
       } else if (json['fuelType'] is String) {
         // Just an ID - would need to fetch separately, but for now set to null
         // TODO: Backend should populate fuelType field
-        print('⚠️ fuelType is returned as ID only: ${json['fuelType']}');
       }
     }
 
@@ -152,8 +151,6 @@ class VehicleVariantResponseModel {
       } else if (json['transmissionType'] is String) {
         // Just an ID - would need to fetch separately, but for now set to null
         // TODO: Backend should populate transmissionType field
-        print(
-            '⚠️ transmissionType is returned as ID only: ${json['transmissionType']}');
       }
     }
 

@@ -42,23 +42,14 @@ Future<void> saveLoginResponse(LoginResponse loginResponse) async {
   await sharedPrefs.setString('email', loginResponse.email);
   await sharedPrefs.setString('userId', loginResponse.id);
 
-  // Save phone number if available
   if (loginResponse.phoneNumber != null &&
       loginResponse.phoneNumber!.isNotEmpty) {
     await sharedPrefs.setString('phoneNumber', loginResponse.phoneNumber!);
   }
 
-  // Save profile picture if available
-  print('🔍 DataStorage: Saving login response');
-  print(
-      '🔍 DataStorage: Profile Pic from login: "${loginResponse.profilePic}"');
-
   if (loginResponse.profilePic != null &&
       loginResponse.profilePic!.isNotEmpty) {
     await sharedPrefs.setString('profilePicture', loginResponse.profilePic!);
-    print('🔍 DataStorage: Profile picture saved to SharedPreferences');
-  } else {
-    print('🔍 DataStorage: No profile picture to save');
   }
 }
 

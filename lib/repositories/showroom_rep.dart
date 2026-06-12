@@ -13,7 +13,6 @@ class ShowroomRepository {
   Future<UserResponse> fetchAllShowroom(
       {int? page, int? limit, String? userType, String? searchQuery}) async {
     try {
-      // For SR users, try a different approach or handle permissions differently
       final response = await _dio.get(
         '/users',
         queryParameters: {
@@ -29,7 +28,6 @@ class ShowroomRepository {
         throw Exception("Failed to load Showroom: ${response.statusMessage}");
       }
     } on DioException catch (e) {
-      // Handle specific error cases for SR users
       if (e.response?.statusCode == 403) {
         throw Exception(
             "Access denied: You don't have permission to view showrooms");
@@ -42,14 +40,12 @@ class ShowroomRepository {
     }
   }
 
-  // Method to fetch current user's showroom information for SR users
   Future<UserResponse> fetchCurrentUserShowroom() async {
     try {
       final currentUserType = await getUserType();
       final currentUserName = await getUserName();
 
       if (currentUserType == 'SR') {
-        // For SR users, try to fetch their own information
         final response = await _dio.get(
           '/users',
           queryParameters: {
@@ -67,7 +63,6 @@ class ShowroomRepository {
               "Failed to load your showroom information: ${response.statusMessage}");
         }
       } else {
-        // For admin users, fetch all showrooms
         return await fetchAllShowroom();
       }
     } on DioException catch (e) {
@@ -115,13 +110,11 @@ class ShowroomRepository {
         'type': showroomuser.userType,
       };
 
-      // Include countryCode if it's provided
       if (showroomuser.countryCode != null &&
           showroomuser.countryCode!.isNotEmpty) {
         updateData['countryCode'] = showroomuser.countryCode;
       }
 
-      // Only include profilePic if it's not null, not empty, and not a default placeholder
       if (showroomuser.profilePic != null &&
           showroomuser.profilePic!.isNotEmpty &&
           showroomuser.profilePic != 'default-profile-pic-url' &&
@@ -129,29 +122,19 @@ class ShowroomRepository {
         updateData['profilePic'] = showroomuser.profilePic;
       }
 
-      // Include password if it's being changed
       if (showroomuser.password != null && showroomuser.password!.isNotEmpty) {
         updateData['password'] = showroomuser.password;
       }
 
-      print('🔍 Debug - API Update Data: $updateData');
-
       final response =
           await _dio.put('/users/${showroomuser.id}', data: updateData);
 
-      print('🔍 Debug - API Response Status: ${response.statusCode}');
-      print('🔍 Debug - API Response Data: ${response.data}');
-
       if (response.statusCode == 200) {
-        // Return the updated user data from the server response
         return UserModel.fromJson(response.data['user'] ?? response.data);
       } else {
         throw Exception("Failed to update user");
       }
     } on DioException catch (e) {
-      print('🔍 Debug - DioException: ${e.message}');
-      print('🔍 Debug - DioException Response: ${e.response?.data}');
-      print('🔍 Debug - DioException Status Code: ${e.response?.statusCode}');
       throw Exception(DioErrorHandler.handleError(e));
     }
   }
@@ -162,7 +145,6 @@ class ShowroomRepository {
       final fileExtension = mimeType?.split('/').last ?? 'jpg';
       final fileName = '$label.$fileExtension';
 
-      // Step 1: Get presigned URL
       final signedUrlResponse = await _dio.get(
         '/upload/presigned-url',
         queryParameters: {
@@ -170,12 +152,9 @@ class ShowroomRepository {
           'fileType': mimeType,
         },
       );
-      print('??????????????$signedUrlResponse?????????????????');
       final signedUrl = signedUrlResponse.data['url'];
-      print('??????????????$signedUrl?????????????????');
       if (signedUrl == null) throw Exception('No signed URL received');
 
-      // Step 2: Upload to S3
       final uploadResponse = await Dio().put(
         signedUrl,
         data: fileBytes,
@@ -184,19 +163,15 @@ class ShowroomRepository {
           'Content-Length': fileBytes.length.toString(),
         }),
       );
-      print('##############${uploadResponse.statusCode}##############');
       if (uploadResponse.statusCode == 200 ||
           uploadResponse.statusCode == 204) {
-        return signedUrl
-            .split('?')
-            .first; // ✅ Public URL (without query params)
+        return signedUrl.split('?').first;
       } else {
         throw Exception('Upload failed: ${uploadResponse.statusCode}');
       }
     } on DioException catch (e) {
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Unexpected error in uploadImageToS3: $e');
       throw Exception('Unexpected error: $e');
     }
   }

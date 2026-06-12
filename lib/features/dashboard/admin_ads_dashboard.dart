@@ -11,7 +11,11 @@ import 'package:ado_dad_admin/common/save_pdf.dart';
 import 'package:ado_dad_admin/common/pdf_generator.dart';
 
 class AdminAdsDashboard extends StatefulWidget {
-  const AdminAdsDashboard({super.key});
+  /// When set, the page opens pre-filtered to a single user's ads.
+  final String? userId;
+  final String? userName;
+
+  const AdminAdsDashboard({super.key, this.userId, this.userName});
 
   @override
   State<AdminAdsDashboard> createState() => _AdminAdsDashboardState();
@@ -21,13 +25,24 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   final ScrollController _horizontalScrollController = ScrollController();
   final Set<String> _selectedAdIds = <String>{};
   String? userType;
+  String? _filterUserName;
 
   @override
   void initState() {
     super.initState();
     _loadUserType();
-    // Fetch ads when the widget initializes
-    context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
+    // Apply (or clear) the owner filter on the shared bloc, then fetch.
+    final bloc = context.read<AdsBloc>();
+    bloc.userFilter = widget.userId;
+    _filterUserName = widget.userName;
+    bloc.add(const AdsEvent.fetchAllAds());
+  }
+
+  void _clearUserFilter() {
+    final bloc = context.read<AdsBloc>();
+    bloc.userFilter = null;
+    setState(() => _filterUserName = null);
+    bloc.add(const AdsEvent.fetchAllAds());
   }
 
   Future<void> _loadUserType() async {
@@ -146,6 +161,10 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
                   Text("Review and approve user listings",
                       style: GoogleFonts.inter(
                           fontSize: 13, color: AppColors.textSecondary)),
+                  if (context.read<AdsBloc>().userFilter != null) ...[
+                    const SizedBox(height: 8),
+                    _userFilterChip(),
+                  ],
                 ],
               ),
             ),
@@ -153,6 +172,37 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           ],
         );
       },
+    );
+  }
+
+  Widget _userFilterChip() {
+    return Container(
+      padding: const EdgeInsets.only(left: 10, right: 4, top: 4, bottom: 4),
+      decoration: BoxDecoration(
+        color: AppColors.accentSoft,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.person_outline, size: 14, color: AppColors.accent),
+          const SizedBox(width: 5),
+          Text("Filtered by: ${_filterUserName ?? 'user'}",
+              style: GoogleFonts.inter(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.accent)),
+          const SizedBox(width: 2),
+          InkWell(
+            onTap: _clearUserFilter,
+            borderRadius: BorderRadius.circular(20),
+            child: const Padding(
+              padding: EdgeInsets.all(3),
+              child: Icon(Icons.close, size: 14, color: AppColors.accent),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

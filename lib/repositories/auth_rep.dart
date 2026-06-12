@@ -33,10 +33,6 @@ class AuthRepository {
       if (response.statusCode == 201) {
         final loginResponse = LoginResponse.fromJson(response.data);
 
-        // Debug logging for login response
-        print('🔍 Auth: Login response received');
-        print('🔍 Auth: Profile Pic: "${loginResponse.profilePic}"');
-
         // Allow Admin, Super Admin & Showroom users
         final allowedTypes = ['AD', 'SA', 'SR'];
         if (!allowedTypes.contains(loginResponse.userType)) {
@@ -44,13 +40,11 @@ class AuthRepository {
               "Access Denied: Only Admin, Super Admin, and Showroom users can log in.");
         }
         await saveLoginResponse(loginResponse);
-        print('🔍 Auth: Login response saved to SharedPreferences');
         return loginResponse;
       } else {
         throw InvalidCredentialsException("Invalid Username or Password");
       }
     } on DioException catch (e) {
-      // Handle specific HTTP status codes for invalid credentials
       if (e.response?.statusCode == 401 || e.response?.statusCode == 403) {
         throw InvalidCredentialsException("Invalid Username or Password");
       }
@@ -58,7 +52,7 @@ class AuthRepository {
     } catch (e) {
       if (e is InvalidCredentialsException ||
           e is UserTypeRestrictedException) {
-        rethrow; // Re-throw our custom exceptions
+        rethrow;
       }
       throw InvalidCredentialsException("Invalid Username or Password");
     }

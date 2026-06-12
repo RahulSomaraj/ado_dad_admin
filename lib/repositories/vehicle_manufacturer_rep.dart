@@ -14,8 +14,6 @@ class VehicleManufacturerRepository {
     String? category,
   }) async {
     try {
-      print('Fetching manufacturers with: '
-          'page=$page, limit=$limit, search="${searchQuery ?? 'null'}", category="${category ?? 'null'}"');
       final queryParams = <String, dynamic>{
         'page': page,
         'limit': limit,
@@ -29,10 +27,9 @@ class VehicleManufacturerRepository {
         queryParams['category'] = category;
       }
       final response = await _dio.get(
-        '/vehicle-inventory/manufacturers', // ✅ Replace with your actual endpoint
+        '/vehicle-inventory/manufacturers',
         queryParameters: queryParams,
       );
-      // print('Manufactures Datas: ${response.data}');
 
       if (response.statusCode == 200) {
         return VehicleManufacturerResponse.fromJson(response.data);
@@ -48,10 +45,8 @@ class VehicleManufacturerRepository {
   Future<String> createManufacturer(
       VehicleManufacturer manufacturerData) async {
     try {
-      print('create called');
       final response = await _dio.post(
         "/vehicle-inventory/manufacturers",
-        // data: manufacturerData.toJson(),
         data: {
           "name": manufacturerData.name,
           "displayName": manufacturerData.displayName,
@@ -71,7 +66,6 @@ class VehicleManufacturerRepository {
           "isPremium": manufacturerData.isPremium,
         },
       );
-      print('create called:$response');
       if (response.statusCode == 201) {
         return response.data['message'] ??
             "Vehicle manufacturer added successfully";
@@ -81,7 +75,6 @@ class VehicleManufacturerRepository {
       }
     } on DioException catch (e) {
       if (e.response != null && e.response!.data != null) {
-        // Try to extract error message from different possible formats
         String? errorMessage;
         if (e.response!.data is Map) {
           errorMessage = e.response!.data['message'] ??
@@ -138,7 +131,6 @@ class VehicleManufacturerRepository {
       }
     } on DioException catch (e) {
       if (e.response != null && e.response!.data != null) {
-        // Try to extract error message from different possible formats
         String? errorMessage;
         if (e.response!.data is Map) {
           errorMessage = e.response!.data['message'] ??
@@ -192,8 +184,6 @@ class VehicleManufacturerRepository {
     String? searchQuery,
   }) async {
     try {
-      print(
-          '📦 Fetching manufacturers for dropdown with page=$page, limit=$limit, search="${searchQuery ?? 'null'}"');
       final queryParams = <String, dynamic>{
         'page': page,
         'limit': limit,
@@ -221,18 +211,12 @@ class VehicleManufacturerRepository {
 
   Future<String> uploadCsv(List<int> fileBytes, String fileName) async {
     try {
-      print('📤 Starting CSV upload...');
-      print('📁 File name: $fileName');
-      print('📊 File size: ${fileBytes.length} bytes');
-
       final formData = FormData.fromMap({
         'file': MultipartFile.fromBytes(
           fileBytes,
           filename: fileName,
         ),
       });
-
-      print('🌐 Uploading to: /vehicle-inventory/upload');
 
       final response = await _dio.post(
         '/vehicle-inventory/upload',
@@ -244,31 +228,13 @@ class VehicleManufacturerRepository {
         ),
       );
 
-      print('✅ Response status: ${response.statusCode}');
-      print('📦 Response data: ${response.data}');
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data['message'] ?? "CSV file uploaded successfully";
       } else {
-        print('❌ Unexpected status code: ${response.statusCode}');
-        print('❌ Response message: ${response.statusMessage}');
-        print('❌ Response data: ${response.data}');
         throw Exception("Failed to upload CSV file: ${response.statusMessage}");
       }
     } on DioException catch (e) {
-      print('❌ DioException occurred:');
-      print('   Type: ${e.type}');
-      print('   Message: ${e.message}');
-      print('   Error: ${e.error}');
-
       if (e.response != null) {
-        print('   Status Code: ${e.response!.statusCode}');
-        print('   Status Message: ${e.response!.statusMessage}');
-        print('   Response Headers: ${e.response!.headers}');
-        print('   Response Data: ${e.response!.data}');
-        print('   Response Data Type: ${e.response!.data.runtimeType}');
-
-        // Try to extract error message from different possible formats
         String? errorMessage;
         if (e.response!.data is Map) {
           errorMessage = e.response!.data['message'] ??
@@ -278,20 +244,11 @@ class VehicleManufacturerRepository {
         } else {
           errorMessage = e.response!.data.toString();
         }
-
-        print('   Extracted Error Message: $errorMessage');
-
         throw Exception(errorMessage ?? "API error occurred");
       } else {
-        print('   No response received');
-        print('   Request Options: ${e.requestOptions}');
         throw Exception("Network error: ${e.message}");
       }
-    } catch (e, stackTrace) {
-      print('❌ Unexpected error occurred:');
-      print('   Error: $e');
-      print('   Error Type: ${e.runtimeType}');
-      print('   Stack Trace: $stackTrace');
+    } catch (e) {
       throw Exception("Unexpected error: $e");
     }
   }

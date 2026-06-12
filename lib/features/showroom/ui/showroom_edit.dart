@@ -302,12 +302,8 @@ class _EditShowroomState extends State<EditShowroom> {
                     // For SR users editing their own profile, go back to profile page
 
                     context.go('/profile');
-                    print(
-                        '🔍 Navigation: SR user editing own profile, going to profile page');
                   } else {
                     // For all other cases (AD/SA editing any user, or SR editing other users), go to showrooms page
-                    print(
-                        '🔍 Navigation: Non-SR user or SR editing other user, going to showrooms page');
                     context.go('/showrooms');
                   }
                 }

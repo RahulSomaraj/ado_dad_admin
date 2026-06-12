@@ -11,7 +11,6 @@ part 'banner_bloc.freezed.dart';
 
 class BannerBloc extends Bloc<BannerEvent, BannerState> {
   final BannerRepository repository;
-  // final List<BannerInfo> _banners = [];
   BannerBloc({required this.repository}) : super(BannerState.initial()) {
     on<_UploadBannersToS3>(_onUploadBanners);
     on<FetchAllBanners>(_onFetchAllBanners);
@@ -26,15 +25,6 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
     emit(const BannerState.loading());
 
     try {
-      // for (final image in event.image) {
-      //   final String? imageUrl = await repository.uploadImageToS3(image);
-      //   print('bloc called :   $imageUrl');
-      //   if (imageUrl != null) {
-      //     _banners
-      //         .add(BannerInfo(imageUrl: imageUrl, uploadedAt: DateTime.now()));
-      //   }
-      // }
-
       final desktopUrl =
           await repository.uploadImageToS3(event.desktopImage, 'desktopImage');
       final tabletUrl =
@@ -54,12 +44,7 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
         link: event.link,
       );
 
-      final createdBanner = await repository.saveBannerToDB(bannerRequest);
-
-      print(
-          '🎉 BannerBloc: Banner created successfully with ID: ${createdBanner.id}');
-
-      // emit(BannerState.success(List.from(_banners)));
+      await repository.saveBannerToDB(bannerRequest);
 
       emit(BannerState.success([
         BannerInfo(imageUrl: desktopUrl, uploadedAt: DateTime.now()),
@@ -89,7 +74,6 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
         currentPage: bannerResponse.currentPage,
       ));
     } catch (e) {
-      print('❌ BannerBloc: Error fetching banners: $e');
       emit(BannerState.failure("Failed to fetch banners: $e"));
     }
   }
@@ -98,14 +82,10 @@ class BannerBloc extends Bloc<BannerEvent, BannerState> {
       UpdateBanner event, Emitter<BannerState> emit) async {
     emit(Loading());
     try {
-      print(
-          '🔍 BannerBloc: Starting banner update for ID: ${event.updatedBanner.id}');
       await repository.updateBanner(event.updatedBanner);
-      print('✅ BannerBloc: Banner update successful');
       emit(const BannerState.updated());
       add(FetchAllBanners(page: 1, limit: 10));
     } catch (e) {
-      print('❌ BannerBloc: Error updating banner: $e');
       emit(BannerState.failure("Failed to update banner: $e"));
     }
   }

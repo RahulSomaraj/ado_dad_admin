@@ -16,8 +16,7 @@ class ReportStatsModel {
   });
 
   factory ReportStatsModel.fromJson(Map<String, dynamic> json) {
-    print('🔍 Parsing ReportStatsModel from JSON: $json');
-    final model = ReportStatsModel(
+    return ReportStatsModel(
       totalReports: json['totalReports'] ?? 0,
       pendingReports: json['pendingReports'] ?? 0,
       resolvedReports: json['resolvedReports'] ?? 0,
@@ -25,9 +24,6 @@ class ReportStatsModel {
       reportsByReason: Map<String, int>.from(json['reportsByReason'] ?? {}),
       reportsByStatus: Map<String, int>.from(json['reportsByStatus'] ?? {}),
     );
-    print(
-        '✅ Parsed ReportStatsModel: Total=${model.totalReports}, Pending=${model.pendingReports}');
-    return model;
   }
 
   Map<String, dynamic> toJson() {
@@ -112,9 +108,7 @@ class ReportModel {
   });
 
   factory ReportModel.fromJson(Map<String, dynamic> json) {
-    print('🔍 Parsing ReportModel from JSON: $json');
-
-    final model = ReportModel(
+    return ReportModel(
       id: json['id'] ?? '',
       reportedUser: json['reportedUser'] ?? '',
       reportedUserDetails:
@@ -136,10 +130,6 @@ class ReportModel {
           ? DateTime.tryParse(json['reviewedAt'])
           : null,
     );
-
-    print(
-        '✅ Parsed ReportModel: ID=${model.id}, Status=${model.status}, Reason=${model.reason}');
-    return model;
   }
 
   Map<String, dynamic> toJson() {
@@ -184,16 +174,8 @@ class ReportListResponse {
   });
 
   factory ReportListResponse.fromJson(Map<String, dynamic> json) {
-    print('🔍 Parsing ReportListResponse from JSON: $json');
-
     final dataList = json['data'] as List?;
-    print('🔍 Data list length: ${dataList?.length ?? 0}');
-
-    if (dataList != null && dataList.isNotEmpty) {
-      print('🔍 First report data: ${dataList.first}');
-    }
-
-    final response = ReportListResponse(
+    return ReportListResponse(
       data: (dataList ?? [])
           .map((report) => ReportModel.fromJson(report))
           .toList(),
@@ -204,10 +186,6 @@ class ReportListResponse {
       hasNext: json['hasNext'] ?? false,
       hasPrev: json['hasPrev'] ?? false,
     );
-
-    print(
-        '✅ Parsed ReportListResponse: ${response.data.length} reports, total: ${response.total}');
-    return response;
   }
 
   Map<String, dynamic> toJson() {

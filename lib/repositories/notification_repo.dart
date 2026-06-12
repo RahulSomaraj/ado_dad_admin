@@ -61,8 +61,6 @@ class NotificationRepository {
         data: data,
       );
 
-      print(response.data);
-
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response.data['message'] ?? "Notification sent successfully";
       } else {
@@ -71,8 +69,6 @@ class NotificationRepository {
         );
       }
     } on DioException catch (e) {
-      print("Dio Error: $e");
-
       if (e.response != null) {
         throw Exception(
           e.response!.data['message'] ?? "API error occurred",

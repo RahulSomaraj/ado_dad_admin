@@ -110,7 +110,6 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
         },
       };
 
-      print("🚀 Variant Update Payload: $updatePayload");
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;

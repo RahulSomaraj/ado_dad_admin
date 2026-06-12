@@ -13,11 +13,8 @@ class BannerRepository {
     try {
       final mimeType = lookupMimeType('image.jpg', headerBytes: fileBytes);
       final fileExtension = mimeType?.split('/').last ?? 'jpg';
-      // final fileName =
-      //     'image_${DateTime.now().millisecondsSinceEpoch}.$fileExtension';
       final fileName = '$label.$fileExtension';
 
-      // Step 1: Get presigned URL
       final signedUrlResponse = await _dio.get(
         '/upload/presigned-url',
         queryParameters: {
@@ -25,12 +22,9 @@ class BannerRepository {
           'fileType': mimeType,
         },
       );
-      print('??????????????$signedUrlResponse?????????????????');
       final signedUrl = signedUrlResponse.data['url'];
-      print('??????????????$signedUrl?????????????????');
       if (signedUrl == null) throw Exception('No signed URL received');
 
-      // Step 2: Upload to S3
       final uploadResponse = await Dio().put(
         signedUrl,
         data: fileBytes,
@@ -39,19 +33,15 @@ class BannerRepository {
           'Content-Length': fileBytes.length.toString(),
         }),
       );
-      print('##############${uploadResponse.statusCode}##############');
       if (uploadResponse.statusCode == 200 ||
           uploadResponse.statusCode == 204) {
-        return signedUrl
-            .split('?')
-            .first; // ✅ Public URL (without query params)
+        return signedUrl.split('?').first;
       } else {
         throw Exception('Upload failed: ${uploadResponse.statusCode}');
       }
     } on DioException catch (e) {
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Unexpected error in uploadImageToS3: $e');
       throw Exception('Unexpected error: $e');
     }
   }
@@ -59,28 +49,12 @@ class BannerRepository {
   Future<BannerUploadRequest> saveBannerToDB(
       BannerUploadRequest request) async {
     try {
-      print('🔄 Saving banner to database...');
-      print('📄 Banner data: ${request.toJson()}');
-
       final response = await _dio.post('/banners', data: request.toJson());
-
-      print('✅ Banner saved successfully: ${response.statusCode}');
-      print('📄 Response data: ${response.data}');
-
-      // Parse the response to get the created banner with ID
       final createdBanner = BannerUploadRequest.fromJson(response.data);
-      print('🆔 Created banner ID: ${createdBanner.id}');
-
       return createdBanner;
     } on DioException catch (e) {
-      print('❌ DioException in saveBannerToDB: $e');
-      print('❌ DioException type: ${e.type}');
-      print('❌ DioException response: ${e.response}');
-      print('❌ DioException status code: ${e.response?.statusCode}');
-      print('❌ DioException message: ${e.message}');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Unexpected error in saveBannerToDB: $e');
       throw Exception('DB save failed: $e');
     }
   }
@@ -96,18 +70,13 @@ class BannerRepository {
           'search': searchQuery,
         },
       );
-      print('📦 Banner API Response Status: ${response.statusCode}');
-      print('📦 Banner API Response Data: ${response.data}');
-      print('📦 Banner API Response Data Type: ${response.data.runtimeType}');
 
       if (response.statusCode == 200) {
         try {
-          // Check if response has 'data' field (common API pattern)
           final responseData = response.data;
           Map<String, dynamic> jsonData;
 
           if (responseData is Map<String, dynamic>) {
-            // Helper function to safely get value (preserves original type)
             dynamic safeGet(Map<String, dynamic> map, List<String> keys,
                 dynamic defaultValue) {
               for (var key in keys) {
@@ -118,7 +87,6 @@ class BannerRepository {
               return defaultValue;
             }
 
-            // If API returns { data: [...], totalPages: ..., currentPage: ... }
             if (responseData.containsKey('data')) {
               jsonData = {
                 'banners': responseData['data'],
@@ -127,17 +95,10 @@ class BannerRepository {
                 'currentPage': safeGet(
                     responseData, ['currentPage', 'currentpage', 'page'], 1),
               };
-              print('📦 Using data field from response');
-            }
-            // If API returns { banners: [...], totalPages: ..., currentPage: ... }
-            else if (responseData.containsKey('banners')) {
+            } else if (responseData.containsKey('banners')) {
               jsonData = responseData;
-              print('📦 Using banners field from response');
-            }
-            // If API returns array directly
-            else if (responseData.containsKey('data') == false &&
+            } else if (responseData.containsKey('data') == false &&
                 responseData is! List) {
-              // Try to find any list field
               final listKey = responseData.keys.firstWhere(
                 (key) => responseData[key] is List,
                 orElse: () => '',
@@ -150,7 +111,6 @@ class BannerRepository {
                   'currentPage': safeGet(
                       responseData, ['currentPage', 'currentpage', 'page'], 1),
                 };
-                print('📦 Using $listKey field from response');
               } else {
                 throw Exception('No banners array found in response');
               }
@@ -162,55 +122,30 @@ class BannerRepository {
                 'Unexpected response format: ${responseData.runtimeType}');
           }
 
-          print('📦 Parsed JSON Data: $jsonData');
           return BannerResponse.fromJson(jsonData);
         } catch (e) {
-          print('❌ Error parsing BannerResponse: $e');
-          print('❌ Response data was: ${response.data}');
           rethrow;
         }
       } else {
         throw Exception("Failed to load banners: ${response.statusCode}");
       }
     } on DioException catch (e) {
-      print('❌ DioException in fetchAllBanners: $e');
-      print('❌ DioException response: ${e.response?.data}');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Unexpected error in fetchAllBanners: $e');
       throw Exception("Failed to fetch banners: $e");
     }
   }
 
   Future<void> updateBanner(BannerUploadRequest banner) async {
     try {
-      print('🔄 Updating banner with ID: ${banner.id}');
-      print('🔄 Banner ID type: ${banner.id.runtimeType}');
-      print('🔄 Banner ID value: "${banner.id}"');
-
-      // Use the banner's toUpdateJson method (excludes _id field)
       final updateData = banner.toUpdateJson();
-
-      print('📄 Update data: $updateData');
-      print('🌐 Making PUT request to: /banners/${banner.id}');
-
-      final response = await _dio.put(
+      await _dio.put(
         '/banners/${banner.id}',
         data: updateData,
       );
-
-      print('✅ Banner update successful: ${response.statusCode}');
-      print('📄 Response data: ${response.data}');
     } on DioException catch (e) {
-      print('❌ DioException in updateBanner: $e');
-      print('❌ DioException type: ${e.type}');
-      print('❌ DioException response: ${e.response}');
-      print('❌ DioException status code: ${e.response?.statusCode}');
-      print('❌ DioException message: ${e.message}');
-      print('❌ DioException request options: ${e.requestOptions}');
       throw Exception(DioErrorHandler.handleError(e));
     } catch (e) {
-      print('❌ Unexpected error in updateBanner: $e');
       throw Exception('Banner update failed: $e');
     }
   }
@@ -218,7 +153,6 @@ class BannerRepository {
   Future<void> deleteBanner(String bannerId) async {
     try {
       final response = await _dio.delete('/banners/$bannerId');
-
       if (response.statusCode == 200) {
       } else {
         throw Exception("Failed to delete banner");

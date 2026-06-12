@@ -7,6 +7,10 @@ import 'ads_state.dart';
 class AdsBloc extends Bloc<AdsEvent, AdsState> {
   final AdsRepository _adsRepository;
 
+  /// Optional owner filter for the admin ads view (set when navigating from a
+  /// user's detail page). Cleared by setting it back to null.
+  String? userFilter;
+
   AdsBloc({required AdsRepository adsRepository})
       : _adsRepository = adsRepository,
         super(const AdsState.initial()) {
@@ -35,6 +39,7 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         page: page,
         limit: limit,
         searchQuery: searchQuery,
+        userId: userFilter,
       );
 
       emit(AdsState.loaded(
@@ -152,6 +157,7 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         page: page,
         limit: limit,
         searchQuery: searchQuery,
+        userId: userFilter,
       );
 
       emit(AdsState.loaded(

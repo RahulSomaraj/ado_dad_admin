@@ -16,7 +16,6 @@ class _VehicleModelViewState extends State<VehicleModelView> {
   @override
   void initState() {
     super.initState();
-    print('📋 Vehicle Model Fields: ${widget.vehiclemodel.toJson()}');
   }
 
   @override

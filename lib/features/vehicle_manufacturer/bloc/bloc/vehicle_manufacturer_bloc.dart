@@ -19,12 +19,6 @@ class VehicleManufacturerBloc
     on<DeleteVehicleManufacturer>(_onDeleteManufacturer);
     on<FetchAllManufacturersForDropdown>(_fetchAllForDropdown);
     on<UploadCsv>(_onUploadCsv);
-
-    // @override
-    // Stream<VehicleManufacturerState> mapEventToState(
-    //   VehicleManufacturerEvent event,
-    // ) async* {
-    //   // TODO: implement mapEventToState
   }
 
   Future<void> _onFetchAllVehicleManufacturers(
@@ -52,7 +46,6 @@ class VehicleManufacturerBloc
   ) async {
     emit(const VehicleManufacturerState.loading());
     try {
-      print("Payload: ${event.manufacturer.toJson()}");
       await repository.createManufacturer(event.manufacturer);
       final result = await repository.fetchAllManufacturers();
       emit(VehicleManufacturerState.loaded(result));
@@ -67,7 +60,6 @@ class VehicleManufacturerBloc
   ) async {
     emit(const VehicleManufacturerState.loading());
     try {
-      print("Update Payload: ${event.manufacturer.toJson()}");
       await repository.updateManufacturer(event.manufacturer);
       final result = await repository.fetchAllManufacturers();
       emit(VehicleManufacturerState.loaded(result));
@@ -94,7 +86,6 @@ class VehicleManufacturerBloc
     FetchAllManufacturersForDropdown event,
     Emitter<VehicleManufacturerState> emit,
   ) async {
-    // Don't show loading state if loading more (to avoid flickering)
     if (!event.loadMore) {
       emit(const VehicleManufacturerState.loading());
     }
@@ -107,14 +98,11 @@ class VehicleManufacturerBloc
       );
 
       if (event.loadMore) {
-        // Get current state and append new data
         final currentState = state;
         if (currentState is _DropdownLoaded) {
           final existingData =
               List<VehicleManufacturer>.from(currentState.data);
-          // Get existing IDs to prevent duplicates
           final existingIds = existingData.map((m) => m.id).toSet();
-          // Only add items that don't already exist
           final newItems =
               result.data.where((m) => !existingIds.contains(m.id)).toList();
           existingData.addAll(newItems);
@@ -124,7 +112,6 @@ class VehicleManufacturerBloc
             result.hasNext,
           ));
         } else {
-          // If state is not dropdownLoaded, just emit new data
           emit(VehicleManufacturerState.dropdownLoaded(
             List<VehicleManufacturer>.from(result.data),
             result.page,
@@ -132,7 +119,6 @@ class VehicleManufacturerBloc
           ));
         }
       } else {
-        // Initial load - create new mutable list
         emit(VehicleManufacturerState.dropdownLoaded(
           List<VehicleManufacturer>.from(result.data),
           result.page,
@@ -151,17 +137,10 @@ class VehicleManufacturerBloc
   ) async {
     emit(const VehicleManufacturerState.loading());
     try {
-      print('🔄 Bloc: Starting CSV upload for file: ${event.fileName}');
       await repository.uploadCsv(event.fileBytes, event.fileName);
-      print('✅ Bloc: CSV upload successful, fetching manufacturers...');
       final result = await repository.fetchAllManufacturers();
-      print('✅ Bloc: Manufacturers fetched successfully');
       emit(VehicleManufacturerState.loaded(result));
-    } catch (e, stackTrace) {
-      print('❌ Bloc: Error during CSV upload:');
-      print('   Error: $e');
-      print('   Error Type: ${e.runtimeType}');
-      print('   Stack Trace: $stackTrace');
+    } catch (e) {
       emit(VehicleManufacturerState.error(e.toString()));
     }
   }

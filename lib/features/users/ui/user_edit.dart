@@ -244,13 +244,8 @@ class _EditUserState extends State<EditUser> {
             : null, // Only include password if it's being changed
       );
 
-      print(
-          '🔍 UserEdit: Profile pic bytes: ${_profilePicBytes != null ? "Has new image" : "No new image"}');
-      print('🔍 UserEdit: Current profile pic URL: "$_currentProfilePicUrl"');
-
       if (_profilePicBytes != null) {
         // User is uploading a new profile picture
-        print('🔍 UserEdit: Using profile picture upload path');
         context.read<UserBloc>().add(UserEvent.updateUserWithProfilePic(
               updatedUser: updatedUser,
               profilePicBytes: _profilePicBytes!,
@@ -258,14 +253,12 @@ class _EditUserState extends State<EditUser> {
       } else {
         // User is not changing profile picture (keep existing or no profile picture)
         // Always use the regular update path - it handles existing profilePic URLs correctly
-        print('🔍 UserEdit: Using regular update path');
         context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
       }
     }
   }
 
   void _showSuccessPopup(BuildContext context, String message) async {
-    print('🔍 UserEdit: Showing success popup with message: "$message"');
     // Get current user type and ID to determine navigation
     final userType = await getUserType();
     final currentUserId = await getUserId();
@@ -292,14 +285,10 @@ class _EditUserState extends State<EditUser> {
                     // For AD/SA users editing their own profile, go back to profile page
                     context.read<UserBloc>().add(const FetchAllUsers());
                     context.go('/profile');
-                    print(
-                        '🔍 Navigation: AD/SA user editing own profile, going to profile page');
                   } else {
                     // For all other cases (editing other users), go to users list
                     context.read<UserBloc>().add(const FetchAllUsers());
                     context.go('/users');
-                    print(
-                        '🔍 Navigation: Editing other user, going to users list');
                   }
                 }
               },
@@ -335,17 +324,12 @@ class _EditUserState extends State<EditUser> {
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
       listener: (context, state) {
-        print('🔍 UserEdit: BlocListener received state: ${state.runtimeType}');
         if (state is UserUpdated) {
-          print(
-              '🔍 UserEdit: UserUpdated state received, updating stored data and showing success popup');
           // Update stored data if AD user is editing their own profile
           _updateStoredUserDataIfOwnProfile().then((_) {
             _showSuccessPopup(
                 context, "User details have been updated successfully.");
           });
-        } else if (state is UserError) {
-          print('🔍 UserEdit: UserError state received: ${state.message}');
         }
       },
       child: BlocBuilder<UserBloc, UserState>(

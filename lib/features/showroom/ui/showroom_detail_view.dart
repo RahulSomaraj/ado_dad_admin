@@ -27,8 +27,6 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
   void initState() {
     super.initState();
     // Trigger the bloc to fetch showroom ads with pagination
-    print(
-        '🏪 ShowroomDetailView: Fetching ads for showroom: ${widget.showroomuser.name} (ID: ${widget.showroomuser.id})');
     context.read<UserAdsBloc>().add(
           UserAdsEvent.fetchUserAds(
             userId: widget.showroomuser.id,

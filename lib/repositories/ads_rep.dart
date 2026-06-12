@@ -10,17 +10,14 @@ class AdsRepository {
     int page = 1,
     int limit = 10,
     String? searchQuery,
+    String? userId,
   }) async {
     try {
-      // final response = await _dio.post('/v2/ads/list', data: {
-      //   'page': page,
-      //   'limit': limit,
-      //   'search': searchQuery,
-      // });
       final response = await _dio.get('/ads/admin/all', queryParameters: {
         'page': page,
         'limit': limit,
         'search': searchQuery,
+        if (userId != null && userId.isNotEmpty) 'postedBy': userId,
       });
 
       if (response.statusCode == 200) {

@@ -45,19 +45,10 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
   ) async {
     emit(const VehicleModelState.loading());
     try {
-      // 1. Upload images to S3
       final uploadedUrls = await repository.uploadImagesToS3(event.rawImages);
-
-      // 2. Update model with uploaded image URLs
       final modelWithImages = event.model.copyWith(images: uploadedUrls);
-
-      print('📦 Final Vehicle Model payload: ${modelWithImages.toJson()}');
-
-      // 3. Post to backend
       await repository.createVehicleModel(modelWithImages);
-      emit(const VehicleModelState.created()); // << success signal
-
-      // 4. Refresh model list
+      emit(const VehicleModelState.created());
       final result = await repository.fetchAllModels();
       emit(VehicleModelState.loaded(result));
     } catch (e) {
@@ -120,25 +111,19 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
   ) async {
     emit(const VehicleModelState.loading());
     try {
-      // 1) Upload only newly added files
       final uploadedNewUrls = event.newRawImages.isEmpty
           ? <String>[]
           : await repository.uploadImagesToS3(event.newRawImages);
 
-      // 2) Merge: keep existing (remaining) + newly uploaded
       final mergedImages = <String>[
         ...event.keepImageUrls,
         ...uploadedNewUrls,
       ];
 
-      // 3) Update model with merged images
       final updated = event.model.copyWith(images: mergedImages);
-
-      // 4) PUT update
       await repository.updateVehicleModel(updated);
-      emit(const VehicleModelState.updated()); // << success signal
+      emit(const VehicleModelState.updated());
 
-      // 5) Refresh list after update
       final refreshed = await repository.fetchAllModels();
       emit(VehicleModelState.loaded(refreshed));
     } catch (e) {
@@ -152,31 +137,17 @@ class VehicleModelBloc extends Bloc<VehicleModelEvent, VehicleModelState> {
   ) async {
     emit(const VehicleModelState.loading());
     try {
-      print(
-          '🔄 Bloc: Starting CSV upload for manufacturer: ${event.manufacturerId}');
       await repository.uploadCsv(
           event.manufacturerId, event.fileBytes, event.fileName);
-      print('✅ Bloc: CSV upload successful, fetching models...');
 
-      // Fetch models by manufacturer first (for the manufacturer view page)
-      // Use default pagination (page 1, limit 10) for the initial fetch after CSV upload
       final manufacturerModels = await repository.fetchModelsByManufacturer(
         event.manufacturerId,
         page: 1,
         limit: 10,
       );
-      print('✅ Bloc: Manufacturer models fetched successfully');
 
-      // Emit the manufacturer-specific models (this updates the manufacturer view page)
       emit(VehicleModelState.loaded(manufacturerModels));
-
-      // Note: The main model list will be refreshed by the global bloc
-      // which is triggered from the UI layer after successful upload
-    } catch (e, stackTrace) {
-      print('❌ Bloc: Error during CSV upload:');
-      print('   Error: $e');
-      print('   Error Type: ${e.runtimeType}');
-      print('   Stack Trace: $stackTrace');
+    } catch (e) {
       emit(VehicleModelState.error(e.toString()));
     }
   }

@@ -157,6 +157,7 @@ class FillWidthDataTable extends StatelessWidget {
   final List<DataRow> rows;
   final double minWidth;
   final double columnSpacing;
+  final bool showCheckboxColumn;
 
   const FillWidthDataTable({
     super.key,
@@ -165,6 +166,7 @@ class FillWidthDataTable extends StatelessWidget {
     required this.rows,
     this.minWidth = 900,
     this.columnSpacing = 48,
+    this.showCheckboxColumn = true,
   });
 
   @override
@@ -184,6 +186,7 @@ class FillWidthDataTable extends StatelessWidget {
               child: DataTable(
                 columnSpacing: columnSpacing,
                 horizontalMargin: 16,
+                showCheckboxColumn: showCheckboxColumn,
                 headingRowColor: WidgetStateColor.resolveWith(
                     (states) => AppColors.surfaceAlt),
                 dataRowColor: WidgetStatePropertyAll(AppColors.surface),

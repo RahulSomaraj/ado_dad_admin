@@ -27,7 +27,6 @@ class _VehicleManufacturerDetailViewState
   @override
   void initState() {
     super.initState();
-    print('Manufacturer ID: ${widget.vehiclemanufacturer.id}');
   }
 
   void _confirmDelete(BuildContext context, VehicleManufacturer m) {
@@ -179,10 +178,6 @@ class _VehicleManufacturerDetailViewState
       if (result != null && result.files.single.bytes != null) {
         final fileBytes = result.files.single.bytes!;
         final fileName = result.files.single.name;
-
-        // Print manufacturer ID when uploading CSV
-        print('📤 Uploading CSV for Manufacturer ID: ${manufacturer.id}');
-        print('📁 File name: $fileName');
 
         if (mounted) {
           setState(() {
