@@ -8,6 +8,7 @@ import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class EditShowroom extends StatefulWidget {
   final UserModel showroomuser;
@@ -350,77 +351,70 @@ class _EditShowroomState extends State<EditShowroom> {
   }
 
   Widget _buildHeaderSection() {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(12),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () {
+            context.pop();
+          },
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
+        const SizedBox(width: 4),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new,
-                  color: AppColors.blackColor),
-              onPressed: () {
-                context.pop();
-              },
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Edit Showroom",
-                style: TextStyle(
-                    color: AppColors.blackColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
+            Text("Showrooms / Edit",
+                style: GoogleFonts.inter(
+                    fontSize: 12, color: AppColors.textMuted)),
+            const SizedBox(height: 2),
+            Text("Edit showroom",
+                style: GoogleFonts.inter(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
           ],
         ),
-      ),
+      ],
     );
   }
 
   Center _buildUpdateForm(ShowroomState state) {
     return Center(
-      child: SizedBox(
-        width: 500,
-        child: Card(
-          elevation: 5,
-          color: AppColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 640),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border),
+          ),
           child: Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(24),
             child: Form(
               key: _showroomEditFormKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  _fieldLabel("Showroom name"),
                   _buildFormField(
                       "Showroom Name", _name, (value) => _name = value!),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 16),
+                  _fieldLabel("Email"),
                   _buildFormField("Email", _email, (value) => _email = value!,
                       isEmail: true),
-                  const SizedBox(height: 15),
+                  const SizedBox(height: 16),
+                  _fieldLabel("Phone number"),
                   _buildPhoneField(),
-                  const SizedBox(height: 15),
-                  _buildProfilePictureSection(),
-                  const SizedBox(height: 15),
-                  _buildChangePasswordSection(),
                   const SizedBox(height: 20),
+                  _buildProfilePictureSection(),
+                  const SizedBox(height: 16),
+                  _buildChangePasswordSection(),
+                  const SizedBox(height: 24),
                   SizedBox(
                     width: double.infinity,
+                    height: 48,
                     child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                      ),
                       onPressed:
                           state is ShowroomLoading ? null : _updateShowroom,
                       child: state is ShowroomLoading
@@ -430,9 +424,9 @@ class _EditShowroomState extends State<EditShowroom> {
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white),
                             )
-                          : const Text("Update",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          : Text("Save changes",
+                              style: GoogleFonts.inter(
+                                  fontSize: 15, fontWeight: FontWeight.w600)),
                     ),
                   ),
                 ],
@@ -444,13 +438,22 @@ class _EditShowroomState extends State<EditShowroom> {
     );
   }
 
+  Widget _fieldLabel(String text) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(text,
+            style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary)),
+      );
+
   Widget _buildFormField(
       String label, String initialValue, Function(String?) onSaved,
       {bool isEmail = false, bool isPhone = false}) {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
-        labelText: label,
+        hintText: "Enter $label",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       keyboardType: isEmail
@@ -478,26 +481,21 @@ class _EditShowroomState extends State<EditShowroom> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Profile Picture",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
+        _fieldLabel("Profile picture"),
+        const SizedBox(height: 2),
         GestureDetector(
           onTap: _pickProfilePicture,
           child: Container(
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(8),
+              color: AppColors.surfaceAlt,
+              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: _profilePicBytes != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(11),
                     child: Image.memory(
                       _profilePicBytes!,
                       fit: BoxFit.cover,
@@ -506,7 +504,7 @@ class _EditShowroomState extends State<EditShowroom> {
                 : _currentProfilePicUrl != null &&
                         _currentProfilePicUrl!.isNotEmpty
                     ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(11),
                         child: Image.network(
                           _currentProfilePicUrl!,
                           fit: BoxFit.cover,
@@ -525,17 +523,17 @@ class _EditShowroomState extends State<EditShowroom> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.add_a_photo,
-          size: 40,
-          color: Colors.grey.shade600,
+        const Icon(
+          Icons.add_a_photo_outlined,
+          size: 32,
+          color: AppColors.textMuted,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
-          "Add Photo",
-          style: TextStyle(
+          "Add photo",
+          style: GoogleFonts.inter(
             fontSize: 12,
-            color: Colors.grey.shade600,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -556,29 +554,30 @@ class _EditShowroomState extends State<EditShowroom> {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+              color: AppColors.surfaceAlt,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.border),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.lock_outline,
-                  color: Colors.grey.shade600,
+                  size: 19,
+                  color: AppColors.textSecondary,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  "Change Password",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade700,
+                  "Change password",
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
                 Icon(
                   _showPasswordSection ? Icons.expand_less : Icons.expand_more,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                 ),
               ],
             ),
@@ -653,7 +652,7 @@ class _EditShowroomState extends State<EditShowroom> {
       controller: _phoneController,
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
-        labelText: "Phone Number",
+        hintText: "Phone number",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         prefixIcon: _buildCountryCodeSelector(),
       ),
