@@ -73,6 +73,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
           case '/view-showroom':
             return 6;
           case '/reports':
+          case '/report-detail':
+          case '/user-moderation-history':
             return 7;
           case '/notifications':
             return 8;
@@ -80,6 +82,12 @@ class _AdminDrawerState extends State<AdminDrawer> {
           case '/upload-banners':
           case '/edit-banner':
             return 9;
+          case '/suspension-management':
+            return 10;
+          case '/appeals':
+            return 11;
+          case '/moderation-settings':
+            return 12;
           default:
             return 0; // Default to dashboard
         }
@@ -113,6 +121,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
           case '/view-showroom':
             return 5;
           case '/reports':
+          case '/report-detail':
+          case '/user-moderation-history':
             return 6;
           case '/notifications':
             return 7;
@@ -120,6 +130,10 @@ class _AdminDrawerState extends State<AdminDrawer> {
           case '/upload-banners':
           case '/edit-banner':
             return 8;
+          case '/suspension-management':
+            return 9;
+          case '/appeals':
+            return 10;
           default:
             return 0; // Default to dashboard
         }
@@ -290,6 +304,13 @@ class _AdminDrawerState extends State<AdminDrawer> {
             'assets/images/notification-icon.png', "Notifications"),
         _buildDrawerItem(baseIndex + 5, '/banners',
             'assets/images/report-icon.png', "Banner Management"),
+        _buildDrawerItem(baseIndex + 6, '/suspension-management',
+            'assets/images/report-icon.png', "Suspensions"),
+        _buildDrawerItem(baseIndex + 7, '/appeals',
+            'assets/images/report-icon.png', "Appeals"),
+        if (widget.userType == "SA")
+          _buildDrawerItem(baseIndex + 8, '/moderation-settings',
+              'assets/images/promotion-icon.png', "Moderation Settings"),
       ]);
 
       return Column(children: menuItems);

@@ -4,6 +4,7 @@ import 'package:ado_dad_admin/features/widgets/list_page.dart';
 import 'package:ado_dad_admin/models/report_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ReportList extends StatefulWidget {
@@ -306,11 +307,21 @@ class _ReportListState extends State<ReportList> {
       DataCell(Text(_formatDate(report.createdAt),
           style: GoogleFonts.inter(
               fontSize: 12.5, color: AppColors.textSecondary))),
-      DataCell(ListRowAction(
-        icon: Icons.delete_outline,
-        tooltip: "Delete",
-        color: AppColors.danger,
-        onTap: () => _showDeleteDialog(report),
+      DataCell(Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListRowAction(
+            icon: Icons.visibility_outlined,
+            tooltip: "Review",
+            onTap: () => context.push('/report-detail', extra: report),
+          ),
+          ListRowAction(
+            icon: Icons.delete_outline,
+            tooltip: "Delete",
+            color: AppColors.danger,
+            onTap: () => _showDeleteDialog(report),
+          ),
+        ],
       )),
     ]);
   }

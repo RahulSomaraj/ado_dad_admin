@@ -17,6 +17,12 @@ import 'package:ado_dad_admin/features/users/ui/user_edit.dart';
 import 'package:ado_dad_admin/features/users/ui/user_list.dart';
 import 'package:ado_dad_admin/features/users/ui/user_view.dart';
 import 'package:ado_dad_admin/features/reports/ui/report_list.dart';
+import 'package:ado_dad_admin/features/moderation/ui/report_detail_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/user_moderation_history_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/suspension_management_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/moderation_settings_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/appeals_review_screen.dart';
+import 'package:ado_dad_admin/models/report_model.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_add.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_edit.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_list.dart';
@@ -64,6 +70,30 @@ class AppRoutes {
           _noTransitionRoute('/showrooms', Showroom()),
           _noTransitionRoute('/add-showroom', ShowroomAdd()),
           _noTransitionRoute('/reports', const ReportList()),
+          _noTransitionRoute(
+              '/suspension-management', const SuspensionManagementScreen()),
+          _noTransitionRoute(
+              '/moderation-settings', const ModerationSettingsScreen()),
+          _noTransitionRoute('/appeals', const AppealsReviewScreen()),
+          GoRoute(
+            path: '/report-detail',
+            pageBuilder: (context, state) {
+              final report = state.extra as ReportModel;
+              return NoTransitionPage(child: ReportDetailScreen(report: report));
+            },
+          ),
+          GoRoute(
+            path: '/user-moderation-history',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return NoTransitionPage(
+                child: UserModerationHistoryScreen(
+                  userId: extra?['userId']?.toString() ?? '',
+                  userName: extra?['userName']?.toString(),
+                ),
+              );
+            },
+          ),
           _noTransitionRoute('/banners', const BannerPage()),
           _noTransitionRoute('/upload-banners', const BannerUploadPage()),
           _noTransitionRoute('/notifications', Notification()),
