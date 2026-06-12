@@ -1,10 +1,9 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
-import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/features/login/bloc/auth_bloc.dart';
-import 'package:ado_dad_admin/features/widgets/input_decoration.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:country_picker/country_picker.dart';
 
 class LoginPage extends StatefulWidget {
@@ -68,136 +67,202 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.scaffoldColor,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          double width = constraints.maxWidth;
+      backgroundColor: AppColors.background,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final showBrandPanel = constraints.maxWidth >= 880;
 
-          // if (width < 768) {
-          //   // For mobile screens: Show nothing or a message
-          //   return const Center(
-          //     child: Text(
-          //       "Please use a tablet or desktop to access the admin panel.",
-          //       textAlign: TextAlign.center,
-          //       style: TextStyle(fontSize: 18),
-          //     ),
-          //   );
-          // }
-
-          // iPad and desktop
-          double cardWidth = width >= 1024 ? 600 : 500;
-
-          return Center(
-            child: Card(
-              elevation: 4,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(0),
-              ),
-              child: Container(
-                color: Colors.white,
-                width: cardWidth,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 100, horizontal: 25),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Column(
+              return ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: showBrandPanel ? 940 : 440,
+                ),
+                child: Material(
+                  elevation: 0,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.border),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.06),
+                          blurRadius: 30,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
+                    ),
+                    clipBehavior: Clip.antiAlias,
+                    child: IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Image.asset(
-                            "assets/images/splashVector.png",
-                            height: 60,
-                          ),
-                          const SizedBox(height: 10),
-                          Image.asset(
-                            "assets/images/Ado Dad11.png",
-                            height: 60,
-                          ),
+                          if (showBrandPanel)
+                            Expanded(child: _buildBrandPanel()),
+                          Expanded(child: _buildFormPanel()),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        "Login",
-                        style: TextStyle(
-                            fontSize: 25, fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 20),
-                      _buildUsername(),
-                      const SizedBox(height: 16),
-                      _buildPassword(),
-                      const SizedBox(height: 20),
-                      _buildLoginBtnn(),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ),
-          );
-        },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     backgroundColor: AppColors.scaffoldColor,
-  //     body: Center(
-  //       child: Card(
-  //         elevation: 4,
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(0),
-  //         ),
-  //         child: Container(
-  //           color: Colors.white,
-  //           width: 500,
-  //           padding: const EdgeInsets.symmetric(vertical: 100, horizontal: 25),
-  //           child: Form(
-  //             key: _formKey,
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [
-  //                 Image.asset(
-  //                   "assets/images/ado-dad-logo.png",
-  //                   height: 100,
-  //                 ),
-  //                 const SizedBox(height: 20),
-  //                 const Text(
-  //                   "Login",
-  //                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-  //                 ),
-  //                 const SizedBox(height: 20),
-  //                 _buildUsername(),
-  //                 const SizedBox(height: 16),
-  //                 _buildPassword(),
-  //                 const SizedBox(height: 20),
-  //                 _buildLoginBtnn(),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  // -------------------------------------------------------------------------
+  // Left brand panel (wide screens only)
+  // -------------------------------------------------------------------------
+  Widget _buildBrandPanel() {
+    return Container(
+      padding: const EdgeInsets.all(40),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.accent, AppColors.accentHover],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Image.asset(
+              "assets/images/splashVector.png",
+              height: 40,
+              errorBuilder: (_, __, ___) =>
+                  const Icon(Icons.directions_car_filled,
+                      color: Colors.white, size: 40),
+            ),
+          ),
+          const Spacer(),
+          Text(
+            "Ado-dad\nAdmin Console",
+            style: GoogleFonts.inter(
+              color: Colors.white,
+              fontSize: 32,
+              height: 1.2,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Manage users, showrooms, the vehicle catalog, "
+            "advertisements and reports — all in one place.",
+            style: GoogleFonts.inter(
+              color: Colors.white.withOpacity(0.85),
+              fontSize: 15,
+              height: 1.5,
+            ),
+          ),
+          const Spacer(),
+          Text(
+            "© ${DateTime.now().year} Ado-dad",
+            style: GoogleFonts.inter(
+              color: Colors.white.withOpacity(0.7),
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-  Widget _buildUsername() {
+  // -------------------------------------------------------------------------
+  // Right form panel
+  // -------------------------------------------------------------------------
+  Widget _buildFormPanel() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 48),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.asset(
+              "assets/images/Ado Dad11.png",
+              height: 44,
+              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+            ),
+            const SizedBox(height: 28),
+            Text(
+              "Welcome back",
+              style: GoogleFonts.inter(
+                fontSize: 26,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              "Sign in to your admin account",
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(height: 28),
+            _fieldLabel("Phone number or email"),
+            const SizedBox(height: 6),
+            _buildUsername(),
+            const SizedBox(height: 18),
+            _fieldLabel("Password"),
+            const SizedBox(height: 6),
+            _buildPassword(),
+            const SizedBox(height: 28),
+            _buildLoginBtnn(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _fieldLabel(String text) => Text(
+        text,
+        style: GoogleFonts.inter(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+      );
+
+  InputDecoration _decoration(String hint,
+      {Widget? suffixIcon, Widget? prefixIcon}) {
+    return InputDecoration(
+      hintText: hint,
+      suffixIcon: suffixIcon,
+      prefixIcon: prefixIcon,
+      isDense: true,
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Fields — phone/email detection + validators preserved
+  // -------------------------------------------------------------------------
+  TextFormField _buildUsername() {
     return TextFormField(
       controller: _usernameController,
       keyboardType: TextInputType.text,
-      decoration: textFieldDecoration('Phone Number or Email').copyWith(
+      decoration: _decoration(
+        'Phone number or email',
         prefixIcon: _showCountryCode ? _buildCountryCodeSelector() : null,
       ),
-      style: AppTextStyle.texttstyle,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "Enter Phone Number or Email";
-        }
-        return null;
-      },
+      style: GoogleFonts.inter(fontSize: 15, color: AppColors.textPrimary),
+      validator: (value) => (value == null || value.isEmpty)
+          ? "Enter Phone Number or Email"
+          : null,
     );
   }
 
@@ -205,9 +270,7 @@ class _LoginPageState extends State<LoginPage> {
     return GestureDetector(
       onTap: () => _showCountryPicker(),
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -219,13 +282,15 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(width: 4),
             Text(
               '+${_selectedCountry?.phoneCode ?? '1'}',
-              style: const TextStyle(
-                fontSize: 16,
+              style: GoogleFonts.inter(
+                fontSize: 15,
                 fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(width: 4),
-            const Icon(Icons.arrow_drop_down, size: 20),
+            const SizedBox(width: 2),
+            const Icon(Icons.arrow_drop_down,
+                size: 20, color: AppColors.textSecondary),
           ],
         ),
       ),
@@ -249,11 +314,15 @@ class _LoginPageState extends State<LoginPage> {
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscureText,
-      decoration: textFieldDecoration('Password').copyWith(
+      decoration: _decoration(
+        'Enter your password',
         suffixIcon: IconButton(
           icon: Icon(
-            _obscureText ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey,
+            _obscureText
+                ? Icons.visibility_off_outlined
+                : Icons.visibility_outlined,
+            color: AppColors.textMuted,
+            size: 20,
           ),
           onPressed: () {
             setState(() {
@@ -262,7 +331,7 @@ class _LoginPageState extends State<LoginPage> {
           },
         ),
       ),
-      style: AppTextStyle.texttstyle,
+      style: GoogleFonts.inter(fontSize: 15, color: AppColors.textPrimary),
       validator: (value) => value!.isEmpty ? "Enter Password" : null,
     );
   }
@@ -281,7 +350,9 @@ class _LoginPageState extends State<LoginPage> {
               showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
-                  title: Center(child: const Text("Login Failed")),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14)),
+                  title: const Text("Login Failed"),
                   content: Padding(
                     padding: const EdgeInsets.all(10),
                     child: Text(message),
@@ -300,39 +371,48 @@ class _LoginPageState extends State<LoginPage> {
         );
       },
       builder: (context, state) {
+        final isLoading = state.maybeWhen(
+          loading: () => true,
+          orElse: () => false,
+        );
         return SizedBox(
           width: double.infinity,
-          height: 48,
+          height: 50,
           child: ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
-                String username = _usernameController.text.trim();
+            onPressed: isLoading
+                ? null
+                : () {
+                    if (_formKey.currentState!.validate()) {
+                      String username = _usernameController.text.trim();
 
-                // If input is not an email, treat it as phone number and add country code
-                if (!_isEmail(username)) {
-                  final countryCode = '+${_selectedCountry?.phoneCode ?? '1'}';
-                  username = '$countryCode$username';
-                }
-                // If it's an email, use it as is (no country code)
+                      // If input is not an email, treat it as phone number and
+                      // prepend the selected country code.
+                      if (!_isEmail(username)) {
+                        final countryCode =
+                            '+${_selectedCountry?.phoneCode ?? '1'}';
+                        username = '$countryCode$username';
+                      }
 
-                context.read<AuthBloc>().add(AuthEvent.login(
-                      username: username,
-                      password: _passwordController.text.trim(),
-                    ));
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primaryColor1,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-            child: state.maybeWhen(
-              loading: () => const CircularProgressIndicator(
-                color: Colors.white,
-              ),
-              orElse: () => Text("Login", style: AppTextStyle.buttonTextstyle),
-            ),
+                      context.read<AuthBloc>().add(AuthEvent.login(
+                            username: username,
+                            password: _passwordController.text.trim(),
+                          ));
+                    }
+                  },
+            child: isLoading
+                ? const SizedBox(
+                    height: 22,
+                    width: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.4,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(
+                    "Sign in",
+                    style: GoogleFonts.inter(
+                        fontSize: 15, fontWeight: FontWeight.w600),
+                  ),
           ),
         );
       },
