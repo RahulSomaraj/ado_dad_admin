@@ -1,9 +1,11 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/list_page.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class VehicleManufacturesList extends StatefulWidget {
   const VehicleManufacturesList({super.key});
@@ -17,19 +19,23 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _horizontalScrollController = ScrollController();
   String? _selectedCategory;
+  int rowsPerPage = 10;
 
   @override
   void initState() {
     super.initState();
-    // Fetch vehicle manufacturers when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context
           .read<VehicleManufacturerBloc>()
-          .add(const FetchAllVehicleManufacturers(
-            page: 1,
-            limit: 10,
-          ));
+          .add(const FetchAllVehicleManufacturers(page: 1, limit: 10));
     });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _horizontalScrollController.dispose();
+    super.dispose();
   }
 
   /// Helper method to create FetchAllVehicleManufacturers event
@@ -39,7 +45,6 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
     String? searchQuery,
     String? category,
   }) {
-    // Only include non-empty values
     final finalSearchQuery =
         (searchQuery != null && searchQuery.trim().isNotEmpty)
             ? searchQuery.trim()
@@ -48,43 +53,28 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
         ? category.trim()
         : null;
 
-    // Create event - freezed will handle null values correctly
     if (finalCategory != null && finalSearchQuery != null) {
       return FetchAllVehicleManufacturers(
-        page: page,
-        limit: limit,
-        searchQuery: finalSearchQuery,
-        category: finalCategory,
-      );
+          page: page,
+          limit: limit,
+          searchQuery: finalSearchQuery,
+          category: finalCategory);
     } else if (finalCategory != null) {
       return FetchAllVehicleManufacturers(
-        page: page,
-        limit: limit,
-        category: finalCategory,
-      );
+          page: page, limit: limit, category: finalCategory);
     } else if (finalSearchQuery != null) {
       return FetchAllVehicleManufacturers(
-        page: page,
-        limit: limit,
-        searchQuery: finalSearchQuery,
-      );
+          page: page, limit: limit, searchQuery: finalSearchQuery);
     } else {
-      return FetchAllVehicleManufacturers(
-        page: page,
-        limit: limit,
-      );
+      return FetchAllVehicleManufacturers(page: page, limit: limit);
     }
   }
 
   void _onCategoryChanged(String? category) {
-    setState(() {
-      _selectedCategory = category;
-    });
-    // Reset to page 1 when category changes
+    setState(() => _selectedCategory = category);
     final searchQuery = _searchController.text.trim().isEmpty
         ? null
         : _searchController.text.trim();
-
     context.read<VehicleManufacturerBloc>().add(
           _createFetchEvent(
             page: 1,
@@ -96,254 +86,74 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
   }
 
   @override
-  void dispose() {
-    _searchController.dispose();
-    _horizontalScrollController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
-          _buildHeaderSection(),
-          const SizedBox(height: 20),
-          _buildCategoryFilterSection(),
-          const SizedBox(height: 20),
-          _buildCompanyList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeaderSection() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
-
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: isTablet
-          ? Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Vehicle Manufacturer Management",
-                    style: TextStyle(
-                      color: AppColors.blackColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+          ListPageHeader(
+            breadcrumb: "Home / Vehicle Manufacturers",
+            title: "Vehicle Manufacturers",
+            subtitle: "Manage manufacturer catalog",
+            searchHint: "Search manufacturers…",
+            searchController: _searchController,
+            onSearch: (query) {
+              final searchQuery = query.trim().isEmpty ? null : query.trim();
+              context.read<VehicleManufacturerBloc>().add(
+                    _createFetchEvent(
+                      page: 1,
+                      limit: rowsPerPage,
+                      searchQuery: searchQuery,
+                      category: _selectedCategory,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildSearchBar(),
-                  const SizedBox(height: 12),
-                  _buildAddButton(),
-                ],
-              ),
-            )
-          : Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Vehicle Manufacturer Management",
-                    style: TextStyle(
-                      color: AppColors.blackColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  _buildSearchBar(),
-                  const SizedBox(width: 15),
-                  _buildAddButton(),
-                ],
-              ),
-            ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    final isTablet = MediaQuery.of(context).size.width < 900 &&
-        MediaQuery.of(context).size.width >= 550;
-    return Container(
-      width: isTablet ? double.infinity : 200,
-      height: 50,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.blackColor)),
-      child: Row(
-        children: [
-          const SizedBox(width: 8),
-          const Icon(
-            Icons.search,
-            color: Colors.black,
-            size: 20,
+                  );
+            },
+            trailing: _buildCategoryDropdown(),
+            addLabel: "Add manufacturer",
+            onAdd: () => context.push('/add-vehiclemanufacturer'),
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: "Search...",
-                hintStyle: TextStyle(fontSize: 14),
-                border: InputBorder.none,
-              ),
-              style: const TextStyle(fontSize: 14),
-              onChanged: (query) {
-                final searchQuery = query.trim().isEmpty ? null : query.trim();
-                context.read<VehicleManufacturerBloc>().add(
-                      _createFetchEvent(
-                        page: 1,
-                        limit: rowsPerPage,
-                        searchQuery: searchQuery,
-                        category: _selectedCategory,
-                      ),
-                    );
-              },
-            ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: listCardDecoration(),
+            clipBehavior: Clip.antiAlias,
+            child: _buildCompanyList(),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildCategoryFilterSection() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: _buildCategoryDropdown(),
       ),
     );
   }
 
   Widget _buildCategoryDropdown() {
     return Container(
-      width: 200,
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: AppColors.blackColor),
-      ),
+      height: 40,
       padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.border),
+      ),
       child: DropdownButton<String>(
         value: _selectedCategory,
-        hint: const Text(
-          'Select Category',
-          style: TextStyle(fontSize: 14, color: Colors.grey),
-        ),
-        isExpanded: true,
-        underline: const SizedBox(),
-        icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
-        items: [
-          const DropdownMenuItem<String>(
-            value: null,
-            child: Text('All Categories', style: TextStyle(fontSize: 14)),
-          ),
-          const DropdownMenuItem<String>(
-            value: 'two_wheeler',
-            child: Text('Two Wheeler', style: TextStyle(fontSize: 14)),
-          ),
-          const DropdownMenuItem<String>(
-            value: 'passenger_car',
-            child: Text('Passenger Car', style: TextStyle(fontSize: 14)),
-          ),
-          const DropdownMenuItem<String>(
-            value: 'commercial_vehicle',
-            child: Text('Commercial Vehicle', style: TextStyle(fontSize: 14)),
-          ),
-          const DropdownMenuItem<String>(
-            value: 'luxury',
-            child: Text('Luxury', style: TextStyle(fontSize: 14)),
-          ),
-          const DropdownMenuItem<String>(
-            value: 'suv',
-            child: Text('SUV', style: TextStyle(fontSize: 14)),
-          ),
+        hint: Text('All categories',
+            style:
+                GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary)),
+        isDense: true,
+        underline: const SizedBox.shrink(),
+        icon: const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
+        style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
+        items: const [
+          DropdownMenuItem<String>(value: null, child: Text('All categories')),
+          DropdownMenuItem<String>(
+              value: 'two_wheeler', child: Text('Two Wheeler')),
+          DropdownMenuItem<String>(
+              value: 'passenger_car', child: Text('Passenger Car')),
+          DropdownMenuItem<String>(
+              value: 'commercial_vehicle', child: Text('Commercial Vehicle')),
+          DropdownMenuItem<String>(value: 'luxury', child: Text('Luxury')),
+          DropdownMenuItem<String>(value: 'suv', child: Text('SUV')),
         ],
         onChanged: _onCategoryChanged,
-      ),
-    );
-  }
-
-  Widget _buildAddButton() {
-    final isTablet = MediaQuery.of(context).size.width < 900 &&
-        MediaQuery.of(context).size.width >= 550;
-    return SizedBox(
-      width: isTablet ? double.infinity : 280,
-      height: 50,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final buttonWidth = constraints.maxWidth;
-
-          // Dynamically adjust content based on width
-          double iconSize = buttonWidth < 180 ? 18 : 20;
-          double fontSize = buttonWidth < 180 ? 12 : 14;
-          double spacing = buttonWidth < 180 ? 4 : 6;
-
-          // Shorten text on very narrow screens
-          String buttonText = buttonWidth < 180
-              ? 'Add Manufacturer'
-              : (isTablet ? 'Add Manufacturer' : 'Add Vehicle Manufacturer');
-
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blackColor,
-              foregroundColor: AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              textStyle:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            onPressed: () {
-              // context.push('/add-vehiclemanufacturer');
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  context.push('/add-vehiclemanufacturer');
-                }
-              });
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment:
-                  isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.add,
-                  color: AppColors.primaryColor,
-                  size: iconSize,
-                ),
-                SizedBox(width: spacing),
-                Flexible(
-                  child: Text(
-                    buttonText,
-                    style: TextStyle(fontSize: fontSize),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
       ),
     );
   }
@@ -352,278 +162,129 @@ class _VehicleManufacturesListState extends State<VehicleManufacturesList> {
     return BlocBuilder<VehicleManufacturerBloc, VehicleManufacturerState>(
       builder: (context, state) {
         return state.when(
-          initial: () =>
-              const Center(child: Text("No Vehicle Manufactures Found")),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          initial: () => _statusBox(Text("No manufacturers found",
+              style: GoogleFonts.inter(color: AppColors.textSecondary))),
+          loading: () => _statusBox(const CircularProgressIndicator()),
           loaded: (response) {
+            if (response.data.isEmpty) {
+              return _statusBox(Text("No manufacturers found",
+                  style: GoogleFonts.inter(color: AppColors.textSecondary)));
+            }
             return Column(
               children: [
-                _buildCompanyTable(response.data, response.page),
-                const SizedBox(height: 30),
-                _buildPaginationBar(response.page, response.totalPages),
+                FillWidthDataTable(
+                  controller: _horizontalScrollController,
+                  minWidth: 900,
+                  columns: [
+                    listColumn('#'),
+                    listColumn('Name'),
+                    listColumn('Display name'),
+                    listColumn('Origin country'),
+                    listColumn('Premium'),
+                    listColumn('Actions'),
+                  ],
+                  rows: response.data
+                      .asMap()
+                      .entries
+                      .map((e) => _buildCompanyRow(e.key, e.value, response.page))
+                      .toList(),
+                ),
+                ListPagination(
+                  currentPage: response.page,
+                  totalPages: response.totalPages,
+                  rowsPerPage: rowsPerPage,
+                  onRowsPerPageChanged: (v) {
+                    setState(() => rowsPerPage = v);
+                    _fetchPage(1);
+                  },
+                  onPageChanged: _fetchPage,
+                ),
               ],
             );
           },
-          error: (message) => Center(
-            child: Text(message, style: const TextStyle(color: Colors.red)),
-          ),
+          error: (message) => _statusBox(Text(message,
+              style: GoogleFonts.inter(color: AppColors.danger))),
           dropdownLoaded: (_, __, ___) => const SizedBox.shrink(),
         );
       },
     );
   }
 
-  Widget _buildCompanyTable(
-      List<VehicleManufacturer> manufactures, int currentPage) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
-
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Scrollbar(
-            thumbVisibility: true,
-            controller: _horizontalScrollController,
-            child: SingleChildScrollView(
-              controller: _horizontalScrollController,
-              scrollDirection: Axis.horizontal,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: constraints.maxWidth),
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: DataTable(
-                      columnSpacing: isTablet ? 20 : 40,
-                      headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => const Color.fromARGB(66, 144, 140, 140),
-                      ),
-                      dataRowColor:
-                          WidgetStatePropertyAll(AppColors.primaryColor),
-                      dataRowMinHeight: isTablet ? 45 : 55,
-                      dataRowMaxHeight: isTablet ? 45 : 55,
-                      columns: _buildResponsiveColumns(isTablet),
-                      rows: manufactures
-                          .asMap()
-                          .entries
-                          .map((entry) => _buildCompanyRow(
-                              entry.key, entry.value, currentPage))
-                          .toList(),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
+  void _fetchPage(int page) {
+    final searchQuery = _searchController.text.trim().isEmpty
+        ? null
+        : _searchController.text.trim();
+    context.read<VehicleManufacturerBloc>().add(_createFetchEvent(
+          page: page,
+          limit: rowsPerPage,
+          searchQuery: searchQuery,
+          category: _selectedCategory,
+        ));
   }
 
-  List<DataColumn> _buildResponsiveColumns(bool isTablet) {
-    return [
-      const DataColumn(
-        label: Padding(
-          padding: EdgeInsets.only(left: 30),
-          child: Text(
-            'ID',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Name' : 'Name',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Display Name' : 'Display Name',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Origin Country' : 'Origin Country ',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Is Premium' : 'Is Premium',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      const DataColumn(
-        label: Text(
-          'Actions',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-    ];
-  }
+  Widget _statusBox(Widget child) => Padding(
+        padding: const EdgeInsets.all(48),
+        child: Center(child: child),
+      );
 
   DataRow _buildCompanyRow(
       int index, VehicleManufacturer manufacturer, int currentPage) {
-    int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+    final rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+    final cellStyle =
+        GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary);
     return DataRow(cells: [
-      DataCell(Padding(
-        padding: const EdgeInsets.only(left: 30),
-        child: Text('$rowNumber'),
+      DataCell(Text('$rowNumber',
+          style: GoogleFonts.inter(
+              fontSize: 13, color: AppColors.textSecondary))),
+      DataCell(SizedBox(
+        width: 150,
+        child: Text(manufacturer.name,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: cellStyle.copyWith(fontWeight: FontWeight.w500)),
       )),
-      DataCell(Container(
-        width: 120,
-        child: Text(
-          manufacturer.name,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
+      DataCell(SizedBox(
+        width: 150,
+        child: Text(manufacturer.displayName,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: GoogleFonts.inter(
+                fontSize: 13, color: AppColors.textSecondary)),
       )),
-      DataCell(Container(
-        width: 120,
-        child: Text(
-          manufacturer.displayName,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
+      DataCell(Text(manufacturer.originCountry, style: cellStyle)),
+      DataCell(_yesNoChip(manufacturer.isPremium)),
+      DataCell(Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListRowAction(
+            icon: Icons.edit_outlined,
+            tooltip: "Edit",
+            onTap: () =>
+                context.push('/edit-vehicle_manufacturer', extra: manufacturer),
+          ),
+          ListRowAction(
+            icon: Icons.visibility_outlined,
+            tooltip: "View",
+            onTap: () =>
+                context.push('/view-vehicle_manufacturer', extra: manufacturer),
+          ),
+        ],
       )),
-      DataCell(Container(
-        width: 100,
-        child: Text(
-          manufacturer.originCountry,
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
-      )),
-      DataCell(Container(
-        width: 80,
-        child: Text(
-          manufacturer.isPremium ? 'Yes' : 'No',
-          overflow: TextOverflow.ellipsis,
-          maxLines: 1,
-        ),
-      )),
-      DataCell(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit,
-                  color: Color.fromARGB(255, 59, 59, 59)),
-              onPressed: () {
-                context.push('/edit-vehicle_manufacturer', extra: manufacturer);
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.remove_red_eye_outlined,
-                  color: Color.fromARGB(255, 20, 20, 20)),
-              onPressed: () {
-                context.push('/view-vehicle_manufacturer', extra: manufacturer);
-              },
-            ),
-          ],
-        ),
-      ),
     ]);
   }
 
-  int rowsPerPage = 10;
-
-  Widget _buildPaginationBar(int currentPage, int totalPages) {
+  Widget _yesNoChip(bool value) {
+    final bg = value ? AppColors.successSoft : AppColors.surfaceAlt;
+    final fg = value ? AppColors.success : AppColors.textSecondary;
     return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 20, bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const Text("Rows per page: "),
-            const SizedBox(width: 8),
-            DropdownButton<int>(
-              value: rowsPerPage,
-              dropdownColor: Colors.white,
-              items: [10, 20].map((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text(value.toString()),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    rowsPerPage = value;
-                  });
-                  final searchQuery = _searchController.text.trim().isEmpty
-                      ? null
-                      : _searchController.text.trim();
-                  context.read<VehicleManufacturerBloc>().add(_createFetchEvent(
-                        page: 1,
-                        limit: rowsPerPage,
-                        searchQuery: searchQuery,
-                        category: _selectedCategory,
-                      ));
-                }
-              },
-            ),
-            const SizedBox(width: 20),
-            GestureDetector(
-              onTap: currentPage > 1
-                  ? () {
-                      final searchQuery = _searchController.text.trim().isEmpty
-                          ? null
-                          : _searchController.text.trim();
-                      context
-                          .read<VehicleManufacturerBloc>()
-                          .add(_createFetchEvent(
-                            page: currentPage - 1,
-                            limit: rowsPerPage,
-                            searchQuery: searchQuery,
-                            category: _selectedCategory,
-                          ));
-                    }
-                  : null,
-              child: Icon(
-                Icons.chevron_left,
-                size: 28,
-                color: currentPage > 1 ? Colors.black : Colors.grey[400],
-              ),
-            ),
-            const SizedBox(width: 15),
-            Text(
-              "Page $currentPage of $totalPages",
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 15),
-            GestureDetector(
-              onTap: currentPage < totalPages
-                  ? () {
-                      final searchQuery = _searchController.text.trim().isEmpty
-                          ? null
-                          : _searchController.text.trim();
-                      context
-                          .read<VehicleManufacturerBloc>()
-                          .add(_createFetchEvent(
-                            page: currentPage + 1,
-                            limit: rowsPerPage,
-                            searchQuery: searchQuery,
-                            category: _selectedCategory,
-                          ));
-                    }
-                  : null,
-              child: Icon(
-                Icons.chevron_right,
-                size: 28,
-                color:
-                    currentPage < totalPages ? Colors.black : Colors.grey[400],
-              ),
-            ),
-          ],
-        ),
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+        decoration:
+            BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+        child: Text(value ? 'Yes' : 'No',
+            style: GoogleFonts.inter(
+                fontSize: 11, fontWeight: FontWeight.w600, color: fg)),
       ),
     );
   }

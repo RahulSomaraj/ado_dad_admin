@@ -2,12 +2,14 @@ import 'dart:async';
 
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/list_page.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:ado_dad_admin/repositories/vehicle_manufacturer_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class VehicleModelsList extends StatefulWidget {
   const VehicleModelsList({super.key});
@@ -34,11 +36,11 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
   bool _hasMoreManufacturers = true;
   StateSetter? _menuSetState;
   Timer? _searchDebounceTimer;
+  int rowsPerPage = 10;
 
   @override
   void initState() {
     super.initState();
-    // Fetch manufacturers and vehicle models when the page is initialized
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchManufacturers();
       context
@@ -47,17 +49,24 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
     });
   }
 
-  Future<void> _fetchManufacturers({bool loadMore = false, String? searchQuery}) async {
-    // If searching, always reset to page 1 and don't load more
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _horizontalScrollController.dispose();
+    _manufacturerSearchController.dispose();
+    _searchDebounceTimer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchManufacturers(
+      {bool loadMore = false, String? searchQuery}) async {
     if (searchQuery != null && searchQuery.isNotEmpty) {
       loadMore = false;
     }
-    
+
     if (loadMore) {
       if (_isLoadingMoreManufacturers || !_hasMoreManufacturers) return;
-      setState(() {
-        _isLoadingMoreManufacturers = true;
-      });
+      setState(() => _isLoadingMoreManufacturers = true);
     } else {
       setState(() {
         _isLoadingManufacturers = true;
@@ -68,23 +77,13 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
 
     try {
       int pageToFetch = loadMore ? _manufacturerCurrentPage + 1 : 1;
-
-      print(
-          '🔄 Fetching manufacturers: loadMore=$loadMore, currentPage=$_manufacturerCurrentPage, pageToFetch=$pageToFetch');
-
       final response = await _manufacturerRepository.fetchDropDownManufacturers(
         page: pageToFetch,
         limit: 10,
         searchQuery: searchQuery,
       );
 
-      print(
-          '✅ Received response: page=${response.page}, hasNext=${response.hasNext}, items=${response.data.length}, total=${response.total}, totalPages=${response.totalPages}');
-
-      // Validate response
       if (response.data.isEmpty && loadMore) {
-        print(
-            '⚠️ Received empty response for loadMore, updating hasNext to false');
         setState(() {
           _hasMoreManufacturers = false;
           _isLoadingMoreManufacturers = false;
@@ -94,11 +93,9 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
 
       setState(() {
         if (loadMore) {
-          // Create a new mutable list and add all items
           _manufacturers = List<VehicleManufacturer>.from(_manufacturers)
             ..addAll(response.data);
         } else {
-          // Create a new mutable list from response data
           _manufacturers = List<VehicleManufacturer>.from(response.data);
         }
         _manufacturerCurrentPage = response.page;
@@ -107,19 +104,14 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
         _isLoadingMoreManufacturers = false;
       });
 
-      // Update the dropdown menu if it's open - defer to after build
       if (_menuSetState != null) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (_menuSetState != null) {
-            _menuSetState!(() {
-              // Trigger rebuild of the menu
-            });
+            _menuSetState!(() {});
           }
         });
       }
-    } catch (e, stackTrace) {
-      print('❌ Error loading manufacturers: $e');
-      print('❌ Stack trace: $stackTrace');
+    } catch (e) {
       setState(() {
         _isLoadingManufacturers = false;
         _isLoadingMoreManufacturers = false;
@@ -136,295 +128,109 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
   }
 
   bool _onManufacturerScroll(ScrollNotification notification) {
-    // Only load more if there's no active search query
     if (_manufacturerSearchQuery.isEmpty &&
         (notification is ScrollUpdateNotification ||
             notification is ScrollEndNotification)) {
       final metrics = notification.metrics;
-      // Check if list is scrollable and near the bottom
       if (metrics.maxScrollExtent > 0 &&
           metrics.pixels >= metrics.maxScrollExtent - 100) {
-        // Only trigger if we have more to load and not already loading
         if (_hasMoreManufacturers &&
             !_isLoadingMoreManufacturers &&
             !_isLoadingManufacturers) {
-          print(
-              '📜 Scroll detected near bottom, loading more manufacturers...');
           _fetchManufacturers(loadMore: true, searchQuery: null);
         }
       }
     }
-    return false; // Allow the notification to continue bubbling
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    _horizontalScrollController.dispose();
-    _manufacturerSearchController.dispose();
-    _searchDebounceTimer?.cancel();
-    super.dispose();
+    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox(height: 20),
-          _buildHeaderSection(),
-          const SizedBox(height: 20),
-          _buildManufacturerFilter(),
-          const SizedBox(height: 20),
-          _buildVehicleModelsList(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeaderSection() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
-
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: isTablet
-          ? Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Vehicle Model Management",
-                    style: TextStyle(
-                      color: AppColors.blackColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  _buildSearchBar(),
-                  const SizedBox(height: 12),
-                  _buildAddButton(),
-                ],
-              ),
-            )
-          : Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    "Vehicle Model Management",
-                    style: TextStyle(
-                      color: AppColors.blackColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  _buildSearchBar(),
-                  const SizedBox(width: 15),
-                  _buildAddButton(),
-                ],
-              ),
-            ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    final isTablet = MediaQuery.of(context).size.width < 900 &&
-        MediaQuery.of(context).size.width >= 550;
-    return Container(
-      width: isTablet ? double.infinity : 200,
-      height: 50,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: AppColors.blackColor)),
-      child: Row(
-        children: [
-          const SizedBox(width: 8),
-          const Icon(
-            Icons.search,
-            color: Colors.black,
-            size: 20,
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                hintText: "Search...",
-                hintStyle: TextStyle(fontSize: 14),
-                border: InputBorder.none,
-              ),
-              style: const TextStyle(fontSize: 14),
-              onChanged: (query) {
-                if (_selectedManufacturerId == null) {
-                  if (query.isNotEmpty) {
-                    context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
-                        page: 1, limit: rowsPerPage, searchQuery: query));
-                  } else {
-                    context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
-                        page: 1, limit: rowsPerPage, searchQuery: ''));
-                  }
-                } else {
-                  // When manufacturer is selected, search is handled by the API
-                  // We still need to fetch by manufacturer
-                  context.read<VehicleModelBloc>().add(
-                      VehicleModelEvent.fetchByManufacturer(
-                          _selectedManufacturerId!,
-                          page: 1,
-                          limit: rowsPerPage));
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAddButton() {
-    final isTablet = MediaQuery.of(context).size.width < 900 &&
-        MediaQuery.of(context).size.width >= 550;
-    return SizedBox(
-      width: isTablet ? double.infinity : 260,
-      height: 50,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final buttonWidth = constraints.maxWidth;
-
-          // Dynamically adjust content based on width
-          double iconSize = buttonWidth < 180 ? 18 : 20;
-          double fontSize = buttonWidth < 180 ? 14 : 16;
-          double spacing = buttonWidth < 180 ? 6 : 8;
-          return ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.blackColor,
-              foregroundColor: AppColors.primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              textStyle:
-                  const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            onPressed: () {
-              WidgetsBinding.instance.addPostFrameCallback((_) {
-                if (mounted) {
-                  context.push('/add-vehiclemodel');
-                }
-              });
+          ListPageHeader(
+            breadcrumb: "Home / Vehicle Models",
+            title: "Vehicle Models",
+            subtitle: "Manage model catalog",
+            searchHint: "Search models…",
+            searchController: _searchController,
+            onSearch: (query) {
+              if (_selectedManufacturerId == null) {
+                context.read<VehicleModelBloc>().add(FetchAllVehicleModels(
+                    page: 1,
+                    limit: rowsPerPage,
+                    searchQuery: query.isNotEmpty ? query : ''));
+              } else {
+                context.read<VehicleModelBloc>().add(
+                    VehicleModelEvent.fetchByManufacturer(
+                        _selectedManufacturerId!,
+                        page: 1,
+                        limit: rowsPerPage));
+              }
             },
-            child: Row(
-              mainAxisAlignment:
-                  isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.add,
-                  color: AppColors.primaryColor,
-                  size: iconSize,
-                ),
-                SizedBox(width: spacing),
-                Text(
-                  isTablet ? 'Add Model' : 'Add Vehicle Model',
-                  style: TextStyle(fontSize: fontSize),
-                ),
-              ],
-            ),
-          );
-        },
+            trailing: _buildManufacturerFilterTrigger(),
+            addLabel: "Add model",
+            onAdd: () => context.push('/add-vehiclemodel'),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            decoration: listCardDecoration(),
+            clipBehavior: Clip.antiAlias,
+            child: _buildVehicleModelsList(),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildManufacturerFilter() {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 15),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Container(
-          width: isTablet ? double.infinity : 300,
-          height: 50,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.blackColor),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.filter_alt,
-                color: Colors.black,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _isLoadingManufacturers
-                    ? const Center(
-                        child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      )
-                    : _buildSearchableDropdown(),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSearchableDropdown() {
-    VehicleManufacturer? selectedManufacturer;
+  Widget _buildManufacturerFilterTrigger() {
+    VehicleManufacturer? selected;
     if (_selectedManufacturerId != null && _manufacturers.isNotEmpty) {
       try {
-        selectedManufacturer = _manufacturers.firstWhere(
-          (m) => m.id == _selectedManufacturerId,
-        );
-      } catch (e) {
-        // Manufacturer not found, keep as null
-        selectedManufacturer = null;
+        selected =
+            _manufacturers.firstWhere((m) => m.id == _selectedManufacturerId);
+      } catch (_) {
+        selected = null;
       }
     }
-
     return GestureDetector(
-      onTap: () => _showManufacturerDropdown(),
+      onTap: _isLoadingManufacturers ? null : _showManufacturerDropdown,
       child: Container(
         key: _dropdownKey,
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        height: 40,
+        constraints: const BoxConstraints(maxWidth: 220),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: AppColors.border),
+        ),
         child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Expanded(
-              child: Text(
-                selectedManufacturer?.displayName ?? 'Filter by Manufacturer',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: selectedManufacturer != null
-                      ? Colors.black
-                      : Colors.grey[600],
-                ),
-                overflow: TextOverflow.ellipsis,
-              ),
+            const Icon(Icons.filter_alt_outlined,
+                size: 16, color: AppColors.textSecondary),
+            const SizedBox(width: 8),
+            Flexible(
+              child: _isLoadingManufacturers
+                  ? const SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : Text(
+                      selected?.displayName ?? 'Filter by manufacturer',
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.inter(
+                          fontSize: 13,
+                          color: selected != null
+                              ? AppColors.textPrimary
+                              : AppColors.textSecondary),
+                    ),
             ),
-            const Icon(Icons.arrow_drop_down, color: Colors.black),
+            const Icon(Icons.arrow_drop_down, color: AppColors.textSecondary),
           ],
         ),
       ),
@@ -434,7 +240,6 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
   void _showManufacturerDropdown() {
     _manufacturerSearchController.clear();
     _manufacturerSearchQuery = '';
-    // Reset pagination if needed
     if (_manufacturers.length < 10) {
       _manufacturerCurrentPage = 1;
       _hasMoreManufacturers = true;
@@ -446,41 +251,33 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
 
     final Offset offset = renderBox.localToGlobal(Offset.zero);
     final Size size = renderBox.size;
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
-    final dropdownWidth = isTablet ? size.width : 300.0;
+    const double dropdownWidth = 300.0;
 
     showMenu(
       context: context,
       position: RelativeRect.fromLTRB(
-        offset.dx + size.width - dropdownWidth, // Right align
-        offset.dy + size.height + 5, // Below the dropdown
+        offset.dx + size.width - dropdownWidth,
+        offset.dy + size.height + 5,
         offset.dx + size.width,
-        offset.dy + size.height + 305, // Max height
+        offset.dy + size.height + 305,
       ),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
+      shape:
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       items: [
         PopupMenuItem<String>(
           enabled: false,
           padding: EdgeInsets.zero,
           child: StatefulBuilder(
             builder: (context, setMenuState) {
-              // Store reference to setMenuState so we can update the menu when manufacturers change
               _menuSetState = setMenuState;
-
-              // When searching, use the API results directly (no local filtering needed)
-              // When not searching, show all loaded manufacturers
               final filteredList = _manufacturers;
 
               return Container(
-                width: dropdownWidth - 2, // Account for border
+                width: dropdownWidth - 2,
                 padding: const EdgeInsets.all(8),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Search box
                     TextField(
                       controller: _manufacturerSearchController,
                       autofocus: true,
@@ -488,12 +285,9 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                         hintText: 'Search manufacturers...',
                         prefixIcon: const Icon(Icons.search, size: 20),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
+                            borderRadius: BorderRadius.circular(8)),
                         contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 8,
-                        ),
+                            horizontal: 12, vertical: 8),
                         isDense: true,
                       ),
                       style: const TextStyle(fontSize: 14),
@@ -501,47 +295,39 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                         setMenuState(() {
                           _manufacturerSearchQuery = value;
                         });
-                        
-                        // Cancel previous timer
                         _searchDebounceTimer?.cancel();
-                        
-                        // If search query is not empty, make API call with debounce
                         if (value.isNotEmpty) {
-                          _searchDebounceTimer = Timer(const Duration(milliseconds: 500), () {
-                            // Reset pagination for search
+                          _searchDebounceTimer =
+                              Timer(const Duration(milliseconds: 500), () {
                             setState(() {
                               _manufacturerCurrentPage = 1;
                               _hasMoreManufacturers = true;
                               _isLoadingMoreManufacturers = false;
                             });
-                            
-                            _fetchManufacturers(loadMore: false, searchQuery: value);
+                            _fetchManufacturers(
+                                loadMore: false, searchQuery: value);
                           });
                         } else {
-                          // If search is cleared, reload without search
                           setState(() {
                             _manufacturerCurrentPage = 1;
                             _hasMoreManufacturers = true;
                             _isLoadingMoreManufacturers = false;
                           });
-                          
-                          _fetchManufacturers(loadMore: false, searchQuery: null);
+                          _fetchManufacturers(
+                              loadMore: false, searchQuery: null);
                         }
                       },
                     ),
                     const SizedBox(height: 8),
-                    // Filtered list
                     Container(
                       constraints: const BoxConstraints(maxHeight: 250),
                       child: filteredList.isEmpty &&
                               _manufacturerSearchQuery.isNotEmpty
                           ? const Padding(
                               padding: EdgeInsets.all(16.0),
-                              child: Text(
-                                'No manufacturers found',
-                                style:
-                                    TextStyle(color: Colors.grey, fontSize: 14),
-                              ),
+                              child: Text('No manufacturers found',
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 14)),
                             )
                           : NotificationListener<ScrollNotification>(
                               onNotification: _onManufacturerScroll,
@@ -549,14 +335,13 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                                 shrinkWrap: true,
                                 physics: const AlwaysScrollableScrollPhysics(),
                                 itemCount: filteredList.length +
-                                    1 + // +1 for "All Manufacturers"
+                                    1 +
                                     (_manufacturerSearchQuery.isEmpty &&
                                             _isLoadingMoreManufacturers
                                         ? 1
-                                        : 0), // +1 for loading indicator
+                                        : 0),
                                 itemBuilder: (context, index) {
                                   if (index == 0) {
-                                    // "All Manufacturers" option
                                     final isSelected =
                                         _selectedManufacturerId == null;
                                     return InkWell(
@@ -575,15 +360,12 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                                         color: isSelected
                                             ? Colors.grey[200]
                                             : null,
-                                        child: const Text(
-                                          'All Manufacturers',
-                                          style: TextStyle(fontSize: 14),
-                                        ),
+                                        child: const Text('All Manufacturers',
+                                            style: TextStyle(fontSize: 14)),
                                       ),
                                     );
                                   }
 
-                                  // Show loading indicator at the end if loading more and no search query
                                   if (_manufacturerSearchQuery.isEmpty &&
                                       _isLoadingMoreManufacturers &&
                                       index == filteredList.length + 1) {
@@ -622,10 +404,9 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
                                           horizontal: 16, vertical: 12),
                                       color:
                                           isSelected ? Colors.grey[200] : null,
-                                      child: Text(
-                                        manufacturer.displayName,
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
+                                      child: Text(manufacturer.displayName,
+                                          style:
+                                              const TextStyle(fontSize: 14)),
                                     ),
                                   );
                                 },
@@ -640,406 +421,161 @@ class _VehicleModelsListState extends State<VehicleModelsList> {
         ),
       ],
     ).then((_) {
-      // Clear the menu state reference when menu is closed
       _menuSetState = null;
     });
-  }
-
-  Widget _renderFromCacheOrEmpty() {
-    if (_lastListResponse == null) return const SizedBox.shrink();
-    final r = _lastListResponse!;
-    return Column(
-      children: [
-        _buildVehicleModelsTable(r.data, r.page),
-        const SizedBox(height: 30),
-        _buildPaginationBar(r.page, r.totalPages),
-      ],
-    );
   }
 
   Widget _buildVehicleModelsList() {
     return BlocBuilder<VehicleModelBloc, VehicleModelState>(
       builder: (context, state) {
-        // return state.when(
-        //   initial: () => const Center(child: Text("No Vehicle Models Found")),
-        //   loading: () => const Center(child: CircularProgressIndicator()),
-        //   loaded: (response) {
-        //     return Column(
-        //       children: [
-        //         _buildVehicleModelsTable(response.data, response.page),
-        //         const SizedBox(height: 30),
-        //         _buildPaginationBar(response.page, response.totalPages),
-        //       ],
-        //     );
-        //   },
-        //   error: (message) => Center(
-        //     child: Text(message, style: const TextStyle(color: Colors.red)),
-        //   ),
-        //   optionsLoaded: (fuelTypes, transmissionTypes) => _lastListResponse !=
-        //           null
-        //       ? Column(
-        //           children: [
-        //             _buildVehicleModelsTable(
-        //                 _lastListResponse!.data, _lastListResponse!.page),
-        //             const SizedBox(height: 30),
-        //             _buildPaginationBar(
-        //                 _lastListResponse!.page, _lastListResponse!.totalPages),
-        //           ],
-        //         )
-        //       : const SizedBox.shrink(),
-        // );
         return state.when(
-          initial: () => const Center(child: Text("No Vehicle Models Found")),
-          loading: () => const Center(child: CircularProgressIndicator()),
+          initial: () => _statusBox(Text("No vehicle models found",
+              style: GoogleFonts.inter(color: AppColors.textSecondary))),
+          loading: () => _statusBox(const CircularProgressIndicator()),
           loaded: (response) {
             _lastListResponse = response;
-            return Column(
-              children: [
-                _buildVehicleModelsTable(response.data, response.page),
-                const SizedBox(height: 30),
-                _buildPaginationBar(response.page, response.totalPages),
-              ],
-            );
+            return _loadedContent(response);
           },
-          error: (message) => Center(
-            child: Text(message, style: const TextStyle(color: Colors.red)),
-          ),
+          error: (message) => _statusBox(
+              Text(message, style: GoogleFonts.inter(color: AppColors.danger))),
           optionsLoaded: (_, __) => _renderFromCacheOrEmpty(),
           oneLoaded: (_) => _renderFromCacheOrEmpty(),
-          created: () => Center(),
-          updated: () => Center(), // 👈 handled, but no list fetch
+          created: () => const SizedBox.shrink(),
+          updated: () => const SizedBox.shrink(),
         );
       },
     );
   }
 
-  Widget _buildVehicleModelsTable(List<VehicleModel> models, int currentPage) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
+  Widget _renderFromCacheOrEmpty() {
+    if (_lastListResponse == null) return const SizedBox.shrink();
+    return _loadedContent(_lastListResponse!);
+  }
 
-    // Add null safety check for models list
-    if (models.isEmpty) {
-      return const Center(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Text(
-            "No vehicle models found",
-            style: TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-        ),
-      );
+  Widget _loadedContent(VehicleModelResponse r) {
+    if (r.data.isEmpty) {
+      return _statusBox(Text("No vehicle models found",
+          style: GoogleFonts.inter(color: AppColors.textSecondary)));
     }
-
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Scrollbar(
-            thumbVisibility: true,
-            controller: _horizontalScrollController,
-            child: SingleChildScrollView(
-              controller: _horizontalScrollController,
-              scrollDirection: Axis.horizontal,
-              child: ConstrainedBox(
-                constraints: BoxConstraints(minWidth: constraints.maxWidth),
-                child: Card(
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: DataTable(
-                      columnSpacing: isTablet ? 20 : 25,
-                      headingRowColor: WidgetStateColor.resolveWith(
-                        (states) => const Color.fromARGB(66, 144, 140, 140),
-                      ),
-                      dataRowColor:
-                          WidgetStatePropertyAll(AppColors.primaryColor),
-                      dataRowMinHeight: isTablet ? 45 : 55,
-                      dataRowMaxHeight: isTablet ? 45 : 55,
-                      columns: _buildResponsiveColumns(isTablet),
-                      rows: models
-                          .asMap()
-                          .entries
-                          .map((entry) => _buildVehicleModelRow(
-                              entry.key, entry.value, currentPage))
-                          .toList(),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
+    return Column(
+      children: [
+        FillWidthDataTable(
+          controller: _horizontalScrollController,
+          minWidth: 1240,
+          columnSpacing: 36,
+          columns: [
+            listColumn('#'),
+            listColumn('Name'),
+            listColumn('Display name'),
+            listColumn('Manufacturer'),
+            listColumn('Vehicle type'),
+            listColumn('Description'),
+            listColumn('Segment'),
+            listColumn('Active'),
+            listColumn('Variants'),
+            listColumn('Actions'),
+          ],
+          rows: r.data
+              .asMap()
+              .entries
+              .map((e) => _buildVehicleModelRow(e.key, e.value, r.page))
+              .toList(),
+        ),
+        ListPagination(
+          currentPage: r.page,
+          totalPages: r.totalPages,
+          rowsPerPage: rowsPerPage,
+          onRowsPerPageChanged: (v) {
+            setState(() => rowsPerPage = v);
+            _fetchModelsPage(1);
+          },
+          onPageChanged: _fetchModelsPage,
+        ),
+      ],
     );
   }
 
-  List<DataColumn> _buildResponsiveColumns(bool isTablet) {
-    return [
-      const DataColumn(
-        label: Padding(
-          padding: EdgeInsets.only(left: 30),
-          child: Text(
-            'ID',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Name' : 'Name',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Display Name' : 'Display Name',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Manufacturer' : 'Manufacturer',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Vehicle Type' : 'Vehicle Type',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Description' : 'Description',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Segment' : 'Segment',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Is Active' : 'Is Active',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      // DataColumn(
-      //   label: Text(
-      //     isTablet ? 'Commercial?' : 'Commercial?',
-      //     style: const TextStyle(fontWeight: FontWeight.bold),
-      //   ),
-      // ),
-      // DataColumn(
-      //   label: Text(
-      //     isTablet ? 'Comm. Type' : 'Comm. Type',
-      //     style: const TextStyle(fontWeight: FontWeight.bold),
-      //   ),
-      // ),
-      // DataColumn(
-      //   label: Text(
-      //     isTablet ? 'Comm. Body' : 'Comm. Body',
-      //     style: const TextStyle(fontWeight: FontWeight.bold),
-      //   ),
-      // ),
-      // DataColumn(
-      //   label: Text(
-      //     isTablet ? 'Payload' : 'Payload',
-      //     style: const TextStyle(fontWeight: FontWeight.bold),
-      //   ),
-      // ),
-      // DataColumn(
-      //   label: Text(
-      //     isTablet ? 'Axles' : 'Axles',
-      //     style: const TextStyle(fontWeight: FontWeight.bold),
-      //   ),
-      // ),
-      // DataColumn(
-      //   label: Text(
-      //     isTablet ? 'Seats' : 'Seats',
-      //     style: const TextStyle(fontWeight: FontWeight.bold),
-      //   ),
-      // ),
-      DataColumn(
-        label: Text(
-          isTablet ? 'Variants' : 'Variant Count',
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-      const DataColumn(
-        label: Text(
-          'Actions',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-      ),
-    ];
+  void _fetchModelsPage(int page) {
+    if (_selectedManufacturerId == null) {
+      context
+          .read<VehicleModelBloc>()
+          .add(FetchAllVehicleModels(page: page, limit: rowsPerPage));
+    } else {
+      context.read<VehicleModelBloc>().add(
+          VehicleModelEvent.fetchByManufacturer(_selectedManufacturerId!,
+              page: page, limit: rowsPerPage));
+    }
   }
+
+  Widget _statusBox(Widget child) => Padding(
+        padding: const EdgeInsets.all(48),
+        child: Center(child: child),
+      );
 
   DataRow _buildVehicleModelRow(
       int index, VehicleModel models, int currentPage) {
-    int rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+    final rowNumber = ((currentPage - 1) * rowsPerPage) + index + 1;
+    final cellStyle =
+        GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary);
+    final mutedStyle =
+        GoogleFonts.inter(fontSize: 13, color: AppColors.textSecondary);
     return DataRow(cells: [
-      DataCell(Padding(
-        padding: const EdgeInsets.only(left: 30),
-        child: Text('$rowNumber'),
+      DataCell(Text('$rowNumber', style: mutedStyle)),
+      DataCell(Text(models.name,
+          style: cellStyle.copyWith(fontWeight: FontWeight.w500))),
+      DataCell(Text(models.displayName, style: mutedStyle)),
+      DataCell(Text(
+          models.manufacturer?.displayName ??
+              models.manufacturer?.name ??
+              'N/A',
+          style: cellStyle)),
+      DataCell(Text(models.vehicleType, style: cellStyle)),
+      DataCell(SizedBox(
+          width: 160,
+          child: Text(models.description ?? 'N/A',
+              maxLines: 2, overflow: TextOverflow.ellipsis, style: mutedStyle))),
+      DataCell(SizedBox(
+          width: 130,
+          child: Text(models.segment ?? 'N/A',
+              maxLines: 2, overflow: TextOverflow.ellipsis, style: mutedStyle))),
+      DataCell(models.isActive == null
+          ? Text('—', style: mutedStyle)
+          : _activeChip(models.isActive!)),
+      DataCell(Text(models.variantCount?.toString() ?? '-', style: cellStyle)),
+      DataCell(Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListRowAction(
+            icon: Icons.edit_outlined,
+            tooltip: "Edit",
+            onTap: () => context.push('/edit-vehicle_model', extra: models),
+          ),
+          ListRowAction(
+            icon: Icons.visibility_outlined,
+            tooltip: "View",
+            onTap: () {
+              if (models.id != null) {
+                context.push('/view-vehicle_model', extra: models);
+              }
+            },
+          ),
+        ],
       )),
-      DataCell(Text(models.name)),
-      DataCell(Text(models.displayName)),
-      DataCell(Text(models.manufacturer?.displayName ??
-          models.manufacturer?.name ??
-          'N/A')),
-      DataCell(Text(models.vehicleType)),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            models.description ?? 'N/A',
-            softWrap: true,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ))),
-      DataCell(SizedBox(
-          width: 150,
-          child: Text(
-            models.segment ?? 'N/A',
-            softWrap: true,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ))),
-      DataCell(Text(models.isActive?.toString() ?? 'N/A')),
-      // DataCell(Text(models.isCommercialVehicle?.toString() ?? '-')),
-      // DataCell(Text(models.commercialVehicleType ?? '-')),
-      // DataCell(Text(models.commercialBodyType ?? '-')),
-      // DataCell(Text(models.defaultPayloadCapacity != null &&
-      //         models.defaultPayloadUnit != null
-      //     ? "${models.defaultPayloadCapacity} ${models.defaultPayloadUnit}"
-      //     : '-')),
-      // DataCell(Text(models.defaultAxleCount?.toString() ?? '-')),
-      // DataCell(Text(models.defaultSeatingCapacity?.toString() ?? '-')),
-      DataCell(Text(models.variantCount?.toString() ?? '-')),
-      DataCell(
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.edit,
-                  color: Color.fromARGB(255, 59, 59, 59)),
-              onPressed: () {
-                context.push('/edit-vehicle_model', extra: models);
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.remove_red_eye_outlined,
-                  color: Color.fromARGB(255, 20, 20, 20)),
-              onPressed: () {
-                if (models.id != null) {
-                  context.push('/view-vehicle_model', extra: models);
-                }
-              },
-            ),
-          ],
-        ),
-      ),
     ]);
   }
 
-  int rowsPerPage = 10;
-
-  Widget _buildPaginationBar(int currentPage, int totalPages) {
+  Widget _activeChip(bool value) {
+    final bg = value ? AppColors.successSoft : AppColors.surfaceAlt;
+    final fg = value ? AppColors.success : AppColors.textSecondary;
     return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 20, bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const Text("Rows per page: "),
-            const SizedBox(width: 8),
-            DropdownButton<int>(
-              value: rowsPerPage,
-              dropdownColor: Colors.white,
-              items: [10, 20].map((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text(value.toString()),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  setState(() {
-                    rowsPerPage = value;
-                  });
-                  if (_selectedManufacturerId == null) {
-                    context.read<VehicleModelBloc>().add(
-                        FetchAllVehicleModels(page: 1, limit: rowsPerPage));
-                  } else {
-                    context.read<VehicleModelBloc>().add(
-                        VehicleModelEvent.fetchByManufacturer(
-                            _selectedManufacturerId!,
-                            page: 1,
-                            limit: rowsPerPage));
-                  }
-                }
-              },
-            ),
-            const SizedBox(width: 20),
-            GestureDetector(
-              onTap: currentPage > 1
-                  ? () {
-                      if (_selectedManufacturerId == null) {
-                        context.read<VehicleModelBloc>().add(
-                            FetchAllVehicleModels(
-                                page: currentPage - 1, limit: rowsPerPage));
-                      } else {
-                        context.read<VehicleModelBloc>().add(
-                            VehicleModelEvent.fetchByManufacturer(
-                                _selectedManufacturerId!,
-                                page: currentPage - 1,
-                                limit: rowsPerPage));
-                      }
-                    }
-                  : null,
-              child: Icon(
-                Icons.chevron_left,
-                size: 28,
-                color: currentPage > 1 ? Colors.black : Colors.grey[400],
-              ),
-            ),
-            const SizedBox(width: 15),
-            Text(
-              "Page $currentPage of $totalPages",
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 15),
-            GestureDetector(
-              onTap: currentPage < totalPages
-                  ? () {
-                      if (_selectedManufacturerId == null) {
-                        context.read<VehicleModelBloc>().add(
-                            FetchAllVehicleModels(
-                                page: currentPage + 1, limit: rowsPerPage));
-                      } else {
-                        context.read<VehicleModelBloc>().add(
-                            VehicleModelEvent.fetchByManufacturer(
-                                _selectedManufacturerId!,
-                                page: currentPage + 1,
-                                limit: rowsPerPage));
-                      }
-                    }
-                  : null,
-              child: Icon(
-                Icons.chevron_right,
-                size: 28,
-                color:
-                    currentPage < totalPages ? Colors.black : Colors.grey[400],
-              ),
-            ),
-          ],
-        ),
+      alignment: Alignment.centerLeft,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+        decoration:
+            BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+        child: Text(value ? 'Active' : 'Inactive',
+            style: GoogleFonts.inter(
+                fontSize: 11, fontWeight: FontWeight.w600, color: fg)),
       ),
     );
   }

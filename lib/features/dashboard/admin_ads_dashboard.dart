@@ -408,7 +408,6 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             dataRowMaxHeight: 80,
             columns: [
               DataColumn(label: Text('Select', style: headingStyle)),
-              DataColumn(label: Text('Image', style: headingStyle)),
               DataColumn(label: Text('Name', style: headingStyle)),
               DataColumn(label: Text('Category', style: headingStyle)),
               DataColumn(label: Text('Posted On', style: headingStyle)),
@@ -445,9 +444,6 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
               });
             },
           ),
-        ),
-        DataCell(
-          SizedBox(width: 56, height: 48, child: _buildAdImage(ad)),
         ),
         DataCell(
           SizedBox(
@@ -543,32 +539,6 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
     return ad.title.isNotEmpty
         ? ad.title
         : (ad.description.isNotEmpty ? ad.description : 'No Title Available');
-  }
-
-  Widget _buildAdImage(AdModel ad) {
-    if (ad.images.isNotEmpty) {
-      return ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          ad.images.first,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) =>
-              _buildImagePlaceholder(),
-        ),
-      );
-    }
-    return _buildImagePlaceholder();
-  }
-
-  Widget _buildImagePlaceholder() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surfaceAlt,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: const Icon(Icons.image_not_supported_outlined,
-          color: AppColors.textMuted, size: 20),
-    );
   }
 
   String _formatCategory(String category) {
