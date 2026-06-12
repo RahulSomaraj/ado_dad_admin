@@ -2,12 +2,14 @@ import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/vehicle_categories.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/form_kit.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:ado_dad_admin/repositories/vehicle_model_rep.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class VehicleManufacturerDetailView extends StatefulWidget {
   final VehicleManufacturer vehiclemanufacturer;
@@ -121,12 +123,14 @@ class _VehicleManufacturerDetailViewState
         );
       },
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(m),
-            const SizedBox(height: 15),
+            _buildHeaderBar(m),
+            const SizedBox(height: 16),
+            _heroCard(m),
+            const SizedBox(height: 12),
             _buildInfoCard(m),
             const SizedBox(height: 20),
             BlocProvider(
@@ -213,203 +217,190 @@ class _VehicleManufacturerDetailViewState
     }
   }
 
-  Widget _buildHeader(VehicleManufacturer m) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 600 && screenWidth <= 900;
-
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: isTablet
-          ? Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth < 600 ? 20 : 100, vertical: 12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            context.pop();
-                          },
-                          icon: Icon(Icons.arrow_back_ios)),
-                      Expanded(
-                        child: Text(
-                          m.displayName,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    icon: const Icon(Icons.upload_file, color: Colors.white),
-                    label: const Text(
-                      'Upload Models CSV',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    onPressed: () => _uploadCsvFile(m),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(width: double.infinity, child: _editButton(m)),
-                  const SizedBox(height: 12),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.blackColor,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.white,
-                    ),
-                    label: const Text("Delete Manufacturer"),
-                    onPressed: () => _confirmDelete(context, m),
-                  ),
-                ],
-              ),
-            )
-          : Container(
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      IconButton(
-                          onPressed: () {
-                            context.pop();
-                          },
-                          icon: Icon(Icons.arrow_back_ios)),
-                      Text(
-                        m.displayName,
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.black,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        icon:
-                            const Icon(Icons.upload_file, color: Colors.white),
-                        label: const Text(
-                          'Upload Models CSV',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        onPressed: () => _uploadCsvFile(m),
-                      ),
-                      const SizedBox(width: 12),
-                      _editButton(m),
-                      const SizedBox(width: 12),
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.blackColor,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        icon: const Icon(
-                          Icons.delete,
-                          color: Colors.white,
-                        ),
-                        label: const Text("Delete Manufacturer"),
-                        onPressed: () => _confirmDelete(context, m),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-    );
-  }
-
-  Widget _buildInfoCard(VehicleManufacturer m) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      color: AppColors.primaryColor,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Wrap(
-          runSpacing: 16,
-          spacing: 40,
-          children: [
-            _infoTile("Name", m.name),
-            _infoTile("Category", prettyVehicleCategory(m.vehicleCategory)),
-            _infoTile("Country", m.originCountry),
-            _infoTile("Founded", m.foundedYear?.toString() ?? '—'),
-            _infoTile("Website", _orDash(m.website)),
-            _infoTile("Headquarters", _orDash(m.headquarters)),
-            _infoTile("Active", m.isActive ? "Yes" : "No"),
-            _infoTile("Premium", m.isPremium ? "Yes" : "No"),
-            _infoTile("Description", _orDash(m.description)),
-            _infoTile("Logo", _orDash(m.logo)),
-          ],
+  Widget _buildHeaderBar(VehicleManufacturer m) {
+    return FormHeaderBar(
+      breadcrumb: "Manufacturers / Detail",
+      title: m.displayName.isNotEmpty ? m.displayName : m.name,
+      onBack: () => context.pop(),
+      actions: [
+        OutlinedButton.icon(
+          onPressed: () => _uploadCsvFile(m),
+          icon: const Icon(Icons.upload_file, size: 16),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.textSecondary,
+            side: const BorderSide(color: AppColors.border),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          ),
+          label: const Text("Upload CSV"),
         ),
-      ),
+        const SizedBox(width: 8),
+        OutlinedButton.icon(
+          onPressed: () =>
+              context.push('/edit-vehicle_manufacturer', extra: m),
+          icon: const Icon(Icons.edit_outlined, size: 16),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppColors.accent,
+            side: const BorderSide(color: AppColors.accent),
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          ),
+          label: const Text("Edit"),
+        ),
+        const SizedBox(width: 8),
+        IconButton(
+          tooltip: "Delete",
+          onPressed: () => _confirmDelete(context, m),
+          icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+        ),
+      ],
     );
   }
 
-  Widget _infoTile(String label, String value) {
-    return SizedBox(
-      width: 300,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _heroCard(VehicleManufacturer m) {
+    final hasLogo = m.logo != null && m.logo!.startsWith('http');
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 14)),
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: AppColors.accentSoft,
+              shape: BoxShape.circle,
+              image: hasLogo
+                  ? DecorationImage(
+                      image: NetworkImage(m.logo!), fit: BoxFit.cover)
+                  : null,
+            ),
+            alignment: Alignment.center,
+            child: hasLogo
+                ? null
+                : Text(
+                    (m.displayName.isNotEmpty ? m.displayName : m.name)
+                        .characters
+                        .first
+                        .toUpperCase(),
+                    style: GoogleFonts.inter(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.accent),
+                  ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(m.name,
+                    style: GoogleFonts.inter(
+                        fontSize: 15, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 2),
+                Text(m.originCountry.isEmpty ? '—' : m.originCountry,
+                    style: GoogleFonts.inter(
+                        fontSize: 12.5, color: AppColors.textSecondary)),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    _chip(prettyVehicleCategory(m.vehicleCategory),
+                        AppColors.accentSoft, AppColors.accent),
+                    if (m.isPremium)
+                      _chip("Premium", AppColors.warningSoft,
+                          const Color(0xFF92400E)),
+                    m.isActive
+                        ? _chip("Active", AppColors.successSoft,
+                            const Color(0xFF166534))
+                        : _chip("Inactive", AppColors.dangerSoft,
+                            const Color(0xFF991B1B)),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 
-  static String _orDash(String? value) =>
-      (value == null || value.trim().isEmpty) ? '—' : value;
-
-  Widget _editButton(VehicleManufacturer m) {
-    return ElevatedButton.icon(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.accent,
-        foregroundColor: Colors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
+  Widget _buildInfoCard(VehicleManufacturer m) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
       ),
-      icon: const Icon(Icons.edit, color: Colors.white),
-      label: const Text("Edit"),
-      onPressed: () => context.push('/edit-vehicle_manufacturer', extra: m),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.info_outline,
+                  size: 16, color: AppColors.textSecondary),
+              const SizedBox(width: 8),
+              Text("Manufacturer details",
+                  style: GoogleFonts.inter(
+                      fontSize: 13, fontWeight: FontWeight.w600)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          _kv("Name", m.name),
+          _kv("Category", prettyVehicleCategory(m.vehicleCategory)),
+          _kv("Origin country", m.originCountry.isEmpty ? '—' : m.originCountry),
+          _kv("Founded", m.foundedYear?.toString() ?? '—'),
+          _kv("Headquarters", _orDash(m.headquarters)),
+          _kv("Website", _orDash(m.website)),
+          _kv("Active", m.isActive ? "Yes" : "No"),
+          _kv("Premium", m.isPremium ? "Yes" : "No"),
+          _kv("Description", _orDash(m.description)),
+        ],
+      ),
     );
   }
+
+  Widget _kv(String k, String v) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 150,
+            child: Text(k,
+                style: GoogleFonts.inter(
+                    fontSize: 12.5, color: AppColors.textMuted)),
+          ),
+          Expanded(
+            child: Text(v,
+                style: GoogleFonts.inter(
+                    fontSize: 13,
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w500)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _chip(String text, Color bg, Color fg) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration:
+            BoxDecoration(color: bg, borderRadius: BorderRadius.circular(7)),
+        child: Text(text,
+            style: GoogleFonts.inter(
+                fontSize: 12, fontWeight: FontWeight.w500, color: fg)),
+      );
+
+  static String _orDash(String? value) =>
+      (value == null || value.trim().isEmpty) ? '—' : value;
 }
 
 class _VehicleModelListSectionWithListener extends StatelessWidget {

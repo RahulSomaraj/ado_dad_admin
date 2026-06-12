@@ -280,25 +280,18 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Container(
-          decoration: formCardDecoration(),
-          clipBehavior: Clip.antiAlias,
+        child: Form(
+          key: _manufactureFormKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const FormHeaderStrip(
+              FormSectionCard(
                 icon: Icons.factory_outlined,
-                title: "New manufacturer",
+                title: "Brand details",
                 subtitle: "Add a brand to the vehicle catalog",
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _manufactureFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const FormSectionTitle("Brand details"),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                       _buildFormRow([
                         _buildFormField(
                             "Manufacturer Name", "", (v) => _name = v!),
@@ -367,8 +360,16 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     _buildFormField(
                         "Headquarters", "", (v) => _headquarters = v!),
                   ]),
-                  const SizedBox(height: 20),
-                  const FormSectionTitle("Classification & status"),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.sell_outlined,
+                title: "Classification & status",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   LabeledField(
                     label: "Vehicle category",
                     child: DropdownButtonFormField<String>(
@@ -404,8 +405,11 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                     premiumValue: _isPremium,
                     onPremium: (v) => setState(() => _isPremium = v),
                   ),
-                  const SizedBox(height: 22),
-                  SizedBox(
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -435,15 +439,11 @@ class _VehicleManufacturesAddState extends State<VehicleManufacturesAdd> {
                             ),
                     ),
                   ),
-                    ],
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildFormRow(List<Widget> children) => TwoColGrid(children);

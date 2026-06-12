@@ -425,25 +425,18 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
         constraints: BoxConstraints(
           maxWidth: isTablet ? screenWidth - 32 : 900,
         ),
-        child: Container(
-          decoration: formCardDecoration(),
-          clipBehavior: Clip.antiAlias,
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FormHeaderStrip(
+              FormSectionCard(
                 icon: Icons.directions_car_outlined,
-                title: _displayName.isNotEmpty ? _displayName : "Model",
+                title: "Model details",
                 subtitle: "Edit model details",
-              ),
-              Padding(
-                padding: EdgeInsets.all(isTablet ? 16.0 : 20.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const FormSectionTitle("Basics"),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                       _row(
                         _text('Model Name',
                             initial: _name, onSaved: (v) => _name = v ?? ''),
@@ -582,11 +575,17 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
                     },
                   ),
 
-                  const SizedBox(height: 15),
-                  _imageEditor(), // existing + new picker
-                  const SizedBox(height: 20),
-
-                  SizedBox(
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.image_outlined,
+                title: "Images",
+                child: _imageEditor(),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: isLoading ? null : _save,
@@ -609,15 +608,11 @@ class _VehicleModelEditState extends State<VehicleModelEdit> {
                                   fontSize: 16, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                    ],
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   // ————— helpers —————

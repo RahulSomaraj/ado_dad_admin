@@ -265,28 +265,19 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 800),
-        child: Container(
-          decoration: formCardDecoration(),
-          clipBehavior: Clip.antiAlias,
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FormHeaderStrip(
+              FormSectionCard(
                 icon: Icons.tune,
-                title: widget.variant.displayName.isNotEmpty
-                    ? widget.variant.displayName
-                    : widget.variant.name,
+                title: "Basics",
                 subtitle:
                     "For ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionLabel("Basics"),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   _buildRow([
                     _buildTextField(
                       "Name",
@@ -536,8 +527,16 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                       },
                     ),
                   ]),
-                  const SizedBox(height: 20),
-                  _sectionLabel("Engine & performance"),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.settings_outlined,
+                title: "Engine & performance",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   _buildRow([
                     _buildTextField(
                       "Seating Capacity",
@@ -567,8 +566,16 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                       initialValue: _maxTorque?.toString() ?? '',
                     ),
                   ]),
-                  const SizedBox(height: 20),
-                  _sectionLabel("Pricing"),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.payments_outlined,
+                title: "Pricing & status",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   _buildRow([
                     _buildTextField(
                       "Mileage (kmpl)",
@@ -585,7 +592,10 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                   ]),
                   const SizedBox(height: 16),
                   _buildActiveSwitch(),
-                  const SizedBox(height: 24),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -607,15 +617,11 @@ class _VehicleVariantEditState extends State<VehicleVariantEdit> {
                       ),
                     ),
                   )
-                    ],
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _sectionLabel(String text) => FormSectionTitle(text);

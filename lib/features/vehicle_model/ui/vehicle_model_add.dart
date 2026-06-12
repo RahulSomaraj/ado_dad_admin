@@ -434,25 +434,18 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Container(
-          decoration: formCardDecoration(),
-          clipBehavior: Clip.antiAlias,
+        child: Form(
+          key: _modelFormKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const FormHeaderStrip(
+              FormSectionCard(
                 icon: Icons.directions_car_outlined,
-                title: "New model",
+                title: "Model details",
                 subtitle: "Add a vehicle model to the catalog",
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _modelFormKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const FormSectionTitle("Basics"),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                       _buildFormRow([
                         _buildFormField(
                             "Model Name", "", (v) => _modelname = v!),
@@ -681,10 +674,17 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
                   //         'Seating Capacity', '', (v) => _seatingCapacity = v),
                   //   ]),
                   // ],
-                  const SizedBox(height: 15),
-                  _buildImagePickerPreview(),
-                  const SizedBox(height: 20),
-                  SizedBox(
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.image_outlined,
+                title: "Images",
+                child: _buildImagePickerPreview(),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -715,15 +715,11 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
                             ),
                     ),
                   ),
-                    ],
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   Widget _buildFormRow(List<Widget> children) => TwoColGrid(children);

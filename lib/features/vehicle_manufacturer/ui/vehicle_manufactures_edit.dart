@@ -209,32 +209,18 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Container(
-          decoration: formCardDecoration(),
-          clipBehavior: Clip.antiAlias,
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FormHeaderStrip(
+              FormSectionCard(
                 icon: Icons.factory_outlined,
-                initials: _displayname.isNotEmpty
-                    ? _displayname.characters.first.toUpperCase()
-                    : null,
-                image: (_logo.isNotEmpty &&
-                        (_logo.startsWith('http')))
-                    ? NetworkImage(_logo)
-                    : null,
-                title: _displayname.isNotEmpty ? _displayname : "Manufacturer",
+                title: "Brand details",
                 subtitle: "Edit brand details",
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const FormSectionTitle("Brand details"),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                       _buildFormRow([
                         _buildFormField(
                             "Manufacturer Name", _name, (v) => _name = v!),
@@ -280,8 +266,16 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                     _buildFormField("Headquarters", _headquarters,
                         (v) => _headquarters = v!),
                   ]),
-                  const SizedBox(height: 20),
-                  const FormSectionTitle("Classification & status"),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.sell_outlined,
+                title: "Classification & status",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   LabeledField(
                     label: "Vehicle category",
                     child: DropdownButtonFormField<String>(
@@ -312,15 +306,14 @@ class _VehicleManufacturesEditState extends State<VehicleManufacturesEdit> {
                   ),
                   const SizedBox(height: 14),
                   _toggleRow(),
-                  const SizedBox(height: 22),
-                  PrimaryFormButton(
-                    label: "Update Manufacturer",
-                    loading: isLoading,
-                    onPressed: _updateVehicleManufacturer,
-                  ),
-                    ],
-                  ),
+                  ],
                 ),
+              ),
+              const SizedBox(height: 16),
+              PrimaryFormButton(
+                label: "Update Manufacturer",
+                loading: isLoading,
+                onPressed: _updateVehicleManufacturer,
               ),
             ],
           ),

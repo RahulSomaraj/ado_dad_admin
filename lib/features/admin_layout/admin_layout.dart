@@ -134,14 +134,7 @@ class _AdminLayoutState extends State<AdminLayout> {
             children: [
               if (!isTablet)
                 AdminDrawer(userType: userType, userName: userName),
-              Expanded(
-                child: Column(
-                  children: [
-                    if (!isTablet) _buildTopBar(pageTitle),
-                    Expanded(child: widget.child),
-                  ],
-                ),
-              ),
+              Expanded(child: widget.child),
             ],
           ),
         );
@@ -149,40 +142,4 @@ class _AdminLayoutState extends State<AdminLayout> {
     );
   }
 
-  Widget _buildTopBar(String title) {
-    return Container(
-      height: 56,
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(bottom: BorderSide(color: AppColors.border)),
-      ),
-      child: Row(
-        children: [
-          Text(
-            title,
-            style: GoogleFonts.inter(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const Spacer(),
-          if (userName != null)
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: AppColors.accent,
-              child: Text(
-                _initials(userName!),
-                style: GoogleFonts.inter(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
 }

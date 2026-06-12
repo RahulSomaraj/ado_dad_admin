@@ -249,26 +249,19 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 820),
-        child: Container(
-          decoration: formCardDecoration(),
-          clipBehavior: Clip.antiAlias,
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              FormHeaderStrip(
+              FormSectionCard(
                 icon: Icons.tune,
-                title: "New variant",
+                title: "Basics",
                 subtitle:
                     "For ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _sectionLabel("Basics"),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   _buildRow([
                     _buildTextField("Name", (v) => _name = v!),
                     _buildTextField("Display Name", (v) => _displayName = v!),
@@ -476,8 +469,16 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                       },
                     ),
                   ]),
-                  const SizedBox(height: 20),
-                  _sectionLabel("Engine & performance"),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.settings_outlined,
+                title: "Engine & performance",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   _buildRow([
                     _buildTextField("Seating Capacity",
                         (v) => _seatingCapacity = int.tryParse(v!),
@@ -502,15 +503,21 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                         keyboardType: TextInputType.number),
                     const SizedBox.shrink(),
                   ]),
-                  const SizedBox(height: 20),
-                  _sectionLabel("Pricing"),
-                  _buildRow([
-                    _buildTextField(
-                        "Price (₹)", (v) => _price = int.tryParse(v!),
-                        keyboardType: TextInputType.number),
-                    const SizedBox.shrink(),
-                  ]),
-                  const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.payments_outlined,
+                title: "Pricing",
+                child: _buildRow([
+                  _buildTextField(
+                      "Price (₹)", (v) => _price = int.tryParse(v!),
+                      keyboardType: TextInputType.number),
+                  const SizedBox.shrink(),
+                ]),
+              ),
+              const SizedBox(height: 16),
                   // _buildRow([
                   //   _buildTextField(
                   //       "Price (₹)", (v) => _price = int.tryParse(v!),
@@ -545,15 +552,11 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                           )),
                     ),
                   )
-                    ],
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   // Widget _buildForm() {

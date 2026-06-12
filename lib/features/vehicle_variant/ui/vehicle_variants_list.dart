@@ -219,20 +219,17 @@ class _VehicleVariantsListState extends State<VehicleVariantsList> {
     return FillWidthDataTable(
       controller: _hController,
       showCheckboxColumn: false,
-      minWidth: 1000,
+      minWidth: 800,
       columns: [
         listColumn("VARIANT"),
         listColumn("MODEL"),
         listColumn("FUEL"),
-        listColumn("TRANSMISSION"),
-        listColumn("ENGINE"),
         listColumn("PRICE"),
         listColumn("STATUS"),
         listColumn("ACTIONS"),
       ],
       rows: _items.map((it) {
         final v = it.variant;
-        final cc = v.engineSpecs?.capacity ?? v.engineSpecs?.displacement;
         return DataRow(
           onSelectChanged: (_) => context.push(
             '/view-vehiclevariant',
@@ -255,10 +252,6 @@ class _VehicleVariantsListState extends State<VehicleVariantsList> {
             DataCell(Text(it.modelName,
                 style: GoogleFonts.inter(fontSize: 13))),
             DataCell(Text(v.fuelType?.displayName ?? '—',
-                style: GoogleFonts.inter(fontSize: 13))),
-            DataCell(Text(v.transmissionType?.displayName ?? '—',
-                style: GoogleFonts.inter(fontSize: 13))),
-            DataCell(Text(cc != null ? "$cc cc" : '—',
                 style: GoogleFonts.inter(fontSize: 13))),
             DataCell(Text(_money(v.price),
                 style: GoogleFonts.inter(

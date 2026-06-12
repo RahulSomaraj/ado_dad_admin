@@ -200,6 +200,62 @@ class LabeledField extends StatelessWidget {
   }
 }
 
+/// A bordered section card with an icon + title header — mirrors the detail
+/// pages' card style so add/edit forms read the same way. Put the section's
+/// fields in [child].
+class FormSectionCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String? subtitle;
+  final Widget child;
+
+  const FormSectionCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.child,
+    this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 16, color: AppColors.textSecondary),
+              const SizedBox(width: 8),
+              Text(title,
+                  style: GoogleFonts.inter(
+                      fontSize: 13, fontWeight: FontWeight.w600)),
+            ],
+          ),
+          if (subtitle != null) ...[
+            const SizedBox(height: 2),
+            Padding(
+              padding: const EdgeInsets.only(left: 24),
+              child: Text(subtitle!,
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textMuted)),
+            ),
+          ],
+          const SizedBox(height: 14),
+          child,
+        ],
+      ),
+    );
+  }
+}
+
 /// Responsive 2-column grid: stacks to a single column below [breakpoint].
 class TwoColGrid extends StatelessWidget {
   final List<Widget> children;
