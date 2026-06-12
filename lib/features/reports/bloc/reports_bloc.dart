@@ -10,6 +10,7 @@ part 'reports_bloc.freezed.dart';
 class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
   final ReportsRepository reportsRepository;
   ReportStatsModel? _cachedStats;
+  _ReportsListData? _cachedList;
 
   ReportsBloc({required this.reportsRepository}) : super(ReportsInitial()) {
     on<FetchReportStats>(_onFetchReportStats);
@@ -19,28 +20,35 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
 
   Future<void> _onFetchReportStats(
       FetchReportStats event, Emitter<ReportsState> emit) async {
-    print('🔄 ReportsBloc: Starting to fetch report stats');
     emit(const ReportsState.statsLoading());
-
     try {
       final stats = await reportsRepository.fetchReportStats();
       _cachedStats = stats;
-      print(
-          '✅ ReportsBloc: Successfully fetched stats - Total: ${stats.totalReports}');
-      print('📤 ReportsBloc: Emitting ReportsStatsLoaded state');
-      emit(ReportsState.statsLoaded(stats: stats));
-      print('📤 ReportsBloc: State emitted successfully');
+      // If reports were already loaded, emit the combined state so the list
+      // doesn't disappear when stats arrive later than the list response.
+      final cached = _cachedList;
+      if (cached != null) {
+        emit(ReportsState.loaded(
+          stats: stats,
+          reports: cached.reports,
+          total: cached.total,
+          page: cached.page,
+          limit: cached.limit,
+          totalPages: cached.totalPages,
+          hasNext: cached.hasNext,
+          hasPrev: cached.hasPrev,
+        ));
+      } else {
+        emit(ReportsState.statsLoaded(stats: stats));
+      }
     } catch (e) {
-      print('❌ ReportsBloc: Error fetching report stats: $e');
       emit(ReportsState.error("Failed to fetch report stats: $e"));
     }
   }
 
   Future<void> _onFetchReports(
       FetchReports event, Emitter<ReportsState> emit) async {
-    print('🔄 ReportsBloc: Starting to fetch reports');
     emit(const ReportsState.listLoading());
-
     try {
       final response = await reportsRepository.fetchReports(
         page: event.page ?? 1,
@@ -50,12 +58,17 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
         reason: event.reason ?? '',
       );
 
-      print(
-          '✅ ReportsBloc: Successfully fetched ${response.data.length} reports');
+      _cachedList = _ReportsListData(
+        reports: response.data,
+        total: response.total,
+        page: response.page,
+        limit: response.limit,
+        totalPages: response.totalPages,
+        hasNext: response.hasNext,
+        hasPrev: response.hasPrev,
+      );
 
-      // If we have cached stats, emit combined state
       if (_cachedStats != null) {
-        print('📤 ReportsBloc: Emitting combined ReportsLoaded state');
         emit(ReportsState.loaded(
           stats: _cachedStats!,
           reports: response.data,
@@ -67,7 +80,6 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
           hasPrev: response.hasPrev,
         ));
       } else {
-        print('📤 ReportsBloc: Emitting ReportsListLoaded state');
         emit(ReportsState.listLoaded(
           reports: response.data,
           total: response.total,
@@ -78,23 +90,38 @@ class ReportsBloc extends Bloc<ReportsEvent, ReportsState> {
           hasPrev: response.hasPrev,
         ));
       }
-      print('📤 ReportsBloc: State emitted successfully');
     } catch (e) {
-      print('❌ ReportsBloc: Error fetching reports: $e');
       emit(ReportsState.error("Failed to fetch reports: $e"));
     }
   }
 
   Future<void> _onDeleteReport(
       DeleteReport event, Emitter<ReportsState> emit) async {
-    print('🔄 ReportsBloc: Starting to delete report: ${event.reportId}');
     try {
       await reportsRepository.deleteReport(event.reportId);
-      print('✅ ReportsBloc: Report deleted successfully');
       emit(const ReportsState.reportDeleted());
     } catch (e) {
-      print('❌ ReportsBloc: Error deleting report: $e');
       emit(ReportsState.error("Failed to delete report: $e"));
     }
   }
+}
+
+class _ReportsListData {
+  final List<ReportModel> reports;
+  final int total;
+  final int page;
+  final int limit;
+  final int totalPages;
+  final bool hasNext;
+  final bool hasPrev;
+
+  _ReportsListData({
+    required this.reports,
+    required this.total,
+    required this.page,
+    required this.limit,
+    required this.totalPages,
+    required this.hasNext,
+    required this.hasPrev,
+  });
 }

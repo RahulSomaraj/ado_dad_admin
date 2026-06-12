@@ -184,18 +184,10 @@ class AppRoutes {
     ],
     redirect: (context, state) async {
       final isAuthenticated = await _isLoggedIn();
+      final path = state.uri.toString();
 
-      if (!isAuthenticated) {
-        if (state.uri.toString() != '/') {
-          return '/';
-        }
-      } else {
-        if (state.uri.toString() == '/' ||
-            state.uri.toString() == '/dashboard') {
-          return '/dashboard';
-        }
-      }
-
+      if (!isAuthenticated && path != '/') return '/';
+      if (isAuthenticated && path == '/') return '/dashboard';
       return null;
     },
   );

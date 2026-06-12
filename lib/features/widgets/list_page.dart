@@ -234,7 +234,9 @@ class ListPagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (totalPages <= 1) return const SizedBox.shrink();
+    // Hide only when there is no data at all; otherwise always show the bar
+    // (including the rows-per-page selector) even on a single page.
+    if (totalPages < 1) return const SizedBox.shrink();
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: const BoxDecoration(

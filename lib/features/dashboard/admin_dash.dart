@@ -314,7 +314,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
     if (_statsLoading && data.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (data.isEmpty) {
+    if (data.isEmpty || data.length < 2) {
       return Center(
         child: Text("No activity data",
             style: GoogleFonts.inter(
