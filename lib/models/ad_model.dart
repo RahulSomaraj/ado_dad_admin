@@ -9,6 +9,7 @@ class AdModel {
   final bool isActive;
   final bool soldOut;
   final bool isApproved;
+  final String status;
   final String? approvedBy;
   final AdUser? approvedByUser;
   final DateTime postedAt;
@@ -16,7 +17,7 @@ class AdModel {
   final String postedBy;
   final AdUser user;
   final VehicleDetails? vehicleDetails;
-  final List<dynamic> commercialVehicleDetails;
+  final Map<String, dynamic>? commercialVehicleDetails;
   final List<dynamic> propertyDetails;
   final int? year;
   final bool isFavorite;
@@ -32,6 +33,7 @@ class AdModel {
     required this.isActive,
     required this.soldOut,
     required this.isApproved,
+    required this.status,
     this.approvedBy,
     this.approvedByUser,
     required this.postedAt,
@@ -39,70 +41,59 @@ class AdModel {
     required this.postedBy,
     required this.user,
     this.vehicleDetails,
-    required this.commercialVehicleDetails,
+    this.commercialVehicleDetails,
     required this.propertyDetails,
     this.year,
     required this.isFavorite,
   });
 
   factory AdModel.fromJson(Map<String, dynamic> json) {
-    try {
-      print('🔄 Parsing AdModel for ID: ${json['id']}');
-      print('📄 vehicleDetails type: ${json['vehicleDetails'].runtimeType}');
-      print('📄 propertyDetails type: ${json['propertyDetails'].runtimeType}');
-      print(
-          '📄 commercialVehicleDetails type: ${json['commercialVehicleDetails'].runtimeType}');
-      final result = AdModel(
-        id: json['id']?.toString() ?? '',
-        title: json['title']?.toString() ?? '',
-        description: json['description']?.toString() ?? '',
-        price: (json['price'] is int)
-            ? json['price']
-            : int.tryParse(json['price']?.toString() ?? '0') ?? 0,
-        images: (json['images'] is List)
-            ? List<String>.from(json['images'].map((e) => e?.toString() ?? ''))
-            : [],
-        location: json['location']?.toString() ?? '',
-        category: json['category']?.toString() ?? '',
-        isActive: json['isActive'] == true,
-        soldOut: json['soldOut'] == true,
-        isApproved: json['isApproved'] == true,
-        approvedBy: json['approvedBy']?.toString(),
-        approvedByUser: (json['approvedByUser'] != null &&
-                json['approvedByUser'] is Map &&
-                json['approvedByUser'].isNotEmpty)
-            ? AdUser.fromJson(json['approvedByUser'])
-            : null,
-        postedAt: DateTime.tryParse(json['postedAt']?.toString() ?? '') ??
-            DateTime.now(),
-        updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
-            DateTime.now(),
-        postedBy: json['postedBy']?.toString() ?? '',
-        user: AdUser.fromJson(json['user'] ?? {}),
-        vehicleDetails: (json['vehicleDetails'] != null &&
-                json['vehicleDetails'] is Map &&
-                json['vehicleDetails'].isNotEmpty)
-            ? VehicleDetails.fromJson(json['vehicleDetails'])
-            : null,
-        commercialVehicleDetails: (json['commercialVehicleDetails'] is List)
-            ? json['commercialVehicleDetails']
-            : [],
-        propertyDetails:
-            (json['propertyDetails'] is List) ? json['propertyDetails'] : [],
-        year: (json['year'] is int)
-            ? json['year']
-            : (json['year'] is double)
-                ? json['year'].toInt()
-                : int.tryParse(json['year']?.toString() ?? ''),
-        isFavorite: json['isFavorite'] == true,
-      );
-      print('✅ Successfully parsed AdModel for ID: ${json['id']}');
-      return result;
-    } catch (e) {
-      print('❌ Error parsing AdModel: $e');
-      print('📄 AdModel JSON: $json');
-      rethrow;
-    }
+    return AdModel(
+      id: json['id']?.toString() ?? '',
+      title: json['title']?.toString() ?? '',
+      description: json['description']?.toString() ?? '',
+      price: (json['price'] is int)
+          ? json['price']
+          : int.tryParse(json['price']?.toString() ?? '0') ?? 0,
+      images: (json['images'] is List)
+          ? List<String>.from(json['images'].map((e) => e?.toString() ?? ''))
+          : [],
+      location: json['location']?.toString() ?? '',
+      category: json['category']?.toString() ?? '',
+      isActive: json['isActive'] == true,
+      soldOut: json['soldOut'] == true,
+      isApproved: json['isApproved'] == true,
+      status: json['status']?.toString() ?? 'pending',
+      approvedBy: json['approvedBy']?.toString(),
+      approvedByUser: (json['approvedByUser'] != null &&
+              json['approvedByUser'] is Map &&
+              json['approvedByUser'].isNotEmpty)
+          ? AdUser.fromJson(json['approvedByUser'])
+          : null,
+      postedAt: DateTime.tryParse(json['postedAt']?.toString() ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.now(),
+      postedBy: json['postedBy']?.toString() ?? '',
+      user: AdUser.fromJson(json['user'] ?? {}),
+      vehicleDetails: (json['vehicleDetails'] != null &&
+              json['vehicleDetails'] is Map &&
+              json['vehicleDetails'].isNotEmpty)
+          ? VehicleDetails.fromJson(json['vehicleDetails'])
+          : null,
+      commercialVehicleDetails: json['commercialVehicleDetails'] is Map
+          ? Map<String, dynamic>.from(
+              json['commercialVehicleDetails'] as Map)
+          : null,
+      propertyDetails:
+          (json['propertyDetails'] is List) ? json['propertyDetails'] : [],
+      year: (json['year'] is int)
+          ? json['year']
+          : (json['year'] is double)
+              ? json['year'].toInt()
+              : int.tryParse(json['year']?.toString() ?? ''),
+      isFavorite: json['isFavorite'] == true,
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -117,6 +108,7 @@ class AdModel {
       'isActive': isActive,
       'soldOut': soldOut,
       'isApproved': isApproved,
+      'status': status,
       'approvedBy': approvedBy,
       'approvedByUser': approvedByUser?.toJson(),
       'postedAt': postedAt.toIso8601String(),
@@ -148,19 +140,13 @@ class AdUser {
   });
 
   factory AdUser.fromJson(Map<String, dynamic> json) {
-    try {
-      return AdUser(
-        id: json['id']?.toString() ?? '',
-        name: json['name']?.toString() ?? '',
-        email: json['email']?.toString() ?? '',
-        phone: json['phone']?.toString() ?? '',
-        profilePic: json['profilePic']?.toString() ?? '',
-      );
-    } catch (e) {
-      print('❌ Error parsing AdUser: $e');
-      print('📄 AdUser JSON: $json');
-      rethrow;
-    }
+    return AdUser(
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      phone: json['phone']?.toString() ?? '',
+      profilePic: json['profilePic']?.toString() ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -746,47 +732,41 @@ class VehicleDetails {
   });
 
   factory VehicleDetails.fromJson(Map<String, dynamic> json) {
-    try {
-      return VehicleDetails(
-        id: json['_id']?.toString() ?? '',
-        ad: json['ad']?.toString() ?? '',
-        vehicleType: json['vehicleType']?.toString() ?? '',
-        manufacturerId: json['manufacturerId']?.toString() ?? '',
-        modelId: json['modelId']?.toString() ?? '',
-        variantId: json['variantId']?.toString() ?? '',
-        year: (json['year'] is int)
-            ? json['year']
-            : (json['year'] is double)
-                ? json['year'].toInt()
-                : int.tryParse(json['year']?.toString() ?? '0') ?? 0,
-        mileage: (json['mileage'] is int)
-            ? json['mileage']
-            : (json['mileage'] is double)
-                ? json['mileage'].toInt()
-                : int.tryParse(json['mileage']?.toString() ?? '0') ?? 0,
-        transmissionTypeId: json['transmissionTypeId']?.toString() ?? '',
-        fuelTypeId: json['fuelTypeId']?.toString() ?? '',
-        color: json['color']?.toString() ?? '',
-        isFirstOwner: json['isFirstOwner'] == true,
-        hasInsurance: json['hasInsurance'] == true,
-        hasRcBook: json['hasRcBook'] == true,
-        additionalFeatures: json['additionalFeatures'] ?? [],
-        createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
-            DateTime.now(),
-        updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
-            DateTime.now(),
-        manufacturer: Manufacturer.fromJson(json['manufacturer'] ?? {}),
-        model: VehicleModel.fromJson(json['model'] ?? {}),
-        variant: VehicleVariant.fromJson(json['variant'] ?? {}),
-        fuelType: FuelType.fromJson(json['fuelType'] ?? {}),
-        transmissionType:
-            TransmissionType.fromJson(json['transmissionType'] ?? {}),
-      );
-    } catch (e) {
-      print('❌ Error parsing VehicleDetails: $e');
-      print('📄 VehicleDetails JSON: $json');
-      rethrow;
-    }
+    return VehicleDetails(
+      id: json['_id']?.toString() ?? '',
+      ad: json['ad']?.toString() ?? '',
+      vehicleType: json['vehicleType']?.toString() ?? '',
+      manufacturerId: json['manufacturerId']?.toString() ?? '',
+      modelId: json['modelId']?.toString() ?? '',
+      variantId: json['variantId']?.toString() ?? '',
+      year: (json['year'] is int)
+          ? json['year']
+          : (json['year'] is double)
+              ? json['year'].toInt()
+              : int.tryParse(json['year']?.toString() ?? '0') ?? 0,
+      mileage: (json['mileage'] is int)
+          ? json['mileage']
+          : (json['mileage'] is double)
+              ? json['mileage'].toInt()
+              : int.tryParse(json['mileage']?.toString() ?? '0') ?? 0,
+      transmissionTypeId: json['transmissionTypeId']?.toString() ?? '',
+      fuelTypeId: json['fuelTypeId']?.toString() ?? '',
+      color: json['color']?.toString() ?? '',
+      isFirstOwner: json['isFirstOwner'] == true,
+      hasInsurance: json['hasInsurance'] == true,
+      hasRcBook: json['hasRcBook'] == true,
+      additionalFeatures: json['additionalFeatures'] ?? [],
+      createdAt: DateTime.tryParse(json['createdAt']?.toString() ?? '') ??
+          DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.now(),
+      manufacturer: Manufacturer.fromJson(json['manufacturer'] ?? {}),
+      model: VehicleModel.fromJson(json['model'] ?? {}),
+      variant: VehicleVariant.fromJson(json['variant'] ?? {}),
+      fuelType: FuelType.fromJson(json['fuelType'] ?? {}),
+      transmissionType:
+          TransmissionType.fromJson(json['transmissionType'] ?? {}),
+    );
   }
 
   Map<String, dynamic> toJson() {
@@ -827,38 +807,13 @@ class UserAdsResponse {
   });
 
   factory UserAdsResponse.fromJson(Map<String, dynamic> json) {
-    try {
-      print('🔄 Parsing UserAdsResponse...');
-      print('📄 Data field type: ${json['data'].runtimeType}');
-      print('📄 Data field value: ${json['data']}');
-
-      List<AdModel> adsList = [];
-
-      if (json['data'] != null) {
-        if (json['data'] is List) {
-          print(
-              '📄 Data is a List with ${(json['data'] as List).length} items');
-          adsList = (json['data'] as List)
-              .map((ad) => AdModel.fromJson(ad as Map<String, dynamic>))
-              .toList();
-        } else {
-          print('❌ Data is not a List, it is: ${json['data'].runtimeType}');
-          throw Exception('Data field is not a List');
-        }
-      } else {
-        print('⚠️ Data field is null');
-      }
-
-      print('✅ Successfully parsed ${adsList.length} ads');
-      return UserAdsResponse(
-        data: adsList,
-        total: json['total'] ?? adsList.length,
-      );
-    } catch (e) {
-      print('❌ Error parsing UserAdsResponse: $e');
-      print('❌ Error type: ${e.runtimeType}');
-      print('📄 Full JSON: $json');
-      rethrow;
-    }
+    final data = json['data'];
+    final List<AdModel> adsList = data is List
+        ? data.map((ad) => AdModel.fromJson(ad as Map<String, dynamic>)).toList()
+        : [];
+    return UserAdsResponse(
+      data: adsList,
+      total: json['total'] ?? adsList.length,
+    );
   }
 }

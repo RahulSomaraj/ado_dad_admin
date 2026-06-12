@@ -6,6 +6,7 @@ import 'package:ado_dad_admin/features/dashboard/bloc/ads_event.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ado_dad_admin/common/save_pdf.dart';
 import 'package:ado_dad_admin/common/pdf_generator.dart';
 
@@ -53,7 +54,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(message),
-                backgroundColor: Colors.green,
+                backgroundColor: AppColors.success,
                 duration: const Duration(seconds: 2),
               ),
             );
@@ -62,7 +63,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(message),
-                backgroundColor: Colors.red,
+                backgroundColor: AppColors.danger,
                 duration: const Duration(seconds: 3),
               ),
             );
@@ -75,178 +76,89 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildHeaderSection(),
-            const SizedBox(height: 20),
-            _buildSelectAllToolbar(),
-            const SizedBox(height: 12),
-            _buildAdsTable(),
+            const SizedBox(height: 16),
+            Container(
+              decoration: _cardDecoration(),
+              clipBehavior: Clip.antiAlias,
+              child: Column(
+                children: [
+                  _buildSelectAllToolbar(),
+                  _buildAdsTable(),
+                ],
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Header
+  // ---------------------------------------------------------------------------
   Widget _buildHeaderSection() {
     return BlocBuilder<AdsBloc, AdsState>(
       builder: (context, state) {
-        return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColors.primaryColor,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 6,
-                spreadRadius: 2,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: Row(
-            children: [
-              const SizedBox(width: 16),
-              Text(
-                userType == "SA" ? "Advertisement List" : "Admin Dashboard",
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const Spacer(),
-              state.whenOrNull(
-                    loaded: (ads, total, currentPage, itemsPerPage) {
-                      if (total > 0) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: Colors.black87,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            "Total Ads: $total",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        );
-                      }
-                      return const SizedBox.shrink();
-                    },
-                  ) ??
-                  const SizedBox.shrink(),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildAdsTable() {
-    return BlocBuilder<AdsBloc, AdsState>(
-      builder: (context, state) {
-        return state.when(
-          initial: () => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(40.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          loading: () => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(40.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          loaded: (ads, total, currentPage, itemsPerPage) {
-            if (ads.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: Column(
-                    children: [
-                      const Icon(
-                        Icons.inbox_outlined,
-                        size: 48,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(height: 16),
-                      const Text(
-                        'No ads found',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-
-            return Column(
-              children: [
-                _buildAdsDataTable(ads),
-                const SizedBox(height: 20),
-                _buildPagination(total, currentPage, itemsPerPage),
-              ],
-            );
-          },
-          error: (message) => Center(
-            child: Padding(
-              padding: const EdgeInsets.all(40.0),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.error_outline,
-                    size: 48,
-                    color: Colors.red,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Error loading ads: $message',
-                    style: const TextStyle(
-                      color: Colors.red,
-                      fontSize: 16,
+        final totalChip = state.whenOrNull(
+              loaded: (ads, total, currentPage, itemsPerPage) {
+                if (total > 0) {
+                  return Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: AppColors.accentSoft,
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    textAlign: TextAlign.center,
+                    child: Text(
+                      "$total total",
+                      style: GoogleFonts.inter(
+                        color: AppColors.accent,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12.5,
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ) ??
+            const SizedBox.shrink();
+
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Home / Advertisements",
+                      style: GoogleFonts.inter(
+                          fontSize: 12, color: AppColors.textMuted)),
+                  const SizedBox(height: 2),
+                  Text(
+                    userType == "SA" ? "Advertisements" : "Advertisements",
+                    style: GoogleFonts.inter(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary),
                   ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: () {
-                      context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
-                    },
-                    child: const Text('Retry'),
-                  ),
+                  const SizedBox(height: 2),
+                  Text("Review and approve user listings",
+                      style: GoogleFonts.inter(
+                          fontSize: 13, color: AppColors.textSecondary)),
                 ],
               ),
             ),
-          ),
-          approvalLoading: (adId) => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(40.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          approvalSuccess: (message, updatedAd) => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(40.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
-          approvalError: (message, adId) => const Center(
-            child: Padding(
-              padding: EdgeInsets.all(40.0),
-              child: CircularProgressIndicator(),
-            ),
-          ),
+            totalChip,
+          ],
         );
       },
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Select-all toolbar (card top bar)
+  // ---------------------------------------------------------------------------
   Widget _buildSelectAllToolbar() {
     return BlocBuilder<AdsBloc, AdsState>(
       builder: (context, state) {
@@ -259,42 +171,63 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
         final List<AdModel> currentAds = loadedState;
         final bool allSelected = currentAds.isNotEmpty &&
             currentAds.every((ad) => _selectedAdIds.contains(ad.id));
+        final int selectedCount =
+            currentAds.where((ad) => _selectedAdIds.contains(ad.id)).length;
 
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            Checkbox(
-              value: allSelected,
-              onChanged: (value) {
-                _toggleSelectAll(currentAds, value == true);
-              },
-            ),
-            TextButton(
-              onPressed: () {
-                _toggleSelectAll(currentAds, !allSelected);
-              },
-              child: const Text(
-                'Select All',
-                style: TextStyle(color: AppColors.blackColor),
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          decoration: const BoxDecoration(
+            color: AppColors.surfaceAlt,
+            border: Border(bottom: BorderSide(color: AppColors.border)),
+          ),
+          child: Row(
+            children: [
+              InkWell(
+                onTap: () => _toggleSelectAll(currentAds, !allSelected),
+                borderRadius: BorderRadius.circular(6),
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: allSelected,
+                      onChanged: (value) =>
+                          _toggleSelectAll(currentAds, value == true),
+                      visualDensity: VisualDensity.compact,
+                      materialTapTargetSize:
+                          MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    const SizedBox(width: 4),
+                    Text('Select all',
+                        style: GoogleFonts.inter(
+                            fontSize: 13, color: AppColors.textPrimary)),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 12),
-            ElevatedButton.icon(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.blackColor),
-              onPressed: () async {
-                await _downloadSelectedAsPdf(currentAds);
-              },
-              icon: const Icon(
-                Icons.picture_as_pdf,
-                color: AppColors.primaryColor,
+              if (selectedCount > 0) ...[
+                const SizedBox(width: 8),
+                Text('· $selectedCount selected',
+                    style: GoogleFonts.inter(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.accent)),
+              ],
+              const Spacer(),
+              TextButton.icon(
+                onPressed: () => _downloadSelectedAsPdf(currentAds),
+                style: TextButton.styleFrom(
+                  backgroundColor: AppColors.accentSoft,
+                  foregroundColor: AppColors.accent,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
+                ),
+                icon: const Icon(Icons.download_outlined, size: 18),
+                label: Text('Download PDF',
+                    style: GoogleFonts.inter(
+                        fontSize: 13, fontWeight: FontWeight.w600)),
               ),
-              label: Text(
-                'Download PDF',
-                style: TextStyle(color: AppColors.primaryColor),
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );
@@ -346,7 +279,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           SnackBar(
             content: Text(
                 'PDF report saved: $filename with ${selected.length} records'),
-            backgroundColor: Colors.green,
+            backgroundColor: AppColors.success,
           ),
         );
       }
@@ -355,104 +288,142 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to generate PDF: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.danger,
           ),
         );
       }
     }
   }
 
+  // ---------------------------------------------------------------------------
+  // Table / states
+  // ---------------------------------------------------------------------------
+  Widget _buildAdsTable() {
+    return BlocBuilder<AdsBloc, AdsState>(
+      builder: (context, state) {
+        return state.when(
+          initial: () => _centeredLoader(),
+          loading: () => _centeredLoader(),
+          loaded: (ads, total, currentPage, itemsPerPage) {
+            if (ads.isEmpty) {
+              return _emptyState();
+            }
+            return Column(
+              children: [
+                _buildAdsDataTable(ads),
+                _buildPagination(total, currentPage, itemsPerPage),
+              ],
+            );
+          },
+          error: (message) => _errorState(message),
+          approvalLoading: (adId) => _centeredLoader(),
+          approvalSuccess: (message, updatedAd) => _centeredLoader(),
+          approvalError: (message, adId) => _centeredLoader(),
+        );
+      },
+    );
+  }
+
+  Widget _centeredLoader() => const Center(
+        child: Padding(
+          padding: EdgeInsets.all(48.0),
+          child: CircularProgressIndicator(),
+        ),
+      );
+
+  Widget _emptyState() => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(48.0),
+          child: Column(
+            children: [
+              const Icon(Icons.inbox_outlined,
+                  size: 44, color: AppColors.textMuted),
+              const SizedBox(height: 14),
+              Text('No ads found',
+                  style: GoogleFonts.inter(
+                      color: AppColors.textSecondary, fontSize: 15)),
+            ],
+          ),
+        ),
+      );
+
+  Widget _errorState(String message) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            children: [
+              const Icon(Icons.error_outline,
+                  size: 44, color: AppColors.danger),
+              const SizedBox(height: 14),
+              Text('Error loading ads: $message',
+                  style: GoogleFonts.inter(
+                      color: AppColors.danger, fontSize: 14),
+                  textAlign: TextAlign.center),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        ),
+      );
+
   Widget _buildAdsDataTable(List<AdModel> ads) {
-    return Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Scrollbar(
+    final headingStyle = GoogleFonts.inter(
+        fontSize: 11,
+        fontWeight: FontWeight.w600,
+        color: AppColors.textMuted,
+        letterSpacing: 0.3);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Fill the available width on large screens; keep a 1000px floor so the
+        // table scrolls horizontally on small ones.
+        final double tableWidth =
+            constraints.maxWidth > 1000 ? constraints.maxWidth : 1000;
+        return Scrollbar(
           controller: _horizontalScrollController,
           thumbVisibility: true,
-          trackVisibility: true,
           child: SingleChildScrollView(
             controller: _horizontalScrollController,
             scrollDirection: Axis.horizontal,
             child: ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: 1000),
+              constraints: BoxConstraints(minWidth: tableWidth),
               child: DataTable(
-                columnSpacing: 90,
-                headingRowColor: WidgetStateColor.resolveWith(
-                  (states) => const Color.fromARGB(66, 144, 140, 140),
+            columnSpacing: 56,
+            horizontalMargin: 16,
+            headingRowColor:
+                WidgetStateColor.resolveWith((states) => AppColors.surfaceAlt),
+            dataRowColor: WidgetStateProperty.resolveWith((states) {
+              if (states.contains(WidgetState.selected)) {
+                return AppColors.accentSoft;
+              }
+              return AppColors.surface;
+            }),
+            dividerThickness: 1,
+            dataRowMinHeight: 60,
+            dataRowMaxHeight: 80,
+            columns: [
+              DataColumn(label: Text('Select', style: headingStyle)),
+              DataColumn(label: Text('Image', style: headingStyle)),
+              DataColumn(label: Text('Name', style: headingStyle)),
+              DataColumn(label: Text('Category', style: headingStyle)),
+              DataColumn(label: Text('Posted On', style: headingStyle)),
+              DataColumn(label: Text('Location', style: headingStyle)),
+              DataColumn(label: Text('Price', style: headingStyle)),
+              DataColumn(label: Text('Status', style: headingStyle)),
+              DataColumn(label: Text('Approval', style: headingStyle)),
+            ],
+            rows: ads.map((ad) => _buildAdRow(ad)).toList(),
                 ),
-                dataRowColor: WidgetStateProperty.resolveWith((states) {
-                  if (states.contains(WidgetState.selected)) {
-                    return AppColors.primaryColor1.withOpacity(0.2);
-                  }
-                  return AppColors.primaryColor;
-                }),
-                dataRowMinHeight: 60,
-                dataRowMaxHeight: 80,
-                columns: const [
-                  DataColumn(
-                    label: Text(
-                      'Select',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Image',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Name',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Category',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Posted On',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Location',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Price',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Status',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Approval',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-                rows: ads.map((ad) => _buildAdRow(ad)).toList(),
               ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        },
+      );
   }
 
   DataRow _buildAdRow(AdModel ad) {
@@ -463,6 +434,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
         DataCell(
           Checkbox(
             value: isSelected,
+            visualDensity: VisualDensity.compact,
             onChanged: (value) {
               setState(() {
                 if (value == true) {
@@ -475,77 +447,69 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           ),
         ),
         DataCell(
-          SizedBox(
-            width: 80,
-            height: 50,
-            child: _buildAdImage(ad),
-          ),
+          SizedBox(width: 56, height: 48, child: _buildAdImage(ad)),
         ),
         DataCell(
           SizedBox(
-            width: 100,
+            width: 160,
             child: Text(
               _buildVehicleTitle(ad),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
-            ),
-          ),
-        ),
-        DataCell(
-          Text(
-            _formatCategory(ad.category),
-            style: const TextStyle(fontSize: 14),
-          ),
-        ),
-        DataCell(
-          Text(
-            _formatDate(ad.postedAt),
-            style: const TextStyle(fontSize: 12),
-          ),
-        ),
-        DataCell(
-          Text(
-            ad.location,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
-        ),
-        DataCell(
-          Text(
-            '₹${ad.price.toString()}',
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-        DataCell(
-          SizedBox(
-            width: 60,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-              decoration: BoxDecoration(
-                color: ad.soldOut ? Colors.black : Colors.green,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                ad.soldOut ? 'SoldOut' : 'Active',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 11,
-                  color: Colors.white,
+              style: GoogleFonts.inter(
+                  fontSize: 13,
                   fontWeight: FontWeight.w500,
-                ),
-              ),
+                  color: AppColors.textPrimary),
             ),
           ),
+        ),
+        DataCell(
+          Text(_formatCategory(ad.category),
+              style: GoogleFonts.inter(
+                  fontSize: 13, color: AppColors.textSecondary)),
+        ),
+        DataCell(
+          Text(_formatDate(ad.postedAt),
+              style: GoogleFonts.inter(
+                  fontSize: 12.5, color: AppColors.textSecondary)),
         ),
         DataCell(
           SizedBox(
             width: 120,
-            child: _buildApprovalButtons(ad),
+            child: Text(ad.location,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.inter(
+                    fontSize: 13, color: AppColors.textSecondary)),
           ),
         ),
+        DataCell(
+          Text('₹${ad.price.toString()}',
+              style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
+        ),
+        DataCell(_buildStatusChip(ad)),
+        DataCell(
+          SizedBox(width: 180, child: _buildApprovalButtons(ad)),
+        ),
       ],
+    );
+  }
+
+  Widget _buildStatusChip(AdModel ad) {
+    final bg = ad.soldOut ? AppColors.surfaceAlt : AppColors.successSoft;
+    final fg = ad.soldOut ? AppColors.textSecondary : AppColors.success;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+      child: Text(
+        ad.soldOut ? 'Sold out' : 'Active',
+        style: GoogleFonts.inter(
+            fontSize: 11, fontWeight: FontWeight.w600, color: fg),
+      ),
     );
   }
 
@@ -599,14 +563,11 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   Widget _buildImagePlaceholder() {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.grey.shade200,
+        color: AppColors.surfaceAlt,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Icon(
-        Icons.image_not_supported,
-        color: Colors.grey,
-        size: 24,
-      ),
+      child: const Icon(Icons.image_not_supported_outlined,
+          color: AppColors.textMuted, size: 20),
     );
   }
 
@@ -641,19 +602,18 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
         // For sold-out ads, show a message instead of buttons
         if (ad.soldOut) {
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
-              borderRadius: BorderRadius.circular(12),
+              color: AppColors.surfaceAlt,
+              borderRadius: BorderRadius.circular(6),
             ),
-            child: const Text(
-              'Sold Out',
+            child: Text(
+              'Sold out',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 10,
-                color: Colors.grey,
-                fontWeight: FontWeight.w500,
-              ),
+              style: GoogleFonts.inter(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600),
             ),
           );
         }
@@ -667,10 +627,14 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
         final bool isApproved = ad.isApproved;
 
         return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             // Approve Button
-            GestureDetector(
+            _approvalButton(
+              label: isLoading ? '...' : (isApproved ? 'Approved' : 'Approve'),
+              filled: true,
+              color: AppColors.success,
+              disabled: isLoading || isApproved,
               onTap: (isLoading || isApproved)
                   ? null
                   : () {
@@ -679,26 +643,14 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
                             isApproved: true,
                           ));
                     },
-              child: Container(
-                width: 60,
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                decoration: BoxDecoration(
-                  color: (isLoading || isApproved) ? Colors.grey : Colors.green,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  isLoading ? '...' : (isApproved ? 'Approved' : 'Approve'),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
             ),
+            const SizedBox(width: 8),
             // Reject Button
-            GestureDetector(
+            _approvalButton(
+              label: isLoading ? '...' : 'Reject',
+              filled: false,
+              color: AppColors.danger,
+              disabled: isLoading,
               onTap: isLoading
                   ? null
                   : () {
@@ -707,23 +659,6 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
                             isApproved: false,
                           ));
                     },
-              child: Container(
-                width: 50,
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-                decoration: BoxDecoration(
-                  color: isLoading ? Colors.grey : Colors.red,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  isLoading ? '...' : 'Reject',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
             ),
           ],
         );
@@ -731,79 +666,134 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
     );
   }
 
-  Widget _buildPagination(int total, int currentPage, int itemsPerPage) {
-    final totalPages = (total / itemsPerPage).ceil();
-
-    if (totalPages <= 1) return const SizedBox.shrink();
-
-    return Align(
-      alignment: Alignment.centerRight,
-      child: Padding(
-        padding: const EdgeInsets.only(right: 20, bottom: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const Text("Rows per page: "),
-            const SizedBox(width: 8),
-            DropdownButton<int>(
-              value: itemsPerPage,
-              dropdownColor: Colors.white,
-              items: [10, 20].map((int value) {
-                return DropdownMenuItem<int>(
-                  value: value,
-                  child: Text(value.toString()),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) {
-                  context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
-                        page: 1,
-                        limit: value,
-                      ));
-                }
-              },
-            ),
-            const SizedBox(width: 20),
-            GestureDetector(
-              onTap: currentPage > 1
-                  ? () {
-                      context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
-                            page: currentPage - 1,
-                            limit: itemsPerPage,
-                          ));
-                    }
-                  : null,
-              child: Icon(
-                Icons.chevron_left,
-                size: 28,
-                color: currentPage > 1 ? Colors.black : Colors.grey[400],
-              ),
-            ),
-            const SizedBox(width: 15),
-            Text(
-              "Page $currentPage of $totalPages",
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(width: 15),
-            GestureDetector(
-              onTap: currentPage < totalPages
-                  ? () {
-                      context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
-                            page: currentPage + 1,
-                            limit: itemsPerPage,
-                          ));
-                    }
-                  : null,
-              child: Icon(
-                Icons.chevron_right,
-                size: 28,
-                color:
-                    currentPage < totalPages ? Colors.black : Colors.grey[400],
-              ),
-            ),
-          ],
+  Widget _approvalButton({
+    required String label,
+    required bool filled,
+    required Color color,
+    required bool disabled,
+    required VoidCallback? onTap,
+  }) {
+    final Color effective = disabled ? AppColors.textMuted : color;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: filled
+              ? (disabled ? AppColors.surfaceAlt : color)
+              : Colors.transparent,
+          border: filled ? null : Border.all(color: effective),
+          borderRadius: BorderRadius.circular(7),
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: GoogleFonts.inter(
+            fontSize: 11.5,
+            fontWeight: FontWeight.w600,
+            color: filled
+                ? (disabled ? AppColors.textSecondary : Colors.white)
+                : effective,
+          ),
         ),
       ),
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Pagination
+  // ---------------------------------------------------------------------------
+  Widget _buildPagination(int total, int currentPage, int itemsPerPage) {
+    final totalPages = (total / itemsPerPage).ceil();
+    if (totalPages <= 1) return const SizedBox.shrink();
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: const BoxDecoration(
+        border: Border(top: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Text("Rows per page:",
+              style: GoogleFonts.inter(
+                  fontSize: 12.5, color: AppColors.textSecondary)),
+          const SizedBox(width: 8),
+          DropdownButton<int>(
+            value: itemsPerPage,
+            dropdownColor: Colors.white,
+            underline: const SizedBox.shrink(),
+            style: GoogleFonts.inter(
+                fontSize: 13, color: AppColors.textPrimary),
+            items: [10, 20].map((int value) {
+              return DropdownMenuItem<int>(
+                value: value,
+                child: Text(value.toString()),
+              );
+            }).toList(),
+            onChanged: (value) {
+              if (value != null) {
+                context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
+                      page: 1,
+                      limit: value,
+                    ));
+              }
+            },
+          ),
+          const SizedBox(width: 20),
+          Text("Page $currentPage of $totalPages",
+              style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
+          const SizedBox(width: 14),
+          _pageArrow(
+            icon: Icons.chevron_left,
+            enabled: currentPage > 1,
+            onTap: () => context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
+                  page: currentPage - 1,
+                  limit: itemsPerPage,
+                )),
+          ),
+          const SizedBox(width: 6),
+          _pageArrow(
+            icon: Icons.chevron_right,
+            enabled: currentPage < totalPages,
+            onTap: () => context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
+                  page: currentPage + 1,
+                  limit: itemsPerPage,
+                )),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pageArrow({
+    required IconData icon,
+    required bool enabled,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(7),
+      child: Container(
+        width: 30,
+        height: 30,
+        decoration: BoxDecoration(
+          border: Border.all(color: AppColors.border),
+          borderRadius: BorderRadius.circular(7),
+        ),
+        child: Icon(icon,
+            size: 18,
+            color: enabled ? AppColors.textPrimary : AppColors.textMuted),
+      ),
+    );
+  }
+
+  BoxDecoration _cardDecoration() => BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
+      );
 }
