@@ -50,7 +50,9 @@ class _UserViewState extends State<UserView> {
       child: Column(
         children: [
           _buildHeaderSection(context),
-          const SizedBox(height: 10),
+          const SizedBox(height: 20),
+          _buildStatisticsCards(),
+          const SizedBox(height: 20),
           _buildUserProfileSection(),
           const SizedBox(height: 30),
           _buildUserAdsSection(),
@@ -95,26 +97,52 @@ class _UserViewState extends State<UserView> {
     );
   }
 
-  /// User Profile Section with Avatar and Details
-  Widget _buildUserProfileSection() {
+  /// Statistics Cards Section
+  Widget _buildStatisticsCards() {
     return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 1070),
-      child: Card(
-        elevation: 5,
-        color: AppColors.primaryColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      constraints: const BoxConstraints(maxWidth: 1200),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Row(
           children: [
-            // First Container - Profile Picture and Name
             Expanded(
-              flex: 1,
-              child: _buildProfileContainer(),
+              child: _buildStatCard(
+                'Total Ads',
+                _totalAds.toString(),
+                Icons.inventory_2_outlined,
+                Colors.blue,
+              ),
             ),
-            const SizedBox(width: 20),
-            // Second Container - Email, Phone, User Type
+            const SizedBox(width: 16),
             Expanded(
-              flex: 2,
-              child: _buildDetailsContainer(),
+              child: _buildStatCard(
+                'User Type',
+                _getUserTypeDisplay(widget.user.userType),
+                Icons.person_outline,
+                Colors.purple,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
+                'Account Status',
+                widget.user.isDeleted == true ? 'Deleted' : 'Active',
+                widget.user.isDeleted == true
+                    ? Icons.delete_outline
+                    : Icons.check_circle_outline,
+                widget.user.isDeleted == true ? Colors.red : Colors.green,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildStatCard(
+                'User ID',
+                widget.user.id.length > 8
+                    ? '${widget.user.id.substring(0, 8)}...'
+                    : widget.user.id,
+                Icons.badge_outlined,
+                Colors.orange,
+              ),
             ),
           ],
         ),
@@ -122,13 +150,96 @@ class _UserViewState extends State<UserView> {
     );
   }
 
-  /// First Container - Profile Picture and Name with Yellow Background
+  /// Build Statistics Card
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Card(
+      elevation: 3,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: AppColors.primaryColor,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 24),
+                ),
+                const Spacer(),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// User Profile Section with Avatar and Details
+  Widget _buildUserProfileSection() {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 1200),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Card(
+          elevation: 5,
+          color: AppColors.primaryColor,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // First Container - Profile Picture and Name
+              Expanded(
+                flex: 1,
+                child: _buildProfileContainer(),
+              ),
+              const SizedBox(width: 20),
+              // Second Container - All Details in Grid
+              Expanded(
+                flex: 2,
+                child: _buildDetailsContainer(),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// First Container - Profile Picture and Name with Background
   Widget _buildProfileContainer() {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.primaryColor1.withOpacity(0.1),
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(12), bottomLeft: Radius.circular(12)),
         border: Border.all(color: AppColors.primaryColor1.withOpacity(0.3)),
       ),
@@ -137,16 +248,33 @@ class _UserViewState extends State<UserView> {
         children: [
           // Profile Picture with Circle Avatar
           _buildProfilePicture(),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           // Name below the avatar
           Text(
             widget.user.name,
             style: const TextStyle(
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
             textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 12),
+          // User ID badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              'ID: ${widget.user.id.length > 10 ? "${widget.user.id.substring(0, 10)}..." : widget.user.id}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ],
       ),
@@ -156,14 +284,22 @@ class _UserViewState extends State<UserView> {
   /// Profile Picture with Circle Avatar
   Widget _buildProfilePicture() {
     return Container(
-      width: 120,
-      height: 120,
+      width: 140,
+      height: 140,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         border: Border.all(
-          color: Colors.grey.shade300,
-          width: 3,
+          color: AppColors.primaryColor1.withOpacity(0.5),
+          width: 4,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 2,
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: ClipOval(
         child:
@@ -184,51 +320,140 @@ class _UserViewState extends State<UserView> {
     return Container(
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: Colors.grey.shade200,
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primaryColor1.withOpacity(0.3),
+            AppColors.primaryColor1.withOpacity(0.1),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       child: const Icon(
         Icons.person,
-        size: 60,
-        color: Colors.grey,
+        size: 70,
+        color: Colors.black54,
       ),
     );
   }
 
-  /// Second Container - Email, Phone, User Type
+  /// Second Container - All Details in Grid
   Widget _buildDetailsContainer() {
     return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
         color: Colors.white,
-        // borderRadius: BorderRadius.circular(12),
-        // border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.only(
+          topRight: Radius.circular(12),
+          bottomRight: Radius.circular(12),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Email and Phone in same row
+          const Text(
+            "User Information",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 24),
+          // First Row - Email and Phone
           Row(
             children: [
               Expanded(
-                child: _buildDetailItem("Email", widget.user.email),
+                child: _buildDetailItemWithIcon(
+                  Icons.email_outlined,
+                  "Email",
+                  widget.user.email,
+                  Colors.blue,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildDetailItem("Phone", _formatPhoneNumber()),
+                child: _buildDetailItemWithIcon(
+                  Icons.phone_outlined,
+                  "Phone",
+                  _formatPhoneNumber(),
+                  Colors.green,
+                ),
               ),
             ],
           ),
           const SizedBox(height: 20),
-          // User Type and Total Ads in same row
+          // Second Row - Username (if available) and User Type
           Row(
             children: [
               Expanded(
-                child: _buildDetailItem(
-                    "User Type", _getUserTypeDisplay(widget.user.userType)),
+                child: _buildDetailItemWithIcon(
+                  Icons.alternate_email,
+                  "Username",
+                  widget.user.username ?? 'Not provided',
+                  Colors.purple,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildDetailItem("Total Ads", _totalAds.toString()),
+                child: _buildDetailItemWithIcon(
+                  Icons.person_outline,
+                  "User Type",
+                  _getUserTypeDisplay(widget.user.userType),
+                  Colors.orange,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Third Row - Created At and Updated At
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailItemWithIcon(
+                  Icons.calendar_today_outlined,
+                  "Account Created",
+                  widget.user.createdAt != null
+                      ? _formatDateTime(widget.user.createdAt!)
+                      : 'Not available',
+                  Colors.teal,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildDetailItemWithIcon(
+                  Icons.update_outlined,
+                  "Last Updated",
+                  widget.user.updatedAt != null
+                      ? _formatDateTime(widget.user.updatedAt!)
+                      : 'Not available',
+                  Colors.indigo,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Fourth Row - Account Status and Total Ads
+          Row(
+            children: [
+              Expanded(
+                child: _buildDetailItemWithIcon(
+                  widget.user.isDeleted == true
+                      ? Icons.delete_outline
+                      : Icons.check_circle_outline,
+                  "Account Status",
+                  widget.user.isDeleted == true ? 'Deleted' : 'Active',
+                  widget.user.isDeleted == true ? Colors.red : Colors.green,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: _buildDetailItemWithIcon(
+                  Icons.inventory_2_outlined,
+                  "Total Ads",
+                  _totalAds.toString(),
+                  Colors.blueGrey,
+                ),
               ),
             ],
           ),
@@ -237,7 +462,50 @@ class _UserViewState extends State<UserView> {
     );
   }
 
-  /// Individual Detail Item
+  /// Individual Detail Item with Icon
+  Widget _buildDetailItemWithIcon(
+      IconData icon, String label, String value, Color iconColor) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 20, color: iconColor),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                  fontSize: 13,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            value,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 2,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Individual Detail Item (keeping for backwards compatibility if needed)
   Widget _buildDetailItem(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,6 +528,25 @@ class _UserViewState extends State<UserView> {
         ),
       ],
     );
+  }
+
+  /// Format DateTime for display
+  String _formatDateTime(DateTime date) {
+    final months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    return '${date.day} ${months[date.month - 1]} ${date.year}, ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
   }
 
   /// Convert user type code to display text
@@ -295,22 +582,51 @@ class _UserViewState extends State<UserView> {
 
   /// User Ads Section
   Widget _buildUserAdsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Section Header
-        // Text(
-        //   "User's Ads",
-        //   style: const TextStyle(
-        //     fontSize: 20,
-        //     fontWeight: FontWeight.bold,
-        //     color: Colors.black87,
-        //   ),
-        // ),
-        const SizedBox(height: 10),
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 1200),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              children: [
+                const Icon(Icons.inventory_2_outlined,
+                    color: Colors.black87, size: 24),
+                const SizedBox(width: 8),
+                const Text(
+                  "User's Ads",
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryColor1.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    'Total: $_totalAds',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 20),
 
-        // Ads Table with BlocBuilder
-        BlocBuilder<UserAdsBloc, UserAdsState>(
+          // Ads Table with BlocBuilder
+          BlocBuilder<UserAdsBloc, UserAdsState>(
           builder: (context, state) {
             return state.when(
               initial: () => const Center(
@@ -404,7 +720,8 @@ class _UserViewState extends State<UserView> {
             );
           },
         ),
-      ],
+        ],
+      ),
     );
   }
 
