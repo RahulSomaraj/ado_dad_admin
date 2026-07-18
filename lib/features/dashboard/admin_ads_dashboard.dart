@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
 import 'package:ado_dad_admin/models/ad_model.dart';
@@ -6,9 +8,14 @@ import 'package:ado_dad_admin/features/dashboard/bloc/ads_event.dart';
 import 'package:ado_dad_admin/features/dashboard/bloc/ads_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:ado_dad_admin/common/save_pdf.dart';
 import 'package:ado_dad_admin/common/pdf_generator.dart';
+
+/// Status filter values for the toolbar segmented control.
+enum _AdStatusFilter { all, pending, approved, sold }
 
 class AdminAdsDashboard extends StatefulWidget {
   /// When set, the page opens pre-filtered to a single user's ads.
@@ -23,9 +30,24 @@ class AdminAdsDashboard extends StatefulWidget {
 
 class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   final ScrollController _horizontalScrollController = ScrollController();
+  final TextEditingController _searchController = TextEditingController();
   final Set<String> _selectedAdIds = <String>{};
+
+  Timer? _searchDebounce;
   String? userType;
   String? _filterUserName;
+  String? _searchQuery;
+  String? _categoryFilter; // null = all categories
+  _AdStatusFilter _statusFilter = _AdStatusFilter.all;
+  int _limit = 10;
+
+  static const Map<String, String> _categories = {
+    'two_wheeler': 'Two Wheeler',
+    'four_wheeler': 'Four Wheeler',
+    'private_vehicle': 'Private Vehicle',
+    'commercial_vehicle': 'Commercial Vehicle',
+    'property': 'Property',
+  };
 
   @override
   void initState() {
@@ -41,32 +63,99 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
     });
   }
 
-  void _clearUserFilter() {
-    final bloc = context.read<AdsBloc>();
-    bloc.userFilter = null;
-    setState(() => _filterUserName = null);
-    bloc.add(const AdsEvent.fetchAllAds());
+  @override
+  void dispose() {
+    _horizontalScrollController.dispose();
+    _searchController.dispose();
+    _searchDebounce?.cancel();
+    super.dispose();
   }
 
   Future<void> _loadUserType() async {
     final type = await getUserType();
-    if (mounted) {
-      setState(() {
-        userType = type;
-      });
+    if (mounted) setState(() => userType = type);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Data helpers
+  // ---------------------------------------------------------------------------
+  void _fetch({int page = 1}) {
+    context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
+          page: page,
+          limit: _limit,
+          searchQuery: _searchQuery,
+        ));
+  }
+
+  void _onSearchChanged(String value) {
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 450), () {
+      _searchQuery = value.trim().isEmpty ? null : value.trim();
+      _fetch();
+    });
+  }
+
+  void _clearUserFilter() {
+    final bloc = context.read<AdsBloc>();
+    bloc.userFilter = null;
+    setState(() => _filterUserName = null);
+    _fetch();
+  }
+
+  String _adStatus(AdModel ad) {
+    if (ad.soldOut) return 'sold';
+    if (ad.isApproved) return 'approved';
+    return 'pending';
+  }
+
+  /// Client-side filters (category + status) applied to the loaded page,
+  /// with pending ads surfaced first for faster moderation.
+  List<AdModel> _visibleAds(List<AdModel> ads) {
+    var list = ads.where((ad) {
+      if (_categoryFilter != null && ad.category != _categoryFilter) {
+        return false;
+      }
+      switch (_statusFilter) {
+        case _AdStatusFilter.all:
+          return true;
+        case _AdStatusFilter.pending:
+          return _adStatus(ad) == 'pending';
+        case _AdStatusFilter.approved:
+          return _adStatus(ad) == 'approved';
+        case _AdStatusFilter.sold:
+          return _adStatus(ad) == 'sold';
+      }
+    }).toList();
+
+    int rank(AdModel ad) {
+      switch (_adStatus(ad)) {
+        case 'pending':
+          return 0;
+        case 'approved':
+          return 1;
+        default:
+          return 2;
+      }
     }
+
+    list.sort((a, b) => rank(a).compareTo(rank(b)));
+    return list;
   }
 
-  @override
-  void dispose() {
-    _horizontalScrollController.dispose();
-    super.dispose();
+  void _openAdDetail(AdModel ad) {
+    context.push('/view-advertisement', extra: ad);
   }
 
+  // ---------------------------------------------------------------------------
+  // Build
+  // ---------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return BlocListener<AdsBloc, AdsState>(
       listener: (context, state) {
+        // Only surface snackbars when this page is the visible route —
+        // the ad detail page shares the same bloc and shows its own.
+        if (ModalRoute.of(context)?.isCurrent == false) return;
         state.whenOrNull(
           approvalSuccess: (message, updatedAd) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -95,12 +184,14 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           children: [
             _buildHeaderSection(),
             const SizedBox(height: 16),
+            _buildKpiRow(),
+            const SizedBox(height: 16),
             Container(
               decoration: _cardDecoration(),
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
-                  _buildSelectAllToolbar(),
+                  _buildToolbar(),
                   _buildAdsTable(),
                 ],
               ),
@@ -115,66 +206,34 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   // Header
   // ---------------------------------------------------------------------------
   Widget _buildHeaderSection() {
-    return BlocBuilder<AdsBloc, AdsState>(
-      builder: (context, state) {
-        final totalChip = state.whenOrNull(
-              loaded: (ads, total, currentPage, itemsPerPage) {
-                if (total > 0) {
-                  return Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentSoft,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      "$total total",
-                      style: GoogleFonts.inter(
-                        color: AppColors.accent,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12.5,
-                      ),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ) ??
-            const SizedBox.shrink();
-
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Home / Advertisements",
-                      style: GoogleFonts.inter(
-                          fontSize: 12, color: AppColors.textMuted)),
-                  const SizedBox(height: 2),
-                  Text(
-                    userType == "SA" ? "Advertisements" : "Advertisements",
-                    style: GoogleFonts.inter(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary),
-                  ),
-                  const SizedBox(height: 2),
-                  Text("Review and approve user listings",
-                      style: GoogleFonts.inter(
-                          fontSize: 13, color: AppColors.textSecondary)),
-                  if (context.read<AdsBloc>().userFilter != null) ...[
-                    const SizedBox(height: 8),
-                    _userFilterChip(),
-                  ],
-                ],
-              ),
-            ),
-            totalChip,
-          ],
-        );
-      },
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Home / Advertisements",
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textMuted)),
+              const SizedBox(height: 2),
+              Text("Advertisements",
+                  style: GoogleFonts.inter(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary)),
+              const SizedBox(height: 2),
+              Text("Review and approve user listings",
+                  style: GoogleFonts.inter(
+                      fontSize: 13, color: AppColors.textSecondary)),
+              if (context.read<AdsBloc>().userFilter != null) ...[
+                const SizedBox(height: 8),
+                _userFilterChip(),
+              ],
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -188,7 +247,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.person_outline, size: 14, color: AppColors.accent),
+          const Icon(Icons.person_outline, size: 14, color: AppColors.accent),
           const SizedBox(width: 5),
           Text("Filtered by: ${_filterUserName ?? 'user'}",
               style: GoogleFonts.inter(
@@ -210,94 +269,372 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
   }
 
   // ---------------------------------------------------------------------------
-  // Select-all toolbar (card top bar)
+  // KPI cards
   // ---------------------------------------------------------------------------
-  Widget _buildSelectAllToolbar() {
+  Widget _buildKpiRow() {
     return BlocBuilder<AdsBloc, AdsState>(
+      buildWhen: (prev, curr) =>
+          curr.maybeWhen(loaded: (_, __, ___, ____) => true, orElse: () => false),
       builder: (context, state) {
-        final loadedState = state.whenOrNull(
-            loaded: (ads, total, currentPage, itemsPerPage) => ads);
-        if (loadedState == null || loadedState.isEmpty) {
-          return const SizedBox.shrink();
-        }
+        final loaded = state.whenOrNull(
+            loaded: (ads, total, page, limit) => (ads: ads, total: total));
+        final ads = loaded?.ads ?? const <AdModel>[];
+        final int pending =
+            ads.where((a) => _adStatus(a) == 'pending').length;
+        final int approved =
+            ads.where((a) => _adStatus(a) == 'approved').length;
+        final int sold = ads.where((a) => _adStatus(a) == 'sold').length;
 
-        final List<AdModel> currentAds = loadedState;
-        final bool allSelected = currentAds.isNotEmpty &&
-            currentAds.every((ad) => _selectedAdIds.contains(ad.id));
-        final int selectedCount =
-            currentAds.where((ad) => _selectedAdIds.contains(ad.id)).length;
-
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          decoration: const BoxDecoration(
-            color: AppColors.surfaceAlt,
-            border: Border(bottom: BorderSide(color: AppColors.border)),
-          ),
-          child: Row(
+        return LayoutBuilder(builder: (context, c) {
+          final cols = c.maxWidth >= 900 ? 4 : (c.maxWidth >= 460 ? 2 : 1);
+          const gap = 12.0;
+          final w = ((c.maxWidth - gap * (cols - 1)) / cols) - 0.5;
+          return Wrap(
+            spacing: gap,
+            runSpacing: gap,
             children: [
-              InkWell(
-                onTap: () => _toggleSelectAll(currentAds, !allSelected),
-                borderRadius: BorderRadius.circular(6),
-                child: Row(
-                  children: [
-                    Checkbox(
-                      value: allSelected,
-                      onChanged: (value) =>
-                          _toggleSelectAll(currentAds, value == true),
-                      visualDensity: VisualDensity.compact,
-                      materialTapTargetSize:
-                          MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    const SizedBox(width: 4),
-                    Text('Select all',
-                        style: GoogleFonts.inter(
-                            fontSize: 13, color: AppColors.textPrimary)),
-                  ],
+              SizedBox(
+                width: w,
+                child: _kpiCard(
+                  icon: Icons.campaign_outlined,
+                  bg: const Color(0xFFE0E7FF),
+                  fg: const Color(0xFF4F46E5),
+                  value: loaded != null ? '${loaded.total}' : '—',
+                  label: "Total ads",
                 ),
               ),
-              if (selectedCount > 0) ...[
-                const SizedBox(width: 8),
-                Text('· $selectedCount selected',
-                    style: GoogleFonts.inter(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.accent)),
-              ],
-              const Spacer(),
-              TextButton.icon(
-                onPressed: () => _downloadSelectedAsPdf(currentAds),
-                style: TextButton.styleFrom(
-                  backgroundColor: AppColors.accentSoft,
-                  foregroundColor: AppColors.accent,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+              SizedBox(
+                width: w,
+                child: _kpiCard(
+                  icon: Icons.pending_actions_outlined,
+                  bg: AppColors.warningSoft,
+                  fg: const Color(0xFF92400E),
+                  value: loaded != null ? '$pending' : '—',
+                  label: "Pending review",
+                  hint: "this page",
+                  highlighted: pending > 0,
                 ),
-                icon: const Icon(Icons.download_outlined, size: 18),
-                label: Text('Download PDF',
-                    style: GoogleFonts.inter(
-                        fontSize: 13, fontWeight: FontWeight.w600)),
+              ),
+              SizedBox(
+                width: w,
+                child: _kpiCard(
+                  icon: Icons.check_circle_outline,
+                  bg: AppColors.successSoft,
+                  fg: AppColors.success,
+                  value: loaded != null ? '$approved' : '—',
+                  label: "Approved",
+                  hint: "this page",
+                ),
+              ),
+              SizedBox(
+                width: w,
+                child: _kpiCard(
+                  icon: Icons.sell_outlined,
+                  bg: const Color(0xFFFCE7F3),
+                  fg: const Color(0xFFDB2777),
+                  value: loaded != null ? '$sold' : '—',
+                  label: "Sold out",
+                  hint: "this page",
+                ),
               ),
             ],
-          ),
-        );
+          );
+        });
       },
     );
   }
 
-  void _toggleSelectAll(List<AdModel> ads, bool select) {
-    setState(() {
-      if (select) {
-        for (final ad in ads) {
-          _selectedAdIds.add(ad.id);
-        }
-      } else {
-        for (final ad in ads) {
-          _selectedAdIds.remove(ad.id);
-        }
-      }
-    });
+  Widget _kpiCard({
+    required IconData icon,
+    required Color bg,
+    required Color fg,
+    required String value,
+    required String label,
+    String? hint,
+    bool highlighted = false,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+            color: highlighted ? const Color(0xFFFCD34D) : AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration:
+                BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10)),
+            child: Icon(icon, color: fg, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(value,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.inter(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary)),
+                Row(
+                  children: [
+                    Flexible(
+                      child: Text(label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.inter(
+                              fontSize: 12, color: AppColors.textSecondary)),
+                    ),
+                    if (hint != null) ...[
+                      const SizedBox(width: 4),
+                      Text("· $hint",
+                          style: GoogleFonts.inter(
+                              fontSize: 10.5, color: AppColors.textMuted)),
+                    ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Toolbar: search, filters, bulk actions
+  // ---------------------------------------------------------------------------
+  Widget _buildToolbar() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceAlt,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LayoutBuilder(builder: (context, c) {
+            final bool narrow = c.maxWidth < 760;
+            final search = _searchField();
+            final category = _categoryDropdown();
+            final download = _downloadButton();
+            if (narrow) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  search,
+                  const SizedBox(height: 8),
+                  Row(children: [
+                    Expanded(child: category),
+                    const SizedBox(width: 8),
+                    download,
+                  ]),
+                ],
+              );
+            }
+            return Row(
+              children: [
+                Expanded(flex: 5, child: search),
+                const SizedBox(width: 10),
+                SizedBox(width: 210, child: category),
+                const Spacer(),
+                download,
+              ],
+            );
+          }),
+          const SizedBox(height: 10),
+          Row(
+            children: [
+              Expanded(child: _statusSegments()),
+              _selectionSummary(),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _searchField() {
+    return SizedBox(
+      height: 38,
+      child: TextField(
+        controller: _searchController,
+        onChanged: _onSearchChanged,
+        style: GoogleFonts.inter(fontSize: 13.5),
+        decoration: InputDecoration(
+          isDense: true,
+          hintText: "Search ads by title, location…",
+          hintStyle:
+              GoogleFonts.inter(fontSize: 13, color: AppColors.textMuted),
+          prefixIcon:
+              const Icon(Icons.search, size: 18, color: AppColors.textMuted),
+          suffixIcon: (_searchQuery != null || _searchController.text.isNotEmpty)
+              ? IconButton(
+                  icon: const Icon(Icons.close,
+                      size: 16, color: AppColors.textMuted),
+                  onPressed: () {
+                    _searchController.clear();
+                    _searchQuery = null;
+                    _fetch();
+                    setState(() {});
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: AppColors.surface,
+          contentPadding: const EdgeInsets.symmetric(vertical: 9),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(9),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(9),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(9),
+            borderSide: const BorderSide(color: AppColors.accent, width: 1.4),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _categoryDropdown() {
+    return Container(
+      height: 38,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String?>(
+          value: _categoryFilter,
+          isExpanded: true,
+          icon: const Icon(Icons.keyboard_arrow_down,
+              size: 18, color: AppColors.textSecondary),
+          dropdownColor: Colors.white,
+          style: GoogleFonts.inter(
+              fontSize: 13, color: AppColors.textPrimary),
+          items: [
+            DropdownMenuItem<String?>(
+              value: null,
+              child: Text("All categories",
+                  style: GoogleFonts.inter(
+                      fontSize: 13, color: AppColors.textSecondary)),
+            ),
+            ..._categories.entries.map((e) => DropdownMenuItem<String?>(
+                  value: e.key,
+                  child: Text(e.value),
+                )),
+          ],
+          onChanged: (v) => setState(() => _categoryFilter = v),
+        ),
+      ),
+    );
+  }
+
+  Widget _statusSegments() {
+    Widget segment(_AdStatusFilter value, String label) {
+      final bool selected = _statusFilter == value;
+      return InkWell(
+        onTap: () => setState(() => _statusFilter = value),
+        borderRadius: BorderRadius.circular(7),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: selected ? AppColors.surface : Colors.transparent,
+            borderRadius: BorderRadius.circular(7),
+            border: selected
+                ? Border.all(color: AppColors.borderStrong)
+                : null,
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.04),
+                        blurRadius: 2,
+                        offset: const Offset(0, 1))
+                  ]
+                : null,
+          ),
+          child: Text(label,
+              style: GoogleFonts.inter(
+                  fontSize: 12.5,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  color: selected
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary)),
+        ),
+      );
+    }
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE9ECF2),
+          borderRadius: BorderRadius.circular(9),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            segment(_AdStatusFilter.all, "All"),
+            segment(_AdStatusFilter.pending, "Pending"),
+            segment(_AdStatusFilter.approved, "Approved"),
+            segment(_AdStatusFilter.sold, "Sold"),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _selectionSummary() {
+    if (_selectedAdIds.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(left: 10),
+      child: Text("${_selectedAdIds.length} selected",
+          style: GoogleFonts.inter(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w600,
+              color: AppColors.accent)),
+    );
+  }
+
+  Widget _downloadButton() {
+    return BlocBuilder<AdsBloc, AdsState>(
+      builder: (context, state) {
+        final ads = state.whenOrNull(
+                loaded: (ads, total, page, limit) => ads) ??
+            const <AdModel>[];
+        return SizedBox(
+          height: 38,
+          child: TextButton.icon(
+            onPressed: () => _downloadSelectedAsPdf(_visibleAds(ads)),
+            style: TextButton.styleFrom(
+              backgroundColor: AppColors.accentSoft,
+              foregroundColor: AppColors.accent,
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(9)),
+            ),
+            icon: const Icon(Icons.download_outlined, size: 18),
+            label: Text('PDF',
+                style: GoogleFonts.inter(
+                    fontSize: 13, fontWeight: FontWeight.w600)),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _downloadSelectedAsPdf(List<AdModel> visibleAds) async {
@@ -311,23 +648,13 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
     }
 
     try {
-      // Generate PDF
       final pdfBytes = await PdfGenerator.generateAdsReport(selected);
       final String filename =
           'ads_report_${DateTime.now().millisecondsSinceEpoch}.pdf';
-
-      // Save PDF
       await savePdf(pdfBytes, filename);
 
       if (mounted) {
-        // Clear all selections
-        setState(() {
-          _selectedAdIds.clear();
-        });
-
-        // Refresh the data
-        context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
-
+        setState(() => _selectedAdIds.clear());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -358,12 +685,14 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           initial: () => _centeredLoader(),
           loading: () => _centeredLoader(),
           loaded: (ads, total, currentPage, itemsPerPage) {
-            if (ads.isEmpty) {
-              return _emptyState();
+            _limit = itemsPerPage;
+            final visible = _visibleAds(ads);
+            if (visible.isEmpty) {
+              return _emptyState(filtered: ads.isNotEmpty);
             }
             return Column(
               children: [
-                _buildAdsDataTable(ads),
+                _buildAdsDataTable(visible),
                 _buildPagination(total, currentPage, itemsPerPage),
               ],
             );
@@ -384,17 +713,30 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
         ),
       );
 
-  Widget _emptyState() => Center(
+  Widget _emptyState({bool filtered = false}) => Center(
         child: Padding(
           padding: const EdgeInsets.all(48.0),
           child: Column(
             children: [
-              const Icon(Icons.inbox_outlined,
+              Icon(filtered ? Icons.filter_alt_off_outlined : Icons.inbox_outlined,
                   size: 44, color: AppColors.textMuted),
               const SizedBox(height: 14),
-              Text('No ads found',
+              Text(
+                  filtered
+                      ? 'No ads match the current filters'
+                      : 'No ads found',
                   style: GoogleFonts.inter(
                       color: AppColors.textSecondary, fontSize: 15)),
+              if (filtered) ...[
+                const SizedBox(height: 10),
+                TextButton(
+                  onPressed: () => setState(() {
+                    _categoryFilter = null;
+                    _statusFilter = _AdStatusFilter.all;
+                  }),
+                  child: const Text('Clear filters'),
+                ),
+              ],
             ],
           ),
         ),
@@ -409,14 +751,12 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
                   size: 44, color: AppColors.danger),
               const SizedBox(height: 14),
               Text('Error loading ads: $message',
-                  style: GoogleFonts.inter(
-                      color: AppColors.danger, fontSize: 14),
+                  style:
+                      GoogleFonts.inter(color: AppColors.danger, fontSize: 14),
                   textAlign: TextAlign.center),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () {
-                  context.read<AdsBloc>().add(const AdsEvent.fetchAllAds());
-                },
+                onPressed: _fetch,
                 child: const Text('Retry'),
               ),
             ],
@@ -431,12 +771,13 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
         color: AppColors.textMuted,
         letterSpacing: 0.3);
 
+    final bool allSelected =
+        ads.isNotEmpty && ads.every((ad) => _selectedAdIds.contains(ad.id));
+
     return LayoutBuilder(
       builder: (context, constraints) {
-        // Fill the available width on large screens; keep a 1000px floor so the
-        // table scrolls horizontally on small ones.
         final double tableWidth =
-            constraints.maxWidth > 1000 ? constraints.maxWidth : 1000;
+            constraints.maxWidth > 1080 ? constraints.maxWidth : 1080;
         return Scrollbar(
           controller: _horizontalScrollController,
           thumbVisibility: true,
@@ -446,36 +787,58 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             child: ConstrainedBox(
               constraints: BoxConstraints(minWidth: tableWidth),
               child: DataTable(
-            columnSpacing: 56,
-            horizontalMargin: 16,
-            headingRowColor:
-                WidgetStateColor.resolveWith((states) => AppColors.surfaceAlt),
-            dataRowColor: WidgetStateProperty.resolveWith((states) {
-              if (states.contains(WidgetState.selected)) {
-                return AppColors.accentSoft;
-              }
-              return AppColors.surface;
-            }),
-            dividerThickness: 1,
-            dataRowMinHeight: 60,
-            dataRowMaxHeight: 80,
-            columns: [
-              DataColumn(label: Text('Select', style: headingStyle)),
-              DataColumn(label: Text('Name', style: headingStyle)),
-              DataColumn(label: Text('Category', style: headingStyle)),
-              DataColumn(label: Text('Posted On', style: headingStyle)),
-              DataColumn(label: Text('Location', style: headingStyle)),
-              DataColumn(label: Text('Price', style: headingStyle)),
-              DataColumn(label: Text('Status', style: headingStyle)),
-              DataColumn(label: Text('Approval', style: headingStyle)),
-            ],
-            rows: ads.map((ad) => _buildAdRow(ad)).toList(),
-                ),
+                columnSpacing: 40,
+                horizontalMargin: 16,
+                headingRowColor: WidgetStateColor.resolveWith(
+                    (states) => AppColors.surfaceAlt),
+                dataRowColor: WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.selected)) {
+                    return AppColors.accentSoft;
+                  }
+                  if (states.contains(WidgetState.hovered)) {
+                    return const Color(0xFFF8FAFF);
+                  }
+                  return AppColors.surface;
+                }),
+                dividerThickness: 1,
+                dataRowMinHeight: 64,
+                dataRowMaxHeight: 72,
+                columns: [
+                  DataColumn(
+                    label: Checkbox(
+                      value: allSelected,
+                      onChanged: (v) => _toggleSelectAll(ads, v == true),
+                      visualDensity: VisualDensity.compact,
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                  ),
+                  DataColumn(label: Text('Ad', style: headingStyle)),
+                  DataColumn(label: Text('Category', style: headingStyle)),
+                  DataColumn(label: Text('Posted', style: headingStyle)),
+                  DataColumn(label: Text('Location', style: headingStyle)),
+                  DataColumn(label: Text('Price', style: headingStyle)),
+                  DataColumn(label: Text('Status', style: headingStyle)),
+                  DataColumn(label: Text('Actions', style: headingStyle)),
+                ],
+                rows: ads.map((ad) => _buildAdRow(ad)).toList(),
               ),
             ),
-          );
-        },
-      );
+          ),
+        );
+      },
+    );
+  }
+
+  void _toggleSelectAll(List<AdModel> ads, bool select) {
+    setState(() {
+      if (select) {
+        _selectedAdIds.addAll(ads.map((a) => a.id));
+      } else {
+        for (final ad in ads) {
+          _selectedAdIds.remove(ad.id);
+        }
+      }
+    });
   }
 
   DataRow _buildAdRow(AdModel ad) {
@@ -498,190 +861,189 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             },
           ),
         ),
+        DataCell(_adCell(ad), onTap: () => _openAdDetail(ad)),
         DataCell(
-          SizedBox(
-            width: 160,
-            child: Text(
-              _buildVehicleTitle(ad),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 2,
-              style: GoogleFonts.inter(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary),
-            ),
-          ),
-        ),
-        DataCell(
-          Text(_formatCategory(ad.category),
-              style: GoogleFonts.inter(
-                  fontSize: 13, color: AppColors.textSecondary)),
+          _categoryChip(ad.category),
+          onTap: () => _openAdDetail(ad),
         ),
         DataCell(
           Text(_formatDate(ad.postedAt),
               style: GoogleFonts.inter(
                   fontSize: 12.5, color: AppColors.textSecondary)),
+          onTap: () => _openAdDetail(ad),
         ),
         DataCell(
           SizedBox(
             width: 120,
-            child: Text(ad.location,
+            child: Text(ad.location.isEmpty ? '—' : ad.location,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 style: GoogleFonts.inter(
                     fontSize: 13, color: AppColors.textSecondary)),
           ),
+          onTap: () => _openAdDetail(ad),
         ),
         DataCell(
-          Text('₹${ad.price.toString()}',
+          Text(_formatPrice(ad.price),
               style: GoogleFonts.inter(
                   fontSize: 13,
                   fontWeight: FontWeight.w600,
                   color: AppColors.textPrimary)),
+          onTap: () => _openAdDetail(ad),
         ),
-        DataCell(_buildStatusChip(ad)),
-        DataCell(
-          SizedBox(width: 180, child: _buildApprovalButtons(ad)),
+        DataCell(_buildStatusChip(ad), onTap: () => _openAdDetail(ad)),
+        DataCell(SizedBox(width: 150, child: _rowActions(ad))),
+      ],
+    );
+  }
+
+  /// Thumbnail + title + seller name.
+  Widget _adCell(AdModel ad) {
+    final String url = ad.images.isNotEmpty ? ad.images.first : '';
+    return Row(
+      children: [
+        Container(
+          width: 52,
+          height: 40,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceAlt,
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: AppColors.border),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: url.isEmpty
+              ? const Icon(Icons.image_outlined,
+                  size: 18, color: AppColors.textMuted)
+              : Image.network(url,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const Icon(
+                      Icons.broken_image_outlined,
+                      size: 18,
+                      color: AppColors.textMuted)),
+        ),
+        const SizedBox(width: 10),
+        SizedBox(
+          width: 190,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _buildVehicleTitle(ad),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: GoogleFonts.inter(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary),
+              ),
+              if (ad.user.name.isNotEmpty)
+                Text(
+                  ad.user.name,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                  style: GoogleFonts.inter(
+                      fontSize: 11.5, color: AppColors.textMuted),
+                ),
+            ],
+          ),
         ),
       ],
     );
   }
 
-  Widget _buildStatusChip(AdModel ad) {
-    final bg = ad.soldOut ? AppColors.surfaceAlt : AppColors.successSoft;
-    final fg = ad.soldOut ? AppColors.textSecondary : AppColors.success;
+  Widget _categoryChip(String category) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-      decoration:
-          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+      decoration: BoxDecoration(
+        color: AppColors.accentSoft,
+        borderRadius: BorderRadius.circular(6),
+      ),
       child: Text(
-        ad.soldOut ? 'Sold out' : 'Active',
+        _formatCategory(category),
         style: GoogleFonts.inter(
-            fontSize: 11, fontWeight: FontWeight.w600, color: fg),
+            fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.accent),
       ),
     );
   }
 
-  /// Build title based on category with null safety
-  String _buildVehicleTitle(AdModel ad) {
-    // For property category, show description
-    if (ad.category == 'property') {
-      return ad.description.isNotEmpty
-          ? ad.description
-          : 'Property Description Not Available';
-    }
-
-    // For vehicle categories, show vehicle details
-    if (ad.category == 'two_wheeler' ||
-        ad.category == 'four_wheeler' ||
-        ad.category == 'commercial_vehicle' ||
-        ad.category == 'private_vehicle') {
-      if (ad.vehicleDetails == null) {
-        return 'Vehicle Details Not Available';
-      }
-
-      final manufacturer =
-          ad.vehicleDetails?.manufacturer.displayName ?? 'Unknown';
-      final model = ad.vehicleDetails?.model.displayName ?? 'Unknown';
-      final year = ad.vehicleDetails?.year.toString() ?? 'Unknown';
-
-      return '$manufacturer $model($year)';
-    }
-
-    // For other categories, show title or description
-    return ad.title.isNotEmpty
-        ? ad.title
-        : (ad.description.isNotEmpty ? ad.description : 'No Title Available');
-  }
-
-  String _formatCategory(String category) {
-    switch (category) {
-      case 'two_wheeler':
-        return 'Two Wheeler';
-      case 'four_wheeler':
-        return 'Four Wheeler';
-      case 'commercial_vehicle':
-        return 'Commercial Vehicle';
-      case 'property':
-        return 'Property';
+  Widget _buildStatusChip(AdModel ad) {
+    late String text;
+    late Color bg;
+    late Color fg;
+    switch (_adStatus(ad)) {
+      case 'sold':
+        text = 'Sold out';
+        bg = AppColors.surfaceAlt;
+        fg = AppColors.textSecondary;
+        break;
+      case 'approved':
+        text = 'Approved';
+        bg = AppColors.successSoft;
+        fg = AppColors.success;
+        break;
       default:
-        return category
-            .replaceAll('_', ' ')
-            .split(' ')
-            .map((word) => word.isNotEmpty
-                ? word[0].toUpperCase() + word.substring(1).toLowerCase()
-                : '')
-            .join(' ');
+        text = 'Pending';
+        bg = AppColors.warningSoft;
+        fg = const Color(0xFF92400E);
     }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+      decoration:
+          BoxDecoration(color: bg, borderRadius: BorderRadius.circular(6)),
+      child: Text(text,
+          style: GoogleFonts.inter(
+              fontSize: 11, fontWeight: FontWeight.w600, color: fg)),
+    );
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  Widget _buildApprovalButtons(AdModel ad) {
+  // ---------------------------------------------------------------------------
+  // Row actions: approve / reject / view
+  // ---------------------------------------------------------------------------
+  Widget _rowActions(AdModel ad) {
     return BlocBuilder<AdsBloc, AdsState>(
       builder: (context, state) {
-        // For sold-out ads, show a message instead of buttons
-        if (ad.soldOut) {
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceAlt,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              'Sold out',
-              textAlign: TextAlign.center,
-              style: GoogleFonts.inter(
-                  fontSize: 11,
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w600),
-            ),
-          );
-        }
-
-        final isLoading = state.maybeWhen(
+        final bool isLoading = state.maybeWhen(
           approvalLoading: (adId) => adId == ad.id,
           orElse: () => false,
         );
 
-        // Check if ad is already approved
-        final bool isApproved = ad.isApproved;
+        if (isLoading) {
+          return const Align(
+            alignment: Alignment.centerLeft,
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
+        }
 
         return Row(
-          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Approve Button
-            _approvalButton(
-              label: isLoading ? '...' : (isApproved ? 'Approved' : 'Approve'),
-              filled: true,
-              color: AppColors.success,
-              disabled: isLoading || isApproved,
-              onTap: (isLoading || isApproved)
-                  ? null
-                  : () {
-                      context.read<AdsBloc>().add(AdsEvent.updateAdApproval(
-                            adId: ad.id,
-                            isApproved: true,
-                          ));
-                    },
-            ),
-            const SizedBox(width: 8),
-            // Reject Button
-            _approvalButton(
-              label: isLoading ? '...' : 'Reject',
-              filled: false,
-              color: AppColors.danger,
-              disabled: isLoading,
-              onTap: isLoading
-                  ? null
-                  : () {
-                      context.read<AdsBloc>().add(AdsEvent.updateAdApproval(
-                            adId: ad.id,
-                            isApproved: false,
-                          ));
-                    },
+            if (!ad.soldOut) ...[
+              _actionIcon(
+                icon: Icons.check_circle_outline,
+                color: AppColors.success,
+                tooltip: ad.isApproved ? 'Already approved' : 'Approve',
+                disabled: ad.isApproved,
+                onTap: () => context.read<AdsBloc>().add(
+                    AdsEvent.updateAdApproval(adId: ad.id, isApproved: true)),
+              ),
+              _actionIcon(
+                icon: Icons.cancel_outlined,
+                color: AppColors.danger,
+                tooltip: 'Reject',
+                onTap: () => context.read<AdsBloc>().add(
+                    AdsEvent.updateAdApproval(adId: ad.id, isApproved: false)),
+              ),
+            ],
+            _actionIcon(
+              icon: Icons.visibility_outlined,
+              color: AppColors.accent,
+              tooltip: 'View details',
+              onTap: () => _openAdDetail(ad),
             ),
           ],
         );
@@ -689,39 +1051,71 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
     );
   }
 
-  Widget _approvalButton({
-    required String label,
-    required bool filled,
+  Widget _actionIcon({
+    required IconData icon,
     required Color color,
-    required bool disabled,
-    required VoidCallback? onTap,
+    required String tooltip,
+    required VoidCallback onTap,
+    bool disabled = false,
   }) {
-    final Color effective = disabled ? AppColors.textMuted : color;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: filled
-              ? (disabled ? AppColors.surfaceAlt : color)
-              : Colors.transparent,
-          border: filled ? null : Border.all(color: effective),
-          borderRadius: BorderRadius.circular(7),
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.inter(
-            fontSize: 11.5,
-            fontWeight: FontWeight.w600,
-            color: filled
-                ? (disabled ? AppColors.textSecondary : Colors.white)
-                : effective,
-          ),
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: disabled ? null : onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Padding(
+          padding: const EdgeInsets.all(7),
+          child: Icon(icon,
+              size: 20, color: disabled ? AppColors.textMuted : color),
         ),
       ),
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Formatting helpers
+  // ---------------------------------------------------------------------------
+  String _buildVehicleTitle(AdModel ad) {
+    if (ad.category == 'property') {
+      return ad.description.isNotEmpty
+          ? ad.description
+          : 'Property Description Not Available';
+    }
+
+    if (ad.category == 'two_wheeler' ||
+        ad.category == 'four_wheeler' ||
+        ad.category == 'commercial_vehicle' ||
+        ad.category == 'private_vehicle') {
+      if (ad.vehicleDetails == null) {
+        return 'Vehicle Details Not Available';
+      }
+      final manufacturer =
+          ad.vehicleDetails?.manufacturer.displayName ?? 'Unknown';
+      final model = ad.vehicleDetails?.model.displayName ?? 'Unknown';
+      final year = ad.vehicleDetails?.year.toString() ?? 'Unknown';
+      return '$manufacturer $model ($year)';
+    }
+
+    return ad.title.isNotEmpty
+        ? ad.title
+        : (ad.description.isNotEmpty ? ad.description : 'No Title Available');
+  }
+
+  String _formatCategory(String category) {
+    return _categories[category] ??
+        category
+            .replaceAll('_', ' ')
+            .split(' ')
+            .map((word) => word.isNotEmpty
+                ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+                : '')
+            .join(' ');
+  }
+
+  String _formatDate(DateTime date) => DateFormat('dd MMM yyyy').format(date);
+
+  String _formatPrice(int price) =>
+      '₹${NumberFormat.decimalPattern('en_IN').format(price)}';
 
   // ---------------------------------------------------------------------------
   // Pagination
@@ -746,8 +1140,7 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             value: itemsPerPage,
             dropdownColor: Colors.white,
             underline: const SizedBox.shrink(),
-            style: GoogleFonts.inter(
-                fontSize: 13, color: AppColors.textPrimary),
+            style: GoogleFonts.inter(fontSize: 13, color: AppColors.textPrimary),
             items: [10, 20].map((int value) {
               return DropdownMenuItem<int>(
                 value: value,
@@ -756,10 +1149,8 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
             }).toList(),
             onChanged: (value) {
               if (value != null) {
-                context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
-                      page: 1,
-                      limit: value,
-                    ));
+                _limit = value;
+                _fetch();
               }
             },
           ),
@@ -773,19 +1164,13 @@ class _AdminAdsDashboardState extends State<AdminAdsDashboard> {
           _pageArrow(
             icon: Icons.chevron_left,
             enabled: currentPage > 1,
-            onTap: () => context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
-                  page: currentPage - 1,
-                  limit: itemsPerPage,
-                )),
+            onTap: () => _fetch(page: currentPage - 1),
           ),
           const SizedBox(width: 6),
           _pageArrow(
             icon: Icons.chevron_right,
             enabled: currentPage < totalPages,
-            onTap: () => context.read<AdsBloc>().add(AdsEvent.fetchAllAds(
-                  page: currentPage + 1,
-                  limit: itemsPerPage,
-                )),
+            onTap: () => _fetch(page: currentPage + 1),
           ),
         ],
       ),

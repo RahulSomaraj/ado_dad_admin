@@ -3,6 +3,7 @@ import 'package:ado_dad_admin/features/admin_layout/admin_layout.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner_edit.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner_upload_page.dart';
+import 'package:ado_dad_admin/features/dashboard/ad_detail_view.dart';
 import 'package:ado_dad_admin/features/dashboard/admin_ads_dashboard.dart';
 import 'package:ado_dad_admin/features/dashboard/role_based_dashboard.dart';
 import 'package:ado_dad_admin/features/login/ui/login.dart';
@@ -35,6 +36,7 @@ import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_add.da
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_edit.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_view.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variants_list.dart';
+import 'package:ado_dad_admin/models/ad_model.dart' show AdModel;
 import 'package:ado_dad_admin/models/banner_model.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
@@ -69,6 +71,20 @@ class AppRoutes {
                   userName: extra?['userName']?.toString(),
                 ),
               );
+            },
+          ),
+          GoRoute(
+            path: '/view-advertisement',
+            pageBuilder: (context, state) {
+              final extra = state.extra;
+              if (extra is! AdModel) {
+                return const NoTransitionPage(
+                  child: Center(
+                    child: Text("⚠️ Advertisement data missing or invalid."),
+                  ),
+                );
+              }
+              return NoTransitionPage(child: AdDetailView(ad: extra));
             },
           ),
           _noTransitionRoute('/add-user', AddUser()),
