@@ -8,6 +8,7 @@ import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:country_picker/country_picker.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class EditUser extends StatefulWidget {
   final UserModel user;
@@ -243,13 +244,8 @@ class _EditUserState extends State<EditUser> {
             : null, // Only include password if it's being changed
       );
 
-      print(
-          '🔍 UserEdit: Profile pic bytes: ${_profilePicBytes != null ? "Has new image" : "No new image"}');
-      print('🔍 UserEdit: Current profile pic URL: "$_currentProfilePicUrl"');
-
       if (_profilePicBytes != null) {
         // User is uploading a new profile picture
-        print('🔍 UserEdit: Using profile picture upload path');
         context.read<UserBloc>().add(UserEvent.updateUserWithProfilePic(
               updatedUser: updatedUser,
               profilePicBytes: _profilePicBytes!,
@@ -257,14 +253,12 @@ class _EditUserState extends State<EditUser> {
       } else {
         // User is not changing profile picture (keep existing or no profile picture)
         // Always use the regular update path - it handles existing profilePic URLs correctly
-        print('🔍 UserEdit: Using regular update path');
         context.read<UserBloc>().add(UpdateUser(updatedUser: updatedUser));
       }
     }
   }
 
   void _showSuccessPopup(BuildContext context, String message) async {
-    print('🔍 UserEdit: Showing success popup with message: "$message"');
     // Get current user type and ID to determine navigation
     final userType = await getUserType();
     final currentUserId = await getUserId();
@@ -291,14 +285,10 @@ class _EditUserState extends State<EditUser> {
                     // For AD/SA users editing their own profile, go back to profile page
                     context.read<UserBloc>().add(const FetchAllUsers());
                     context.go('/profile');
-                    print(
-                        '🔍 Navigation: AD/SA user editing own profile, going to profile page');
                   } else {
                     // For all other cases (editing other users), go to users list
                     context.read<UserBloc>().add(const FetchAllUsers());
                     context.go('/users');
-                    print(
-                        '🔍 Navigation: Editing other user, going to users list');
                   }
                 }
               },
@@ -334,17 +324,12 @@ class _EditUserState extends State<EditUser> {
   Widget build(BuildContext context) {
     return BlocListener<UserBloc, UserState>(
       listener: (context, state) {
-        print('🔍 UserEdit: BlocListener received state: ${state.runtimeType}');
         if (state is UserUpdated) {
-          print(
-              '🔍 UserEdit: UserUpdated state received, updating stored data and showing success popup');
           // Update stored data if AD user is editing their own profile
           _updateStoredUserDataIfOwnProfile().then((_) {
             _showSuccessPopup(
                 context, "User details have been updated successfully.");
           });
-        } else if (state is UserError) {
-          print('🔍 UserEdit: UserError state received: ${state.message}');
         }
       },
       child: BlocBuilder<UserBloc, UserState>(
@@ -367,108 +352,232 @@ class _EditUserState extends State<EditUser> {
     );
   }
 
-  /// ✅ Header Section with Back Button
+  /// Header Section with Back Button
   Widget _buildHeaderSection() {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(12),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          onPressed: () {
+            context.pop();
+            context.read<UserBloc>().add(FetchAllUsers());
+          },
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        child: Row(
+        const SizedBox(width: 4),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new,
-                  color: AppColors.blackColor),
-              onPressed: () {
-                context.pop();
-                context.read<UserBloc>().add(FetchAllUsers());
-              },
-            ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                "Edit User",
-                style: TextStyle(
-                    color: AppColors.blackColor,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
+            Text("Users / Edit",
+                style: GoogleFonts.inter(
+                    fontSize: 12, color: AppColors.textMuted)),
+            const SizedBox(height: 2),
+            Text("Edit user",
+                style: GoogleFonts.inter(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary)),
           ],
         ),
-      ),
+      ],
     );
   }
 
-  Center _buildUpdateForm(UserState state) {
+  Widget _buildUpdateForm(UserState state) {
     return Center(
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: MediaQuery.of(context).size.width > 600
-              ? 600
-              : MediaQuery.of(context).size.width - 32,
-        ),
-        child: Card(
-          elevation: 5,
-          color: AppColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: EdgeInsets.all(
-                MediaQuery.of(context).size.width > 600 ? 20 : 16),
-            child: Form(
-              key: _userEditFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildFormField("Name", _name, (value) => _name = value!),
-                  const SizedBox(height: 15),
-                  _buildFormField("Email", _email, (value) => _email = value!,
-                      isEmail: true),
-                  const SizedBox(height: 15),
-                  _buildPhoneField(),
-                  const SizedBox(height: 15),
-                  _buildDropdownField("User Type", _userType),
-                  const SizedBox(height: 15),
-                  _buildProfilePictureSection(),
-                  const SizedBox(height: 15),
-                  _buildChangePasswordSection(),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
+        constraints: const BoxConstraints(maxWidth: 640),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _photoBlock(),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _userEditFormKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _twoCol([
+                        _labeled("Name",
+                            _buildFormField("Name", _name, (v) => _name = v!)),
+                        _labeled(
+                            "Email",
+                            _buildFormField("Email", _email, (v) => _email = v!,
+                                isEmail: true)),
+                        _labeled("Phone number", _buildPhoneField()),
+                        _labeled("User type",
+                            _buildDropdownField("User Type", _userType)),
+                      ]),
+                      const SizedBox(height: 16),
+                      _buildChangePasswordSection(),
+                      const SizedBox(height: 24),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: state is UserLoading ? null : _updateUser,
+                          child: state is UserLoading
+                              ? const SizedBox(
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2, color: Colors.white),
+                                )
+                              : Text("Save changes",
+                                  style: GoogleFonts.inter(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600)),
+                        ),
                       ),
-                      onPressed: state is UserLoading ? null : _updateUser,
-                      child: state is UserLoading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white),
-                            )
-                          : const Text("Update",
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
     );
   }
+
+  Widget _photoBlock() {
+    final img = _photoImage();
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: const BoxDecoration(
+        color: AppColors.surfaceAlt,
+        border: Border(bottom: BorderSide(color: AppColors.border)),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: _pickProfilePicture,
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.accentSoft,
+                    image: img,
+                  ),
+                  child: img == null
+                      ? Center(
+                          child: Text(_initials(_name),
+                              style: GoogleFonts.inter(
+                                  color: AppColors.accent,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 20)))
+                      : null,
+                ),
+                Positioned(
+                  right: -2,
+                  bottom: -2,
+                  child: Container(
+                    width: 22,
+                    height: 22,
+                    decoration: BoxDecoration(
+                        color: AppColors.accent,
+                        shape: BoxShape.circle,
+                        border:
+                            Border.all(color: AppColors.surface, width: 2)),
+                    child: const Icon(Icons.camera_alt,
+                        color: Colors.white, size: 11),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 14),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Profile photo",
+                  style: GoogleFonts.inter(
+                      fontSize: 14, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 2),
+              Text("PNG or JPG, tap to change",
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textSecondary)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  DecorationImage? _photoImage() {
+    if (_profilePicBytes != null) {
+      return DecorationImage(
+          image: MemoryImage(_profilePicBytes!), fit: BoxFit.cover);
+    }
+    if (_currentProfilePicUrl != null &&
+        _currentProfilePicUrl!.isNotEmpty &&
+        _currentProfilePicUrl != 'default-profile-pic-url') {
+      return DecorationImage(
+          image: NetworkImage(_currentProfilePicUrl!), fit: BoxFit.cover);
+    }
+    return null;
+  }
+
+  Widget _labeled(String label, Widget field) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [_fieldLabel(label), field],
+      );
+
+  Widget _twoCol(List<Widget> items) {
+    return LayoutBuilder(builder: (context, c) {
+      if (c.maxWidth < 480) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int i = 0; i < items.length; i++) ...[
+              items[i],
+              if (i != items.length - 1) const SizedBox(height: 16),
+            ],
+          ],
+        );
+      }
+      const gap = 16.0;
+      final w = (c.maxWidth - gap) / 2;
+      return Wrap(
+        spacing: gap,
+        runSpacing: gap,
+        children: items.map((it) => SizedBox(width: w, child: it)).toList(),
+      );
+    });
+  }
+
+  String _initials(String name) {
+    final parts = name.trim().split(RegExp(r'\s+'));
+    if (parts.length > 1 && parts[0].isNotEmpty && parts[1].isNotEmpty) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    return parts.isNotEmpty && parts[0].isNotEmpty
+        ? parts[0][0].toUpperCase()
+        : 'U';
+  }
+
+  Widget _fieldLabel(String text) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(text,
+            style: GoogleFonts.inter(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary)),
+      );
 
   Widget _buildFormField(
       String label, String initialValue, Function(String?) onSaved,
@@ -476,7 +585,7 @@ class _EditUserState extends State<EditUser> {
     return TextFormField(
       initialValue: initialValue,
       decoration: InputDecoration(
-        labelText: label,
+        hintText: "Enter $label",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       keyboardType: isEmail
@@ -504,7 +613,6 @@ class _EditUserState extends State<EditUser> {
     return DropdownButtonFormField<String>(
       value: selectedValue,
       decoration: InputDecoration(
-        labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
       items: _userTypeMap.values
@@ -520,26 +628,21 @@ class _EditUserState extends State<EditUser> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Profile Picture",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
+        _fieldLabel("Profile picture"),
+        const SizedBox(height: 2),
         GestureDetector(
           onTap: _pickProfilePicture,
           child: Container(
             width: 120,
             height: 120,
             decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade400),
-              borderRadius: BorderRadius.circular(8),
+              color: AppColors.surfaceAlt,
+              border: Border.all(color: AppColors.border),
+              borderRadius: BorderRadius.circular(12),
             ),
             child: _profilePicBytes != null
                 ? ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(11),
                     child: Image.memory(
                       _profilePicBytes!,
                       fit: BoxFit.cover,
@@ -548,7 +651,7 @@ class _EditUserState extends State<EditUser> {
                 : _currentProfilePicUrl != null &&
                         _currentProfilePicUrl!.isNotEmpty
                     ? ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(11),
                         child: Image.network(
                           _currentProfilePicUrl!,
                           fit: BoxFit.cover,
@@ -567,17 +670,17 @@ class _EditUserState extends State<EditUser> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.add_a_photo,
-          size: 40,
-          color: Colors.grey.shade600,
+        const Icon(
+          Icons.add_a_photo_outlined,
+          size: 32,
+          color: AppColors.textMuted,
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 6),
         Text(
-          "Add Photo",
-          style: TextStyle(
+          "Add photo",
+          style: GoogleFonts.inter(
             fontSize: 12,
-            color: Colors.grey.shade600,
+            color: AppColors.textSecondary,
           ),
         ),
       ],
@@ -598,29 +701,30 @@ class _EditUserState extends State<EditUser> {
           child: Container(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
+              color: AppColors.surfaceAlt,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: AppColors.border),
             ),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.lock_outline,
-                  color: Colors.grey.shade600,
+                  size: 19,
+                  color: AppColors.textSecondary,
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  "Change Password",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade700,
+                  "Change password",
+                  style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const Spacer(),
                 Icon(
                   _showPasswordSection ? Icons.expand_less : Icons.expand_more,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                 ),
               ],
             ),
@@ -695,7 +799,7 @@ class _EditUserState extends State<EditUser> {
       controller: _phoneController,
       keyboardType: TextInputType.phone,
       decoration: InputDecoration(
-        labelText: "Phone Number",
+        hintText: "Phone number",
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
         prefixIcon: _buildCountryCodeSelector(),
       ),

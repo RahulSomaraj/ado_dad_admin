@@ -7,6 +7,10 @@ import 'ads_state.dart';
 class AdsBloc extends Bloc<AdsEvent, AdsState> {
   final AdsRepository _adsRepository;
 
+  /// Optional owner filter for the admin ads view (set when navigating from a
+  /// user's detail page). Cleared by setting it back to null.
+  String? userFilter;
+
   AdsBloc({required AdsRepository adsRepository})
       : _adsRepository = adsRepository,
         super(const AdsState.initial()) {
@@ -31,14 +35,13 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
     emit(const AdsState.loading());
 
     try {
-      print('🔍 AdsBloc: Fetching ads - page: $page, limit: $limit');
       final response = await _adsRepository.fetchAllAds(
         page: page,
         limit: limit,
         searchQuery: searchQuery,
+        userId: userFilter,
       );
 
-      print('📊 AdsBloc: API Response - ${response.data.length} ads found');
       emit(AdsState.loaded(
         ads: response.data,
         total: response.total,
@@ -46,7 +49,6 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         itemsPerPage: limit,
       ));
     } catch (e) {
-      print('❌ AdsBloc: Error fetching ads: $e');
       emit(AdsState.error(message: 'Failed to load ads: $e'));
     }
   }
@@ -62,13 +64,10 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
     emit(AdsState.approvalLoading(adId: adId));
 
     try {
-      print('🔍 AdsBloc: Updating approval for ad $adId to $isApproved');
       final updatedAd = await _adsRepository.updateAdApproval(
         adId: adId,
         isApproved: isApproved,
       );
-
-      print('✅ AdsBloc: Approval update successful');
 
       // Update the previous loaded state with the updated ad
       currentState.whenOrNull(
@@ -111,8 +110,6 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         },
       );
     } catch (e) {
-      print('❌ AdsBloc: Error updating approval: $e');
-
       // Return to the previous loaded state on error
       currentState.whenOrNull(
         loaded: (ads, total, currentPage, itemsPerPage) {
@@ -160,6 +157,7 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         page: page,
         limit: limit,
         searchQuery: searchQuery,
+        userId: userFilter,
       );
 
       emit(AdsState.loaded(
@@ -169,7 +167,6 @@ class AdsBloc extends Bloc<AdsEvent, AdsState> {
         itemsPerPage: limit,
       ));
     } catch (e) {
-      print('❌ AdsBloc: Error refreshing ads: $e');
       emit(AdsState.error(message: 'Failed to refresh ads: $e'));
     }
   }

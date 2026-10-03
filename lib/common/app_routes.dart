@@ -3,6 +3,7 @@ import 'package:ado_dad_admin/features/admin_layout/admin_layout.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner_edit.dart';
 import 'package:ado_dad_admin/features/banner/ui/banner_upload_page.dart';
+import 'package:ado_dad_admin/features/dashboard/ad_detail_view.dart';
 import 'package:ado_dad_admin/features/dashboard/admin_ads_dashboard.dart';
 import 'package:ado_dad_admin/features/dashboard/role_based_dashboard.dart';
 import 'package:ado_dad_admin/features/login/ui/login.dart';
@@ -17,6 +18,12 @@ import 'package:ado_dad_admin/features/users/ui/user_edit.dart';
 import 'package:ado_dad_admin/features/users/ui/user_list.dart';
 import 'package:ado_dad_admin/features/users/ui/user_view.dart';
 import 'package:ado_dad_admin/features/reports/ui/report_list.dart';
+import 'package:ado_dad_admin/features/moderation/ui/report_detail_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/user_moderation_history_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/suspension_management_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/moderation_settings_screen.dart';
+import 'package:ado_dad_admin/features/moderation/ui/appeals_review_screen.dart';
+import 'package:ado_dad_admin/models/report_model.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_add.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_edit.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/ui/vehicle_manufactures_list.dart';
@@ -27,6 +34,9 @@ import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_model_view.dart'
 import 'package:ado_dad_admin/features/vehicle_model/ui/vehicle_models_list.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_add.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_edit.dart';
+import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variant_view.dart';
+import 'package:ado_dad_admin/features/vehicle_variant/ui/vehicle_variants_list.dart';
+import 'package:ado_dad_admin/models/ad_model.dart' show AdModel;
 import 'package:ado_dad_admin/models/banner_model.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
@@ -51,12 +61,38 @@ class AppRoutes {
           _noTransitionRoute('/dashboard', const RoleBasedDashboard()),
           _noTransitionRoute('/profile', const MyProfile()),
           _noTransitionRoute('/users', Users()),
-          _noTransitionRoute('/advertisements', const AdminAdsDashboard()),
+          GoRoute(
+            path: '/advertisements',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return NoTransitionPage(
+                child: AdminAdsDashboard(
+                  userId: extra?['userId']?.toString(),
+                  userName: extra?['userName']?.toString(),
+                ),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/view-advertisement',
+            pageBuilder: (context, state) {
+              final extra = state.extra;
+              if (extra is! AdModel) {
+                return const NoTransitionPage(
+                  child: Center(
+                    child: Text("⚠️ Advertisement data missing or invalid."),
+                  ),
+                );
+              }
+              return NoTransitionPage(child: AdDetailView(ad: extra));
+            },
+          ),
           _noTransitionRoute('/add-user', AddUser()),
           _noTransitionRoute(
               '/create-ad', const Center(child: Text("Listing Management"))),
           _noTransitionRoute('/vehicle-models', VehicleModelsList()),
           _noTransitionRoute('/add-vehiclemodel', VehicleModelAdd()),
+          _noTransitionRoute('/vehicle-variants', const VehicleVariantsList()),
           _noTransitionRoute(
               '/vehicle-manufactures', VehicleManufacturesList()),
           _noTransitionRoute(
@@ -64,6 +100,30 @@ class AppRoutes {
           _noTransitionRoute('/showrooms', Showroom()),
           _noTransitionRoute('/add-showroom', ShowroomAdd()),
           _noTransitionRoute('/reports', const ReportList()),
+          _noTransitionRoute(
+              '/suspension-management', const SuspensionManagementScreen()),
+          _noTransitionRoute(
+              '/moderation-settings', const ModerationSettingsScreen()),
+          _noTransitionRoute('/appeals', const AppealsReviewScreen()),
+          GoRoute(
+            path: '/report-detail',
+            pageBuilder: (context, state) {
+              final report = state.extra as ReportModel;
+              return NoTransitionPage(child: ReportDetailScreen(report: report));
+            },
+          ),
+          GoRoute(
+            path: '/user-moderation-history',
+            pageBuilder: (context, state) {
+              final extra = state.extra as Map<String, dynamic>?;
+              return NoTransitionPage(
+                child: UserModerationHistoryScreen(
+                  userId: extra?['userId']?.toString() ?? '',
+                  userName: extra?['userName']?.toString(),
+                ),
+              );
+            },
+          ),
           _noTransitionRoute('/banners', const BannerPage()),
           _noTransitionRoute('/upload-banners', const BannerUploadPage()),
           _noTransitionRoute('/notifications', Notification()),
@@ -173,6 +233,27 @@ class AppRoutes {
             },
           ),
           GoRoute(
+            path: '/view-vehiclevariant',
+            pageBuilder: (context, state) {
+              final extra = state.extra;
+              if (extra is! Map<String, dynamic>) {
+                return const NoTransitionPage(
+                  child: Center(
+                    child: Text("⚠️ Variant data missing or invalid."),
+                  ),
+                );
+              }
+              final variant = extra['variant'] as VehicleVariantResponseModel;
+              final vehicleModel = extra['vehicleModel'] as VehicleModel;
+              return NoTransitionPage(
+                child: VehicleVariantView(
+                  variant: variant,
+                  vehicleModel: vehicleModel,
+                ),
+              );
+            },
+          ),
+          GoRoute(
             path: '/edit-banner',
             pageBuilder: (context, state) {
               final banner = state.extra as BannerUploadRequest;
@@ -184,18 +265,10 @@ class AppRoutes {
     ],
     redirect: (context, state) async {
       final isAuthenticated = await _isLoggedIn();
+      final path = state.uri.toString();
 
-      if (!isAuthenticated) {
-        if (state.uri.toString() != '/') {
-          return '/';
-        }
-      } else {
-        if (state.uri.toString() == '/' ||
-            state.uri.toString() == '/dashboard') {
-          return '/dashboard';
-        }
-      }
-
+      if (!isAuthenticated && path != '/') return '/';
+      if (isAuthenticated && path == '/') return '/dashboard';
       return null;
     },
   );

@@ -26,16 +26,17 @@ class _ShowroomDetailViewState extends State<ShowroomDetailView> {
   @override
   void initState() {
     super.initState();
-    // Trigger the bloc to fetch showroom ads with pagination
-    print(
-        '🏪 ShowroomDetailView: Fetching ads for showroom: ${widget.showroomuser.name} (ID: ${widget.showroomuser.id})');
-    context.read<UserAdsBloc>().add(
-          UserAdsEvent.fetchUserAds(
-            userId: widget.showroomuser.id,
-            page: _currentPage,
-            limit: _itemsPerPage,
-          ),
-        );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<UserAdsBloc>().add(
+              UserAdsEvent.fetchUserAds(
+                userId: widget.showroomuser.id,
+                page: _currentPage,
+                limit: _itemsPerPage,
+              ),
+            );
+      }
+    });
   }
 
   @override

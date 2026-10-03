@@ -1,11 +1,11 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/common/data_storage.dart';
-import 'package:ado_dad_admin/common/text_style.dart';
 import 'package:ado_dad_admin/models/login_model.dart';
 import 'package:ado_dad_admin/models/user_model.dart';
 import 'package:ado_dad_admin/repositories/user_rep.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class MyProfile extends StatefulWidget {
   const MyProfile({super.key});
@@ -48,12 +48,10 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
   }
 
   Future<void> _loadUserData() async {
-    print('🔍 Profile: _loadUserData called');
-
-    // Always get the logged-in user's ID first to ensure we're loading the correct user's data
+    // Always get the logged-in user's ID first to ensure we're loading the
+    // correct user's data.
     final loggedInUserId = await getUserId();
     if (loggedInUserId == null) {
-      print('🔍 Profile: No logged-in user ID found');
       return;
     }
 
@@ -63,16 +61,6 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
     final phone = await getUserPhoneNumber();
     final profilePic = await getUserProfilePicture();
 
-    print(
-        '🔍 Profile: Loaded user data for logged-in user ID: $loggedInUserId');
-    print('🔍 Profile: Name: $name');
-    print('🔍 Profile: Email: $email');
-    print('🔍 Profile: Phone: $phone');
-    print('🔍 Profile: User Type: $type');
-    print('🔍 Profile: Profile Pic: "$profilePic"');
-
-    // Verify that we're loading the logged-in user's data
-    // This ensures that even if stored data was accidentally updated, we only show logged-in user's info
     if (mounted) {
       setState(() {
         userType = type;
@@ -81,158 +69,309 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
         userPhone = phone;
         userProfilePic = profilePic;
       });
-      print('🔍 Profile: setState called with updated data');
-    } else {
-      print('🔍 Profile: Widget not mounted, skipping setState');
     }
   }
 
+  bool get _canEdit =>
+      userType == 'SR' || userType == 'AD' || userType == 'SA';
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(30),
-          child: Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Container(
-              height: 80,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 17),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  Text(
-                    "My Profile",
-                    style: AppTextStyle.titleTextstyle,
-                  ),
-                  Text(
-                    "",
-                    style: AppTextStyle.titleTextstyle,
-                  ),
-                ],
-              ),
-            ),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 900),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _buildHeader(),
+              const SizedBox(height: 16),
+              _buildHeroCard(),
+              const SizedBox(height: 16),
+              _buildDetailsCard(),
+            ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(30),
-          child: Card(
-            elevation: 3,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Container(
-              width: 500,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-              ),
+      ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Page header
+  // ---------------------------------------------------------------------------
+  Widget _buildHeader() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 420;
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header row with title and edit icon
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const SizedBox(
-                          width: 1), // Spacer to balance the edit icon
-                      // Edit icon for SR, AD, and SA users in top right corner
-                      if (userType == 'SR' ||
-                          userType == 'AD' ||
-                          userType == 'SA')
-                        GestureDetector(
-                          onTap: _navigateToEditProfile,
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade100,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Icon(
-                              Icons.edit,
-                              color: AppColors.blackColor,
-                              size: 20,
-                            ),
-                          ),
-                        )
-                      else
-                        const SizedBox(
-                            width: 36), // Maintain consistent spacing
-                    ],
-                  ),
-                  // Profile Picture and Name Row
-                  _buildProfilePictureAndNameRow(),
-                  const SizedBox(height: 20),
-                  const Divider(),
-                  const SizedBox(height: 20),
-                  // Remaining Details
-                  _buildProfileRow("Email", userEmail),
-                  const SizedBox(height: 15),
-                  _buildProfileRow("Phone", userPhone),
-                  const SizedBox(height: 15),
-                  _buildProfileRow(
-                      "User Type", getFullUserType(userType ?? "NU")),
+                  Text("Home / Profile",
+                      style: GoogleFonts.inter(
+                          fontSize: 12, color: AppColors.textMuted)),
+                  const SizedBox(height: 2),
+                  Text("My profile",
+                      style: GoogleFonts.inter(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.textPrimary)),
+                  const SizedBox(height: 2),
+                  Text("Your account information",
+                      style: GoogleFonts.inter(
+                          fontSize: 13, color: AppColors.textSecondary)),
                 ],
               ),
             ),
+            if (_canEdit)
+              compact
+                  ? OutlinedButton(
+                      onPressed: _navigateToEditProfile,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                      ),
+                      child: const Icon(Icons.edit_outlined, size: 18),
+                    )
+                  : OutlinedButton.icon(
+                      onPressed: _navigateToEditProfile,
+                      icon: const Icon(Icons.edit_outlined, size: 17),
+                      label: const Text("Edit profile"),
+                    ),
+          ],
+        );
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Hero card (banner + avatar + name + role)
+  // ---------------------------------------------------------------------------
+  Widget _buildHeroCard() {
+    const double bannerHeight = 84;
+    const double avatarOuter = 88; // 80 avatar + 4px ring each side
+    const double overlap = 44; // how far the avatar dips below the banner
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Banner with the avatar overlapping its bottom edge.
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                height: bannerHeight,
+                width: double.infinity,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.accent, AppColors.accentHover],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 24,
+                top: bannerHeight - overlap,
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
+                    color: AppColors.surface,
+                    shape: BoxShape.circle,
+                  ),
+                  child: _buildAvatar(),
+                ),
+              ),
+            ],
           ),
-        ),
+          // Reserve space for the part of the avatar hanging below the banner.
+          const SizedBox(height: avatarOuter - overlap + 12),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  userName ?? "Loading…",
+                  style: GoogleFonts.inter(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 6,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    _roleChip(getFullUserType(userType ?? "NU")),
+                    if (userEmail != null && userEmail!.isNotEmpty)
+                      _inlineMeta(Icons.mail_outline, userEmail!),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAvatar() {
+    final profileImage = _getProfileImage();
+    return CircleAvatar(
+      radius: 40,
+      backgroundColor: AppColors.accentSoft,
+      backgroundImage: profileImage,
+      child: profileImage == null
+          ? Text(
+              _getInitials(userName ?? "User"),
+              style: GoogleFonts.inter(
+                fontSize: 24,
+                fontWeight: FontWeight.w700,
+                color: AppColors.accent,
+              ),
+            )
+          : null,
+    );
+  }
+
+  Widget _roleChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.accentSoft,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.inter(
+            fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.accent),
+      ),
+    );
+  }
+
+  Widget _inlineMeta(IconData icon, String text) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15, color: AppColors.textMuted),
+        const SizedBox(width: 5),
+        Text(text,
+            style: GoogleFonts.inter(
+                fontSize: 13, color: AppColors.textSecondary)),
       ],
     );
   }
 
-  Widget _buildProfilePictureAndNameRow() {
+  // ---------------------------------------------------------------------------
+  // Details card
+  // ---------------------------------------------------------------------------
+  Widget _buildDetailsCard() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("Account information",
+              style: GoogleFonts.inter(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
+          const SizedBox(height: 16),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final twoCol = constraints.maxWidth >= 520;
+              final items = [
+                _detailItem(Icons.person_outline, "Full name", userName),
+                _detailItem(Icons.mail_outline, "Email", userEmail),
+                _detailItem(Icons.phone_outlined, "Phone", userPhone),
+                _detailItem(Icons.badge_outlined, "Role",
+                    getFullUserType(userType ?? "NU")),
+              ];
+              if (!twoCol) {
+                return Column(
+                  children: [
+                    for (int i = 0; i < items.length; i++) ...[
+                      items[i],
+                      if (i != items.length - 1) const Divider(height: 24),
+                    ],
+                  ],
+                );
+              }
+              return Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: items[0]),
+                      const SizedBox(width: 24),
+                      Expanded(child: items[1]),
+                    ],
+                  ),
+                  const Divider(height: 28),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: items[2]),
+                      const SizedBox(width: 24),
+                      Expanded(child: items[3]),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _detailItem(IconData icon, String label, String? value) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Profile Picture Circle Avatar
-        Builder(
-          builder: (context) {
-            final profileImage = _getProfileImage();
-            print(
-                '🔍 Profile: CircleAvatar - profileImage is null: ${profileImage == null}');
-            return CircleAvatar(
-              radius: 40,
-              backgroundColor: Colors.grey.shade300,
-              backgroundImage: profileImage,
-              child: profileImage == null
-                  ? Text(
-                      _getInitials(userName ?? "User"),
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    )
-                  : null,
-            );
-          },
+        Container(
+          width: 34,
+          height: 34,
+          decoration: BoxDecoration(
+            color: AppColors.surfaceAlt,
+            borderRadius: BorderRadius.circular(9),
+          ),
+          child: Icon(icon, size: 17, color: AppColors.textSecondary),
         ),
-        const SizedBox(width: 20),
-        // Name
+        const SizedBox(width: 12),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(label,
+                  style: GoogleFonts.inter(
+                      fontSize: 12, color: AppColors.textMuted)),
+              const SizedBox(height: 3),
               Text(
-                "Name",
-                style: AppTextStyle.valueTextstyle.copyWith(
-                  fontSize: 14,
-                  color: Colors.grey.shade600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                userName ?? "Loading...",
-                style: AppTextStyle.valueTextstyle.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+                (value == null || value.isEmpty) ? "—" : value,
+                style: GoogleFonts.inter(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary),
               ),
             ],
           ),
@@ -241,19 +380,15 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // Preserved helpers / logic
+  // ---------------------------------------------------------------------------
   ImageProvider? _getProfileImage() {
-    print('🔍 Profile: _getProfileImage called');
-    print('🔍 Profile: userProfilePic = "$userProfilePic"');
-
     if (userProfilePic != null &&
-            userProfilePic!.isNotEmpty &&
-            userProfilePic != 'default-profile-pic-url'
-        // userProfilePic!.startsWith('http')
-        ) {
-      print('🔍 Profile: Returning NetworkImage for: $userProfilePic');
+        userProfilePic!.isNotEmpty &&
+        userProfilePic != 'default-profile-pic-url') {
       return NetworkImage(userProfilePic!);
     }
-    print('🔍 Profile: Returning null - no valid profile image');
     return null;
   }
 
@@ -262,17 +397,9 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
     if (words.length > 1) {
       return "${words[0][0].toUpperCase()}${words[1][0].toUpperCase()}";
     }
-    return words[0][0].toUpperCase();
-  }
-
-  Widget _buildProfileRow(String title, String? value) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(title, style: AppTextStyle.valueTextstyle),
-        Text(value ?? "Loading...", style: AppTextStyle.valueTextstyle),
-      ],
-    );
+    return words.isNotEmpty && words[0].isNotEmpty
+        ? words[0][0].toUpperCase()
+        : "U";
   }
 
   void _navigateToEditProfile() async {
@@ -288,19 +415,15 @@ class _MyProfileState extends State<MyProfile> with RouteAware {
         currentUser = await userRepository.fetchUserById(userId);
       } catch (e) {
         // If API call fails, use data from storage
-        print(
-            '🔍 Profile: Failed to fetch user from API, using storage data: $e');
         final countryCode = await getUserCountryCode();
         currentUser = UserModel(
           id: userId,
           name: userName!,
           email: userEmail!,
-          phoneNumber:
-              userPhone ?? '', // Use stored phone number or empty string
+          phoneNumber: userPhone ?? '',
           userType: userType ?? 'SR',
-          profilePic:
-              userProfilePic ?? '', // Use stored profile pic or empty string
-          countryCode: countryCode, // Include country code from storage
+          profilePic: userProfilePic ?? '',
+          countryCode: countryCode,
         );
       }
 

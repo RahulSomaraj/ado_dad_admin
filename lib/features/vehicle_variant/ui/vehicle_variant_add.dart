@@ -1,5 +1,6 @@
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_variant/bloc/bloc/vehicle_variant_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/form_kit.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
 // import 'package:ado_dad_admin/models/vehicle_model.dart' as shared_model;
 import 'package:ado_dad_admin/models/vehicle_variant/variant_model.dart';
@@ -84,7 +85,6 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
       //     .read<VehicleVariantBloc>()
       //     .add(VehicleVariantEvent.createVariant(variant: addedvariant));
 
-      print("🚀 Variant to Submit: ${addedvariant.toPostJson()}");
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
@@ -143,10 +143,13 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
   @override
   void initState() {
     super.initState();
-    // Fetch fuel types and transmission types from API
-    context.read<VehicleVariantBloc>().add(
-          const VehicleVariantEvent.fetchOptions(),
-        );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        context.read<VehicleVariantBloc>().add(
+              const VehicleVariantEvent.fetchOptions(),
+            );
+      }
+    });
   }
 
   @override
@@ -174,12 +177,18 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
           orElse: () {},
         );
       },
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeaderSection(),
-            const SizedBox(height: 24),
+            FormHeaderBar(
+              breadcrumb:
+                  "Variants / ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
+              title: "Add Variant",
+              onBack: () => context.pop(),
+            ),
+            const SizedBox(height: 16),
             _buildForm(),
           ],
         ),
@@ -187,6 +196,7 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15.0),
@@ -206,23 +216,29 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
             const SizedBox(width: 8),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: const Text(
-                "Add Vehicle Variant",
-                style: TextStyle(
-                  color: AppColors.blackColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Add Vehicle Variant",
+                    style: TextStyle(
+                      color: AppColors.blackColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "Model: ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12.5,
+                    ),
+                  ),
+                ],
               ),
             ),
-            // const Spacer(),
-            // Text(
-            //   "Model: ${widget.vehicleModel.displayName}",
-            //   style: const TextStyle(
-            //     color: AppColors.blackColor,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
           ],
         ),
       ),
@@ -232,20 +248,20 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
   Widget _buildForm() {
     return Center(
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 800),
-        child: Card(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          color: AppColors.primaryColor,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+        constraints: const BoxConstraints(maxWidth: 820),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormSectionCard(
+                icon: Icons.tune,
+                title: "Basics",
+                subtitle:
+                    "For ${widget.vehicleModel.displayName.isNotEmpty ? widget.vehicleModel.displayName : widget.vehicleModel.name}",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   _buildRow([
                     _buildTextField("Name", (v) => _name = v!),
                     _buildTextField("Display Name", (v) => _displayName = v!),
@@ -453,7 +469,16 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                       },
                     ),
                   ]),
-                  const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.settings_outlined,
+                title: "Engine & performance",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
                   _buildRow([
                     _buildTextField("Seating Capacity",
                         (v) => _seatingCapacity = int.tryParse(v!),
@@ -476,11 +501,23 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                     _buildTextField(
                         "Mileage (kmpl)", (v) => _mileage = double.tryParse(v!),
                         keyboardType: TextInputType.number),
-                    _buildTextField(
-                        "Price (₹)", (v) => _price = int.tryParse(v!),
-                        keyboardType: TextInputType.number),
+                    const SizedBox.shrink(),
                   ]),
-                  const SizedBox(height: 16),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.payments_outlined,
+                title: "Pricing",
+                child: _buildRow([
+                  _buildTextField(
+                      "Price (₹)", (v) => _price = int.tryParse(v!),
+                      keyboardType: TextInputType.number),
+                  const SizedBox.shrink(),
+                ]),
+              ),
+              const SizedBox(height: 16),
                   // _buildRow([
                   //   _buildTextField(
                   //       "Price (₹)", (v) => _price = int.tryParse(v!),
@@ -501,8 +538,8 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                     child: ElevatedButton(
                       onPressed: _submitForm,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -510,8 +547,8 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
                       ),
                       child: const Text("Create Variant",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
                           )),
                     ),
                   )
@@ -519,9 +556,7 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
   // Widget _buildForm() {
@@ -645,30 +680,24 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
   //   );
   // }
 
-  Widget _buildRow(List<Widget> children) {
-    return Row(
-      children: [
-        Expanded(child: children[0]),
-        const SizedBox(width: 16),
-        Expanded(child: children[1]),
-      ],
-    );
-  }
+  Widget _sectionLabel(String text) => FormSectionTitle(text);
+
+  Widget _buildRow(List<Widget> children) => TwoColGrid(children);
 
   Widget _buildTextField(
     String label,
     FormFieldSetter<String> onSaved, {
     TextInputType? keyboardType,
   }) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    return LabeledField(
+      label: label,
+      child: TextFormField(
+        decoration: formInputDecoration("Enter ${label.toLowerCase()}"),
+        keyboardType: keyboardType,
+        validator: (value) =>
+            value == null || value.isEmpty ? '$label is required' : null,
+        onSaved: onSaved,
       ),
-      keyboardType: keyboardType,
-      validator: (value) =>
-          value == null || value.isEmpty ? '$label is required' : null,
-      onSaved: onSaved,
     );
   }
 
@@ -679,35 +708,33 @@ class _VehicleVariantAddState extends State<VehicleVariantAdd> {
     required ValueChanged<T?> onChanged,
     required String Function(T) getLabel,
   }) {
-    return DropdownButtonFormField<T>(
-      value: value,
-      items: items
-          .map((item) => DropdownMenuItem<T>(
-                value: item,
-                child: Text(
-                  getLabel(item),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ))
-          .toList(),
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+    return LabeledField(
+      label: label,
+      child: DropdownButtonFormField<T>(
+        value: value,
+        items: items
+            .map((item) => DropdownMenuItem<T>(
+                  value: item,
+                  child: Text(
+                    getLabel(item),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ))
+            .toList(),
+        onChanged: onChanged,
+        decoration: formInputDecoration("Select ${label.toLowerCase()}"),
+        validator: (val) => val == null ? '$label is required' : null,
+        isExpanded: true,
+        selectedItemBuilder: (BuildContext context) {
+          return items.map<Widget>((T item) {
+            return Text(
+              getLabel(item),
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: Colors.black),
+            );
+          }).toList();
+        },
       ),
-      validator: (val) => val == null ? '$label is required' : null,
-      isExpanded: true,
-      selectedItemBuilder: (BuildContext context) {
-        return items.map<Widget>((T item) {
-          return Text(
-            getLabel(item),
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: Colors.black),
-          );
-        }).toList();
-      },
     );
   }
 }

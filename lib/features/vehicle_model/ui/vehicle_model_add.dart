@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:ado_dad_admin/common/app_colors.dart';
 import 'package:ado_dad_admin/features/vehicle_manufacturer/bloc/bloc/vehicle_manufacturer_bloc.dart';
 import 'package:ado_dad_admin/features/vehicle_model/bloc/vehicle_model_bloc.dart';
+import 'package:ado_dad_admin/features/widgets/form_kit.dart';
 import 'package:ado_dad_admin/models/vehicle_manufacturer/vehicle_manufacturer_model.dart';
 import 'package:ado_dad_admin/models/vehicle_model/fuel_transmission_models.dart';
 import 'package:ado_dad_admin/models/vehicle_model/vehicle_model.dart';
@@ -359,16 +360,26 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
       child: BlocBuilder<VehicleModelBloc, VehicleModelState>(
         builder: (context, state) {
           return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  _buildHeaderSection(),
-                  const SizedBox(height: 30),
-                  _buildVehicleModelForm(state),
-                  const SizedBox(height: 50), // Add bottom padding
-                ],
-              ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                FormHeaderBar(
+                  breadcrumb: "Vehicle Models / Add",
+                  title: "Add Model",
+                  onBack: () {
+                    if (mounted) {
+                      context.pop();
+                      context
+                          .read<VehicleModelBloc>()
+                          .add(FetchAllVehicleModels());
+                    }
+                  },
+                ),
+                const SizedBox(height: 16),
+                _buildVehicleModelForm(state),
+                const SizedBox(height: 50),
+              ],
             ),
           );
         },
@@ -376,6 +387,7 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
     );
   }
 
+  // ignore: unused_element
   Widget _buildHeaderSection() {
     return Padding(
       padding: const EdgeInsets.all(15),
@@ -422,24 +434,25 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Card(
-          elevation: 5,
-          color: AppColors.primaryColor,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Form(
-              key: _modelFormKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildFormRow([
-                    _buildFormField("Model Name", "", (v) => _modelname = v!),
-                    _buildFormField(
-                        "Display Name", "", (v) => _displayname = v!),
-                  ]),
-                  const SizedBox(height: 15),
+        child: Form(
+          key: _modelFormKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              FormSectionCard(
+                icon: Icons.directions_car_outlined,
+                title: "Model details",
+                subtitle: "Add a vehicle model to the catalog",
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                      _buildFormRow([
+                        _buildFormField(
+                            "Model Name", "", (v) => _modelname = v!),
+                        _buildFormField(
+                            "Display Name", "", (v) => _displayname = v!),
+                      ]),
+                      const SizedBox(height: 15),
                   _buildFormRow([
                     _buildFormField("Description", "", (v) => _description = v!,
                         isRequired: false),
@@ -661,15 +674,22 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
                   //         'Seating Capacity', '', (v) => _seatingCapacity = v),
                   //   ]),
                   // ],
-                  const SizedBox(height: 15),
-                  _buildImagePickerPreview(),
-                  const SizedBox(height: 20),
-                  SizedBox(
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              FormSectionCard(
+                icon: Icons.image_outlined,
+                title: "Images",
+                child: _buildImagePickerPreview(),
+              ),
+              const SizedBox(height: 16),
+              SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        backgroundColor: Colors.black,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        backgroundColor: AppColors.accent,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
@@ -699,20 +719,10 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
               ),
             ),
           ),
-        ),
-      ),
-    );
+        );
   }
 
-  Widget _buildFormRow(List<Widget> children) {
-    return Row(
-      children: [
-        Expanded(child: children[0]),
-        const SizedBox(width: 16),
-        Expanded(child: children[1]),
-      ],
-    );
-  }
+  Widget _buildFormRow(List<Widget> children) => TwoColGrid(children);
 
   Widget _buildFormField(
     String label,
@@ -720,18 +730,18 @@ class _VehicleModelAddState extends State<VehicleModelAdd> {
     Function(String?) onSaved, {
     bool isRequired = true,
   }) {
-    return TextFormField(
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    return LabeledField(
+      label: label,
+      child: TextFormField(
+        decoration: formInputDecoration("Enter ${label.toLowerCase()}"),
+        validator: (value) {
+          if (isRequired && (value == null || value.isEmpty)) {
+            return "$label is required";
+          }
+          return null;
+        },
+        onSaved: onSaved,
       ),
-      validator: (value) {
-        if (isRequired && (value == null || value.isEmpty)) {
-          return "$label is required";
-        }
-        return null;
-      },
-      onSaved: onSaved,
     );
   }
 

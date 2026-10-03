@@ -107,8 +107,6 @@ VehicleManufacturer? _manufacturerFromJson(dynamic json) {
 
       return VehicleManufacturer.fromJson(manufacturerJson);
     } catch (e) {
-      print('⚠️ Error parsing manufacturer: $e');
-      print('⚠️ Manufacturer JSON was: $json');
       return null;
     }
   }
