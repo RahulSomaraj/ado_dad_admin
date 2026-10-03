@@ -86,6 +86,7 @@ class _UserViewState extends State<UserView> {
           _accountCard(),
           const SizedBox(height: 12),
           _adsSection(),
+
         ],
       ),
     );
@@ -122,6 +123,7 @@ class _UserViewState extends State<UserView> {
           onPressed: () => context.push('/edit-user', extra: _user),
           icon: const Icon(Icons.edit_outlined, size: 17),
           label: const Text("Edit"),
+
         ),
       ],
     );
@@ -137,6 +139,7 @@ class _UserViewState extends State<UserView> {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.border),
+
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
@@ -198,6 +201,24 @@ class _UserViewState extends State<UserView> {
                     style: GoogleFonts.inter(
                         fontSize: 13, color: AppColors.textSecondary)),
               ],
+
+            ),
+          ),
+          const SizedBox(height: 12),
+          // User ID badge
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              'ID: ${widget.user.id.length > 10 ? "${widget.user.id.substring(0, 10)}..." : widget.user.id}',
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black54,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
@@ -284,6 +305,7 @@ class _UserViewState extends State<UserView> {
           );
         });
       },
+
     );
   }
 
